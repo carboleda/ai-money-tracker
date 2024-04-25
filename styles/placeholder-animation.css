@@ -1,0 +1,28 @@
+@keyframes typing {
+    from {
+        width: 0
+    }
+}
+
+@keyframes blinkCursor {
+    0% {
+        border-right-color: rgba(255, 255, 255, .75);
+    }
+
+    50% {
+        border-right-color: transparent;
+    }
+
+    100% {
+        border-right-color: rgba(255, 255, 255, .75);
+    }
+}
+
+.input-placeholder-animation {
+    &::placeholder {
+        animation: typing 2s steps(30, end), blinkCursor .75s step-end infinite;
+        overflow: hidden;
+        white-space: nowrap;
+        border-right: .1em solid;
+    }
+}

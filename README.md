@@ -13,6 +13,10 @@ This is a template for creating applications using Next.js 13 (app directory) an
 - [Framer Motion](https://www.framer.com/motion/)
 - [next-themes](https://github.com/pacocoursey/next-themes)
 
+## Resources
+- [React SVG Icons](https://reactsvgicons.com/search)
+- [react-placeholder-typing](https://github.com/pashanitw/react-placeholder-typing/tree/master)
+
 ## How to Use
 
 
