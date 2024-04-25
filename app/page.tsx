@@ -42,7 +42,7 @@ const columns = [
 
 export default function Home() {
   const { data, error } = useSWR<any, Error>(
-    "http://localhost:3000/transactions",
+    "http://localhost:3000/api/transactions",
     fetcher
   );
   if (error) return <div>Failed to load</div>;
