@@ -8,7 +8,7 @@ import {
   getKeyValue,
 } from "@nextui-org/table";
 import useSWR from "swr";
-import { ApiResponse } from "./global";
+import { ApiResponse } from "@/interfaces/global";
 import { Transaction } from "@/interfaces/transaction";
 
 const columns = [
