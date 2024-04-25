@@ -2,7 +2,7 @@
 
 import { Input } from "@nextui-org/input";
 import { Spinner } from "@nextui-org/spinner";
-import { IconBxBrain, SearchIcon } from "./icons";
+import { IconBrain, SearchIcon } from "./icons";
 import { useRef } from "react";
 import useSWRMutation from "swr/mutation";
 import { KeyboardEvent } from "@react-types/shared";
@@ -43,7 +43,7 @@ export const CreateTransactionInput = () => {
           input: "text-sm",
         }}
         startContent={
-          <IconBxBrain className="text-base text-default-400 pointer-events-none flex-shrink-0" />
+          <IconBrain className="text-base text-default-400 pointer-events-none flex-shrink-0" />
         }
         endContent={isMutating && <Spinner size="sm" />}
         onKeyDown={onCreateTransaction}
