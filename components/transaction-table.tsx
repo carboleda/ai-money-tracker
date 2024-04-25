@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Table,
   TableBody,
@@ -5,11 +7,11 @@ import {
   TableColumn,
   TableHeader,
   TableRow,
-  getKeyValue,
 } from "@nextui-org/table";
 import useSWR from "swr";
 import { ApiResponse } from "@/interfaces/global";
 import { Transaction } from "@/interfaces/transaction";
+import { TransactionTypeIcon } from "./transaction-type";
 
 const columns = [
   {
@@ -19,10 +21,6 @@ const columns = [
   {
     key: "category",
     label: "Category",
-  },
-  {
-    key: "type",
-    label: "Type",
   },
   {
     key: "sourceAccount",
@@ -52,9 +50,13 @@ export const TransactionTable = () => {
       <TableBody items={rows}>
         {(item) => (
           <TableRow key={item.id}>
-            {(columnKey) => (
-              <TableCell>{getKeyValue(item, columnKey)}</TableCell>
-            )}
+            <TableCell className="flex items-center gap-2">
+              <TransactionTypeIcon type={item.type} />
+              <span>{item.description}</span>
+            </TableCell>
+            <TableCell>{item.category}</TableCell>
+            <TableCell>{item.sourceAccount}</TableCell>
+            <TableCell>{item.amount}</TableCell>
           </TableRow>
         )}
       </TableBody>
