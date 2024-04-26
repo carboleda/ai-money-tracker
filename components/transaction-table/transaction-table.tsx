@@ -11,7 +11,7 @@ import {
 import useSWR from "swr";
 import { ApiResponse } from "@/interfaces/global";
 import { Transaction } from "@/interfaces/transaction";
-import { TransactionTypeIcon } from "./transaction-type";
+import { TransactionTypeIcon } from "../transaction-type";
 
 const columns = [
   {

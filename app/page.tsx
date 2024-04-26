@@ -1,5 +1,5 @@
 import React from "react";
-import { TransactionTable } from "@/components/transaction-table";
+import { TransactionTable } from "@/components/transaction-table/transaction-table";
 import { CreateTransactionInput } from "@/components/create-transaction-input";
 
 export default function Home() {

@@ -1,11 +1,11 @@
 import {
-	Navbar as NextUINavbar,
-	NavbarContent,
-	NavbarMenu,
-	NavbarMenuToggle,
-	NavbarBrand,
-	NavbarItem,
-	NavbarMenuItem,
+  Navbar as NextUINavbar,
+  NavbarContent,
+  NavbarMenu,
+  NavbarMenuToggle,
+  NavbarBrand,
+  NavbarItem,
+  NavbarMenuItem,
 } from "@nextui-org/navbar";
 import { Button } from "@nextui-org/button";
 import { Kbd } from "@nextui-org/kbd";
@@ -18,16 +18,16 @@ import { siteConfig } from "@/config/site";
 import NextLink from "next/link";
 import clsx from "clsx";
 
-import { ThemeSwitch } from "@/components/theme-switch";
+import { ThemeSwitch } from "@/components/shared/theme-switch";
 import {
-	TwitterIcon,
-	GithubIcon,
-	DiscordIcon,
-	HeartFilledIcon,
-	SearchIcon,
-} from "@/components/icons";
+  TwitterIcon,
+  GithubIcon,
+  DiscordIcon,
+  HeartFilledIcon,
+  SearchIcon,
+} from "@/components/shared/icons";
 
-import { Logo } from "@/components/icons";
+import { Logo } from "@/components/shared/icons";
 
 export const Navbar = () => {
   return (

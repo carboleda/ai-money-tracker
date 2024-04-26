@@ -2,7 +2,7 @@
 
 import { Input } from "@nextui-org/input";
 import { Spinner } from "@nextui-org/spinner";
-import { IconBrain } from "./icons";
+import { IconBrain } from "./shared/icons";
 import { useRef } from "react";
 import useSWRMutation from "swr/mutation";
 import { KeyboardEvent } from "@react-types/shared";

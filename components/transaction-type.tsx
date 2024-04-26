@@ -3,7 +3,7 @@ import {
   IconArrowDownCircleFill,
   IconArrowUpCircleFill,
   IconMoneyBillTransfer,
-} from "./icons";
+} from "./shared/icons";
 
 interface TransactionTypeProps {
   type: TransactionType;
