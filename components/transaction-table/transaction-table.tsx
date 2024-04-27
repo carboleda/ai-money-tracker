@@ -13,6 +13,8 @@ import { ApiResponse } from "@/interfaces/global";
 import { Transaction } from "@/interfaces/transaction";
 import { TransactionTypeDecorator } from "../transaction-type";
 import { TableSkeleton } from "./skeleton";
+import { Button } from "@nextui-org/button";
+import { IconDelete } from "../shared/icons";
 
 const formater = new Intl.NumberFormat();
 
@@ -28,12 +30,13 @@ export const TransactionTable = () => {
 
   return (
     <>
-      <Table aria-label="Transactions">
+      <Table isStriped aria-label="Transactions">
         <TableHeader>
-          <TableColumn>Description</TableColumn>
-          <TableColumn>Amount</TableColumn>
+          <TableColumn>DESCRIPTION</TableColumn>
+          <TableColumn>AMOUNT</TableColumn>
+          <TableColumn>ACTIONS</TableColumn>
         </TableHeader>
-        <TableBody items={rows}>
+        <TableBody items={rows} emptyContent={"No transactions to display."}>
           {(item) => (
             <TableRow key={item.id}>
               <TableCell className="flex flex-col items-start gap-2">
@@ -51,6 +54,16 @@ export const TransactionTable = () => {
                 <TransactionTypeDecorator type={item.type}>
                   {formater.format(item.amount)}
                 </TransactionTypeDecorator>
+              </TableCell>
+              <TableCell>
+                <Button
+                  isIconOnly
+                  color="danger"
+                  variant="light"
+                  aria-label="Remove"
+                >
+                  <IconDelete />
+                </Button>
               </TableCell>
             </TableRow>
           )}
