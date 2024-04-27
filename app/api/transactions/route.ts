@@ -13,7 +13,7 @@ export async function GET() {
 
 export async function POST(req: Request) {
   const trasactionText = await req.text();
-  const trasactionJson = generateTransactionJson(trasactionText);
+  const trasactionJson = await generateTransactionJson(trasactionText);
 
   const transactionData = {
     ...trasactionJson,

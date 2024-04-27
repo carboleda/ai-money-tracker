@@ -3,7 +3,7 @@
 import { Input } from "@nextui-org/input";
 import { Spinner } from "@nextui-org/spinner";
 import { IconBrain } from "./shared/icons";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import useSWRMutation from "swr/mutation";
 import { KeyboardEvent } from "@react-types/shared";
 import { usePlaceholderAnimation } from "@/hooks/placeholder-animation";
@@ -23,7 +23,7 @@ async function sendRequest(url: string, { arg }: { arg: string }) {
 }
 
 export const CreateTransactionInput = () => {
-  const inputRef = useRef<HTMLInputElement>(null);
+  const [inputText, setInputText] = useState<string>("");
   const [placeholder] = usePlaceholderAnimation(placeholders);
 
   const { trigger, isMutating } = useSWRMutation(
@@ -31,11 +31,13 @@ export const CreateTransactionInput = () => {
     sendRequest
   );
 
-  const clearInput = () => (inputRef!.current!.value = "");
+  const clearInput = () => {
+    setInputText("");
+  };
 
   const onCreateTransaction = (e: KeyboardEvent) => {
-    if (e.key === "Enter" && inputRef?.current?.value) {
-      trigger(inputRef.current.value!).then(clearInput);
+    if (e.key === "Enter" && inputText) {
+      trigger(inputText).then(clearInput);
     }
   };
 
@@ -44,8 +46,9 @@ export const CreateTransactionInput = () => {
       aria-label="Create transaction"
       labelPlacement="outside"
       type="text"
+      isClearable
       placeholder={placeholder}
-      ref={inputRef}
+      value={inputText}
       readOnly={isMutating}
       classNames={{
         inputWrapper: "bg-default-100",
@@ -55,6 +58,7 @@ export const CreateTransactionInput = () => {
         <IconBrain className="text-base text-default-400 pointer-events-none flex-shrink-0" />
       }
       endContent={isMutating && <Spinner size="sm" />}
+      onValueChange={setInputText}
       onKeyDown={onCreateTransaction}
     />
   );

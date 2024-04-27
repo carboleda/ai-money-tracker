@@ -1,21 +1,20 @@
 import { TransactionType } from "@/interfaces/transaction";
-import {
-  IconArrowDownCircleFill,
-  IconArrowUpCircleFill,
-  IconMoneyBillTransfer,
-} from "./shared/icons";
+import { ReactNode } from "react";
+import { Code } from "@nextui-org/code";
 
 interface TransactionTypeProps {
   type: TransactionType;
+  children: ReactNode;
 }
 
-export const TransactionTypeIcon: React.FC<TransactionTypeProps> = ({
+export const TransactionTypeDecorator: React.FC<TransactionTypeProps> = ({
   type,
+  children,
 }) => {
   if (type === TransactionType.INCOME)
-    return <IconArrowUpCircleFill className="text-green-500" />;
+    return <Code color="success">{children}</Code>;
   if (type === TransactionType.EXPENSE)
-    return <IconArrowDownCircleFill className="text-red-500" />;
+    return <Code color="danger">{children}</Code>;
   if (type === TransactionType.TRANSFER)
-    return <IconMoneyBillTransfer className="text-orange-500" />;
+    return <Code color="warning">{children}</Code>;
 };
