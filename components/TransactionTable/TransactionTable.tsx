@@ -11,8 +11,8 @@ import {
 import useSWR from "swr";
 import { ApiResponse } from "@/interfaces/global";
 import { Transaction } from "@/interfaces/transaction";
-import { TransactionTypeDecorator } from "../transaction-type";
-import { TableSkeleton } from "./skeleton";
+import { TransactionTypeDecorator } from "../TransactionTypeDecorator";
+import { TableSkeleton } from "./TableSkeleton";
 import { Button } from "@nextui-org/button";
 import { IconDelete } from "../shared/icons";
 

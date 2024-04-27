@@ -18,7 +18,7 @@ import { siteConfig } from "@/config/site";
 import NextLink from "next/link";
 import clsx from "clsx";
 
-import { ThemeSwitch } from "@/components/shared/theme-switch";
+import { ThemeSwitch } from "@/components/shared/ThemeSwitch";
 import {
   TwitterIcon,
   GithubIcon,

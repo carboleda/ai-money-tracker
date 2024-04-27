@@ -6,7 +6,7 @@ import { IconBrain } from "./shared/icons";
 import { useRef, useState } from "react";
 import useSWRMutation from "swr/mutation";
 import { KeyboardEvent } from "@react-types/shared";
-import { usePlaceholderAnimation } from "@/hooks/placeholder-animation";
+import { usePlaceholderAnimation } from "@/hooks/usePlaceholderAnimation";
 
 const placeholders = [
   "Pago recibo de gas por 1000, C1408",
