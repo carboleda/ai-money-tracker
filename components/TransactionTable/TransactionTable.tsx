@@ -35,7 +35,7 @@ export const TransactionTable: React.FC<TranactionTableProps> = ({
       <Table isStriped aria-label="Transactions">
         <TableHeader>
           <TableColumn>DESCRIPTION</TableColumn>
-          <TableColumn>AMOUNT</TableColumn>
+          <TableColumn className="text-end">AMOUNT</TableColumn>
           <TableColumn>ACTIONS</TableColumn>
         </TableHeader>
         <TableBody
@@ -55,7 +55,7 @@ export const TransactionTable: React.FC<TranactionTableProps> = ({
                   {item.category} ({item.description})
                 </span>
               </TableCell>
-              <TableCell>
+              <TableCell className="text-end">
                 <TransactionTypeDecorator type={item.type}>
                   {formater.format(item.amount)}
                 </TransactionTypeDecorator>

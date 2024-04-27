@@ -1,14 +1,21 @@
 import { db } from "@/config/firestore";
 import { genAIModel } from "@/config/gen-ai";
 import * as env from "@/config/env";
+import qs from "node:querystring";
+import { Filter } from "firebase-admin/firestore";
 
 const COLLECTION_NAME = "transactions";
 
-export async function GET() {
-  const snapshot = await db
-    .collection(COLLECTION_NAME)
-    .orderBy("createdAt", "desc")
-    .get();
+export async function GET(req: Request) {
+  const account = new URLSearchParams(req.url.split("?")[1]).get("acc");
+  const collectionRef = db.collection(COLLECTION_NAME);
+
+  let q = collectionRef.orderBy("createdAt", "desc");
+  if (account) {
+    q = q.where("sourceAccount", "==", account);
+  }
+
+  const snapshot = await q.get();
   const transactions = snapshot.docs.map((doc) => {
     const docData = doc.data();
     return {

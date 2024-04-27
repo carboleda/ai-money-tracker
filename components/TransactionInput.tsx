@@ -9,8 +9,8 @@ import { usePlaceholderAnimation } from "@/hooks/usePlaceholderAnimation";
 import { useMutateTransaction } from "@/hooks/useMutateTransaction";
 
 const placeholders = [
-  "Pago recibo de gas por 1000, C1408",
   "Ingreso por salario de 2000, C1408",
+  "Transferencia de C1408 a C2163 por 5000",
   "Gasolina del carro por 3000, C2163",
   "Retiro en cajero por 4000, C1408",
 ];
