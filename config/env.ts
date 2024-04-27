@@ -1,3 +1,5 @@
+export const VALID_ACCOUNTS = JSON.parse(process.env.VALID_ACCOUNTS || "{}");
+
 export const FIREBASE_SERVICE_ACCOUNT = JSON.parse(
   process.env.FIREBASE_SERVICE_ACCOUNT || "{}"
 );

@@ -3,10 +3,10 @@
 import { Input } from "@nextui-org/input";
 import { Spinner } from "@nextui-org/spinner";
 import { IconBrain } from "./shared/icons";
-import { useRef, useState } from "react";
-import useSWRMutation from "swr/mutation";
+import { useState } from "react";
 import { KeyboardEvent } from "@react-types/shared";
 import { usePlaceholderAnimation } from "@/hooks/usePlaceholderAnimation";
+import { useMutateTransaction } from "@/hooks/useMutateTransaction";
 
 const placeholders = [
   "Pago recibo de gas por 1000, C1408",
@@ -15,21 +15,10 @@ const placeholders = [
   "Retiro en cajero por 4000, C1408",
 ];
 
-async function sendRequest(url: string, { arg }: { arg: string }) {
-  return fetch(url, {
-    method: "POST",
-    body: arg,
-  }).then((res) => res.json());
-}
-
-export const CreateTransactionInput = () => {
+export const TransactionInput = () => {
   const [inputText, setInputText] = useState<string>("");
   const [placeholder] = usePlaceholderAnimation(placeholders);
-
-  const { trigger, isMutating } = useSWRMutation(
-    "/api/transactions",
-    sendRequest
-  );
+  const { isMutating, createTransaction } = useMutateTransaction();
 
   const clearInput = () => {
     setInputText("");
@@ -37,7 +26,7 @@ export const CreateTransactionInput = () => {
 
   const onCreateTransaction = (e: KeyboardEvent) => {
     if (e.key === "Enter" && inputText) {
-      trigger(inputText).then(clearInput);
+      createTransaction(inputText).then(clearInput);
     }
   };
 

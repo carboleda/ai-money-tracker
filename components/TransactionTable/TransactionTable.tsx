@@ -8,25 +8,27 @@ import {
   TableHeader,
   TableRow,
 } from "@nextui-org/table";
-import useSWR from "swr";
-import { ApiResponse } from "@/interfaces/global";
 import { Transaction } from "@/interfaces/transaction";
 import { TransactionTypeDecorator } from "../TransactionTypeDecorator";
 import { TableSkeleton } from "./TableSkeleton";
 import { Button } from "@nextui-org/button";
 import { IconDelete } from "../shared/icons";
+import { useMutateTransaction } from "@/hooks/useMutateTransaction";
 
 const formater = new Intl.NumberFormat();
 
-export const TransactionTable = () => {
-  let { data: reesponse, error } = useSWR<ApiResponse<Transaction[]>, Error>(
-    "/api/transactions"
-  );
+interface TranactionTableProps {
+  isLoading: boolean;
+  transactions: Transaction[] | undefined;
+}
 
-  if (error) return <div>Failed to load</div>;
-  if (!reesponse?.data) return <TableSkeleton />;
+export const TransactionTable: React.FC<TranactionTableProps> = ({
+  isLoading,
+  transactions,
+}) => {
+  const { isMutating, deleteTransaction } = useMutateTransaction();
 
-  const rows = reesponse.data;
+  if (isLoading || !transactions) return <TableSkeleton />;
 
   return (
     <>
@@ -36,7 +38,10 @@ export const TransactionTable = () => {
           <TableColumn>AMOUNT</TableColumn>
           <TableColumn>ACTIONS</TableColumn>
         </TableHeader>
-        <TableBody items={rows} emptyContent={"No transactions to display."}>
+        <TableBody
+          items={transactions}
+          emptyContent={"No transactions to display."}
+        >
           {(item) => (
             <TableRow key={item.id}>
               <TableCell className="flex flex-col items-start gap-2">
@@ -58,9 +63,11 @@ export const TransactionTable = () => {
               <TableCell>
                 <Button
                   isIconOnly
+                  disabled={isMutating}
                   color="danger"
                   variant="light"
                   aria-label="Remove"
+                  onClick={() => deleteTransaction(item.id)}
                 >
                   <IconDelete />
                 </Button>

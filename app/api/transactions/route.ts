@@ -5,10 +5,21 @@ import * as env from "@/config/env";
 const COLLECTION_NAME = "transactions";
 
 export async function GET() {
-  const snapshot = await db.collection(COLLECTION_NAME).get();
-  const data = snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+  const snapshot = await db
+    .collection(COLLECTION_NAME)
+    .orderBy("createdAt", "desc")
+    .get();
+  const transactions = snapshot.docs.map((doc) => {
+    const docData = doc.data();
+    return {
+      ...docData,
+      id: doc.id,
+      sourceAccount: env.VALID_ACCOUNTS[docData.sourceAccount],
+      destinationAccount: env.VALID_ACCOUNTS[docData.destinationAccount],
+    };
+  });
 
-  return Response.json({ data });
+  return Response.json({ accounts: env.VALID_ACCOUNTS, transactions });
 }
 
 export async function POST(req: Request) {
@@ -17,12 +28,29 @@ export async function POST(req: Request) {
 
   const transactionData = {
     ...trasactionJson,
-    createAt: new Date().toISOString(),
+    createdAt: new Date().toISOString(),
   };
 
   const docRef = await db.collection(COLLECTION_NAME).add(transactionData);
 
   return Response.json({ id: docRef.id });
+}
+
+export async function DELETE(req: Request) {
+  try {
+    const id = await req.text();
+    await db.collection(COLLECTION_NAME).doc(id).delete();
+    return new Response(null, {
+      status: 204,
+      statusText: "Document successfully deleted!",
+    });
+  } catch (error) {
+    console.error(error);
+    return new Response(null, {
+      status: 500,
+      statusText: `Error removing document ${error}`,
+    });
+  }
 }
 
 async function generateTransactionJson(text: string) {

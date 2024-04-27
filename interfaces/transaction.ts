@@ -13,3 +13,8 @@ export interface Transaction {
   destinationAccount?: string;
   amount: number;
 }
+
+export interface GetTransactionsResponse {
+  accounts: { [key: string]: string };
+  transactions: Transaction[];
+}
