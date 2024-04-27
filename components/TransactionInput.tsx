@@ -14,18 +14,37 @@ const placeholders = [
   "Gasolina del carro por 3000, C2163",
   "Retiro en cajero por 4000, C1408",
 ];
+const requiredFields = ["amount", "account"];
+const validationRegex = /(?<amount>\b\d+\b)|(?<account>\bC\d{1,5}\b)/g;
+
+const getMissinFieldsInPrompt = (inputText: string) => {
+  const matches = [...inputText.matchAll(validationRegex)];
+
+  return requiredFields.filter((field) => {
+    return !matches.some((match) => match.groups && match?.groups?.[field]);
+  });
+};
 
 export const TransactionInput = () => {
   const [inputText, setInputText] = useState<string>("");
+  const [validationError, setValidationError] = useState<string>("");
   const [placeholder] = usePlaceholderAnimation(placeholders);
   const { isMutating, createTransaction } = useMutateTransaction();
 
-  const clearInput = () => {
-    setInputText("");
-  };
+  const clearInput = () => setInputText("");
+  const clearError = () => setValidationError("");
 
   const onCreateTransaction = (e: KeyboardEvent) => {
     if (e.key === "Enter" && inputText) {
+      const missinFields = getMissinFieldsInPrompt(inputText);
+      if (missinFields.length) {
+        setValidationError(
+          `Include the ${missinFields.join(" and ")} in your prompt!`
+        );
+        return;
+      }
+
+      clearError();
       createTransaction(inputText).then(clearInput);
     }
   };
@@ -35,6 +54,7 @@ export const TransactionInput = () => {
       aria-label="Create transaction"
       labelPlacement="outside"
       type="text"
+      size="lg"
       isClearable
       placeholder={placeholder}
       value={inputText}
@@ -48,7 +68,10 @@ export const TransactionInput = () => {
       }
       endContent={isMutating && <Spinner size="sm" />}
       onValueChange={setInputText}
+      onClear={clearError}
       onKeyDown={onCreateTransaction}
+      isInvalid={!!validationError}
+      errorMessage={validationError}
     />
   );
 };
