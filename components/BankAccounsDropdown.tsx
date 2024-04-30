@@ -7,12 +7,12 @@ import {
 } from "@nextui-org/dropdown";
 import { Button } from "@nextui-org/button";
 
-interface BankAccounsProps {
+interface BankAccounDropdownProps {
   accounts: { [key: string]: string } | undefined;
   onChange: (accountKey: string) => void;
 }
 
-export const BankAccouns: React.FC<BankAccounsProps> = ({
+export const BankAccounDropdown: React.FC<BankAccounDropdownProps> = ({
   accounts = {},
   onChange,
 }) => {
@@ -39,7 +39,7 @@ export const BankAccouns: React.FC<BankAccounsProps> = ({
         </Button>
       </DropdownTrigger>
       <DropdownMenu
-        aria-label="Multiple selection example"
+        aria-label="Bank accounts"
         variant="flat"
         closeOnSelect={true}
         selectionMode="single"

@@ -5,12 +5,12 @@ import useSWR from "swr";
 import { GetTransactionsResponse } from "@/interfaces/transaction";
 import { TransactionTable } from "@/components/TransactionTable/TransactionTable";
 import { TransactionInput } from "@/components/TransactionInput";
-import { BankAccouns } from "@/components/BankAccouns";
+import { BankAccounDropdown } from "@/components/BankAccounsDropdown";
 
 export default function Home() {
   const [selectedAccount, setAelectedAccount] = useState<string>("");
   const { isLoading, data: reesponse } = useSWR<GetTransactionsResponse, Error>(
-    `/api/transactions?acc=${selectedAccount}`
+    `/api/transaction?acc=${selectedAccount}`
   );
 
   return (
@@ -18,7 +18,7 @@ export default function Home() {
       <TransactionInput />
 
       <div className="self-start">
-        <BankAccouns
+        <BankAccounDropdown
           accounts={reesponse?.accounts}
           onChange={setAelectedAccount}
         />

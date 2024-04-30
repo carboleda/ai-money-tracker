@@ -6,7 +6,7 @@ interface TransactionRequest {
   body: string;
 }
 
-const KEY = "/api/transactions";
+const KEY = "/api/transaction";
 
 async function sendRequest(url: string, { arg }: { arg: TransactionRequest }) {
   return fetch(url, {

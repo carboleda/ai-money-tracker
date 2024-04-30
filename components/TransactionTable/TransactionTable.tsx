@@ -11,9 +11,9 @@ import {
 import { Transaction } from "@/interfaces/transaction";
 import { TransactionTypeDecorator } from "../TransactionTypeDecorator";
 import { TableSkeleton } from "./TableSkeleton";
-import { Button } from "@nextui-org/button";
-import { IconDelete } from "../shared/icons";
 import { useMutateTransaction } from "@/hooks/useMutateTransaction";
+import { DeleteTransactionButton } from "../DeleteTransactionButton";
+import { Chip } from "@nextui-org/react";
 
 const formater = new Intl.NumberFormat();
 
@@ -36,7 +36,7 @@ export const TransactionTable: React.FC<TranactionTableProps> = ({
         <TableHeader>
           <TableColumn>DESCRIPTION</TableColumn>
           <TableColumn className="text-end">AMOUNT</TableColumn>
-          <TableColumn>ACTIONS</TableColumn>
+          <TableColumn className="text-center">ACTIONS</TableColumn>
         </TableHeader>
         <TableBody
           items={transactions}
@@ -52,7 +52,12 @@ export const TransactionTable: React.FC<TranactionTableProps> = ({
                   )}
                 </div>
                 <span className="text-gray-400">
-                  {item.category} ({item.description})
+                  {item.description}{" "}
+                  {item.category && (
+                    <Chip radius="sm" variant="flat">
+                      {item.category}
+                    </Chip>
+                  )}
                 </span>
               </TableCell>
               <TableCell className="text-end">
@@ -60,17 +65,12 @@ export const TransactionTable: React.FC<TranactionTableProps> = ({
                   {formater.format(item.amount)}
                 </TransactionTypeDecorator>
               </TableCell>
-              <TableCell>
-                <Button
-                  isIconOnly
-                  disabled={isMutating}
-                  color="danger"
-                  variant="light"
-                  aria-label="Remove"
-                  onClick={() => deleteTransaction(item.id)}
-                >
-                  <IconDelete />
-                </Button>
+              <TableCell className="text-center">
+                <DeleteTransactionButton
+                  item={item}
+                  isDisabled={isMutating}
+                  deleteTransaction={deleteTransaction}
+                />
               </TableCell>
             </TableRow>
           )}

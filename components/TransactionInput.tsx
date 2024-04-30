@@ -15,7 +15,8 @@ const placeholders = [
   "Retiro en cajero por 4000, C1408",
 ];
 const requiredFields = ["amount", "account"];
-const validationRegex = /(?<amount>\b\d+\b)|(?<account>\bC\d{1,5}\b)/g;
+const validationRegex =
+  /(?<amount>\b\d+\b)|(?<account>\b(C\d{1,4}|[A-Z]{1,5})\b)/g;
 
 const getMissinFieldsInPrompt = (inputText: string) => {
   const matches = [...inputText.matchAll(validationRegex)];
