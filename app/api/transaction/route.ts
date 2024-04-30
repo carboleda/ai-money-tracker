@@ -2,10 +2,11 @@ import { db } from "@/config/firestore";
 import { genAIModel } from "@/config/genAI";
 import { getMissingFieldsInPrompt } from "@/config/utils";
 import * as env from "@/config/env";
+import { NextRequest, NextResponse } from "next/server";
 
 const COLLECTION_NAME = "transactions";
 
-export async function GET(req: Request) {
+export async function GET(req: NextRequest) {
   const account = new URLSearchParams(req.url.split("?")[1]).get("acc");
   const collectionRef = db.collection(COLLECTION_NAME);
 
@@ -25,17 +26,15 @@ export async function GET(req: Request) {
     };
   });
 
-  return new Response(
-    JSON.stringify({ accounts: env.VALID_ACCOUNTS, transactions })
-  );
+  return NextResponse.json({ accounts: env.VALID_ACCOUNTS, transactions });
 }
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   const trasactionText = await req.text();
   const missingFields = getMissingFieldsInPrompt(trasactionText);
 
   if (missingFields.length > 0) {
-    return new Response(null, { status: 400 });
+    return new NextResponse(null, { status: 400 });
   }
 
   const trasactionJson = await generateTransactionJson(trasactionText);
@@ -47,20 +46,20 @@ export async function POST(req: Request) {
 
   const docRef = await db.collection(COLLECTION_NAME).add(transactionData);
 
-  return new Response(JSON.stringify({ id: docRef.id }));
+  return NextResponse.json({ id: docRef.id });
 }
 
 export async function DELETE(req: Request) {
   try {
     const id = await req.text();
     await db.collection(COLLECTION_NAME).doc(id).delete();
-    return new Response(null, {
+    return new NextResponse(null, {
       status: 204,
       statusText: "Document successfully deleted!",
     });
   } catch (error) {
     console.error(error);
-    return new Response(null, {
+    return new NextResponse(null, {
       status: 500,
       statusText: `Error removing document ${error}`,
     });
