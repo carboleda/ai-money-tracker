@@ -3,7 +3,7 @@ import { Metadata } from "next";
 import { siteConfig } from "@/config/site";
 import { fontSans } from "@/config/fonts";
 import { Providers } from "./providers";
-import { Navbar } from "@/components/shared/Navbar";
+import { Navbar } from "@/components/shared/Navbar1";
 import { Link } from "@nextui-org/link";
 import clsx from "clsx";
 
