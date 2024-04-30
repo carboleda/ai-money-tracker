@@ -12,10 +12,12 @@ This is a template for creating applications using Next.js 13 (app directory) an
 - [TypeScript](https://www.typescriptlang.org/)
 - [Framer Motion](https://www.framer.com/motion/)
 - [next-themes](https://github.com/pacocoursey/next-themes)
+- [Vercel KV](https://vercel.com/docs/storage/vercel-kv)
 
 ## Resources
 - [React SVG Icons](https://reactsvgicons.com/search)
 - [react-placeholder-typing](https://github.com/pashanitw/react-placeholder-typing/tree/master)
+- [Rate Limiting](https://vercel.com/guides/rate-limiting-edge-middleware-vercel-kv)
 
 ## How to Use
 

@@ -1,8 +1,7 @@
 import { db } from "@/config/firestore";
-import { genAIModel } from "@/config/gen-ai";
+import { genAIModel } from "@/config/genAI";
+import { getMissingFieldsInPrompt } from "@/config/utils";
 import * as env from "@/config/env";
-import qs from "node:querystring";
-import { Filter } from "firebase-admin/firestore";
 
 const COLLECTION_NAME = "transactions";
 
@@ -31,6 +30,12 @@ export async function GET(req: Request) {
 
 export async function POST(req: Request) {
   const trasactionText = await req.text();
+  const missingFields = getMissingFieldsInPrompt(trasactionText);
+
+  if (missingFields.length > 0) {
+    return new Response(null, { status: 400 });
+  }
+
   const trasactionJson = await generateTransactionJson(trasactionText);
 
   const transactionData = {
@@ -65,8 +70,9 @@ async function generateTransactionJson(text: string) {
 
   console.log("propmt", prompt);
   const result = await genAIModel.generateContent(prompt);
-  console.log("result", result);
-  const aiData = JSON.parse(result.response.text().replace(/\```(json)?/g, ""));
+  const responseText = result.response.text();
+  console.log("result", responseText);
+  const aiData = JSON.parse(responseText.replace(/\```(json)?/g, ""));
   console.log("aiData", aiData);
 
   return aiData;

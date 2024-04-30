@@ -24,7 +24,13 @@ export const useMutateTransaction = () => {
   const { trigger, isMutating } = useSWRMutation(KEY, sendRequest);
 
   const createTransaction = async (text: string) => {
-    return trigger({ method: "POST", body: text }).then((res) => res.json());
+    return trigger({ method: "POST", body: text }).then((res) => {
+      if (res.status !== 200) {
+        return Promise.reject(res.statusText);
+      }
+
+      return res.json();
+    });
   };
 
   const deleteTransaction = (id: string) => {
