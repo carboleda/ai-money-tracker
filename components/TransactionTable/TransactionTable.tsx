@@ -13,7 +13,7 @@ import { TransactionTypeDecorator } from "../TransactionTypeDecorator";
 import { TableSkeleton } from "./TableSkeleton";
 import { useMutateTransaction } from "@/hooks/useMutateTransaction";
 import { DeleteTransactionButton } from "../DeleteTransactionButton";
-import { Chip } from "@nextui-org/react";
+import { Chip } from "@nextui-org/chip";
 
 const formater = new Intl.NumberFormat();
 
