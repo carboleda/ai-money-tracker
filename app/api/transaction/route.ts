@@ -25,7 +25,9 @@ export async function GET(req: Request) {
     };
   });
 
-  return Response.json({ accounts: env.VALID_ACCOUNTS, transactions });
+  return new Response(
+    JSON.stringify({ accounts: env.VALID_ACCOUNTS, transactions })
+  );
 }
 
 export async function POST(req: Request) {
@@ -45,7 +47,7 @@ export async function POST(req: Request) {
 
   const docRef = await db.collection(COLLECTION_NAME).add(transactionData);
 
-  return Response.json({ id: docRef.id });
+  return new Response(JSON.stringify({ id: docRef.id }));
 }
 
 export async function DELETE(req: Request) {
