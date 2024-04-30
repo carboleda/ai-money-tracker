@@ -40,7 +40,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <main className="container mx-auto max-w-7xl pt-16 px-6 flex-grow">
               {children}
             </main>
-            <footer className="w-full flex items-center justify-center py-3">
+            <footer className="w-full flex items-center justify-center py-3 gap-4">
+              <Link
+                isExternal
+                className="flex items-center gap-1 text-current"
+                href="https://carlosarboleda.co"
+                title="carlosarboleda.co"
+              >
+                <span className="text-default-600">Developed by</span>
+                <p className="text-primary">Carlos Arboleda</p>
+              </Link>
+              <span> | </span>
               <Link
                 isExternal
                 className="flex items-center gap-1 text-current"

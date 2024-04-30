@@ -5,21 +5,20 @@ export const siteConfig = {
   description: "Make beautiful websites regardless of your design experience.",
   navItems: [
     {
-      label: "Home",
+      label: "Transactions",
       href: "/",
     },
   ],
   navMenuItems: [
     {
-      label: "Profile",
-      href: "/profile",
+      label: "Transactions",
+      href: "/",
     },
   ],
   links: {
-    github: "https://github.com/nextui-org/nextui",
-    twitter: "https://twitter.com/getnextui",
-    docs: "https://nextui.org",
-    discord: "https://discord.gg/9b6yyZKmH4",
-    sponsor: "https://patreon.com/jrgarciadev",
+    github: "https://github.com/carboleda/ai-money-tracker",
+    twitter: "https://twitter.com/cfarboleda",
+    linkedin: "https://www.linkedin.com/in/carboleda/",
+    sponsor: "https://carlosarboleda.co/",
   },
 };
