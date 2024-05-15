@@ -1,7 +1,11 @@
-# ai-money-tracker
+# AI Money Tracker
 
+Showcase the power of Gen AI by generating transactions entries from text inputs.
 
-This is a template for creating applications using Next.js 13 (app directory) and NextUI (v2).
+[View Demo](https://ai-money-tracker-h1xtt6h4d-carlos-arboledas-projects-990f3974.vercel.app/)
+
+![intro](docs/images/intro.gif)
+
 
 ## Technologies Used
 
