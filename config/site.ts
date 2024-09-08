@@ -8,7 +8,13 @@ export const pages = [
     navMenuItems: true,
   },
   {
-    label: "Recurring Expenses",
+    label: "Config Recurring Expenses",
+    href: "/recurring-expenses/config",
+    navItems: true,
+    navMenuItems: true,
+  },
+  {
+    label: "Manage Recurring Expenses",
     href: "/recurring-expenses",
     navItems: true,
     navMenuItems: true,
