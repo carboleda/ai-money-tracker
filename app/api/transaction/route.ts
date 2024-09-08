@@ -1,6 +1,6 @@
 import { db } from "@/config/firestore";
 import { genAIModel } from "@/config/genAI";
-import { getMissingFieldsInPrompt } from "@/config/utils";
+import { getAccountName, getMissingFieldsInPrompt } from "@/config/utils";
 import * as env from "@/config/env";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -21,8 +21,8 @@ export async function GET(req: NextRequest) {
     return {
       ...docData,
       id: doc.id,
-      sourceAccount: env.VALID_ACCOUNTS[docData.sourceAccount],
-      destinationAccount: env.VALID_ACCOUNTS[docData.destinationAccount],
+      sourceAccount: getAccountName(docData.sourceAccount),
+      destinationAccount: getAccountName(docData.destinationAccount),
     };
   });
 
