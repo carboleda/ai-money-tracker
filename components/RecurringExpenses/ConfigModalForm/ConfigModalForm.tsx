@@ -65,7 +65,6 @@ export const ConfigRecurringExpenseModalForm: React.FC<
                   }
                 />
                 <Input
-                  autoFocus
                   label="Amount"
                   variant="bordered"
                   type="number"

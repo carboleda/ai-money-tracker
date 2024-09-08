@@ -1,23 +1,46 @@
 export type SiteConfig = typeof siteConfig;
 
-export const pages = [
+export interface Page {
+  label: string;
+  href?: string;
+  navItems?: Omit<Page, "showInNavItems" | "showInNavMenuItems">[];
+  showInNavItems: boolean;
+  showInNavMenuItems: boolean;
+}
+
+export const pages: Page[] = [
   {
     label: "Transactions",
     href: "/",
-    navItems: true,
-    navMenuItems: true,
+    showInNavItems: true,
+    showInNavMenuItems: true,
   },
   {
     label: "Config Recurring Expenses",
     href: "/recurring-expenses/config",
-    navItems: true,
-    navMenuItems: true,
+    showInNavItems: false,
+    showInNavMenuItems: true,
   },
   {
     label: "Manage Recurring Expenses",
     href: "/recurring-expenses",
-    navItems: true,
-    navMenuItems: true,
+    showInNavItems: false,
+    showInNavMenuItems: true,
+  },
+  {
+    label: "Recurring Expenses",
+    showInNavItems: true,
+    showInNavMenuItems: false,
+    navItems: [
+      {
+        label: "Configuration",
+        href: "/recurring-expenses/config",
+      },
+      {
+        label: "Management",
+        href: "/recurring-expenses",
+      },
+    ],
   },
 ];
 
@@ -30,8 +53,8 @@ export const siteConfig = {
     "Gasolina del carro por 3000, C2163",
     "Retiro en cajero por 4000, C1408",
   ],
-  navItems: pages.filter((page) => page.navItems),
-  navMenuItems: pages.filter((page) => page.navMenuItems),
+  navItems: pages.filter((page) => page.showInNavItems),
+  navMenuItems: pages.filter((page) => page.showInNavMenuItems),
   links: {
     github: "https://github.com/carboleda/ai-money-tracker",
     twitter: "https://twitter.com/cfarboleda",
