@@ -22,7 +22,9 @@ export async function GET(req: NextRequest) {
       ...docData,
       id: doc.id,
       sourceAccount: getAccountName(docData.sourceAccount),
-      destinationAccount: getAccountName(docData.destinationAccount),
+      destinationAccount:
+        docData.destinationAccount &&
+        getAccountName(docData.destinationAccount),
     };
   });
 
