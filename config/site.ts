@@ -1,7 +1,22 @@
 export type SiteConfig = typeof siteConfig;
 
+export const pages = [
+  {
+    label: "Transactions",
+    href: "/",
+    navItems: true,
+    navMenuItems: true,
+  },
+  {
+    label: "Recurring Expenses",
+    href: "/recurring-expenses",
+    navItems: true,
+    navMenuItems: true,
+  },
+];
+
 export const siteConfig = {
-  name: "Next.js + NextUI",
+  name: "Money Tracker",
   description: "Make beautiful websites regardless of your design experience.",
   placeholders: [
     "Ingreso por salario de 2000, C1408",
@@ -9,18 +24,8 @@ export const siteConfig = {
     "Gasolina del carro por 3000, C2163",
     "Retiro en cajero por 4000, C1408",
   ],
-  navItems: [
-    {
-      label: "Transactions",
-      href: "/",
-    },
-  ],
-  navMenuItems: [
-    {
-      label: "Transactions",
-      href: "/",
-    },
-  ],
+  navItems: pages.filter((page) => page.navItems),
+  navMenuItems: pages.filter((page) => page.navMenuItems),
   links: {
     github: "https://github.com/carboleda/ai-money-tracker",
     twitter: "https://twitter.com/cfarboleda",

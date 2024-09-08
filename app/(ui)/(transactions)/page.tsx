@@ -7,7 +7,7 @@ import { TransactionTable } from "@/components/TransactionTable/TransactionTable
 import { TransactionInput } from "@/components/TransactionInput";
 import { BankAccounDropdown } from "@/components/BankAccounsDropdown";
 
-export default function Home() {
+export default function Transactions() {
   const [selectedAccount, setAelectedAccount] = useState<string>("");
   const { isLoading, data: reesponse } = useSWR<GetTransactionsResponse, Error>(
     `/api/transaction?acc=${selectedAccount}`
