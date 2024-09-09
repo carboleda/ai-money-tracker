@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { use, useEffect, useMemo, useState } from "react";
 import {
   Dropdown,
   DropdownTrigger,
@@ -6,11 +6,7 @@ import {
   DropdownItem,
 } from "@nextui-org/dropdown";
 import { Button } from "@nextui-org/button";
-import {
-  Frequency,
-  frequencyKeys,
-  frequencyLabels,
-} from "@/interfaces/recurringExpense";
+import { Frequency, frequencyOptions } from "@/interfaces/recurringExpense";
 
 interface FrequencyDropdownProps {
   selectedFrequency?: Frequency;
@@ -21,21 +17,21 @@ export const FrequencyDropdown: React.FC<FrequencyDropdownProps> = ({
   selectedFrequency,
   onChange,
 }) => {
-  const [selectedKeys, setSelectedKeys] = useState(
-    new Set<Frequency>(selectedFrequency ? [selectedFrequency] : [])
-  );
+  const [selectedKeys, setSelectedKeys] = useState(new Set<Frequency>([]));
 
   const selectedValue = useMemo(
     () =>
       Array.from(selectedKeys)
-        .map(
-          (key) =>
-            frequencyLabels[frequencyKeys.findIndex((k) => k === key)] ||
-            "Frequency"
-        )
+        .map((key) => frequencyOptions[key] ?? "")
         .join(", "),
     [selectedKeys]
   );
+
+  useEffect(() => {
+    if (selectedFrequency) {
+      setSelectedKeys(new Set([selectedFrequency]));
+    }
+  }, [selectedFrequency]);
 
   const onSelectionChange = (keys: any) => {
     setSelectedKeys(keys);
@@ -64,10 +60,13 @@ export const FrequencyDropdown: React.FC<FrequencyDropdownProps> = ({
         selectedKeys={selectedKeys}
         onSelectionChange={onSelectionChange}
       >
-        {frequencyLabels.map((label, index) => {
+        {/* {frequencyLabels.map((label, index) => {
           return (
             <DropdownItem key={frequencyKeys[index]}>{label}</DropdownItem>
           );
+        })} */}
+        {Object.entries(frequencyOptions).map(([key, label]) => {
+          return <DropdownItem key={key}>{label}</DropdownItem>;
         })}
       </DropdownMenu>
     </Dropdown>

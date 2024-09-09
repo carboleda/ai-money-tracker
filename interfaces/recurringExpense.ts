@@ -4,8 +4,13 @@ export enum Frequency {
   Yearly = "yearly",
 }
 
-export const frequencyLabels = Object.keys(Frequency);
-export const frequencyKeys = Object.values(Frequency);
+export const frequencyOptions = Object.entries(Frequency).reduce(
+  (acc, [key, value]) => {
+    acc[value] = key;
+    return acc;
+  },
+  {} as Record<Frequency, string>
+);
 
 export interface RecurringExpenseConfig {
   id: string;

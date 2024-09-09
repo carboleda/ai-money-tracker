@@ -49,6 +49,7 @@ export const ConfigRecurringExpenseModalForm: React.FC<
 
   const onOpenChangeHandler = (_open: boolean) => {
     onDismiss();
+    clearInputs();
   };
 
   const clearInputs = () => {

@@ -8,7 +8,10 @@ import {
   TableHeader,
   TableRow,
 } from "@nextui-org/table";
-import { RecurringExpenseConfig } from "@/interfaces/recurringExpense";
+import {
+  frequencyOptions,
+  RecurringExpenseConfig,
+} from "@/interfaces/recurringExpense";
 import { TableSkeleton } from "./TableSkeleton";
 import { Chip } from "@nextui-org/chip";
 import { Button } from "@nextui-org/button";
@@ -77,7 +80,7 @@ export const ConfigRecurringExpensesTable: React.FC<
                   )}
                 </div>
               </TableCell>
-              <TableCell>{item.frequency}</TableCell>
+              <TableCell>{frequencyOptions[item.frequency]}</TableCell>
               <TableCell>{item.dueDate}</TableCell>
               <TableCell className="text-end">
                 <TransactionTypeDecorator type={TransactionType.EXPENSE}>
