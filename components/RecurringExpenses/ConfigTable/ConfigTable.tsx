@@ -29,15 +29,25 @@ export const ConfigRecurringExpensesTable: React.FC<
   ConfigRecurringExpensesTableProps
 > = ({ isLoading, recurringExpenses }) => {
   const [selectedItem, setSelectedItem] = useState<RecurringExpenseConfig>();
+  const [isOpen, setOpen] = useState(false);
 
   if (isLoading || !recurringExpenses) return <TableSkeleton />;
 
   const onDialogDismissed = () => {
     setSelectedItem(undefined);
+    setOpen(false);
+  };
+
+  const onEdit = (item: RecurringExpenseConfig) => {
+    setSelectedItem(item);
+    setOpen(true);
   };
 
   return (
     <>
+      <div className="flex w-full justify-end">
+        <Button onPress={() => setOpen(true)}>Create</Button>
+      </div>
       <Table isStriped aria-label="Recurring Expenses">
         <TableHeader>
           <TableColumn>DESCRIPTION</TableColumn>
@@ -63,7 +73,7 @@ export const ConfigRecurringExpensesTable: React.FC<
                 </div>
               </TableCell>
               <TableCell>{item.frequency}</TableCell>
-              <TableCell>{item.dueDate.toLocaleDateString()}</TableCell>
+              <TableCell>{item.dueDate}</TableCell>
               <TableCell className="text-end">
                 <TransactionTypeDecorator type={TransactionType.EXPENSE}>
                   {formater.format(item.amount)}
@@ -76,7 +86,7 @@ export const ConfigRecurringExpensesTable: React.FC<
                   variant="light"
                   className="self-center"
                   aria-label="Edit"
-                  onClick={() => setSelectedItem(item)}
+                  onClick={() => onEdit(item)}
                 >
                   <IconEdit />
                 </Button>
@@ -87,6 +97,7 @@ export const ConfigRecurringExpensesTable: React.FC<
       </Table>
       <ConfigRecurringExpenseModalForm
         item={selectedItem}
+        isOpen={isOpen}
         onDismiss={onDialogDismissed}
       />
     </>

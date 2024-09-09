@@ -12,12 +12,19 @@ export interface RecurringExpenseConfig {
   description: string;
   category: string;
   frequency: Frequency;
-  dueDate: Date;
+  dueDate: string;
   amount: number;
 }
+
+export interface RecurringExpenseConfigCreateRequest
+  extends Omit<RecurringExpenseConfig, "id"> {}
 
 export interface RecurringExpense
   extends Omit<RecurringExpenseConfig, "date" | "frequency"> {
   paid: boolean;
   account: string;
+}
+
+export interface GetRecurringExpensesConfigResponse {
+  recurringExpensesConfig: RecurringExpenseConfig[];
 }
