@@ -7,7 +7,7 @@ const COLLECTION_NAME = "recurring-expenses";
 export async function GET(req: NextRequest) {
   const collectionRef = db.collection(COLLECTION_NAME);
 
-  const q = collectionRef.orderBy("dueDate", "desc");
+  const q = collectionRef.orderBy("frequency", "asc");
 
   const snapshot = await q.get();
   const recurringExpensesConfig = snapshot.docs.map((doc) => {

@@ -4,9 +4,16 @@ import { Frequency } from "@/interfaces/recurringExpense";
 const requiredFields = ["amount", "account"];
 const validationRegex =
   /(?<amount>\b\d+\b)|(?<account>\b(C\d{1,4}|[A-Z]{1,5})\b)/g;
+const currencyFormater = new Intl.NumberFormat("en-US", {
+  style: "currency",
+  currency: "USD",
+});
 const monthFormatter = new Intl.DateTimeFormat("en-US", {
   month: "long",
 });
+
+export const formatCurrency = (amount: number) =>
+  currencyFormater.format(amount);
 
 export const getMissingFieldsInPrompt = (inputText: string) => {
   const matches = [...inputText.matchAll(validationRegex)];

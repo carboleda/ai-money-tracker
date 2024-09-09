@@ -22,9 +22,7 @@ import { ConfigRecurringExpenseModalForm } from "../ConfigModalForm/ConfigModalF
 import { useState } from "react";
 import { DeleteTableItemButton } from "@/components/DeleteTableItemButton";
 import { useMutateRecurringExpensesConfig } from "@/hooks/useMutateRecurrentExpenseConfig";
-import { formatFrequency } from "@/config/utils";
-
-const formater = new Intl.NumberFormat();
+import { formatCurrency, formatFrequency } from "@/config/utils";
 
 interface ConfigRecurringExpensesTableProps {
   isLoading: boolean;
@@ -61,7 +59,7 @@ export const ConfigRecurringExpensesTable: React.FC<
         <TableHeader>
           <TableColumn>DESCRIPTION</TableColumn>
           <TableColumn>FREQUENCY</TableColumn>
-          <TableColumn>DUE DATE</TableColumn>
+          {/* <TableColumn>DUE DATE</TableColumn> */}
           <TableColumn className="text-end">AMOUNT</TableColumn>
           <TableColumn className="text-center">ACTIONS</TableColumn>
         </TableHeader>
@@ -81,13 +79,13 @@ export const ConfigRecurringExpensesTable: React.FC<
                   )}
                 </div>
               </TableCell>
-              <TableCell>{frequencyOptions[item.frequency]}</TableCell>
+              {/* <TableCell>{frequencyOptions[item.frequency]}</TableCell> */}
               <TableCell>
                 {formatFrequency(item.frequency, item.dueDate)}
               </TableCell>
               <TableCell className="text-end">
-                <TransactionTypeDecorator type={TransactionType.EXPENSE}>
-                  {formater.format(item.amount)}
+                <TransactionTypeDecorator type={TransactionType.TRANSFER}>
+                  {formatCurrency(item.amount)}
                 </TransactionTypeDecorator>
               </TableCell>
               <TableCell>

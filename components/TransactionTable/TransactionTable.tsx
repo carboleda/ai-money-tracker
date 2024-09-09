@@ -14,8 +14,7 @@ import { TableSkeleton } from "./TableSkeleton";
 import { useMutateTransaction } from "@/hooks/useMutateTransaction";
 import { DeleteTableItemButton } from "../DeleteTableItemButton";
 import { Chip } from "@nextui-org/chip";
-
-const formater = new Intl.NumberFormat();
+import { formatCurrency } from "@/config/utils";
 
 interface TranactionTableProps {
   isLoading: boolean;
@@ -64,7 +63,7 @@ export const TransactionTable: React.FC<TranactionTableProps> = ({
               </TableCell>
               <TableCell className="text-end">
                 <TransactionTypeDecorator type={item.type}>
-                  {formater.format(item.amount)}
+                  {formatCurrency(item.amount)}
                 </TransactionTypeDecorator>
               </TableCell>
               <TableCell>
