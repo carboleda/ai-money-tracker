@@ -17,6 +17,8 @@ import { TransactionType } from "@/interfaces/transaction";
 import { IconEdit } from "@/components/shared/icons";
 import { ConfigRecurringExpenseModalForm } from "../ConfigModalForm/ConfigModalForm";
 import { useState } from "react";
+import { DeleteTableItemButton } from "@/components/DeleteTableItemButton";
+import { useMutateRecurringExpensesConfig } from "@/hooks/useMutateRecurrentExpenseConfig";
 
 const formater = new Intl.NumberFormat();
 
@@ -30,6 +32,7 @@ export const ConfigRecurringExpensesTable: React.FC<
 > = ({ isLoading, recurringExpenses }) => {
   const [selectedItem, setSelectedItem] = useState<RecurringExpenseConfig>();
   const [isOpen, setOpen] = useState(false);
+  const { isMutating, deleteConfig } = useMutateRecurringExpensesConfig();
 
   if (isLoading || !recurringExpenses) return <TableSkeleton />;
 
@@ -46,7 +49,9 @@ export const ConfigRecurringExpensesTable: React.FC<
   return (
     <>
       <div className="flex w-full justify-end">
-        <Button onPress={() => setOpen(true)}>Create</Button>
+        <Button color="primary" onPress={() => setOpen(true)}>
+          Create
+        </Button>
       </div>
       <Table isStriped aria-label="Recurring Expenses">
         <TableHeader>
@@ -62,8 +67,8 @@ export const ConfigRecurringExpensesTable: React.FC<
         >
           {(item) => (
             <TableRow key={item.id}>
-              <TableCell className="flex flex-col items-start gap-2">
-                <div>
+              <TableCell>
+                <div className="flex flex-row items-center gap-2">
                   <span>{item.description} </span>
                   {item.category && (
                     <Chip radius="sm" variant="flat">
@@ -79,17 +84,24 @@ export const ConfigRecurringExpensesTable: React.FC<
                   {formater.format(item.amount)}
                 </TransactionTypeDecorator>
               </TableCell>
-              <TableCell className="text-center">
-                <Button
-                  isIconOnly
-                  color="primary"
-                  variant="light"
-                  className="self-center"
-                  aria-label="Edit"
-                  onClick={() => onEdit(item)}
-                >
-                  <IconEdit />
-                </Button>
+              <TableCell>
+                <div className="text-center flex flex-row justify-center">
+                  <Button
+                    isIconOnly
+                    color="warning"
+                    variant="light"
+                    className="self-center"
+                    aria-label="Edit"
+                    onClick={() => onEdit(item)}
+                  >
+                    <IconEdit />
+                  </Button>
+                  <DeleteTableItemButton
+                    itemId={item.id}
+                    isDisabled={isMutating}
+                    deleteTableItem={deleteConfig}
+                  />
+                </div>
               </TableCell>
             </TableRow>
           )}

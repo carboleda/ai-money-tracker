@@ -7,15 +7,17 @@ import { Progress } from "@nextui-org/progress";
 const CONFIRMATION_TIME = 4000;
 const CONFIRMATION_TICK = 10;
 
-interface DeleteTransactionButtonProps {
-  item: Transaction;
+interface DeleteTableItemButtonProps {
+  itemId: string;
   isDisabled?: boolean;
-  deleteTransaction: (id: string) => void;
+  deleteTableItem: (id: string) => void;
 }
 
-export const DeleteTransactionButton: React.FC<
-  DeleteTransactionButtonProps
-> = ({ item, isDisabled = false, deleteTransaction }) => {
+export const DeleteTableItemButton: React.FC<DeleteTableItemButtonProps> = ({
+  itemId,
+  isDisabled = false,
+  deleteTableItem,
+}) => {
   const [isWaitingConfirmation, setIsWaitingConfirmation] = useState(false);
 
   useEffect(() => {
@@ -28,14 +30,14 @@ export const DeleteTransactionButton: React.FC<
 
   const onClick = () => {
     if (isWaitingConfirmation) {
-      return deleteTransaction(item.id);
+      return deleteTableItem(itemId);
     }
 
     setIsWaitingConfirmation(true);
   };
 
   return (
-    <div className="w-fit my-0 mx-auto">
+    <div className="w-fit my-0 content-center">
       <Button
         isIconOnly
         color="danger"
