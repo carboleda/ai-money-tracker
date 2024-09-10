@@ -5,10 +5,11 @@ import {
   RecurringExpenseConfig,
 } from "@/interfaces/recurringExpense";
 import {
-  RecurringExpenseTransaction,
+  PendingTransactionEntity,
   TransactionStatus,
   TransactionType,
 } from "@/interfaces/transaction";
+import { Timestamp } from "firebase-admin/firestore";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
@@ -23,7 +24,7 @@ export async function GET(req: NextRequest) {
   }
 
   const recurringExpenses = await getRecurringExpenses();
-  const createdTransactions: RecurringExpenseTransaction[] = [];
+  const createdTransactions: PendingTransactionEntity[] = [];
 
   for await (const recurringExpense of recurringExpenses) {
     const createdAt = getTransactionDate(recurringExpense);
@@ -35,13 +36,13 @@ export async function GET(req: NextRequest) {
     console.log(
       `Creating pending transaction for ${recurringExpense.description}`
     );
-    const transaction: RecurringExpenseTransaction = {
+    const transaction: PendingTransactionEntity = {
       type: TransactionType.EXPENSE,
       status: TransactionStatus.PENDING,
       description: recurringExpense.description,
       category: recurringExpense.category,
       amount: recurringExpense.amount,
-      createdAt: createdAt.toISOString(),
+      createdAt: Timestamp.fromDate(createdAt),
     };
 
     createdTransactions.push(transaction);

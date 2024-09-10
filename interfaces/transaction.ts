@@ -1,3 +1,5 @@
+import { Timestamp } from "firebase-admin/firestore";
+
 export enum TransactionType {
   INCOME = "income",
   EXPENSE = "expense",
@@ -9,20 +11,25 @@ export enum TransactionStatus {
   COMPLETE = "complete",
 }
 
-export interface Transaction {
-  id: string;
+export interface TransactionEntity {
   description: string;
-  type: TransactionType;
-  category: string;
+  type: string;
+  status: string;
+  category?: string;
   sourceAccount: string;
   destinationAccount?: string;
   amount: number;
-  createdAt: string;
+  createdAt: Timestamp;
 }
 
-export interface RecurringExpenseTransaction
-  extends Omit<Transaction, "id" | "sourceAccount" | "destinationAccount"> {
+export interface PendingTransactionEntity
+  extends Omit<TransactionEntity, "sourceAccount" | "destinationAccount"> {}
+
+export interface Transaction extends Omit<TransactionEntity, "createdAt"> {
+  id: string;
+  type: TransactionType;
   status: TransactionStatus;
+  createdAt: string;
 }
 
 export interface GetTransactionsResponse {

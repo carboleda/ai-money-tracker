@@ -3,7 +3,12 @@ import { genAIModel } from "@/config/genAI";
 import { getAccountName, getMissingFieldsInPrompt } from "@/config/utils";
 import * as env from "@/config/env";
 import { NextRequest, NextResponse } from "next/server";
-import { TransactionStatus } from "@/interfaces/transaction";
+import {
+  Transaction,
+  TransactionEntity,
+  TransactionStatus,
+} from "@/interfaces/transaction";
+import { Timestamp } from "firebase-admin/firestore";
 
 export async function GET(req: NextRequest) {
   const account = new URLSearchParams(req.url.split("?")[1]).get("acc");
@@ -18,7 +23,7 @@ export async function GET(req: NextRequest) {
 
   const snapshot = await q.get();
   const transactions = snapshot.docs.map((doc) => {
-    const docData = doc.data();
+    const docData = doc.data() as TransactionEntity;
     return {
       ...docData,
       id: doc.id,
@@ -26,7 +31,8 @@ export async function GET(req: NextRequest) {
       destinationAccount:
         docData.destinationAccount &&
         getAccountName(docData.destinationAccount),
-    };
+      createdAt: docData.createdAt.toDate().toISOString(),
+    } as Transaction;
   });
 
   return NextResponse.json({ accounts: env.VALID_ACCOUNTS, transactions });
@@ -44,8 +50,9 @@ export async function POST(req: NextRequest) {
 
   const transactionData = {
     ...trasactionJson,
-    createdAt: new Date().toISOString(),
-  };
+    status: TransactionStatus.COMPLETE,
+    createdAt: Timestamp.fromDate(new Date()),
+  } as TransactionEntity;
 
   const docRef = await db
     .collection(Collections.Transactions)
