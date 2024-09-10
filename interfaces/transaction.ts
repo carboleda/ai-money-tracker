@@ -13,8 +13,8 @@ export enum TransactionStatus {
 
 export interface TransactionEntity {
   description: string;
-  type: string;
-  status: string;
+  type: TransactionType;
+  status: TransactionStatus;
   category?: string;
   sourceAccount: string;
   destinationAccount?: string;
@@ -27,8 +27,6 @@ export interface PendingTransactionEntity
 
 export interface Transaction extends Omit<TransactionEntity, "createdAt"> {
   id: string;
-  type: TransactionType;
-  status: TransactionStatus;
   createdAt: string;
 }
 

@@ -1,9 +1,6 @@
 import useSWRMutation from "swr/mutation";
 import { mutate } from "swr";
-import {
-  RecurringExpenseConfig,
-  RecurringExpenseConfigCreateRequest,
-} from "@/interfaces/recurringExpense";
+import { RecurringExpense } from "@/interfaces/recurringExpense";
 
 interface TransactionRequest {
   method: "POST" | "DELETE" | "PATCH";
@@ -24,10 +21,10 @@ async function sendRequest(url: string, { arg }: { arg: TransactionRequest }) {
   });
 }
 
-export const useMutateRecurringExpensesConfig = () => {
+export const useMutateRecurringExpenses = () => {
   const { trigger, isMutating } = useSWRMutation(KEY, sendRequest);
 
-  const createConfig = async (config: RecurringExpenseConfigCreateRequest) => {
+  const createConfig = async (config: Omit<RecurringExpense, "id">) => {
     return trigger({ method: "POST", body: JSON.stringify(config) }).then(
       (res) => {
         if (res.status !== 200) {
@@ -39,7 +36,7 @@ export const useMutateRecurringExpensesConfig = () => {
     );
   };
 
-  const updateConfig = async (config: RecurringExpenseConfig) => {
+  const updateConfig = async (config: RecurringExpense) => {
     return trigger({ method: "PATCH", body: JSON.stringify(config) }).then(
       (res) => {
         if (res.status !== 200) {

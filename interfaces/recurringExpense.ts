@@ -1,3 +1,5 @@
+import { Timestamp } from "firebase-admin/firestore";
+
 export enum Frequency {
   Monthly = "monthly",
   Biannual = "biannual",
@@ -12,24 +14,19 @@ export const frequencyOptions = Object.entries(Frequency).reduce(
   {} as Record<Frequency, string>
 );
 
-export interface RecurringExpenseConfig {
-  id: string;
+export interface RecurringExpenseEntity {
   description: string;
   category: string;
   frequency: Frequency;
-  dueDate: string;
+  dueDate: Timestamp;
   amount: number;
 }
 
-export interface RecurringExpenseConfigCreateRequest
-  extends Omit<RecurringExpenseConfig, "id"> {}
-
-export interface RecurringExpense
-  extends Omit<RecurringExpenseConfig, "date" | "frequency"> {
-  paid: boolean;
-  account: string;
+export interface RecurringExpense extends Omit<RecurringExpenseEntity, "dueDate"> {
+  id: string;
+  dueDate: string;
 }
 
 export interface GetRecurringExpensesConfigResponse {
-  recurringExpensesConfig: RecurringExpenseConfig[];
+  recurringExpensesConfig: RecurringExpense[];
 }

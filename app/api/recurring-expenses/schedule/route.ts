@@ -2,7 +2,8 @@ import { Collections, db } from "@/config/firestore";
 import { computeBiannualDates } from "@/config/utils";
 import {
   Frequency,
-  RecurringExpenseConfig,
+  RecurringExpense,
+  RecurringExpenseEntity,
 } from "@/interfaces/recurringExpense";
 import {
   PendingTransactionEntity,
@@ -23,7 +24,7 @@ export async function GET(req: NextRequest) {
     });
   }
 
-  const recurringExpenses = await getRecurringExpenses();
+  const recurringExpenses: RecurringExpense[] = await getRecurringExpenses();
   const createdTransactions: PendingTransactionEntity[] = [];
 
   for await (const recurringExpense of recurringExpenses) {
@@ -52,26 +53,24 @@ export async function GET(req: NextRequest) {
   return NextResponse.json({ createdTransactions });
 }
 
-async function getRecurringExpenses(): Promise<RecurringExpenseConfig[]> {
+async function getRecurringExpenses(): Promise<RecurringExpense[]> {
   const recurringExpenses = db.collection(Collections.RecurringExpenses);
   const snapshot = await recurringExpenses.get();
 
   return snapshot.docs.map((doc) => {
-    const docData = doc.data();
+    const docData = doc.data() as RecurringExpenseEntity;
     return {
       id: doc.id,
       amount: docData.amount,
       category: docData.category,
       description: docData.description,
-      dueDate: docData.dueDate,
       frequency: docData.frequency,
-    };
+      dueDate: docData.dueDate.toDate().toISOString(),
+    } as RecurringExpense;
   });
 }
 
-function getTransactionDate(
-  recurringExpense: RecurringExpenseConfig
-): Date | null {
+function getTransactionDate(recurringExpense: RecurringExpense): Date | null {
   const now = new Date();
   const dueDate = new Date(recurringExpense.dueDate);
   let createdAt = new Date(recurringExpense.dueDate);
