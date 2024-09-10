@@ -1,42 +1,10 @@
 import { Collections, db } from "@/config/firestore";
 import { genAIModel } from "@/config/genAI";
-import { getAccountName, getMissingFieldsInPrompt } from "@/config/utils";
+import { getMissingFieldsInPrompt } from "@/config/utils";
 import * as env from "@/config/env";
 import { NextRequest, NextResponse } from "next/server";
-import {
-  Transaction,
-  TransactionEntity,
-  TransactionStatus,
-} from "@/interfaces/transaction";
+import { TransactionEntity, TransactionStatus } from "@/interfaces/transaction";
 import { Timestamp } from "firebase-admin/firestore";
-
-export async function GET(req: NextRequest) {
-  const account = new URLSearchParams(req.url.split("?")[1]).get("acc");
-  const collectionRef = db.collection(Collections.Transactions);
-
-  let q = collectionRef
-    .orderBy("createdAt", "asc")
-    .where("status", "!=", TransactionStatus.PENDING);
-  if (account) {
-    q = q.where("sourceAccount", "==", account);
-  }
-
-  const snapshot = await q.get();
-  const transactions = snapshot.docs.map((doc) => {
-    const docData = doc.data() as TransactionEntity;
-    return {
-      ...docData,
-      id: doc.id,
-      sourceAccount: getAccountName(docData.sourceAccount),
-      destinationAccount:
-        docData.destinationAccount &&
-        getAccountName(docData.destinationAccount),
-      createdAt: docData.createdAt.toDate().toISOString(),
-    } as Transaction;
-  });
-
-  return NextResponse.json({ accounts: env.VALID_ACCOUNTS, transactions });
-}
 
 export async function POST(req: NextRequest) {
   const trasactionText = await req.text();

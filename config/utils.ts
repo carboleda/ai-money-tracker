@@ -11,9 +11,18 @@ const currencyFormater = new Intl.NumberFormat("en-US", {
 const monthFormatter = new Intl.DateTimeFormat("en-US", {
   month: "long",
 });
+const dateFormatter = new Intl.DateTimeFormat("en-US", {
+  year: "numeric",
+  month: "long",
+  day: "numeric",
+  hour: "numeric",
+  minute: "numeric",
+});
 
 export const formatCurrency = (amount: number) =>
   currencyFormater.format(amount);
+
+export const formatDate = (date: Date) => dateFormatter.format(date);
 
 export const getMissingFieldsInPrompt = (inputText: string) => {
   const matches = [...inputText.matchAll(validationRegex)];

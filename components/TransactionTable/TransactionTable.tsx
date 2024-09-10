@@ -14,7 +14,7 @@ import { TableSkeleton } from "./TableSkeleton";
 import { useMutateTransaction } from "@/hooks/useMutateTransaction";
 import { DeleteTableItemButton } from "../DeleteTableItemButton";
 import { Chip } from "@nextui-org/chip";
-import { formatCurrency } from "@/config/utils";
+import { formatCurrency, formatDate } from "@/config/utils";
 
 interface TranactionTableProps {
   isLoading: boolean;
@@ -34,6 +34,7 @@ export const TransactionTable: React.FC<TranactionTableProps> = ({
       <Table isStriped isCompact aria-label="Transactions">
         <TableHeader>
           <TableColumn>DESCRIPTION</TableColumn>
+          <TableColumn>DATE</TableColumn>
           <TableColumn className="text-end">AMOUNT</TableColumn>
           <TableColumn className="text-center">ACTIONS</TableColumn>
         </TableHeader>
@@ -61,6 +62,7 @@ export const TransactionTable: React.FC<TranactionTableProps> = ({
                   </span>
                 </div>
               </TableCell>
+              <TableCell>{formatDate(new Date(item.createdAt))}</TableCell>
               <TableCell className="text-end">
                 <TransactionTypeDecorator type={item.type}>
                   {formatCurrency(item.amount)}
