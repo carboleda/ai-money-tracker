@@ -1,11 +1,8 @@
-import { db } from "@/config/firestore";
-import * as env from "@/config/env";
+import { Collections, db } from "@/config/firestore";
 import { NextRequest, NextResponse } from "next/server";
 
-const COLLECTION_NAME = "recurring-expenses";
-
 export async function GET(req: NextRequest) {
-  const collectionRef = db.collection(COLLECTION_NAME);
+  const collectionRef = db.collection(Collections.RecurringExpenses);
 
   const q = collectionRef.orderBy("frequency", "asc");
 
@@ -25,7 +22,7 @@ export async function POST(req: NextRequest) {
   const recurringExpenseConfig = await req.json();
 
   const docRef = await db
-    .collection(COLLECTION_NAME)
+    .collection(Collections.RecurringExpenses)
     .add(recurringExpenseConfig);
 
   return NextResponse.json({ id: docRef.id });
@@ -34,7 +31,10 @@ export async function POST(req: NextRequest) {
 export async function PATCH(req: NextRequest) {
   const { id, ...recurringExpenseConfig } = await req.json();
 
-  await db.collection(COLLECTION_NAME).doc(id).update(recurringExpenseConfig);
+  await db
+    .collection(Collections.RecurringExpenses)
+    .doc(id)
+    .update(recurringExpenseConfig);
 
   return NextResponse.json({ id });
 }
@@ -42,7 +42,7 @@ export async function PATCH(req: NextRequest) {
 export async function DELETE(req: Request) {
   try {
     const id = await req.text();
-    await db.collection(COLLECTION_NAME).doc(id).delete();
+    await db.collection(Collections.RecurringExpenses).doc(id).delete();
     return new NextResponse(null, {
       status: 204,
       statusText: "Document successfully deleted!",

@@ -1,16 +1,17 @@
-import { db } from "@/config/firestore";
+import { Collections, db } from "@/config/firestore";
 import { genAIModel } from "@/config/genAI";
 import { getAccountName, getMissingFieldsInPrompt } from "@/config/utils";
 import * as env from "@/config/env";
 import { NextRequest, NextResponse } from "next/server";
-
-const COLLECTION_NAME = "transactions";
+import { TransactionStatus } from "@/interfaces/transaction";
 
 export async function GET(req: NextRequest) {
   const account = new URLSearchParams(req.url.split("?")[1]).get("acc");
-  const collectionRef = db.collection(COLLECTION_NAME);
+  const collectionRef = db.collection(Collections.Transactions);
 
-  let q = collectionRef.orderBy("createdAt", "desc");
+  let q = collectionRef
+    .orderBy("createdAt", "asc")
+    .where("status", "!=", TransactionStatus.PENDING);
   if (account) {
     q = q.where("sourceAccount", "==", account);
   }
@@ -46,15 +47,17 @@ export async function POST(req: NextRequest) {
     createdAt: new Date().toISOString(),
   };
 
-  const docRef = await db.collection(COLLECTION_NAME).add(transactionData);
+  const docRef = await db
+    .collection(Collections.Transactions)
+    .add(transactionData);
 
   return NextResponse.json({ id: docRef.id });
 }
 
-export async function DELETE(req: Request) {
+export async function DELETE(req: NextRequest) {
   try {
     const id = await req.text();
-    await db.collection(COLLECTION_NAME).doc(id).delete();
+    await db.collection(Collections.Transactions).doc(id).delete();
     return new NextResponse(null, {
       status: 204,
       statusText: "Document successfully deleted!",

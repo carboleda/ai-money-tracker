@@ -4,6 +4,11 @@ export enum TransactionType {
   TRANSFER = "transfer",
 }
 
+export enum TransactionStatus {
+  PENDING = "pending",
+  COMPLETE = "complete",
+}
+
 export interface Transaction {
   id: string;
   description: string;
@@ -12,6 +17,12 @@ export interface Transaction {
   sourceAccount: string;
   destinationAccount?: string;
   amount: number;
+  createdAt: string;
+}
+
+export interface RecurringExpenseTransaction
+  extends Omit<Transaction, "id" | "sourceAccount" | "destinationAccount"> {
+  status: TransactionStatus;
 }
 
 export interface GetTransactionsResponse {
