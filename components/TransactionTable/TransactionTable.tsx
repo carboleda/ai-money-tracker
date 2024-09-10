@@ -31,7 +31,7 @@ export const TransactionTable: React.FC<TranactionTableProps> = ({
 
   return (
     <>
-      <Table isStriped aria-label="Transactions">
+      <Table isStriped isCompact aria-label="Transactions">
         <TableHeader>
           <TableColumn>DESCRIPTION</TableColumn>
           <TableColumn className="text-end">AMOUNT</TableColumn>

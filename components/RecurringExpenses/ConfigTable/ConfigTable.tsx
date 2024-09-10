@@ -55,7 +55,7 @@ export const ConfigRecurringExpensesTable: React.FC<
           Create
         </Button>
       </div>
-      <Table isStriped aria-label="Recurring Expenses">
+      <Table isStriped isCompact aria-label="Recurring Expenses">
         <TableHeader>
           <TableColumn>DESCRIPTION</TableColumn>
           <TableColumn>FREQUENCY</TableColumn>
