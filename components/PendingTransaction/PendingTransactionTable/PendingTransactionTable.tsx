@@ -9,28 +9,39 @@ import {
   TableRow,
 } from "@nextui-org/table";
 import { Transaction } from "@/interfaces/transaction";
-import { TransactionTypeDecorator } from "../TransactionTypeDecorator";
+import { TransactionTypeDecorator } from "../../TransactionTypeDecorator";
 import { TableSkeleton } from "./TableSkeleton";
 import { useMutateTransaction } from "@/hooks/useMutateTransaction";
-import { DeleteTableItemButton } from "../DeleteTableItemButton";
+import { DeleteTableItemButton } from "../../DeleteTableItemButton";
 import { Chip } from "@nextui-org/chip";
 import { formatCurrency, formatDate } from "@/config/utils";
+import { CompleteTransactionModalForm } from "../CompleteTransactionModalForm/CompleteTransactionModalForm";
+import { useState } from "react";
 
 interface PendingTransactionTableProps {
   isLoading: boolean;
   transactions: Transaction[] | undefined;
+  accounts?: { [key: string]: string };
 }
 
 export const PendingTransactionTable: React.FC<
   PendingTransactionTableProps
-> = ({ isLoading, transactions }) => {
+> = ({ isLoading, transactions, accounts }) => {
+  const [selectedItem, setSelectedItem] = useState<Transaction>();
+  const [isOpen, setOpen] = useState(false);
   const { isMutating, deleteTransaction } = useMutateTransaction();
 
   if (isLoading || !transactions) return <TableSkeleton />;
 
   const onRowAction = (key: string) => {
     const transaction = transactions.find((t) => t.id === key);
-    console.log("transaction", transaction);
+    setSelectedItem(transaction);
+    setOpen(true);
+  };
+
+  const onDialogDismissed = () => {
+    setSelectedItem(undefined);
+    setOpen(false);
   };
 
   return (
@@ -84,6 +95,12 @@ export const PendingTransactionTable: React.FC<
           )}
         </TableBody>
       </Table>
+      <CompleteTransactionModalForm
+        item={selectedItem}
+        accounts={accounts}
+        isOpen={isOpen}
+        onDismiss={onDialogDismissed}
+      />
     </>
   );
 };
