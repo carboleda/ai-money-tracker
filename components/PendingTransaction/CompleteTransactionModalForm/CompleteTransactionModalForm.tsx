@@ -10,7 +10,7 @@ import { Input } from "@nextui-org/input";
 import { Button } from "@nextui-org/button";
 import { DatePicker } from "@nextui-org/date-picker";
 import { parseAbsoluteToLocal } from "@internationalized/date";
-import { Transaction } from "@/interfaces/transaction";
+import { Transaction, TransactionStatus } from "@/interfaces/transaction";
 import { BankAccounDropdown } from "@/components/BankAccounsDropdown";
 import { useMutateTransaction } from "@/hooks/useMutateTransaction";
 
@@ -70,6 +70,7 @@ export const CompleteTransactionModalForm: React.FC<
       sourceAccount: selectedAccount,
       amount: amountInput!,
       createdAt: paymentDateInput!,
+      status: TransactionStatus.COMPLETE,
     };
 
     updateTransaction(payload)

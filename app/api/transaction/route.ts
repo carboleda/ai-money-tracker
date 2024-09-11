@@ -3,7 +3,11 @@ import { genAIModel } from "@/config/genAI";
 import { getMissingFieldsInPrompt } from "@/config/utils";
 import * as env from "@/config/env";
 import { NextRequest, NextResponse } from "next/server";
-import { TransactionEntity, TransactionStatus } from "@/interfaces/transaction";
+import {
+  Transaction,
+  TransactionEntity,
+  TransactionStatus,
+} from "@/interfaces/transaction";
 import { Timestamp } from "firebase-admin/firestore";
 
 export async function POST(req: NextRequest) {
@@ -27,6 +31,20 @@ export async function POST(req: NextRequest) {
     .add(transactionData);
 
   return NextResponse.json({ id: docRef.id });
+}
+
+export async function PUT(req: NextRequest) {
+  const { id, ...transactionData } = (await req.json()) as Transaction;
+
+  await db
+    .collection(Collections.Transactions)
+    .doc(id)
+    .update({
+      ...transactionData,
+      createdAt: Timestamp.fromDate(new Date(transactionData.createdAt)),
+    });
+
+  return NextResponse.json({ id });
 }
 
 export async function DELETE(req: NextRequest) {

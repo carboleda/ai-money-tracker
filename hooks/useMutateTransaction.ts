@@ -3,7 +3,7 @@ import { mutate } from "swr";
 import { Transaction } from "@/interfaces/transaction";
 
 interface TransactionRequest {
-  method: "POST" | "DELETE" | "PATCH";
+  method: "POST" | "DELETE" | "PUT";
   body: string;
 }
 
@@ -35,7 +35,7 @@ export const useMutateTransaction = () => {
   };
 
   const updateTransaction = async (trasaction: Transaction) => {
-    return trigger({ method: "PATCH", body: JSON.stringify(trasaction) }).then(
+    return trigger({ method: "PUT", body: JSON.stringify(trasaction) }).then(
       (res) => {
         if (res.status !== 200) {
           return Promise.reject(res.statusText);

@@ -3,7 +3,7 @@ import { mutate } from "swr";
 import { RecurringExpense } from "@/interfaces/recurringExpense";
 
 interface TransactionRequest {
-  method: "POST" | "DELETE" | "PATCH";
+  method: "POST" | "DELETE" | "PUT";
   body: string;
 }
 
@@ -37,7 +37,7 @@ export const useMutateRecurringExpenses = () => {
   };
 
   const updateConfig = async (config: RecurringExpense) => {
-    return trigger({ method: "PATCH", body: JSON.stringify(config) }).then(
+    return trigger({ method: "PUT", body: JSON.stringify(config) }).then(
       (res) => {
         if (res.status !== 200) {
           return Promise.reject(res.statusText);

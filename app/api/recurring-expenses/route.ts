@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
   return NextResponse.json({ id: docRef.id });
 }
 
-export async function PATCH(req: NextRequest) {
+export async function PUT(req: NextRequest) {
   const { id, ...recurringExpenseConfig } =
     (await req.json()) as RecurringExpense;
 
@@ -44,10 +44,8 @@ export async function PATCH(req: NextRequest) {
     .collection(Collections.RecurringExpenses)
     .doc(id)
     .update({
-      data: {
-        ...recurringExpenseConfig,
-        dueDate: Timestamp.fromDate(new Date(recurringExpenseConfig.dueDate)),
-      } as RecurringExpenseEntity,
+      ...recurringExpenseConfig,
+      dueDate: Timestamp.fromDate(new Date(recurringExpenseConfig.dueDate)),
     });
 
   return NextResponse.json({ id });
