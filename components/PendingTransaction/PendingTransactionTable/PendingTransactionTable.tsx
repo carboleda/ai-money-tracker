@@ -9,32 +9,52 @@ import {
   TableRow,
 } from "@nextui-org/table";
 import { Transaction } from "@/interfaces/transaction";
-import { TransactionTypeDecorator } from "../TransactionTypeDecorator";
+import { TransactionTypeDecorator } from "../../TransactionTypeDecorator";
 import { TableSkeleton } from "./TableSkeleton";
 import { useMutateTransaction } from "@/hooks/useMutateTransaction";
-import { DeleteTableItemButton } from "../DeleteTableItemButton";
+import { DeleteTableItemButton } from "../../DeleteTableItemButton";
 import { Chip } from "@nextui-org/chip";
-import { formatCurrency, formatTimeDate } from "@/config/utils";
+import { formatCurrency, formatDate } from "@/config/utils";
+import { CompleteTransactionModalForm } from "../CompleteTransactionModalForm/CompleteTransactionModalForm";
+import { useState } from "react";
 
-interface TranactionTableProps {
+interface PendingTransactionTableProps {
   isLoading: boolean;
   transactions: Transaction[] | undefined;
+  accounts?: { [key: string]: string };
 }
 
-export const TransactionTable: React.FC<TranactionTableProps> = ({
-  isLoading,
-  transactions,
-}) => {
+export const PendingTransactionTable: React.FC<
+  PendingTransactionTableProps
+> = ({ isLoading, transactions, accounts }) => {
+  const [selectedItem, setSelectedItem] = useState<Transaction>();
+  const [isOpen, setOpen] = useState(false);
   const { isMutating, deleteTransaction } = useMutateTransaction();
 
   if (isLoading || !transactions) return <TableSkeleton />;
 
+  const onRowAction = (key: string) => {
+    const transaction = transactions.find((t) => t.id === key);
+    setSelectedItem(transaction);
+    setOpen(true);
+  };
+
+  const onDialogDismissed = () => {
+    setSelectedItem(undefined);
+    setOpen(false);
+  };
+
   return (
     <>
-      <Table isStriped isCompact aria-label="Transactions">
+      <Table
+        isStriped
+        isCompact
+        aria-label="Pending Transactions"
+        onRowAction={(key) => onRowAction(key as string)}
+      >
         <TableHeader>
-          <TableColumn>DESCRIPTION</TableColumn>
           <TableColumn>DATE</TableColumn>
+          <TableColumn>DESCRIPTION</TableColumn>
           <TableColumn className="text-end">AMOUNT</TableColumn>
           <TableColumn className="text-center">ACTIONS</TableColumn>
         </TableHeader>
@@ -44,14 +64,9 @@ export const TransactionTable: React.FC<TranactionTableProps> = ({
         >
           {(item) => (
             <TableRow key={item.id}>
+              <TableCell>{formatDate(new Date(item.createdAt))}</TableCell>
               <TableCell>
                 <div className="flex flex-col items-start gap-2">
-                  <div>
-                    <span>{item.sourceAccount}</span>
-                    {item.destinationAccount && (
-                      <span> &#10141; {item.destinationAccount}</span>
-                    )}
-                  </div>
                   <span className="text-gray-400">
                     {item.description}{" "}
                     {item.category && (
@@ -62,7 +77,6 @@ export const TransactionTable: React.FC<TranactionTableProps> = ({
                   </span>
                 </div>
               </TableCell>
-              <TableCell>{formatTimeDate(new Date(item.createdAt))}</TableCell>
               <TableCell className="text-end">
                 <TransactionTypeDecorator type={item.type}>
                   {formatCurrency(item.amount)}
@@ -81,6 +95,12 @@ export const TransactionTable: React.FC<TranactionTableProps> = ({
           )}
         </TableBody>
       </Table>
+      <CompleteTransactionModalForm
+        item={selectedItem}
+        accounts={accounts}
+        isOpen={isOpen}
+        onDismiss={onDialogDismissed}
+      />
     </>
   );
 };

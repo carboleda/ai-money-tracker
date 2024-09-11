@@ -1,5 +1,9 @@
-export const VALID_ACCOUNTS = JSON.parse(process.env.VALID_ACCOUNTS || "{}");
+export const NODE_ENV = process.env.NODE_ENV;
+export const VALID_ACCOUNTS = JSON.parse(
+  process.env.VALID_ACCOUNTS || "{}"
+) as Record<string, string>;
 export const RATE_LIMIT_ENABLED = process.env.RATE_LIMIT_ENABLED === "true";
+export const CRON_SECRET = process.env.CRON_SECRET;
 
 export const FIREBASE_SERVICE_ACCOUNT = JSON.parse(
   process.env.FIREBASE_SERVICE_ACCOUNT || "{}"
@@ -11,3 +15,5 @@ export const PROMPT_TEMPLATE = (process.env.PROMPT_TEMPLATE || "").replace(
   /\\"/g,
   '"'
 );
+
+export const isDev = ["development", "local"].includes(NODE_ENV);

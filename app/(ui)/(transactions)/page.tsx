@@ -2,15 +2,18 @@
 
 import React, { useState } from "react";
 import useSWR from "swr";
-import { GetTransactionsResponse } from "@/interfaces/transaction";
+import {
+  GetTransactionsResponse,
+  TransactionStatus,
+} from "@/interfaces/transaction";
 import { TransactionTable } from "@/components/TransactionTable/TransactionTable";
 import { TransactionInput } from "@/components/TransactionInput";
 import { BankAccounDropdown } from "@/components/BankAccounsDropdown";
 
-export default function Home() {
-  const [selectedAccount, setAelectedAccount] = useState<string>("");
+export default function Transactions() {
+  const [selectedAccount, setSelectedAccount] = useState<string>("");
   const { isLoading, data: reesponse } = useSWR<GetTransactionsResponse, Error>(
-    `/api/transaction?acc=${selectedAccount}`
+    `/api/transaction/${TransactionStatus.COMPLETE}/?acc=${selectedAccount}`
   );
 
   return (
@@ -20,7 +23,8 @@ export default function Home() {
       <div className="self-start">
         <BankAccounDropdown
           accounts={reesponse?.accounts}
-          onChange={setAelectedAccount}
+          label="Filter by account"
+          onChange={setSelectedAccount}
         />
       </div>
 

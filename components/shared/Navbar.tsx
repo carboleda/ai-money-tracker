@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Navbar as NextUINavbar,
   NavbarContent,
@@ -12,7 +14,7 @@ import { Link } from "@nextui-org/link";
 
 import { link as linkStyles } from "@nextui-org/theme";
 
-import { siteConfig } from "@/config/site";
+import { Page, siteConfig } from "@/config/site";
 import NextLink from "next/link";
 import clsx from "clsx";
 
@@ -20,16 +22,75 @@ import { ThemeSwitch } from "@/components/shared/ThemeSwitch";
 import {
   TwitterIcon,
   GithubIcon,
-  DiscordIcon,
   HeartFilledIcon,
   IconLinkedin,
+  IconChevronDown,
 } from "@/components/shared/icons";
+import {
+  Dropdown,
+  DropdownTrigger,
+  DropdownMenu,
+  DropdownItem,
+} from "@nextui-org/dropdown";
 
 import { Logo } from "@/components/shared/icons";
+import { useState } from "react";
+
+const renderNavbarItem = (item: Page) => {
+  if (item.navItems) {
+    return (
+      <Dropdown key={item.label}>
+        <NavbarItem>
+          <DropdownTrigger>
+            <Button
+              disableRipple
+              className="p-0 bg-transparent data-[hover=true]:bg-transparent"
+              endContent={<IconChevronDown size={16} />}
+              radius="sm"
+              variant="light"
+            >
+              {item.label}
+            </Button>
+          </DropdownTrigger>
+        </NavbarItem>
+        <DropdownMenu
+          aria-label="Features"
+          className="w-[340px]"
+          itemClasses={{
+            base: "gap-4",
+          }}
+        >
+          {item.navItems.map((navItem) => (
+            <DropdownItem key={navItem.href} href={navItem.href!}>
+              {navItem.label}
+            </DropdownItem>
+          ))}
+        </DropdownMenu>
+      </Dropdown>
+    );
+  }
+
+  return (
+    <NavbarItem key={item.label}>
+      <NextLink color="foreground" href={item.href!}>
+        {item.label}
+      </NextLink>
+    </NavbarItem>
+  );
+};
 
 export const Navbar = () => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const closeMenu = () => setIsMenuOpen(false);
+
   return (
-    <NextUINavbar maxWidth="xl" position="sticky">
+    <NextUINavbar
+      maxWidth="xl"
+      position="sticky"
+      isMenuOpen={isMenuOpen}
+      onMenuOpenChange={setIsMenuOpen}
+    >
       <NavbarContent className="basis-1/5 sm:basis-full" justify="start">
         <NavbarBrand as="li" className="gap-3 max-w-fit">
           <NextLink className="flex justify-start items-center gap-1" href="/">
@@ -37,21 +98,8 @@ export const Navbar = () => {
             <p className="font-bold text-inherit">Money Tracker</p>
           </NextLink>
         </NavbarBrand>
-        <ul className="hidden lg:flex gap-4 justify-start ml-2">
-          {siteConfig.navItems.map((item) => (
-            <NavbarItem key={item.href}>
-              <NextLink
-                className={clsx(
-                  linkStyles({ color: "foreground" }),
-                  "data-[active=true]:text-primary data-[active=true]:font-medium"
-                )}
-                color="foreground"
-                href={item.href}
-              >
-                {item.label}
-              </NextLink>
-            </NavbarItem>
-          ))}
+        <ul className="hidden lg:flex gap-4 justify-start items-center ml-2 font-semibold text-white">
+          {siteConfig.navItems.map(renderNavbarItem)}
         </ul>
       </NavbarContent>
 
@@ -102,15 +150,10 @@ export const Navbar = () => {
           {siteConfig.navMenuItems.map((item, index) => (
             <NavbarMenuItem key={`${item}-${index}`}>
               <Link
-                color={
-                  index === 2
-                    ? "primary"
-                    : index === siteConfig.navMenuItems.length - 1
-                    ? "danger"
-                    : "foreground"
-                }
-                href="#"
+                onClick={closeMenu}
+                href={item.href}
                 size="lg"
+                color="foreground"
               >
                 {item.label}
               </Link>

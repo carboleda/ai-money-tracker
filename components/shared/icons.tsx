@@ -345,3 +345,44 @@ export const IconCheckCircle: React.FC<IconSvgProps> = ({
     </svg>
   );
 };
+
+export const IconEdit: React.FC<IconSvgProps> = ({
+  size = 24,
+  width,
+  height,
+  ...props
+}) => {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      height={size || height}
+      width={size || width}
+      {...props}
+    >
+      <path d="M19.045 7.401c.378-.378.586-.88.586-1.414s-.208-1.036-.586-1.414l-1.586-1.586c-.378-.378-.88-.586-1.414-.586s-1.036.208-1.413.585L4 13.585V18h4.413L19.045 7.401zm-3-3l1.587 1.585-1.59 1.584-1.586-1.585 1.589-1.584zM6 16v-1.585l7.04-7.018 1.586 1.586L7.587 16H6zm-2 4h16v2H4z" />
+    </svg>
+  );
+};
+
+export const IconChevronDown: React.FC<IconSvgProps> = ({
+  size = 24,
+  width,
+  height,
+  ...props
+}) => {
+  return (
+    <svg
+      fill="currentColor"
+      viewBox="0 0 16 16"
+      height={size || height}
+      width={size || width}
+      {...props}
+    >
+      <path
+        fillRule="evenodd"
+        d="M1.646 4.646a.5.5 0 01.708 0L8 10.293l5.646-5.647a.5.5 0 01.708.708l-6 6a.5.5 0 01-.708 0l-6-6a.5.5 0 010-.708z"
+      />
+    </svg>
+  );
+};

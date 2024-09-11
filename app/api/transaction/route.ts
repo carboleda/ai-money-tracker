@@ -1,33 +1,14 @@
-import { db } from "@/config/firestore";
+import { Collections, db } from "@/config/firestore";
 import { genAIModel } from "@/config/genAI";
-import { getAccountName, getMissingFieldsInPrompt } from "@/config/utils";
+import { getMissingFieldsInPrompt } from "@/config/utils";
 import * as env from "@/config/env";
 import { NextRequest, NextResponse } from "next/server";
-
-const COLLECTION_NAME = "transactions";
-
-export async function GET(req: NextRequest) {
-  const account = new URLSearchParams(req.url.split("?")[1]).get("acc");
-  const collectionRef = db.collection(COLLECTION_NAME);
-
-  let q = collectionRef.orderBy("createdAt", "desc");
-  if (account) {
-    q = q.where("sourceAccount", "==", account);
-  }
-
-  const snapshot = await q.get();
-  const transactions = snapshot.docs.map((doc) => {
-    const docData = doc.data();
-    return {
-      ...docData,
-      id: doc.id,
-      sourceAccount: getAccountName(docData.sourceAccount),
-      destinationAccount: getAccountName(docData.destinationAccount),
-    };
-  });
-
-  return NextResponse.json({ accounts: env.VALID_ACCOUNTS, transactions });
-}
+import {
+  Transaction,
+  TransactionEntity,
+  TransactionStatus,
+} from "@/interfaces/transaction";
+import { Timestamp } from "firebase-admin/firestore";
 
 export async function POST(req: NextRequest) {
   const trasactionText = await req.text();
@@ -41,18 +22,35 @@ export async function POST(req: NextRequest) {
 
   const transactionData = {
     ...trasactionJson,
-    createdAt: new Date().toISOString(),
-  };
+    status: TransactionStatus.COMPLETE,
+    createdAt: Timestamp.fromDate(new Date()),
+  } as TransactionEntity;
 
-  const docRef = await db.collection(COLLECTION_NAME).add(transactionData);
+  const docRef = await db
+    .collection(Collections.Transactions)
+    .add(transactionData);
 
   return NextResponse.json({ id: docRef.id });
 }
 
-export async function DELETE(req: Request) {
+export async function PUT(req: NextRequest) {
+  const { id, ...transactionData } = (await req.json()) as Transaction;
+
+  await db
+    .collection(Collections.Transactions)
+    .doc(id)
+    .update({
+      ...transactionData,
+      createdAt: Timestamp.fromDate(new Date(transactionData.createdAt)),
+    });
+
+  return NextResponse.json({ id });
+}
+
+export async function DELETE(req: NextRequest) {
   try {
     const id = await req.text();
-    await db.collection(COLLECTION_NAME).doc(id).delete();
+    await db.collection(Collections.Transactions).doc(id).delete();
     return new NextResponse(null, {
       status: 204,
       statusText: "Document successfully deleted!",

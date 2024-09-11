@@ -6,6 +6,7 @@ Showcase the power of Gen AI by generating transactions entries from text inputs
 
 ![intro](docs/images/intro.gif)
 
+[Features](docs/FEATURES.md)
 
 ## Technologies Used
 
