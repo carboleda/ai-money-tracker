@@ -16,4 +16,4 @@ export const PROMPT_TEMPLATE = (process.env.PROMPT_TEMPLATE || "").replace(
   '"'
 );
 
-export const isDev = NODE_ENV === "development";
+export const isDev = ["development", "local"].includes(NODE_ENV);
