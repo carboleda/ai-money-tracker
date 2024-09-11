@@ -28,6 +28,6 @@ export interface RecurringExpense extends Omit<RecurringExpenseEntity, "dueDate"
   dueDate: string;
 }
 
-export interface GetRecurringExpensesConfigResponse {
+export interface GetRecurringExpensesResponse {
   recurringExpensesConfig: RecurringExpense[];
 }

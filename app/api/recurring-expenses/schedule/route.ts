@@ -1,3 +1,4 @@
+import * as env from "@/config/env";
 import { Collections, db } from "@/config/firestore";
 import { computeBiannualDates } from "@/config/utils";
 import {
@@ -15,9 +16,11 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
   const authHeader = req.headers.get("authorization");
+  console.log(!env.CRON_SECRET || authHeader !== `Bearer ${env.CRON_SECRET}`);
+
   if (
-    !process.env.CRON_SECRET ||
-    authHeader !== `Bearer ${process.env.CRON_SECRET}`
+    !env.isDev &&
+    (!env.CRON_SECRET || authHeader !== `Bearer ${env.CRON_SECRET}`)
   ) {
     return new NextResponse(JSON.stringify({ success: false }), {
       status: 401,

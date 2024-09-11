@@ -7,7 +7,7 @@ interface TransactionRequest {
   body: string;
 }
 
-const KEY = "/api/recurring-expenses/config";
+const KEY = "/api/recurring-expenses";
 
 async function sendRequest(url: string, { arg }: { arg: TransactionRequest }) {
   return fetch(url, {

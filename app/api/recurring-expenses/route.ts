@@ -1,4 +1,10 @@
 import { Collections, db } from "@/config/firestore";
+import {
+  RecurringExpense,
+  RecurringExpenseEntity,
+} from "@/interfaces/recurringExpense";
+import { data } from "autoprefixer";
+import { Timestamp } from "firebase-admin/firestore";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
@@ -8,10 +14,11 @@ export async function GET(req: NextRequest) {
 
   const snapshot = await q.get();
   const recurringExpensesConfig = snapshot.docs.map((doc) => {
-    const docData = doc.data();
+    const docData = doc.data() as RecurringExpenseEntity;
     return {
       ...docData,
       id: doc.id,
+      dueDate: docData.dueDate.toDate().toISOString(),
     };
   });
 
@@ -19,22 +26,29 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-  const recurringExpenseConfig = await req.json();
+  const recurringExpenseConfig = (await req.json()) as RecurringExpense;
 
-  const docRef = await db
-    .collection(Collections.RecurringExpenses)
-    .add(recurringExpenseConfig);
+  const docRef = await db.collection(Collections.RecurringExpenses).add({
+    ...recurringExpenseConfig,
+    dueDate: Timestamp.fromDate(new Date(recurringExpenseConfig.dueDate)),
+  } as RecurringExpenseEntity);
 
   return NextResponse.json({ id: docRef.id });
 }
 
 export async function PATCH(req: NextRequest) {
-  const { id, ...recurringExpenseConfig } = await req.json();
+  const { id, ...recurringExpenseConfig } =
+    (await req.json()) as RecurringExpense;
 
   await db
     .collection(Collections.RecurringExpenses)
     .doc(id)
-    .update(recurringExpenseConfig);
+    .update({
+      data: {
+        ...recurringExpenseConfig,
+        dueDate: Timestamp.fromDate(new Date(recurringExpenseConfig.dueDate)),
+      } as RecurringExpenseEntity,
+    });
 
   return NextResponse.json({ id });
 }
