@@ -1,4 +1,5 @@
 import { Timestamp } from "firebase-admin/firestore";
+import { TransactionCategory } from "./transaction";
 
 export enum Frequency {
   Monthly = "monthly",
@@ -16,7 +17,7 @@ export const frequencyOptions = Object.entries(Frequency).reduce(
 
 export interface RecurringExpenseEntity {
   description: string;
-  category: string;
+  category: TransactionCategory;
   frequency: Frequency;
   dueDate: Timestamp;
   amount: number;

@@ -13,6 +13,11 @@ import { parseAbsoluteToLocal } from "@internationalized/date";
 import { Frequency, RecurringExpense } from "@/interfaces/recurringExpense";
 import { FrequencyDropdown } from "@/components/FrequencyDropdown";
 import { useMutateRecurringExpenses } from "@/hooks/useMutateRecurrentExpense";
+import { Autocomplete, AutocompleteItem } from "@nextui-org/autocomplete";
+import {
+  TransactionCategory,
+  transactionCategoryOptions,
+} from "@/interfaces/transaction";
 
 interface RecurringExpenseModalFormProps {
   item?: RecurringExpense;
@@ -27,6 +32,9 @@ export const RecurringExpenseModalForm: React.FC<
     useMutateRecurringExpenses();
   const [validationError, setValidationError] = useState<string>("");
   const [descriptionInput, setDescriptionInput] = useState<string>("");
+  const [transactonCategoryInput, setTransactonCategoryInput] = useState<
+    TransactionCategory | undefined
+  >();
   const [frequencyInput, setFrequencyInput] = useState<Frequency>(
     Frequency.Monthly
   );
@@ -38,6 +46,7 @@ export const RecurringExpenseModalForm: React.FC<
   useEffect(() => {
     if (item) {
       setDescriptionInput(item.description);
+      setTransactonCategoryInput(item.category);
       setFrequencyInput(item.frequency);
       setDueDateInput(item.dueDate);
       setAmountInput(item.amount);
@@ -51,6 +60,7 @@ export const RecurringExpenseModalForm: React.FC<
 
   const clearInputs = () => {
     setDescriptionInput("");
+    setTransactonCategoryInput(undefined);
     setFrequencyInput(Frequency.Monthly);
     setDueDateInput(undefined);
     setAmountInput(0);
@@ -59,9 +69,14 @@ export const RecurringExpenseModalForm: React.FC<
   const clearError = () => setValidationError("");
 
   const onSave = () => {
-    if (descriptionInput === "" || dueDateInput === "" || amountInput === 0) {
+    if (
+      descriptionInput === "" ||
+      !transactonCategoryInput ||
+      dueDateInput === "" ||
+      amountInput === 0
+    ) {
       setValidationError(
-        "Description and amount are required fields. Please fill them out."
+        "Filled all the required fields. Please fill them out."
       );
       return;
     }
@@ -72,7 +87,7 @@ export const RecurringExpenseModalForm: React.FC<
       frequency: frequencyInput,
       dueDate: dueDateInput!,
       amount: amountInput!,
-      category: "Housing",
+      category: transactonCategoryInput,
     };
     (item?.id
       ? updateConfig({ id: item.id, ...payload })
@@ -106,6 +121,22 @@ export const RecurringExpenseModalForm: React.FC<
                   value={descriptionInput}
                   onValueChange={setDescriptionInput}
                 />
+                <Autocomplete
+                  allowsCustomValue
+                  label="Category"
+                  variant="bordered"
+                  defaultItems={transactionCategoryOptions}
+                  selectedKey={transactonCategoryInput}
+                  onSelectionChange={(v) =>
+                    setTransactonCategoryInput(v as TransactionCategory)
+                  }
+                >
+                  {(item) => (
+                    <AutocompleteItem key={item.value}>
+                      {item.label}
+                    </AutocompleteItem>
+                  )}
+                </Autocomplete>
                 <FrequencyDropdown
                   selectedFrequency={frequencyInput}
                   onChange={setFrequencyInput}

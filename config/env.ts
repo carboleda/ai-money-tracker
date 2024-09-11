@@ -1,4 +1,6 @@
-export const VALID_ACCOUNTS = JSON.parse(process.env.VALID_ACCOUNTS || "{}");
+export const VALID_ACCOUNTS = JSON.parse(
+  process.env.VALID_ACCOUNTS || "{}"
+) as Record<string, string>;
 export const RATE_LIMIT_ENABLED = process.env.RATE_LIMIT_ENABLED === "true";
 
 export const FIREBASE_SERVICE_ACCOUNT = JSON.parse(

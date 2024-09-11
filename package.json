@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@google/generative-ai": "^0.8.0",
+    "@nextui-org/autocomplete": "^2.1.5",
     "@nextui-org/chip": "^2.0.32",
     "@nextui-org/code": "^2.0.32",
     "@nextui-org/date-picker": "^2.1.6",

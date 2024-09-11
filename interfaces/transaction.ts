@@ -6,6 +6,17 @@ export enum TransactionType {
   TRANSFER = "transfer",
 }
 
+export enum TransactionCategory {
+  Alimentos = "Alimentos",
+  Educacion = "Educación",
+  Inversion = "Inversión",
+  Salud = "Salud",
+  Servicios = "Servicios",
+  Transporte = "Transporte",
+  Vivienda = "Vivienda",
+  Zeus = "Zeus",
+}
+
 export enum TransactionStatus {
   PENDING = "pending",
   COMPLETE = "complete",
@@ -15,7 +26,7 @@ export interface TransactionEntity {
   description: string;
   type: TransactionType;
   status: TransactionStatus;
-  category?: string;
+  category?: TransactionCategory;
   sourceAccount: string;
   destinationAccount?: string;
   amount: number;
@@ -34,3 +45,9 @@ export interface GetTransactionsResponse {
   accounts: { [key: string]: string };
   transactions: Transaction[];
 }
+
+export const transactionCategoryOptions = Object.entries(
+  TransactionCategory
+).reduce((acc, [key, value]) => {
+  return [...acc, { value: key, label: value }];
+}, [] as Record<string, string>[]);
