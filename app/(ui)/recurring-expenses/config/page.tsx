@@ -2,7 +2,7 @@
 
 import React from "react";
 import useSWR from "swr";
-import { ConfigRecurringExpensesTable } from "@/components/RecurringExpenses/ConfigTable/ConfigTable";
+import { RecurringExpensesTable } from "@/components/RecurringExpenses";
 import { GetRecurringExpensesConfigResponse } from "@/interfaces/recurringExpense";
 
 export default function ConfigRecurringExpenses() {
@@ -13,7 +13,7 @@ export default function ConfigRecurringExpenses() {
 
   return (
     <section className="flex flex-col items-center justify-center gap-4">
-      <ConfigRecurringExpensesTable
+      <RecurringExpensesTable
         recurringExpenses={reesponse?.recurringExpensesConfig}
         isLoading={isLoading}
       />

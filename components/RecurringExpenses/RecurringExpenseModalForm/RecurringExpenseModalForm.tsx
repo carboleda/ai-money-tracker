@@ -12,16 +12,16 @@ import { DatePicker } from "@nextui-org/date-picker";
 import { parseAbsoluteToLocal } from "@internationalized/date";
 import { Frequency, RecurringExpense } from "@/interfaces/recurringExpense";
 import { FrequencyDropdown } from "@/components/FrequencyDropdown";
-import { useMutateRecurringExpenses } from "@/hooks/useMutateRecurrentExpenseConfig";
+import { useMutateRecurringExpenses } from "@/hooks/useMutateRecurrentExpense";
 
-interface ConfigRecurringExpenseModalFormProps {
+interface RecurringExpenseModalFormProps {
   item?: RecurringExpense;
   isOpen: boolean;
   onDismiss: () => void;
 }
 
-export const ConfigRecurringExpenseModalForm: React.FC<
-  ConfigRecurringExpenseModalFormProps
+export const RecurringExpenseModalForm: React.FC<
+  RecurringExpenseModalFormProps
 > = ({ item, onDismiss, isOpen }) => {
   const { isMutating, createConfig, updateConfig } =
     useMutateRecurringExpenses();

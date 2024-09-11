@@ -15,20 +15,21 @@ import { Button } from "@nextui-org/button";
 import { TransactionTypeDecorator } from "@/components/TransactionTypeDecorator";
 import { TransactionType } from "@/interfaces/transaction";
 import { IconEdit } from "@/components/shared/icons";
-import { ConfigRecurringExpenseModalForm } from "../ConfigModalForm/ConfigModalForm";
+import { RecurringExpenseModalForm } from "../RecurringExpenseModalForm/RecurringExpenseModalForm";
 import { useState } from "react";
 import { DeleteTableItemButton } from "@/components/DeleteTableItemButton";
-import { useMutateRecurringExpenses } from "@/hooks/useMutateRecurrentExpenseConfig";
+import { useMutateRecurringExpenses } from "@/hooks/useMutateRecurrentExpense";
 import { formatCurrency, formatFrequency } from "@/config/utils";
 
-interface ConfigRecurringExpensesTableProps {
+interface RecurringExpensesTableProps {
   isLoading: boolean;
   recurringExpenses: RecurringExpense[] | undefined;
 }
 
-export const ConfigRecurringExpensesTable: React.FC<
-  ConfigRecurringExpensesTableProps
-> = ({ isLoading, recurringExpenses }) => {
+export const RecurringExpensesTable: React.FC<RecurringExpensesTableProps> = ({
+  isLoading,
+  recurringExpenses,
+}) => {
   const [selectedItem, setSelectedItem] = useState<RecurringExpense>();
   const [isOpen, setOpen] = useState(false);
   const { isMutating, deleteConfig } = useMutateRecurringExpenses();
@@ -108,7 +109,7 @@ export const ConfigRecurringExpensesTable: React.FC<
           )}
         </TableBody>
       </Table>
-      <ConfigRecurringExpenseModalForm
+      <RecurringExpenseModalForm
         item={selectedItem}
         isOpen={isOpen}
         onDismiss={onDialogDismissed}
