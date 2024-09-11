@@ -6,7 +6,7 @@ import {
   GetTransactionsResponse,
   TransactionStatus,
 } from "@/interfaces/transaction";
-import { TransactionTable } from "@/components/TransactionTable/TransactionTable";
+import { PendingTransactionTable } from "@/components/PendingTransactionTable/PendingTransactionTable";
 
 export default function PendingTransactions() {
   const { isLoading, data: reesponse } = useSWR<GetTransactionsResponse, Error>(
@@ -15,7 +15,7 @@ export default function PendingTransactions() {
 
   return (
     <section className="flex flex-col items-center justify-center gap-4">
-      <TransactionTable
+      <PendingTransactionTable
         transactions={reesponse?.transactions}
         isLoading={isLoading}
       />
