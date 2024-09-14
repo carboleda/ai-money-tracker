@@ -1,4 +1,4 @@
-import { Collections, db } from "@/config/firestore";
+import { Collections, db } from "@/firebase/server";
 import { getAccountName } from "@/config/utils";
 import * as env from "@/config/env";
 import { NextRequest, NextResponse } from "next/server";

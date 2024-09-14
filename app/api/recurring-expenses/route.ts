@@ -1,9 +1,8 @@
-import { Collections, db } from "@/config/firestore";
+import { Collections, db } from "@/firebase/server";
 import {
   RecurringExpense,
   RecurringExpenseEntity,
 } from "@/interfaces/recurringExpense";
-import { data } from "autoprefixer";
 import { Timestamp } from "firebase-admin/firestore";
 import { NextRequest, NextResponse } from "next/server";
 

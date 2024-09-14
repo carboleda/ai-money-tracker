@@ -1,5 +1,5 @@
 import * as env from "@/config/env";
-import { Collections, db } from "@/config/firestore";
+import { Collections, db } from "@/firebase/server";
 import { computeBiannualDates } from "@/config/utils";
 import {
   Frequency,
