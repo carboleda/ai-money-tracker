@@ -5,7 +5,6 @@ import {
   getMessaging,
   getToken,
   MessagePayload,
-  NotificationPayload,
   onMessage,
 } from "firebase/messaging";
 
@@ -22,7 +21,7 @@ export const initializeFirebaseMessaging = async (firebaseApp: FirebaseApp) => {
         vapidKey:
           "BBJ4pIdE85ik9AB2Lei3WtgJosb2DzGXssJiVjx3BUP35d56-8eTMRQ1aMbjHEZzozKfus49njKkcSQ2w8gepb0",
       });
-      console.log({ currentToken });
+      alert(currentToken);
     } else {
       throw new Error("Permission denied.");
     }
