@@ -1,5 +1,6 @@
 "use client";
 
+import * as env from "@/config/env";
 import { FirebaseApp } from "firebase/app";
 import {
   getMessaging,
@@ -16,12 +17,14 @@ export const initializeFirebaseMessaging = async (firebaseApp: FirebaseApp) => {
     const permission = await Notification.requestPermission();
 
     if (permission === "granted") {
-      console.log("Notification permission granted.");
+      console.log(
+        "Notification permission granted.",
+        env.NEXT_PUBLIC_FIREBASE_VAPID_KEY
+      );
       const currentToken = await getToken(messaging, {
-        vapidKey:
-          "BBJ4pIdE85ik9AB2Lei3WtgJosb2DzGXssJiVjx3BUP35d56-8eTMRQ1aMbjHEZzozKfus49njKkcSQ2w8gepb0",
+        vapidKey: env.NEXT_PUBLIC_FIREBASE_VAPID_KEY,
       });
-      alert(currentToken);
+      console.log(currentToken);
     } else {
       throw new Error("Permission denied.");
     }

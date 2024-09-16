@@ -11,6 +11,8 @@ export const FIREBASE_SERVICE_ACCOUNT = JSON.parse(
 export const NEXT_PUBLIC_FIREBASE_APP_CONFIG = JSON.parse(
   process.env.NEXT_PUBLIC_FIREBASE_APP_CONFIG || "{}"
 );
+export const NEXT_PUBLIC_FIREBASE_VAPID_KEY =
+  process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY || "";
 
 export const GEMINI_API_KEY = process.env.GEMINI_API_KEY || "";
 export const GEMINI_MODEL_NAME = process.env.GEMINI_MODEL_NAME || "";
@@ -21,10 +23,3 @@ export const PROMPT_TEMPLATE = (process.env.PROMPT_TEMPLATE || "").replace(
 
 export const isDev = ["development", "local"].includes(NODE_ENV);
 export const isServer = typeof window === "undefined";
-
-// Client env variables are only available in the client
-if (!isServer) {
-  (self as any).NEXT_PUBLIC_FIREBASE_APP_CONFIG = JSON.parse(
-    process.env.NEXT_PUBLIC_FIREBASE_APP_CONFIG || "{}"
-  );
-}
