@@ -8,4 +8,4 @@ if (alreadyCreatedAps.length === 0) {
   });
 }
 
-export * from "./firestore";
+export const { db, Collections } = await import("./firestore");

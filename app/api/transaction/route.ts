@@ -1,4 +1,4 @@
-import { Collections, db } from "@/firebase/server";
+import { db, Collections } from "@/firebase/server";
 import { genAIModel } from "@/config/genAI";
 import { getMissingFieldsInPrompt } from "@/config/utils";
 import * as env from "@/config/env";
