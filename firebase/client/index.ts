@@ -6,16 +6,10 @@ import { initializeApp, getApps, getApp } from "firebase/app";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
-if (!env.isServer) {
-  const alreadyCreatedAps = getApps();
-  if (alreadyCreatedAps.length === 0) {
-    // Initialize Firebase
-    initializeApp(env.NEXT_PUBLIC_FIREBASE_APP_CONFIG);
-  }
-
-  const firebaseApp = getApp();
-
-  import("./messaging").then(({ initializeFirebaseMessaging }) =>
-    initializeFirebaseMessaging(firebaseApp)
-  );
+const alreadyCreatedAps = getApps();
+if (alreadyCreatedAps.length === 0) {
+  // Initialize Firebase
+  initializeApp(env.NEXT_PUBLIC_FIREBASE_APP_CONFIG);
 }
+
+export const firebaseApp = getApp();

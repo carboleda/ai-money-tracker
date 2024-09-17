@@ -1,10 +1,11 @@
 "use client";
 
-import "@/firebase/client";
+import { firebaseApp } from "@/firebase/client";
 import * as React from "react";
 import { NextUIProvider } from "@nextui-org/system";
 import { useRouter } from "next/navigation";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
+import FcmProvider from "@/components/FcmProvider";
 import { ThemeProviderProps } from "next-themes/dist/types";
 import { SWRConfig } from "swr";
 
@@ -18,18 +19,20 @@ export function Providers({ children, themeProps }: ProvidersProps) {
 
   return (
     <NextUIProvider navigate={router.push}>
-      <NextThemesProvider {...themeProps}>
-        <SWRConfig
-          value={{
-            refreshInterval: 0,
-            revalidateOnFocus: false,
-            fetcher: (resource, init) =>
-              fetch(resource, init).then((res) => res.json()),
-          }}
-        >
-          {children}
-        </SWRConfig>
-      </NextThemesProvider>
+      <FcmProvider.FcmProvider firebaseApp={firebaseApp}>
+        <NextThemesProvider {...themeProps}>
+          <SWRConfig
+            value={{
+              refreshInterval: 0,
+              revalidateOnFocus: false,
+              fetcher: (resource, init) =>
+                fetch(resource, init).then((res) => res.json()),
+            }}
+          >
+            {children}
+          </SWRConfig>
+        </NextThemesProvider>
+      </FcmProvider.FcmProvider>
     </NextUIProvider>
   );
 }

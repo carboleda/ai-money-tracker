@@ -1,20 +1,20 @@
 import { Collections, db } from "@/firebase/server";
 import { User, UserEntity } from "@/interfaces/user";
-import { DocumentData } from "firebase-admin/firestore";
+import { QueryDocumentSnapshot } from "firebase-admin/firestore";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function PUT(req: NextRequest) {
   const { fcmToken } = (await req.json()) as User;
 
-  const userData = await getExistingUser();
+  const userDoc = await getExistingUser();
 
-  if (userData) {
-    userData.update({
-      ...userData,
+  if (userDoc) {
+    userDoc.ref.update({
+      ...(userDoc.data() as UserEntity),
       fcmToken,
     });
 
-    return NextResponse.json({ id: userData.id });
+    return NextResponse.json({ id: userDoc.id });
   }
 
   const docRef = await db.collection(Collections.Users).add({ fcmToken });
@@ -22,7 +22,7 @@ export async function PUT(req: NextRequest) {
   return NextResponse.json({ id: docRef.id });
 }
 
-async function getExistingUser(): Promise<(UserEntity & DocumentData) | null> {
+async function getExistingUser(): Promise<QueryDocumentSnapshot | null> {
   return db
     .collection(Collections.Users)
     .limit(1) // TODO: Use the doc function instead of limit to support multiple users
@@ -32,11 +32,6 @@ async function getExistingUser(): Promise<(UserEntity & DocumentData) | null> {
         return null;
       }
 
-      const doc = snapshot.docs[0];
-
-      return {
-        ...(doc.data() as UserEntity),
-        id: doc.id,
-      } as UserEntity & DocumentData;
+      return snapshot.docs[0];
     });
 }
