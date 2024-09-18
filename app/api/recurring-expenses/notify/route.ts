@@ -1,11 +1,11 @@
+import { Env } from "@/config/env";
 import { Notification } from "firebase-admin/messaging";
 import { db, sendMessage } from "@/firebase/server";
-import * as UserApi from "@/app/api/user/route";
+import { UserSharedFunctions } from "@/app/api/user";
 import { UserEntity } from "@/interfaces/user";
 import { TransactionEntity, TransactionStatus } from "@/interfaces/transaction";
 import { NextResponse } from "next/server";
 import { dateDiffInDays, formatDate } from "@/config/utils";
-import { Env } from "@/config/env";
 
 export async function GET() {
   const now = new Date();
@@ -23,7 +23,7 @@ export async function GET() {
     return new NextResponse(null, { status: 200 });
   }
 
-  const user = await UserApi.getExistingUser();
+  const user = await UserSharedFunctions.getExistingUser();
   const userData = user?.data() as UserEntity;
   const notifyUser = createNotifier(userData.fcmToken);
 
