@@ -31,10 +31,10 @@ const messaging = firebase.messaging();
 // https://firebase.google.com/docs/cloud-messaging/concept-options
 messaging.onBackgroundMessage(function (payload) {
   const { title = "New message", body } = payload.notification ?? {};
-  console.log(
-    "[firebase-messaging-sw.js] Received background message ",
-    payload
-  );
+  // console.log(
+  //   "[firebase-messaging-sw.js] Received background message ",
+  //   payload
+  // );
   const options = {
     body,
     // icon: "/firebase-logo.png",
