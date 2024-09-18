@@ -44,6 +44,7 @@ export async function GET(req: NextRequest) {
       type: TransactionType.EXPENSE,
       status: TransactionStatus.PENDING,
       description: recurringExpense.description,
+      paymentLink: recurringExpense.paymentLink,
       category: recurringExpense.category,
       amount: recurringExpense.amount,
       createdAt: Timestamp.fromDate(createdAt),
@@ -67,6 +68,7 @@ async function getRecurringExpenses(): Promise<RecurringExpense[]> {
       amount: docData.amount,
       category: docData.category,
       description: docData.description,
+      paymentLink: docData.paymentLink,
       frequency: docData.frequency,
       dueDate: docData.dueDate.toDate().toISOString(),
     } as RecurringExpense;

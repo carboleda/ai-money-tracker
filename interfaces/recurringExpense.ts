@@ -17,6 +17,7 @@ export const frequencyOptions = Object.entries(Frequency).reduce(
 
 export interface RecurringExpenseEntity {
   description: string;
+  paymentLink?: string;
   category: TransactionCategory;
   frequency: Frequency;
   dueDate: Timestamp;

@@ -6,4 +6,6 @@ export enum Collections {
   RecurringExpenses = "recurring-expenses",
 }
 
-export const db = getFirestore();
+const db = getFirestore();
+
+export { db };

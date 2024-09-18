@@ -18,6 +18,7 @@ import {
   TransactionCategory,
   transactionCategoryOptions,
 } from "@/interfaces/transaction";
+import { IconLink } from "@/components/shared/icons";
 
 interface RecurringExpenseModalFormProps {
   item?: RecurringExpense;
@@ -32,9 +33,9 @@ export const RecurringExpenseModalForm: React.FC<
     useMutateRecurringExpenses();
   const [validationError, setValidationError] = useState<string>("");
   const [descriptionInput, setDescriptionInput] = useState<string>("");
-  const [transactonCategoryInput, setTransactonCategoryInput] = useState<
-    TransactionCategory | undefined
-  >();
+  const [paymentLinkInput, setPaymentLinkInput] = useState<string>();
+  const [transactonCategoryInput, setTransactonCategoryInput] =
+    useState<TransactionCategory>();
   const [frequencyInput, setFrequencyInput] = useState<Frequency>(
     Frequency.Monthly
   );
@@ -46,6 +47,7 @@ export const RecurringExpenseModalForm: React.FC<
   useEffect(() => {
     if (item) {
       setDescriptionInput(item.description);
+      setPaymentLinkInput(item.paymentLink);
       setTransactonCategoryInput(item.category);
       setFrequencyInput(item.frequency);
       setDueDateInput(item.dueDate);
@@ -60,6 +62,7 @@ export const RecurringExpenseModalForm: React.FC<
 
   const clearInputs = () => {
     setDescriptionInput("");
+    setPaymentLinkInput("");
     setTransactonCategoryInput(undefined);
     setFrequencyInput(Frequency.Monthly);
     setDueDateInput(undefined);
@@ -82,8 +85,9 @@ export const RecurringExpenseModalForm: React.FC<
     }
 
     clearError();
-    const payload = {
+    const payload: Omit<RecurringExpense, "id"> = {
       description: descriptionInput,
+      paymentLink: paymentLinkInput,
       frequency: frequencyInput,
       dueDate: dueDateInput!,
       amount: amountInput!,
@@ -118,6 +122,7 @@ export const RecurringExpenseModalForm: React.FC<
                   autoFocus
                   label="Deescription"
                   variant="bordered"
+                  isRequired
                   value={descriptionInput}
                   onValueChange={setDescriptionInput}
                 />
@@ -125,7 +130,8 @@ export const RecurringExpenseModalForm: React.FC<
                   allowsCustomValue
                   label="Category"
                   variant="bordered"
-                  defaultItems={transactionCategoryOptions}
+                  isRequired
+                  items={transactionCategoryOptions}
                   selectedKey={transactonCategoryInput}
                   onSelectionChange={(v) =>
                     setTransactonCategoryInput(v as TransactionCategory)
@@ -145,6 +151,7 @@ export const RecurringExpenseModalForm: React.FC<
                   label="Due date"
                   variant="bordered"
                   granularity="day"
+                  isRequired
                   value={
                     dueDateInput ? parseAbsoluteToLocal(dueDateInput) : null
                   }
@@ -154,8 +161,17 @@ export const RecurringExpenseModalForm: React.FC<
                   label="Amount"
                   variant="bordered"
                   type="number"
+                  isRequired
                   value={amountInput?.toString()}
                   onValueChange={(v) => setAmountInput(parseFloat(v))}
+                />
+                <Input
+                  autoFocus
+                  label="Payment Link"
+                  variant="bordered"
+                  startContent={<IconLink />}
+                  value={paymentLinkInput}
+                  onValueChange={setPaymentLinkInput}
                 />
               </ModalBody>
               <ModalFooter>

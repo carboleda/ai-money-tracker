@@ -18,7 +18,8 @@ import { Chip } from "@nextui-org/chip";
 import { formatCurrency, formatDate } from "@/config/utils";
 import { CompleteTransactionModalForm } from "../CompleteTransactionModalForm/CompleteTransactionModalForm";
 import { useState } from "react";
-import { IconCheckCircle } from "@/components/shared/icons";
+import { IconCheckCircle, IconLink } from "@/components/shared/icons";
+import Link from "next/link";
 
 interface PendingTransactionTableProps {
   isLoading: boolean;
@@ -67,7 +68,7 @@ export const PendingTransactionTable: React.FC<
             <TableRow key={item.id}>
               <TableCell>{formatDate(new Date(item.createdAt))}</TableCell>
               <TableCell>
-                <div className="flex flex-col items-start gap-2">
+                <div className="flex flex-row items-start gap-2">
                   <span className="text-gray-400">
                     {item.description}{" "}
                     {item.category && (
@@ -76,6 +77,11 @@ export const PendingTransactionTable: React.FC<
                       </Chip>
                     )}
                   </span>
+                  {item.paymentLink && (
+                    <Link href={item.paymentLink} target="_blank">
+                      <IconLink />
+                    </Link>
+                  )}
                 </div>
               </TableCell>
               <TableCell className="text-end">
