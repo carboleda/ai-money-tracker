@@ -1,32 +1,46 @@
-import { db } from "@/firebase/server"; // Adjust the import according to your project structure
+import { db } from "@/firebase/server";
+import * as UserApi from "@/app/api/user/route";
+import { UserEntity } from "@/interfaces/user";
+import { TransactionEntity, TransactionStatus } from "@/interfaces/transaction";
+import { NextResponse } from "next/server";
 
-async function notifyPendingTransactions() {
+export async function GET() {
   const now = new Date();
-  const threeDaysFromNow = new Date();
-  threeDaysFromNow.setDate(now.getDate() + 3);
+  const upcomingNotificationDate = new Date();
+  upcomingNotificationDate.setDate(now.getDate() + 3); // FIXME: Create environment variable for notification days
 
   const transactionsRef = db.collection("transactions");
   const snapshot = await transactionsRef
-    .where("dueDate", ">=", now)
-    .where("dueDate", "<=", threeDaysFromNow)
+    .where("status", "==", TransactionStatus.PENDING)
+    .orderBy("createdAt", "asc")
     .get();
 
   if (snapshot.empty) {
     console.log("No pending transactions found.");
-    return;
+    return new NextResponse(null, { status: 200 });
   }
 
-  snapshot.forEach((doc) => {
-    const transaction = doc.data();
-    if (!transaction.isComplete) {
-      notifyUser(transaction);
-    }
-  });
+  const user = await UserApi.getExistingUser();
+  const userData = user?.data() as UserEntity;
+  const notifyUser = createNotifier(userData.fcmToken);
+
+  snapshot.docs
+    .map((doc) => doc.data() as TransactionEntity)
+    .filter((transaction) => {
+      const createdAt = transaction.createdAt.toDate();
+      return createdAt <= now || upcomingNotificationDate >= createdAt;
+    })
+    .forEach((transaction) => notifyUser(transaction));
+
+  return new NextResponse(null, { status: 200 });
 }
 
-function notifyUser(transaction: any) {
-  // Implement your notification logic here
-  console.log(
-    `Reminder: Pending transaction for ${transaction.description} is due soon.`
-  );
+function createNotifier(fcmToken: string) {
+  return (transaction: TransactionEntity) => {
+    // TODO: Create message template
+    const createdAt = transaction.createdAt.toDate();
+    console.log(
+      `Reminder: Pending transaction for ${transaction.description} is due on ${createdAt}.`
+    );
+  };
 }

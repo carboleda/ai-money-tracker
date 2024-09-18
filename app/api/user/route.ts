@@ -22,7 +22,7 @@ export async function PUT(req: NextRequest) {
   return NextResponse.json({ id: docRef.id });
 }
 
-async function getExistingUser(): Promise<QueryDocumentSnapshot | null> {
+export async function getExistingUser(): Promise<QueryDocumentSnapshot | null> {
   return db
     .collection(Collections.Users)
     .limit(1) // TODO: Use the doc function instead of limit to support multiple users
