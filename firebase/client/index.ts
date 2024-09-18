@@ -1,6 +1,6 @@
 "use client";
 
-import * as env from "@/config/env";
+import { Env } from "@/config/env";
 // Import the functions you need from the SDKs you need
 import { initializeApp, getApps, getApp } from "firebase/app";
 // TODO: Add SDKs for Firebase products that you want to use
@@ -9,7 +9,7 @@ import { initializeApp, getApps, getApp } from "firebase/app";
 const alreadyCreatedAps = getApps();
 if (alreadyCreatedAps.length === 0) {
   // Initialize Firebase
-  initializeApp(env.NEXT_PUBLIC_FIREBASE_APP_CONFIG);
+  initializeApp(Env.NEXT_PUBLIC_FIREBASE_APP_CONFIG);
 }
 
 export const firebaseApp = getApp();

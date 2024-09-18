@@ -8,7 +8,7 @@ import {
   MessagePayload,
   onMessage,
 } from "firebase/messaging";
-import * as env from "@/config/env";
+import { Env } from "@/config/env";
 import { useMutateUser } from "@/hooks/useMutateUser";
 
 interface FcmProviderProps {

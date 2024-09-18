@@ -1,4 +1,4 @@
-import * as env from "@/config/env";
+import { Env } from "@/config/env";
 import { Frequency } from "@/interfaces/recurringExpense";
 
 const requiredFields = ["amount", "account"];
@@ -40,7 +40,7 @@ export const getMissingFieldsInPrompt = (inputText: string) => {
 };
 
 export const getAccountName = (account: string) => {
-  return env.VALID_ACCOUNTS[account] || "Unknown";
+  return Env.VALID_ACCOUNTS[account] || "Unknown";
 };
 
 export const computeBiannualDates = (date: Date): [Date, Date] => {

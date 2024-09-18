@@ -1,6 +1,6 @@
 import { Collections, db } from "@/firebase/server";
 import { getAccountName } from "@/config/utils";
-import * as env from "@/config/env";
+import { Env } from "@/config/env";
 import { NextRequest, NextResponse } from "next/server";
 import {
   Transaction,
@@ -36,5 +36,5 @@ export async function GET(req: NextRequest, { params }: GetTransactionsParams) {
     } as Transaction;
   });
 
-  return NextResponse.json({ accounts: env.VALID_ACCOUNTS, transactions });
+  return NextResponse.json({ accounts: Env.VALID_ACCOUNTS, transactions });
 }

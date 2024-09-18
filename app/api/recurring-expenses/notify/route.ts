@@ -5,11 +5,12 @@ import { UserEntity } from "@/interfaces/user";
 import { TransactionEntity, TransactionStatus } from "@/interfaces/transaction";
 import { NextResponse } from "next/server";
 import { dateDiffInDays, formatDate } from "@/config/utils";
+import { Env } from "@/config/env";
 
 export async function GET() {
   const now = new Date();
-  const upcomingNotificationDate = new Date();
-  upcomingNotificationDate.setDate(now.getDate() + 3); // FIXME: Create environment variable for notification days
+  const earlyReminderDate = new Date();
+  earlyReminderDate.setDate(now.getDate() + Env.EARLY_REMINDER_DAYS_AHEAD);
 
   const transactionsRef = db.collection("transactions");
   const snapshot = await transactionsRef
@@ -30,7 +31,7 @@ export async function GET() {
     .map((doc) => doc.data() as TransactionEntity)
     .filter((transaction) => {
       const createdAt = transaction.createdAt.toDate();
-      return createdAt <= now || upcomingNotificationDate >= createdAt;
+      return createdAt <= now || earlyReminderDate >= createdAt;
     })
     .forEach((transaction) => notifyUser(transaction));
 

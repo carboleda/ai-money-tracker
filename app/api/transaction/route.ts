@@ -1,7 +1,7 @@
 import { db, Collections } from "@/firebase/server";
 import { genAIModel } from "@/config/genAI";
 import { getMissingFieldsInPrompt } from "@/config/utils";
-import * as env from "@/config/env";
+import { Env } from "@/config/env";
 import { NextRequest, NextResponse } from "next/server";
 import {
   Transaction,
@@ -65,7 +65,7 @@ export async function DELETE(req: NextRequest) {
 }
 
 async function generateTransactionJson(text: string) {
-  const prompt = `${env.PROMPT_TEMPLATE} ${text}`;
+  const prompt = `${Env.PROMPT_TEMPLATE} ${text}`;
 
   console.log("propmt", prompt);
   const result = await genAIModel.generateContent(prompt);
