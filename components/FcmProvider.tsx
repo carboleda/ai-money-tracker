@@ -46,7 +46,4 @@ const FcmProviderFrontend: React.FC<FcmProviderProps> = ({
   );
 };
 
-// eslint-disable-next-line import/no-anonymous-default-export
-export default {
-  FcmProvider: Env.isServer ? FcmProviderServer : FcmProviderFrontend,
-};
+export default Env.isServer ? FcmProviderServer : FcmProviderFrontend;

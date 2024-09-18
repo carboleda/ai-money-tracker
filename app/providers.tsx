@@ -19,7 +19,7 @@ export function Providers({ children, themeProps }: ProvidersProps) {
 
   return (
     <NextUIProvider navigate={router.push}>
-      <FcmProvider.FcmProvider firebaseApp={firebaseApp}>
+      <FcmProvider firebaseApp={firebaseApp}>
         <NextThemesProvider {...themeProps}>
           <SWRConfig
             value={{
@@ -32,7 +32,7 @@ export function Providers({ children, themeProps }: ProvidersProps) {
             {children}
           </SWRConfig>
         </NextThemesProvider>
-      </FcmProvider.FcmProvider>
+      </FcmProvider>
     </NextUIProvider>
   );
 }
