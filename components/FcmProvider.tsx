@@ -3,20 +3,12 @@
 import { ReactNode } from "react";
 import { FirebaseApp } from "firebase/app";
 import { getMessaging, MessagePayload, onMessage } from "firebase/messaging";
-import { Env } from "@/config/env";
 import { NotificationRequestModal } from "./shared/NotificationsRequestModal";
 
 interface FcmProviderProps {
   firebaseApp?: FirebaseApp;
   children: ReactNode;
 }
-
-const FcmProviderServer: React.FC<FcmProviderProps> = ({
-  firebaseApp,
-  children,
-}) => {
-  return <>{children}</>;
-};
 
 const FcmProviderFrontend: React.FC<FcmProviderProps> = ({
   firebaseApp,
@@ -46,4 +38,4 @@ const FcmProviderFrontend: React.FC<FcmProviderProps> = ({
   );
 };
 
-export default Env.isServer ? FcmProviderServer : FcmProviderFrontend;
+export default FcmProviderFrontend;

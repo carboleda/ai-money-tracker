@@ -23,7 +23,7 @@ export const NotificationRequestModal: React.FC<
 > = ({ firebaseApp, onPermissionGranted }) => {
   const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure();
   const { updateUser } = useMutateUser();
-  const permission = Notification.permission;
+  const permission = Env.isServer ? "granted" : Notification.permission;
 
   useEffect(() => {
     if (permission !== "granted") {
@@ -53,7 +53,7 @@ export const NotificationRequestModal: React.FC<
 
   return (
     <>
-      <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+      <Modal id="m1" isOpen={isOpen} onOpenChange={onOpenChange}>
         <ModalContent>
           {(onClose) => (
             <>
