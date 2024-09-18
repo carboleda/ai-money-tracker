@@ -9,3 +9,4 @@ if (alreadyCreatedAps.length === 0) {
 }
 
 export const { db, Collections } = await import("./firestore");
+export const { sendMessage } = await import("./messaging");

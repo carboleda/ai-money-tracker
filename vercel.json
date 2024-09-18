@@ -3,6 +3,10 @@
     {
       "path": "/api/recurring-expenses/schedule",
       "schedule": "0 6 1 * *"
+    },
+    {
+      "path": "/api/recurring-expenses/notify",
+      "schedule": "0 10 * * *"
     }
   ]
 }

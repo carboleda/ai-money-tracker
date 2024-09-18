@@ -53,7 +53,7 @@ export async function GET(req: NextRequest) {
     await db.collection(Collections.Transactions).add(transaction);
   }
 
-  return NextResponse.json({ createdTransactions });
+  return new NextResponse(null, { status: 200 });
 }
 
 async function getRecurringExpenses(): Promise<RecurringExpense[]> {

@@ -1,8 +1,10 @@
-import { db } from "@/firebase/server";
+import { Notification } from "firebase-admin/messaging";
+import { db, sendMessage } from "@/firebase/server";
 import * as UserApi from "@/app/api/user/route";
 import { UserEntity } from "@/interfaces/user";
 import { TransactionEntity, TransactionStatus } from "@/interfaces/transaction";
 import { NextResponse } from "next/server";
+import { dateDiffInDays, formatDate } from "@/config/utils";
 
 export async function GET() {
   const now = new Date();
@@ -36,11 +38,31 @@ export async function GET() {
 }
 
 function createNotifier(fcmToken: string) {
+  const now = new Date();
   return (transaction: TransactionEntity) => {
-    // TODO: Create message template
-    const createdAt = transaction.createdAt.toDate();
-    console.log(
-      `Reminder: Pending transaction for ${transaction.description} is due on ${createdAt}.`
-    );
+    const notification = getNotification(now, transaction);
+    sendMessage(fcmToken, notification);
+  };
+}
+
+function getNotification(
+  now: Date,
+  transaction: TransactionEntity
+): Notification {
+  const createdAt = transaction.createdAt.toDate();
+
+  if (createdAt <= now) {
+    const dayDiff = dateDiffInDays(now, createdAt);
+    return {
+      title: `[ACTION REQUIRED]: Payment due`,
+      body: `Payment for ${transaction.description} is due ${dayDiff} ago, pay it ASAP.`,
+    };
+  }
+
+  return {
+    title: `[REMINDER]: Payment will be due soon`,
+    body: `Payment for ${transaction.description} is due on ${formatDate(
+      createdAt
+    )}.`,
   };
 }
