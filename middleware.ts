@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Ratelimit } from "@upstash/ratelimit";
 import { kv } from "@vercel/kv";
-import * as env from "@/config/env";
+import { Env } from "@/config/env";
 
 function getRatelimit(method: string) {
   if (method === "POST") {
@@ -25,7 +25,7 @@ export const config = {
 };
 
 export default async function middleware(request: NextRequest) {
-  if (env.RATE_LIMIT_ENABLED) {
+  if (Env.RATE_LIMIT_ENABLED) {
     // You could alternatively limit based on user ID or similar
     const ip = request.ip ?? "127.0.0.1";
     const rl = getRatelimit(request.method);

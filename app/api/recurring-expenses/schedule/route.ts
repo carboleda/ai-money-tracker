@@ -1,5 +1,5 @@
-import * as env from "@/config/env";
-import { Collections, db } from "@/config/firestore";
+import { Env } from "@/config/env";
+import { Collections, db } from "@/firebase/server";
 import { computeBiannualDates } from "@/config/utils";
 import {
   Frequency,
@@ -16,11 +16,11 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
   const authHeader = req.headers.get("authorization");
-  console.log(!env.CRON_SECRET || authHeader !== `Bearer ${env.CRON_SECRET}`);
+  console.log(!Env.CRON_SECRET || authHeader !== `Bearer ${Env.CRON_SECRET}`);
 
   if (
-    !env.isDev &&
-    (!env.CRON_SECRET || authHeader !== `Bearer ${env.CRON_SECRET}`)
+    !Env.isDev &&
+    (!Env.CRON_SECRET || authHeader !== `Bearer ${Env.CRON_SECRET}`)
   ) {
     return new NextResponse(JSON.stringify({ success: false }), {
       status: 401,
@@ -44,6 +44,7 @@ export async function GET(req: NextRequest) {
       type: TransactionType.EXPENSE,
       status: TransactionStatus.PENDING,
       description: recurringExpense.description,
+      paymentLink: recurringExpense.paymentLink,
       category: recurringExpense.category,
       amount: recurringExpense.amount,
       createdAt: Timestamp.fromDate(createdAt),
@@ -53,7 +54,7 @@ export async function GET(req: NextRequest) {
     await db.collection(Collections.Transactions).add(transaction);
   }
 
-  return NextResponse.json({ createdTransactions });
+  return new NextResponse(null, { status: 200 });
 }
 
 async function getRecurringExpenses(): Promise<RecurringExpense[]> {
@@ -67,6 +68,7 @@ async function getRecurringExpenses(): Promise<RecurringExpense[]> {
       amount: docData.amount,
       category: docData.category,
       description: docData.description,
+      paymentLink: docData.paymentLink,
       frequency: docData.frequency,
       dueDate: docData.dueDate.toDate().toISOString(),
     } as RecurringExpense;

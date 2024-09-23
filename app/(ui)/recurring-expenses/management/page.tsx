@@ -15,6 +15,9 @@ export default function PendingTransactions() {
 
   return (
     <section className="flex flex-col items-center justify-center gap-4">
+      <div className="flex flex-row w-full justify-start gap-2">
+        <h1 className="text-3xl font-bold">Management</h1>
+      </div>
       <PendingTransactionTable
         transactions={reesponse?.transactions}
         accounts={reesponse?.accounts}

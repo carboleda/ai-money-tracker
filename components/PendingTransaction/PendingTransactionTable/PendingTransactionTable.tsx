@@ -13,10 +13,13 @@ import { TransactionTypeDecorator } from "../../TransactionTypeDecorator";
 import { TableSkeleton } from "./TableSkeleton";
 import { useMutateTransaction } from "@/hooks/useMutateTransaction";
 import { DeleteTableItemButton } from "../../DeleteTableItemButton";
+import { Button } from "@nextui-org/button";
 import { Chip } from "@nextui-org/chip";
 import { formatCurrency, formatDate } from "@/config/utils";
 import { CompleteTransactionModalForm } from "../CompleteTransactionModalForm/CompleteTransactionModalForm";
 import { useState } from "react";
+import { IconCheckCircle, IconLink } from "@/components/shared/icons";
+import Link from "next/link";
 
 interface PendingTransactionTableProps {
   isLoading: boolean;
@@ -33,9 +36,8 @@ export const PendingTransactionTable: React.FC<
 
   if (isLoading || !transactions) return <TableSkeleton />;
 
-  const onRowAction = (key: string) => {
-    const transaction = transactions.find((t) => t.id === key);
-    setSelectedItem(transaction);
+  const onConfirm = (item: Transaction) => {
+    setSelectedItem(item);
     setOpen(true);
   };
 
@@ -50,7 +52,7 @@ export const PendingTransactionTable: React.FC<
         isStriped
         isCompact
         aria-label="Pending Transactions"
-        onRowAction={(key) => onRowAction(key as string)}
+        // onRowAction={(key) => onRowAction(key as string)}
       >
         <TableHeader>
           <TableColumn>DATE</TableColumn>
@@ -66,7 +68,7 @@ export const PendingTransactionTable: React.FC<
             <TableRow key={item.id}>
               <TableCell>{formatDate(new Date(item.createdAt))}</TableCell>
               <TableCell>
-                <div className="flex flex-col items-start gap-2">
+                <div className="flex flex-row items-start gap-2">
                   <span className="text-gray-400">
                     {item.description}{" "}
                     {item.category && (
@@ -75,6 +77,11 @@ export const PendingTransactionTable: React.FC<
                       </Chip>
                     )}
                   </span>
+                  {item.paymentLink && (
+                    <Link href={item.paymentLink} target="_blank">
+                      <IconLink />
+                    </Link>
+                  )}
                 </div>
               </TableCell>
               <TableCell className="text-end">
@@ -84,6 +91,16 @@ export const PendingTransactionTable: React.FC<
               </TableCell>
               <TableCell>
                 <div className="flex flex-row justify-center">
+                  <Button
+                    isIconOnly
+                    color="success"
+                    variant="light"
+                    className="self-center"
+                    aria-label="Confirm"
+                    onClick={() => onConfirm(item)}
+                  >
+                    <IconCheckCircle />
+                  </Button>
                   <DeleteTableItemButton
                     itemId={item.id}
                     isDisabled={isMutating}

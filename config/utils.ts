@@ -1,4 +1,4 @@
-import * as env from "@/config/env";
+import { Env } from "@/config/env";
 import { Frequency } from "@/interfaces/recurringExpense";
 
 const requiredFields = ["amount", "account"];
@@ -40,7 +40,7 @@ export const getMissingFieldsInPrompt = (inputText: string) => {
 };
 
 export const getAccountName = (account: string) => {
-  return env.VALID_ACCOUNTS[account] || "Unknown";
+  return Env.VALID_ACCOUNTS[account] || "Unknown";
 };
 
 export const computeBiannualDates = (date: Date): [Date, Date] => {
@@ -79,4 +79,10 @@ export const formatFrequency = (frequency: Frequency, dueDate: string) => {
     .join(" and ");
 
   return `Every 6 months at ${date.getDate()}${daySuffix} in ${months}`;
+};
+
+export const dateDiffInDays = (date1: Date, date2: Date) => {
+  const diffInMilliseconds = Math.abs(date2.getTime() - date1.getTime());
+  const diffInDays = Math.ceil(diffInMilliseconds / (1000 * 60 * 60 * 24));
+  return diffInDays;
 };
