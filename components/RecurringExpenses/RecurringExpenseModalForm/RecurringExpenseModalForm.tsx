@@ -166,7 +166,6 @@ export const RecurringExpenseModalForm: React.FC<
                   onValueChange={(v) => setAmountInput(parseFloat(v))}
                 />
                 <Input
-                  autoFocus
                   label="Payment Link"
                   variant="bordered"
                   startContent={<IconLink />}
