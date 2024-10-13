@@ -16,8 +16,12 @@ export async function GET(req: NextRequest, { params }: GetTransactionsParams) {
   const collectionRef = db.collection(Collections.Transactions);
 
   let q = collectionRef
-    .orderBy("createdAt", "desc")
-    .where("status", "==", params.status);
+    .where("status", "==", params.status)
+    .orderBy(
+      "createdAt",
+      params.status === TransactionStatus.PENDING ? "asc" : "desc"
+    );
+
   if (account) {
     q = q.where("sourceAccount", "==", account);
   }

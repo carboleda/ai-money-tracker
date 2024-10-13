@@ -9,7 +9,7 @@ import { NextRequest, NextResponse } from "next/server";
 export async function GET(req: NextRequest) {
   const collectionRef = db.collection(Collections.RecurringExpenses);
 
-  const q = collectionRef.orderBy("frequency", "asc");
+  const q = collectionRef.orderBy("frequency", "asc").orderBy("dueDate", "asc");
 
   const snapshot = await q.get();
   const recurringExpensesConfig = snapshot.docs.map((doc) => {

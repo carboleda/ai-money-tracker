@@ -16,24 +16,33 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
   const authHeader = req.headers.get("authorization");
-  console.log(!Env.CRON_SECRET || authHeader !== `Bearer ${Env.CRON_SECRET}`);
 
   if (
     !Env.isDev &&
     (!Env.CRON_SECRET || authHeader !== `Bearer ${Env.CRON_SECRET}`)
   ) {
+    console.error("Unauthorized request");
     return new NextResponse(JSON.stringify({ success: false }), {
       status: 401,
     });
   }
 
+  console.log(`Fetching recurring expenses...`);
   const recurringExpenses: RecurringExpense[] = await getRecurringExpenses();
-  const createdTransactions: PendingTransactionEntity[] = [];
+
+  if (!recurringExpenses.length) {
+    console.log("No recurring expenses found.");
+    return new NextResponse(null, { status: 200 });
+  }
+  console.log(`Found ${recurringExpenses.length} recurring expenses`);
 
   for await (const recurringExpense of recurringExpenses) {
     const createdAt = getTransactionDate(recurringExpense);
 
     if (!createdAt) {
+      console.log(
+        `Skipping transaction for ${recurringExpense.description} createdAt is "${createdAt}"`
+      );
       continue;
     }
 
@@ -50,7 +59,6 @@ export async function GET(req: NextRequest) {
       createdAt: Timestamp.fromDate(createdAt),
     };
 
-    createdTransactions.push(transaction);
     await db.collection(Collections.Transactions).add(transaction);
   }
 
@@ -75,16 +83,29 @@ async function getRecurringExpenses(): Promise<RecurringExpense[]> {
   });
 }
 
+/**
+ * The function determines the transaction date based on the frequency of the recurring expense:
+ * - Firsy it chackes if it's monthly frequency or yearly frequency.
+ *   For yearly it checks if the current month matches the due date's month and for any of the cases
+ *   it returns the due date with the current year and moth.
+ * - For biannual frequency, it computes potential biannual dates and checks if any of them
+ *   match the current month, returning the matching date with the current year.
+ * - If no conditions are met, it returns null.
+ * @param recurringExpense
+ * @returns
+ */
 function getTransactionDate(recurringExpense: RecurringExpense): Date | null {
   const now = new Date();
   const dueDate = new Date(recurringExpense.dueDate);
   let createdAt = new Date(recurringExpense.dueDate);
 
   if (
-    now.getMonth() === dueDate.getMonth() &&
-    [Frequency.Yearly, Frequency.Monthly].includes(recurringExpense.frequency)
+    recurringExpense.frequency === Frequency.Monthly ||
+    (recurringExpense.frequency === Frequency.Yearly &&
+      now.getMonth() === dueDate.getMonth())
   ) {
     createdAt.setFullYear(now.getFullYear());
+    createdAt.setMonth(now.getMonth());
 
     return createdAt;
   }
