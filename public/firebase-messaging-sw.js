@@ -6,10 +6,10 @@
 // Note that you can only use Firebase Messaging here. Other Firebase libraries
 // are not available in the service worker.
 importScripts(
-  "https://www.gstatic.com/firebasejs/10.13.1/firebase-app-compat.js"
+  "https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"
 );
 importScripts(
-  "https://www.gstatic.com/firebasejs/10.13.1/firebase-messaging-compat.js"
+  "https://www.gstatic.com/firebasejs/10.14.1/firebase-messaging-compat.js"
 );
 importScripts("swEnv.js");
 
@@ -30,26 +30,68 @@ const messaging = firebase.messaging();
 // For more info see:
 // https://firebase.google.com/docs/cloud-messaging/concept-options
 messaging.onBackgroundMessage(function (payload) {
-  const { title = "New message", body } = payload.notification ?? {};
-  // console.log(
-  //   "[firebase-messaging-sw.js] Received background message ",
-  //   payload
-  // );
+  const { notification = {}, data } = payload ?? {};
+  const { title = "New message", body } = notification;
+  console.log(
+    "[firebase-messaging-sw.js] Received background message ",
+    payload
+  );
+  const currentNotification = getCurrentNotification(data.hashCode);
+
+  if (currentNotification) {
+    currentNotification.close();
+  }
+
   const options = {
     body,
-    icon: "/favicon-48x48.png",
+    icon: "/favicon/favicon-48x48.png",
     vibrate: [100, 50, 100],
+    data,
   };
-
   self.registration.showNotification(title, options);
 });
 
 self.addEventListener("notificationclick", function (event) {
   console.log("Notification click received.");
+
+  const urlToOpen = new URL(
+    "https://mt.carlosarboleda.co/recurring-expenses/management",
+    self.location.origin
+  ).href;
+
+  const promiseChain = clients
+    .matchAll({
+      type: "window",
+      includeUncontrolled: true,
+    })
+    .then((windowClients) => {
+      let matchingClient = null;
+
+      for (let i = 0; i < windowClients.length; i++) {
+        const windowClient = windowClients[i];
+        if (windowClient.url === urlToOpen) {
+          matchingClient = windowClient;
+          break;
+        }
+      }
+
+      if (matchingClient) {
+        return matchingClient.focus();
+      }
+
+      return clients.openWindow(urlToOpen);
+    });
+
+  event.waitUntil(promiseChain);
   event.notification.close();
-  event.waitUntil(
-    clients.openWindow(
-      "https://mt.carlosarboleda.co/recurring-expenses/management"
-    )
-  );
 });
+
+function getCurrentNotification(hashCode) {
+  const notifications = self.registration.getNotifications();
+  for (let i = 0; i < notifications.length; i++) {
+    console.log("notifications " + i, notifications[i]);
+    if (notifications[i].data && notifications[i].data.hashCode === hashCode) {
+      return notifications[i];
+    }
+  }
+}

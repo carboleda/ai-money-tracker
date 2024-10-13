@@ -73,21 +73,25 @@ function createNotifier(fcmToken: string) {
   const now = new Date();
   return (transaction: TransactionEntity) => {
     const notification = getNotification(now, transaction);
-    return sendMessage(fcmToken, notification);
+    return sendMessage(fcmToken, notification, {
+      hashCode: `${transaction.description.length}-${transaction.description
+        .toLowerCase()
+        .replace(/ /g, "-")}`,
+    });
   };
 }
 
 function getNotification(
   now: Date,
   transaction: TransactionEntity
-): Notification {
+): Notification & { data?: Record<string, string> } {
   const createdAt = transaction.createdAt.toDate();
 
   if (createdAt <= now) {
     const dayDiff = dateDiffInDays(now, createdAt);
     return {
       title: `[ACTION REQUIRED]: Payment due`,
-      body: `Payment for ${transaction.description} is due ${dayDiff} ago, pay it ASAP.`,
+      body: `Payment for ${transaction.description} is due ${dayDiff} days ago, pay it ASAP.`,
     };
   }
 
