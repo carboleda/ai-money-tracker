@@ -92,7 +92,7 @@ export const Navbar = () => {
         <NavbarBrand as="li" className="gap-3 max-w-fit">
           <NextLink className="flex justify-start items-center gap-1" href="/">
             <Image width={40} alt="App logo" src={siteConfig.icons.logo} />
-            <p className="font-bold text-inherit">Money Tracker</p>
+            <p className="font-bold text-inherit">{siteConfig.name}</p>
           </NextLink>
         </NavbarBrand>
         <ul className="hidden lg:flex gap-4 justify-start items-center ml-2 font-semibold text-white">

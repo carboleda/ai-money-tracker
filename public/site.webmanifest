@@ -1,6 +1,6 @@
 {
   "name": "AI Money Tracker",
-  "short_name": "MT AI",
+  "short_name": "AI Money Tracker",
   "description": "Your personal finance tracker powered by AI",
   "start_url": "/",
   "display": "standalone",
