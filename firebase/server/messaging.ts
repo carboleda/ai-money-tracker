@@ -1,14 +1,20 @@
-import { getMessaging, Message, Notification } from "firebase-admin/messaging";
+import {
+  getMessaging,
+  TokenMessage,
+  WebpushNotification,
+} from "firebase-admin/messaging";
 
 export const sendMessage = async (
   fcmToken: string,
-  notification: Notification,
+  notification: WebpushNotification,
   data?: Record<string, string>
 ) => {
   try {
-    const message: Message = {
-      notification,
-      data,
+    const message: TokenMessage = {
+      webpush: {
+        notification,
+        data,
+      },
       token: fcmToken,
     };
 

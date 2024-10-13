@@ -1,5 +1,5 @@
 import { Env } from "@/config/env";
-import { Notification } from "firebase-admin/messaging";
+import { WebpushNotification } from "firebase-admin/messaging";
 import { db, sendMessage } from "@/firebase/server";
 import { UserSharedFunctions } from "@/app/api/user";
 import { UserEntity } from "@/interfaces/user";
@@ -64,7 +64,7 @@ export async function GET(req: NextRequest) {
   const messageIds = await Promise.allSettled(
     transactions.map((transaction) => notifyUser(transaction))
   );
-  console.log("Notifications sent", { ids: messageIds });
+  console.log("Notifications sent", messageIds);
 
   return NextResponse.json({ success: true, count: transactions.length });
 }
@@ -84,18 +84,24 @@ function createNotifier(fcmToken: string) {
 function getNotification(
   now: Date,
   transaction: TransactionEntity
-): Notification & { data?: Record<string, string> } {
+): WebpushNotification {
+  const sharedConfig: WebpushNotification = {
+    icon: "/favicon/favicon-48x48.png",
+    vibrate: [100, 50, 100],
+  };
   const createdAt = transaction.createdAt.toDate();
 
   if (createdAt <= now) {
     const dayDiff = dateDiffInDays(now, createdAt);
     return {
+      ...sharedConfig,
       title: `[ACTION REQUIRED]: Payment due`,
       body: `Payment for ${transaction.description} is due ${dayDiff} days ago, pay it ASAP.`,
     };
   }
 
   return {
+    ...sharedConfig,
     title: `[REMINDER]: Payment will be due soon`,
     body: `Payment for ${transaction.description} is due on ${formatDate(
       createdAt
