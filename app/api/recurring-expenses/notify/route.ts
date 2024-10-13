@@ -88,6 +88,7 @@ function getNotification(
   const sharedConfig: WebpushNotification = {
     icon: "/favicon/favicon-48x48.png",
     vibrate: [100, 50, 100],
+    silent: true,
   };
   const createdAt = transaction.createdAt.toDate();
 

@@ -30,8 +30,8 @@ const messaging = firebase.messaging();
 // For more info see:
 // https://firebase.google.com/docs/cloud-messaging/concept-options
 messaging.onBackgroundMessage(function (payload) {
-  const { data } = payload ?? {};
-  // const { title = "New message", body } = notification;
+  const { notification = {}, data } = payload ?? {};
+  const { title, ...options } = notification;
   console.log(
     "[firebase-messaging-sw.js] Received background message ",
     payload
@@ -48,7 +48,7 @@ messaging.onBackgroundMessage(function (payload) {
   //   vibrate: [100, 50, 100],
   //   data,
   // };
-  // self.registration.showNotification(title, options);
+  self.registration.showNotification(title, { ...options, data });
 });
 
 self.addEventListener("notificationclick", function (event) {
