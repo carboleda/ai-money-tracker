@@ -5,11 +5,15 @@ export const sendMessage = async (
   notification: Notification,
   data?: Record<string, string>
 ) => {
-  const message: Message = {
-    notification,
-    data,
-    token: fcmToken,
-  };
+  try {
+    const message: Message = {
+      notification,
+      data,
+      token: fcmToken,
+    };
 
-  return getMessaging().send(message);
+    return getMessaging().send(message);
+  } catch (error) {
+    return Promise.reject((error as Error).message);
+  }
 };

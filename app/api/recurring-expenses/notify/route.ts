@@ -61,9 +61,11 @@ export async function GET(req: NextRequest) {
     `Sending notifications for ${transactions.length} transactions...`,
     { transactions }
   );
-  transactions.forEach((transaction) => notifyUser(transaction));
+  const ids = Promise.all(
+    transactions.map((transaction) => notifyUser(transaction))
+  );
+  console.log("Notifications sent successfully.", { ids });
 
-  console.log("Notifications sent successfully.");
   return NextResponse.json({ success: true, count: transactions.length });
 }
 
@@ -71,7 +73,7 @@ function createNotifier(fcmToken: string) {
   const now = new Date();
   return (transaction: TransactionEntity) => {
     const notification = getNotification(now, transaction);
-    sendMessage(fcmToken, notification);
+    return sendMessage(fcmToken, notification);
   };
 }
 
