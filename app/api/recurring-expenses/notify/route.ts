@@ -61,10 +61,10 @@ export async function GET(req: NextRequest) {
     `Sending notifications for ${transactions.length} transactions...`,
     { transactions }
   );
-  const ids = await Promise.all(
+  const messageIds = await Promise.allSettled(
     transactions.map((transaction) => notifyUser(transaction))
   );
-  console.log("Notifications sent successfully.", { ids });
+  console.log("Notifications sent", { ids: messageIds });
 
   return NextResponse.json({ success: true, count: transactions.length });
 }

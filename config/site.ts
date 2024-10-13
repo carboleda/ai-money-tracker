@@ -45,7 +45,7 @@ export const pages: Page[] = [
 ];
 
 export const siteConfig = {
-  name: "Money Tracker",
+  name: "AI Money Tracker",
   description: "Make beautiful websites regardless of your design experience.",
   placeholders: [
     "Ingreso por salario de 2000, C1408",
@@ -60,5 +60,11 @@ export const siteConfig = {
     twitter: "https://twitter.com/cfarboleda",
     linkedin: "https://www.linkedin.com/in/carboleda/",
     sponsor: "https://carlosarboleda.co/",
+  },
+  icons: {
+    icon: "/favicon/favicon.ico",
+    logo: "/favicon/favicon-48x48.png",
+    shortcut: "/favicon/favicon-16x16.png",
+    apple: "/favicon/apple-touch-icon.png",
   },
 };

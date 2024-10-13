@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "node -r dotenv/config config/swEnvBuild.js dotenv_config_path=.env.local && next dev",
+    "dev:s": "node -r dotenv/config config/swEnvBuild.js dotenv_config_path=.env.local && next dev --experimental-https",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
@@ -15,6 +16,7 @@
     "@nextui-org/code": "^2.0.32",
     "@nextui-org/date-picker": "^2.1.6",
     "@nextui-org/dropdown": "^2.1.29",
+    "@nextui-org/image": "^2.0.32",
     "@nextui-org/input": "^2.2.4",
     "@nextui-org/link": "^2.0.34",
     "@nextui-org/modal": "^2.0.39",

@@ -37,12 +37,19 @@ messaging.onBackgroundMessage(function (payload) {
   // );
   const options = {
     body,
-    // icon: "/firebase-logo.png",
-    vibrate: [
-      500, 110, 500, 110, 450, 110, 200, 110, 170, 40, 450, 110, 200, 110, 170,
-      40, 500,
-    ],
+    icon: "/favicon-48x48.png",
+    vibrate: [100, 50, 100],
   };
 
   self.registration.showNotification(title, options);
+});
+
+self.addEventListener("notificationclick", function (event) {
+  console.log("Notification click received.");
+  event.notification.close();
+  event.waitUntil(
+    clients.openWindow(
+      "https://mt.carlosarboleda.co/recurring-expenses/management"
+    )
+  );
 });
