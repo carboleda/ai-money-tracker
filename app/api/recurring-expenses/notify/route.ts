@@ -61,7 +61,7 @@ export async function GET(req: NextRequest) {
     `Sending notifications for ${transactions.length} transactions...`,
     { transactions }
   );
-  const ids = Promise.all(
+  const ids = await Promise.all(
     transactions.map((transaction) => notifyUser(transaction))
   );
   console.log("Notifications sent successfully.", { ids });
