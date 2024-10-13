@@ -2,6 +2,8 @@ import { Env } from "@/config/env";
 import { initializeApp, cert, getApps } from "firebase-admin/app";
 import { getFirestore } from "firebase-admin/firestore";
 
+console.log("Environment variables", { Env });
+
 const alreadyCreatedAps = getApps();
 if (alreadyCreatedAps.length === 0) {
   initializeApp({
