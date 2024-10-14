@@ -50,6 +50,7 @@ export async function GET(req: NextRequest) {
       `Creating pending transaction for ${recurringExpense.description}`
     );
     const transaction: PendingTransactionEntity = {
+      id: recurringExpense.id,
       type: TransactionType.EXPENSE,
       status: TransactionStatus.PENDING,
       description: recurringExpense.description,
@@ -70,14 +71,14 @@ async function getRecurringExpenses(): Promise<RecurringExpense[]> {
   const snapshot = await recurringExpenses.get();
 
   return snapshot.docs.map((doc) => {
-    const docData = doc.data() as RecurringExpenseEntity;
+    const docData = { id: doc.id, ...doc.data() } as RecurringExpenseEntity;
     return {
-      id: doc.id,
-      amount: docData.amount,
-      category: docData.category,
-      description: docData.description,
-      paymentLink: docData.paymentLink,
-      frequency: docData.frequency,
+      ...docData,
+      // amount: docData.amount,
+      // category: docData.category,
+      // description: docData.description,
+      // paymentLink: docData.paymentLink,
+      // frequency: docData.frequency,
       dueDate: docData.dueDate.toDate().toISOString(),
     } as RecurringExpense;
   });

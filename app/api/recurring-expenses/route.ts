@@ -13,10 +13,9 @@ export async function GET(req: NextRequest) {
 
   const snapshot = await q.get();
   const recurringExpensesConfig = snapshot.docs.map((doc) => {
-    const docData = doc.data() as RecurringExpenseEntity;
+    const docData = { id: doc.id, ...doc.data() } as RecurringExpenseEntity;
     return {
       ...docData,
-      id: doc.id,
       dueDate: docData.dueDate.toDate().toISOString(),
     };
   });

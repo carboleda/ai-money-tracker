@@ -9,11 +9,19 @@ export type DataNotification = {
   extraData?: Record<string, string>;
 };
 
+/**
+ * Prevent the app from displaying notification twice
+ * https://stackoverflow.com/a/67917507/3167601
+ * @param fcmToken
+ * @param dataNotification
+ * @returns
+ */
 export const sendMessage = async (
   fcmToken: string,
-  { notification, extraData }: DataNotification
+  dataNotification: DataNotification
 ) => {
   try {
+    const { notification, extraData } = dataNotification;
     const message: TokenMessage = {
       data: { ...notification, ...extraData },
       token: fcmToken,
