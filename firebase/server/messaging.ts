@@ -1,20 +1,21 @@
 import {
   getMessaging,
   TokenMessage,
-  WebpushNotification,
+  Notification,
 } from "firebase-admin/messaging";
+
+export type DataNotification = {
+  notification: Notification;
+  extraData?: Record<string, string>;
+};
 
 export const sendMessage = async (
   fcmToken: string,
-  notification: WebpushNotification,
-  data?: Record<string, string>
+  { notification, extraData }: DataNotification
 ) => {
   try {
     const message: TokenMessage = {
-      webpush: {
-        notification,
-        data,
-      },
+      data: { ...notification, ...extraData },
       token: fcmToken,
     };
 

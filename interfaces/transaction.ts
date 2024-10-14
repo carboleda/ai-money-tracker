@@ -23,6 +23,7 @@ export enum TransactionStatus {
 }
 
 export interface TransactionEntity {
+  id?: string;
   description: string;
   paymentLink?: string;
   type: TransactionType;

@@ -1,5 +1,5 @@
 import { Env } from "@/config/env";
-import { WebpushNotification } from "firebase-admin/messaging";
+import { Notification } from "firebase-admin/messaging";
 import { db, sendMessage } from "@/firebase/server";
 import { UserSharedFunctions } from "@/app/api/user";
 import { UserEntity } from "@/interfaces/user";
@@ -43,7 +43,7 @@ export async function GET(req: NextRequest) {
   console.log(`Will send notifications to user ${user?.id}`, userData);
 
   const transactions = snapshot.docs
-    .map((doc) => doc.data() as TransactionEntity)
+    .map((doc) => ({ id: doc.id, ...doc.data() } as TransactionEntity))
     .filter((transaction) => {
       const createdAt = transaction.createdAt.toDate();
       return createdAt <= now || earlyReminderDate >= createdAt;
@@ -73,10 +73,11 @@ function createNotifier(fcmToken: string) {
   const now = new Date();
   return (transaction: TransactionEntity) => {
     const notification = getNotification(now, transaction);
-    return sendMessage(fcmToken, notification, {
-      hashCode: `${transaction.description.length}-${transaction.description
-        .toLowerCase()
-        .replace(/ /g, "-")}`,
+    return sendMessage(fcmToken, {
+      notification,
+      extraData: {
+        transactionId: transaction.id!,
+      },
     });
   };
 }
@@ -84,25 +85,18 @@ function createNotifier(fcmToken: string) {
 function getNotification(
   now: Date,
   transaction: TransactionEntity
-): WebpushNotification {
-  const sharedConfig: WebpushNotification = {
-    icon: "/favicon/favicon-48x48.png",
-    vibrate: [100, 50, 100],
-    silent: true,
-  };
+): Notification {
   const createdAt = transaction.createdAt.toDate();
 
   if (createdAt <= now) {
     const dayDiff = dateDiffInDays(now, createdAt);
     return {
-      ...sharedConfig,
       title: `[ACTION REQUIRED]: Payment due`,
       body: `Payment for ${transaction.description} is due ${dayDiff} days ago, pay it ASAP.`,
     };
   }
 
   return {
-    ...sharedConfig,
     title: `[REMINDER]: Payment will be due soon`,
     body: `Payment for ${transaction.description} is due on ${formatDate(
       createdAt

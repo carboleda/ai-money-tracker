@@ -45,7 +45,7 @@ export const pages: Page[] = [
 ];
 
 export const siteConfig = {
-  name: "AI Money Tracker v1.1",
+  name: "AI Money Tracker (v1.2)",
   description: "Make beautiful websites regardless of your design experience.",
   placeholders: [
     "Ingreso por salario de 2000, C1408",
