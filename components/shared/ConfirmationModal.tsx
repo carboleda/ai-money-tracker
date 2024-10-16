@@ -11,6 +11,7 @@ import { PropsWithChildren } from "react";
 export enum Action {
   Yes,
   No,
+  Cancel,
 }
 
 interface ConfirmationModalProps extends PropsWithChildren {
@@ -27,7 +28,11 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
 }) => {
   return (
     <>
-      <Modal id="confirmatioon-modal" isOpen={isOpen}>
+      <Modal
+        id="confirmatioon-modal"
+        isOpen={isOpen}
+        onOpenChange={() => onAction(Action.Cancel)}
+      >
         <ModalContent>
           {(onClose) => (
             <>

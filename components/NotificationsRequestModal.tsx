@@ -4,7 +4,7 @@ import { Env } from "@/config/env";
 import { getMessaging, getToken } from "firebase/messaging";
 import { FirebaseApp } from "firebase/app";
 import { useMutateUser } from "@/hooks/useMutateUser";
-import { ConfirmationModal } from "./shared/ConfirmationModal";
+import { Action, ConfirmationModal } from "./shared/ConfirmationModal";
 
 interface NotificationRequestModalProps {
   firebaseApp?: FirebaseApp;
@@ -24,9 +24,13 @@ export const NotificationRequestModal: React.FC<
     }
   }, [permission, onOpen]);
 
-  const onAccept = async () => {
+  const onAction = async (action: Action) => {
     try {
       onClose();
+
+      if (action !== Action.Yes) {
+        return;
+      }
 
       const permission = await Notification.requestPermission();
 
@@ -52,7 +56,7 @@ export const NotificationRequestModal: React.FC<
       <ConfirmationModal
         title="Money Track wants to keep you informed! 🔔"
         isOpen={isOpen}
-        onAction={onAccept}
+        onAction={onAction}
       >
         <p>
           To provide you with real-time alerts and reminders about your

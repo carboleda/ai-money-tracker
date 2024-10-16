@@ -1,3 +1,6 @@
+/**
+ * https://unpkg.com/browse/@nextui-org/use-is-mobile@2.0.9/dist/index.mjs
+ */
 import { useIsSSR } from "@react-aria/ssr";
 
 const MOBILE_SCREEN_WIDTH = 700;
