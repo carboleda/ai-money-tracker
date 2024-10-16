@@ -28,9 +28,10 @@ export async function GET(req: NextRequest, { params }: GetTransactionsParams) {
 
   const snapshot = await q.get();
   const transactions = snapshot.docs.map((doc) => {
-    const docData = { id: doc.id, ...doc.data() } as TransactionEntity;
+    const docData = { ...doc.data() } as TransactionEntity;
     return {
       ...docData,
+      id: doc.id,
       sourceAccount: getAccountName(docData.sourceAccount),
       destinationAccount:
         docData.destinationAccount &&
