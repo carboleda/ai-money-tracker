@@ -1,21 +1,34 @@
 import { TransactionType } from "@/interfaces/transaction";
 import { ReactNode } from "react";
-import { Code } from "@nextui-org/code";
+import { Chip } from "@nextui-org/chip";
 
 interface TransactionTypeDecoratorProps {
   type: TransactionType;
+  size?: "sm" | "md" | "lg";
   children: ReactNode;
 }
 
 export const TransactionTypeDecorator: React.FC<
   TransactionTypeDecoratorProps
-> = ({ type, children }) => {
+> = ({ type, size, children }) => {
   if (type === TransactionType.INCOME)
-    return <Code color="success">{children}</Code>;
+    return (
+      <Chip color="success" variant="flat" size={size}>
+        {children}
+      </Chip>
+    );
   if (type === TransactionType.EXPENSE)
-    return <Code color="danger">{children}</Code>;
+    return (
+      <Chip color="danger" variant="flat" size={size}>
+        {children}
+      </Chip>
+    );
   if (type === TransactionType.TRANSFER)
-    return <Code color="warning">{children}</Code>;
+    return (
+      <Chip color="warning" variant="flat" size={size}>
+        {children}
+      </Chip>
+    );
 
   return <></>;
 };
