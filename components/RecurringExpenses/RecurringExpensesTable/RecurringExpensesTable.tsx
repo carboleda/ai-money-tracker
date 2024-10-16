@@ -10,16 +10,12 @@ import {
 } from "@nextui-org/table";
 import { RecurringExpense } from "@/interfaces/recurringExpense";
 import { TableSkeleton } from "./TableSkeleton";
-import { Chip } from "@nextui-org/chip";
 import { Button } from "@nextui-org/button";
-import { TransactionTypeDecorator } from "@/components/TransactionTypeDecorator";
-import { TransactionType } from "@/interfaces/transaction";
 import { IconEdit } from "@/components/shared/icons";
 import { RecurringExpenseModalForm } from "../RecurringExpenseModalForm/RecurringExpenseModalForm";
 import { useState } from "react";
 import { DeleteTableItemButton } from "@/components/DeleteTableItemButton";
 import { useMutateRecurringExpenses } from "@/hooks/useMutateRecurrentExpense";
-import { formatCurrency, formatFrequency } from "@/config/utils";
 import { useRenderCell } from "./Columns";
 
 interface RecurringExpensesTableProps {

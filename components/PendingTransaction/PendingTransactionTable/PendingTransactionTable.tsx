@@ -9,17 +9,14 @@ import {
   TableRow,
 } from "@nextui-org/table";
 import { Transaction } from "@/interfaces/transaction";
-import { TransactionTypeDecorator } from "../../TransactionTypeDecorator";
 import { TableSkeleton } from "./TableSkeleton";
 import { useMutateTransaction } from "@/hooks/useMutateTransaction";
 import { DeleteTableItemButton } from "../../DeleteTableItemButton";
 import { Button } from "@nextui-org/button";
-import { Chip } from "@nextui-org/chip";
-import { formatCurrency, formatDate } from "@/config/utils";
 import { CompleteTransactionModalForm } from "../CompleteTransactionModalForm/CompleteTransactionModalForm";
 import { useState } from "react";
-import { IconCheckCircle, IconLink } from "@/components/shared/icons";
-import Link from "next/link";
+import { IconCheckCircle } from "@/components/shared/icons";
+import { useRenderCell } from "./Columns";
 
 interface PendingTransactionTableProps {
   isLoading: boolean;
@@ -33,6 +30,7 @@ export const PendingTransactionTable: React.FC<
   const [selectedItem, setSelectedItem] = useState<Transaction>();
   const [isOpen, setOpen] = useState(false);
   const { isMutating, deleteTransaction } = useMutateTransaction();
+  const { columns, renderCell } = useRenderCell();
 
   if (isLoading || !transactions) return <TableSkeleton />;
 
@@ -48,17 +46,13 @@ export const PendingTransactionTable: React.FC<
 
   return (
     <>
-      <Table
-        isStriped
-        isCompact
-        aria-label="Pending Transactions"
-        // onRowAction={(key) => onRowAction(key as string)}
-      >
-        <TableHeader>
-          <TableColumn>DATE</TableColumn>
-          <TableColumn>DESCRIPTION</TableColumn>
-          <TableColumn className="text-end">AMOUNT</TableColumn>
-          <TableColumn className="text-center">ACTIONS</TableColumn>
+      <Table isStriped isCompact aria-label="Pending Transactions">
+        <TableHeader columns={columns}>
+          {(column) => (
+            <TableColumn key={column.key} className={`${column.className}`}>
+              {column.label}
+            </TableColumn>
+          )}
         </TableHeader>
         <TableBody
           items={transactions}
@@ -66,48 +60,32 @@ export const PendingTransactionTable: React.FC<
         >
           {(item) => (
             <TableRow key={item.id}>
-              <TableCell>{formatDate(new Date(item.createdAt))}</TableCell>
-              <TableCell>
-                <div className="flex flex-row items-start gap-2">
-                  <span className="text-gray-400">
-                    {item.description}{" "}
-                    {item.category && (
-                      <Chip radius="sm" variant="flat">
-                        {item.category}
-                      </Chip>
-                    )}
-                  </span>
-                  {item.paymentLink && (
-                    <Link href={item.paymentLink} target="_blank">
-                      <IconLink />
-                    </Link>
-                  )}
-                </div>
-              </TableCell>
-              <TableCell className="text-end">
-                <TransactionTypeDecorator type={item.type}>
-                  {formatCurrency(item.amount)}
-                </TransactionTypeDecorator>
-              </TableCell>
-              <TableCell>
-                <div className="flex flex-row justify-center">
-                  <Button
-                    isIconOnly
-                    color="success"
-                    variant="light"
-                    className="self-center"
-                    aria-label="Confirm"
-                    onClick={() => onConfirm(item)}
-                  >
-                    <IconCheckCircle />
-                  </Button>
-                  <DeleteTableItemButton
-                    itemId={item.id}
-                    isDisabled={isMutating}
-                    deleteTableItem={deleteTransaction}
-                  />
-                </div>
-              </TableCell>
+              {(columnKey) => {
+                if (columnKey === "actions") {
+                  return (
+                    <TableCell>
+                      <div className="flex flex-row justify-center">
+                        <DeleteTableItemButton
+                          itemId={item.id}
+                          isDisabled={isMutating}
+                          deleteTableItem={deleteTransaction}
+                        />
+                        <Button
+                          isIconOnly
+                          color="success"
+                          variant="light"
+                          className="self-center"
+                          aria-label="Confirm"
+                          onClick={() => onConfirm(item)}
+                        >
+                          <IconCheckCircle />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  );
+                }
+                return renderCell(columnKey, item);
+              }}
             </TableRow>
           )}
         </TableBody>
