@@ -6,7 +6,7 @@ import {
   ModalBody,
   ModalFooter,
 } from "@nextui-org/modal";
-import { Input } from "@nextui-org/input";
+import { Input, Textarea } from "@nextui-org/input";
 import { Button } from "@nextui-org/button";
 import { DatePicker } from "@nextui-org/date-picker";
 import { parseAbsoluteToLocal } from "@internationalized/date";
@@ -18,7 +18,7 @@ import {
   TransactionCategory,
   transactionCategoryOptions,
 } from "@/interfaces/transaction";
-import { IconLink } from "@/components/shared/icons";
+import { IconComment, IconLink } from "@/components/shared/icons";
 
 interface RecurringExpenseModalFormProps {
   item?: RecurringExpense;
@@ -34,6 +34,7 @@ export const RecurringExpenseModalForm: React.FC<
   const [validationError, setValidationError] = useState<string>("");
   const [descriptionInput, setDescriptionInput] = useState<string>("");
   const [paymentLinkInput, setPaymentLinkInput] = useState<string>();
+  const [notesInput, setNotesInput] = useState<string>();
   const [transactonCategoryInput, setTransactonCategoryInput] =
     useState<TransactionCategory>();
   const [frequencyInput, setFrequencyInput] = useState<Frequency>(
@@ -47,11 +48,12 @@ export const RecurringExpenseModalForm: React.FC<
   useEffect(() => {
     if (item) {
       setDescriptionInput(item.description);
-      setPaymentLinkInput(item.paymentLink);
       setTransactonCategoryInput(item.category);
       setFrequencyInput(item.frequency);
       setDueDateInput(item.dueDate);
       setAmountInput(item.amount);
+      setPaymentLinkInput(item.paymentLink);
+      setNotesInput(item.notes);
     }
   }, [item]);
 
@@ -62,11 +64,12 @@ export const RecurringExpenseModalForm: React.FC<
 
   const clearInputs = () => {
     setDescriptionInput("");
-    setPaymentLinkInput("");
     setTransactonCategoryInput(undefined);
     setFrequencyInput(Frequency.Monthly);
     setDueDateInput(undefined);
     setAmountInput(0);
+    setPaymentLinkInput("");
+    setNotesInput("");
   };
 
   const clearError = () => setValidationError("");
@@ -87,11 +90,12 @@ export const RecurringExpenseModalForm: React.FC<
     clearError();
     const payload: Omit<RecurringExpense, "id"> = {
       description: descriptionInput,
-      paymentLink: paymentLinkInput,
       frequency: frequencyInput,
       dueDate: dueDateInput!,
       amount: amountInput!,
       category: transactonCategoryInput,
+      paymentLink: paymentLinkInput,
+      notes: notesInput,
     };
     (item?.id
       ? updateConfig({ id: item.id, ...payload })
@@ -115,7 +119,7 @@ export const RecurringExpenseModalForm: React.FC<
           {(onClose) => (
             <>
               <ModalHeader className="flex flex-col gap-1">
-                Config Recurrent Expense
+                Recurrent Expense
               </ModalHeader>
               <ModalBody>
                 <Input
@@ -126,51 +130,65 @@ export const RecurringExpenseModalForm: React.FC<
                   value={descriptionInput}
                   onValueChange={setDescriptionInput}
                 />
-                <Autocomplete
-                  allowsCustomValue
-                  label="Category"
-                  variant="bordered"
-                  isRequired
-                  items={transactionCategoryOptions}
-                  selectedKey={transactonCategoryInput}
-                  onSelectionChange={(v) =>
-                    setTransactonCategoryInput(v as TransactionCategory)
-                  }
-                >
-                  {(item) => (
-                    <AutocompleteItem key={item.value}>
-                      {item.label}
-                    </AutocompleteItem>
-                  )}
-                </Autocomplete>
-                <FrequencyDropdown
-                  selectedFrequency={frequencyInput}
-                  onChange={setFrequencyInput}
-                />
-                <DatePicker
-                  label="Due date"
-                  variant="bordered"
-                  granularity="day"
-                  isRequired
-                  value={
-                    dueDateInput ? parseAbsoluteToLocal(dueDateInput) : null
-                  }
-                  onChange={(v) => setDueDateInput(v.toDate().toISOString())}
-                />
-                <Input
-                  label="Amount"
-                  variant="bordered"
-                  type="number"
-                  isRequired
-                  value={amountInput?.toString()}
-                  onValueChange={(v) => setAmountInput(parseFloat(v))}
-                />
+                <div className="flex gap-2">
+                  <Autocomplete
+                    allowsCustomValue
+                    label="Category"
+                    variant="bordered"
+                    isRequired
+                    items={transactionCategoryOptions}
+                    selectedKey={transactonCategoryInput}
+                    onSelectionChange={(v) =>
+                      setTransactonCategoryInput(v as TransactionCategory)
+                    }
+                  >
+                    {(item) => (
+                      <AutocompleteItem key={item.value}>
+                        {item.label}
+                      </AutocompleteItem>
+                    )}
+                  </Autocomplete>
+                  <div className="w-full">
+                    <FrequencyDropdown
+                      selectedFrequency={frequencyInput}
+                      onChange={setFrequencyInput}
+                    />
+                  </div>
+                </div>
+                <div className="flex gap-2">
+                  <DatePicker
+                    label="Due date"
+                    variant="bordered"
+                    granularity="day"
+                    isRequired
+                    value={
+                      dueDateInput ? parseAbsoluteToLocal(dueDateInput) : null
+                    }
+                    onChange={(v) => setDueDateInput(v.toDate().toISOString())}
+                  />
+                  <Input
+                    label="Amount"
+                    variant="bordered"
+                    type="number"
+                    isRequired
+                    value={amountInput?.toString()}
+                    onValueChange={(v) => setAmountInput(parseFloat(v))}
+                  />
+                </div>
                 <Input
                   label="Payment Link"
                   variant="bordered"
                   startContent={<IconLink />}
                   value={paymentLinkInput}
                   onValueChange={setPaymentLinkInput}
+                />
+                <Textarea
+                  label="Notes"
+                  placeholder="Enter your notes here"
+                  variant="bordered"
+                  startContent={<IconComment size={20} />}
+                  value={notesInput}
+                  onValueChange={setNotesInput}
                 />
               </ModalBody>
               <ModalFooter>

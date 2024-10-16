@@ -6,7 +6,7 @@ import { useIsMobile } from "@/hooks/useIsMobile";
 import { TableColumn } from "@/interfaces/global";
 import { TransactionTypeDecorator } from "@/components/TransactionTypeDecorator";
 import Link from "next/link";
-import { IconLink } from "@/components/shared/icons";
+import { IconComment, IconLink } from "@/components/shared/icons";
 
 const columnsDesktop: TableColumn[] = [
   {
@@ -55,11 +55,12 @@ const renderCellDesktop = (key: any, item: Transaction): JSX.Element => {
                 </Chip>
               )}
             </span>
+
             <span className="text-gray-400">{item.description}</span>
-            {item.paymentLink && (
-              <Link href={item.paymentLink} target="_blank">
-                <IconLink />
-              </Link>
+            {item.notes && (
+              <span onClick={() => navigator.clipboard.writeText(item.notes!)}>
+                <IconComment size={20} />
+              </span>
             )}
           </div>
         </TableCell>
@@ -68,10 +69,17 @@ const renderCellDesktop = (key: any, item: Transaction): JSX.Element => {
       return <TableCell>{formatDate(new Date(item.createdAt))}</TableCell>;
     case "amount":
       return (
-        <TableCell className="text-end">
-          <TransactionTypeDecorator type={item.type}>
-            {formatCurrency(item.amount)}
-          </TransactionTypeDecorator>
+        <TableCell>
+          <div className="flex flex-row items-center gap-2 justify-end">
+            {item.paymentLink && (
+              <Link href={item.paymentLink} target="_blank">
+                <IconLink />
+              </Link>
+            )}
+            <TransactionTypeDecorator type={item.type}>
+              {formatCurrency(item.amount)}
+            </TransactionTypeDecorator>
+          </div>
         </TableCell>
       );
     default:
@@ -85,12 +93,26 @@ const renderCellMobile = (key: any, item: Transaction): JSX.Element => {
       return (
         <TableCell>
           <div className="flex flex-col items-start gap-2">
-            <div>
+            <div className="flex flex-row items-center gap-2">
               <span>{item.description}</span>
+              {item.notes && (
+                <span
+                  onClick={() => navigator.clipboard.writeText(item.notes!)}
+                >
+                  <IconComment size={20} />
+                </span>
+              )}
             </div>
-            <span className="text-gray-400">
-              {formatDate(new Date(item.createdAt))}
-            </span>
+            <div className="flex flex-row items-center gap-2">
+              <span className="text-gray-400">
+                {formatDate(new Date(item.createdAt))}
+              </span>
+              {item.paymentLink && (
+                <Link href={item.paymentLink} target="_blank">
+                  <IconLink />
+                </Link>
+              )}
+            </div>
             <span className="text-end">
               <TransactionTypeDecorator type={item.type} size="sm">
                 {formatCurrency(item.amount)}

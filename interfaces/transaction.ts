@@ -26,6 +26,7 @@ export interface TransactionEntity {
   id: string;
   description: string;
   paymentLink?: string;
+  notes?: string;
   type: TransactionType;
   status: TransactionStatus;
   category?: TransactionCategory;

@@ -54,10 +54,11 @@ export async function GET(req: NextRequest) {
       type: TransactionType.EXPENSE,
       status: TransactionStatus.PENDING,
       description: recurringExpense.description,
-      paymentLink: recurringExpense.paymentLink,
       category: recurringExpense.category,
       amount: recurringExpense.amount,
       createdAt: Timestamp.fromDate(createdAt),
+      paymentLink: recurringExpense.paymentLink,
+      notes: recurringExpense.notes,
     };
 
     await db.collection(Collections.Transactions).add(transaction);
@@ -77,8 +78,9 @@ async function getRecurringExpenses(): Promise<RecurringExpense[]> {
       // amount: docData.amount,
       // category: docData.category,
       // description: docData.description,
-      // paymentLink: docData.paymentLink,
       // frequency: docData.frequency,
+      // paymentLink: docData.paymentLink,
+      // notes: docData.notes,
       dueDate: docData.dueDate.toDate().toISOString(),
     } as RecurringExpense;
   });

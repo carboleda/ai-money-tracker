@@ -43,7 +43,7 @@ export const FrequencyDropdown: React.FC<FrequencyDropdownProps> = ({
       <DropdownTrigger>
         <Button
           variant="bordered"
-          className="h-14"
+          className="h-14 w-full"
           style={{ justifyContent: "flex-start" }}
         >
           <div className="text-start mh-5">
