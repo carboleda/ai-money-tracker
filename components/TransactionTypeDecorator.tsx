@@ -13,19 +13,19 @@ export const TransactionTypeDecorator: React.FC<
 > = ({ type, size, children }) => {
   if (type === TransactionType.INCOME)
     return (
-      <Chip color="success" variant="flat" size={size}>
+      <Chip radius="sm" color="success" variant="flat" size={size}>
         {children}
       </Chip>
     );
   if (type === TransactionType.EXPENSE)
     return (
-      <Chip color="danger" variant="flat" size={size}>
+      <Chip radius="sm" color="danger" variant="flat" size={size}>
         {children}
       </Chip>
     );
   if (type === TransactionType.TRANSFER)
     return (
-      <Chip color="warning" variant="flat" size={size}>
+      <Chip radius="sm" color="warning" variant="flat" size={size}>
         {children}
       </Chip>
     );

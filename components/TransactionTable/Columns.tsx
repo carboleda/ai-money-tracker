@@ -4,14 +4,9 @@ import { Chip } from "@nextui-org/chip";
 import { TableCell } from "@nextui-org/table";
 import { TransactionTypeDecorator } from "../TransactionTypeDecorator";
 import { useIsMobile } from "@/hooks/useIsMobile";
+import { TableColumn } from "@/interfaces/global";
 
-interface Column {
-  key: string;
-  label: string;
-  className?: string;
-}
-
-const columnsDesktop: Column[] = [
+const columnsDesktop: TableColumn[] = [
   {
     key: "description",
     label: "DESCRIPTION",
@@ -32,7 +27,7 @@ const columnsDesktop: Column[] = [
   },
 ];
 
-const columnsMobile: Column[] = [
+const columnsMobile: TableColumn[] = [
   {
     key: "transaction",
     label: "TRANSACTION",
@@ -40,6 +35,7 @@ const columnsMobile: Column[] = [
   {
     key: "actions",
     label: "ACTIONS",
+    className: "text-center",
   },
 ];
 
