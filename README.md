@@ -23,6 +23,11 @@ Showcase the power of Gen AI by generating transactions entries from text inputs
 - [React SVG Icons](https://reactsvgicons.com/search)
 - [react-placeholder-typing](https://github.com/pashanitw/react-placeholder-typing/tree/master)
 - [Rate Limiting](https://vercel.com/guides/rate-limiting-edge-middleware-vercel-kv)
+- [Web Push Notifications]()
+    - [Get started with the Notifications API](https://web.dev/articles/codelab-notifications-get-started)
+    - [Common Notification Patterns](https://web-push-book.gauntface.com/common-notification-patterns/)
+    - [Send and receive push messages - Progressive Web App Trainings](https://www.youtube.com/watch?v=N9zpRvFRmj8)
+- [Build a PWA with Next.js and TypeScript](https://t-i-show.medium.com/build-a-pwa-with-next-js-and-typescript-94ead0e3e6f2)
 
 ## How to Use
 
