@@ -52,7 +52,7 @@ const renderCellDesktop = (key: any, item: RecurringExpense): JSX.Element => {
           <div className="flex flex-row items-center gap-2">
             <span>{item.description}</span>
             {item.category && (
-              <Chip radius="sm" variant="flat">
+              <Chip radius="sm" variant="flat" className="ml-2">
                 {item.category}
               </Chip>
             )}
@@ -87,9 +87,17 @@ const renderCellMobile = (key: any, item: RecurringExpense): JSX.Element => {
               {formatFrequency(item.frequency, item.dueDate)}
             </span>
             <span>
-              <TransactionTypeDecorator type={TransactionType.TRANSFER}>
+              <TransactionTypeDecorator
+                type={TransactionType.TRANSFER}
+                size="sm"
+              >
                 {formatCurrency(item.amount)}
               </TransactionTypeDecorator>
+              {item.category && (
+                <Chip radius="sm" variant="flat" size="sm" className="ml-2">
+                  {item.category}
+                </Chip>
+              )}
             </span>
           </div>
         </TableCell>

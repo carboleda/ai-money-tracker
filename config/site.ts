@@ -16,13 +16,13 @@ export const pages: Page[] = [
     showInNavMenuItems: true,
   },
   {
-    label: "Config Recurring Expenses",
+    label: "Recurring Expenses",
     href: "/recurring-expenses",
     showInNavItems: false,
     showInNavMenuItems: true,
   },
   {
-    label: "Manage Recurring Expenses",
+    label: "Pending Transactions",
     href: "/recurring-expenses/management",
     showInNavItems: false,
     showInNavMenuItems: true,
@@ -33,11 +33,11 @@ export const pages: Page[] = [
     showInNavMenuItems: false,
     navItems: [
       {
-        label: "Configuration",
+        label: "Configurations",
         href: "/recurring-expenses",
       },
       {
-        label: "Management",
+        label: "Pending Transactions",
         href: "/recurring-expenses/management",
       },
     ],

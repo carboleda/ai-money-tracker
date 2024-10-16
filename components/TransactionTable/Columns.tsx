@@ -84,14 +84,7 @@ const renderCellMobile = (key: any, item: Transaction): JSX.Element => {
         <TableCell>
           <div className="flex flex-col items-start gap-2">
             <div>
-              <span>
-                {item.sourceAccount}
-                {item.category && (
-                  <Chip radius="sm" variant="flat" size="sm" className="ml-2">
-                    {item.category}
-                  </Chip>
-                )}
-              </span>
+              <span>{item.sourceAccount}</span>
               {item.destinationAccount && (
                 <span> &#10141; {item.destinationAccount}</span>
               )}
@@ -104,6 +97,11 @@ const renderCellMobile = (key: any, item: Transaction): JSX.Element => {
               <TransactionTypeDecorator type={item.type} size="sm">
                 <span className="text-sm">{formatCurrency(item.amount)}</span>
               </TransactionTypeDecorator>
+              {item.category && (
+                <Chip radius="sm" variant="flat" size="sm" className="ml-2">
+                  {item.category}
+                </Chip>
+              )}
             </span>
           </div>
         </TableCell>
