@@ -4,7 +4,7 @@
   "description": "Your personal finance tracker powered by AI",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#ffffff",
+  "background_color": "#000000",
   "theme_color": "#000000",
   "icons": [
     {
