@@ -31,6 +31,13 @@ export const formatTimeDate = (date: Date) => dateTimeFormatter.format(date);
 
 export const formatDate = (date: Date) => dateFormatter.format(date);
 
+export const getMonthBounds = (date: Date) => {
+  const start = new Date(date.getFullYear(), date.getMonth(), 1);
+  const end = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+
+  return { start, end };
+};
+
 export const getMissingFieldsInPrompt = (inputText: string) => {
   const matches = [...inputText.matchAll(validationRegex)];
 

@@ -39,7 +39,7 @@ export const BankAccounDropdown: React.FC<BankAccounDropdownProps> = ({
         <Button
           variant="bordered"
           size="md"
-          className="w-full justify-start py-6 px-3 rounded-xl"
+          className="h-14 w-full justify-start py-6 px-3 rounded-xl"
         >
           <div className="text-start mh-5">
             <label className="text-xs text-default-600">{label}</label>

@@ -24,7 +24,7 @@ export const Navbar = () => {
         <div className="flex w-full">
           <NextLink className="flex justify-start items-center gap-3" href="/">
             <Image width={40} alt="App logo" src={siteConfig.icons.logo} />
-            <p className="font-bold text-inherit text-lg text-zinc-700">
+            <p className="font-bold text-inherit text-lg text-zinc-700 dark:text-zinc-200">
               {siteConfig.name}
             </p>
           </NextLink>

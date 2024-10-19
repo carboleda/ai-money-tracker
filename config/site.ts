@@ -18,14 +18,14 @@ export const pages: Page[] = [
     icon: HiCollection,
   },
   {
-    label: "Recurrent",
-    href: "/recurring-expenses",
-    icon: HiMiniArrowPathRoundedSquare,
-  },
-  {
     label: "Pending",
     href: "/recurring-expenses/management",
     icon: HiBell,
+  },
+  {
+    label: "Recurrent",
+    href: "/recurring-expenses",
+    icon: HiMiniArrowPathRoundedSquare,
   },
 ];
 

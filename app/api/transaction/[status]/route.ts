@@ -17,6 +17,8 @@ export async function GET(req: NextRequest, { params }: GetTransactionsParams) {
 
   let q = collectionRef
     .where("status", "==", params.status)
+    .where("createdAt", ">=", new Date(searchParams.get("start")!))
+    .where("createdAt", "<=", new Date(searchParams.get("end")!))
     .orderBy(
       "createdAt",
       params.status === TransactionStatus.PENDING ? "asc" : "desc"
