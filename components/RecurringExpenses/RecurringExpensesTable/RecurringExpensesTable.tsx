@@ -17,6 +17,7 @@ import { useState } from "react";
 import { DeleteTableItemButton } from "@/components/DeleteTableItemButton";
 import { useMutateRecurringExpenses } from "@/hooks/useMutateRecurrentExpense";
 import { useRenderCell } from "./Columns";
+import { HiOutlinePlusCircle } from "react-icons/hi";
 
 interface RecurringExpensesTableProps {
   isLoading: boolean;
@@ -48,7 +49,8 @@ export const RecurringExpensesTable: React.FC<RecurringExpensesTableProps> = ({
     <>
       <div className="flex w-full justify-end">
         <Button color="primary" onPress={() => setOpen(true)}>
-          Create
+          <HiOutlinePlusCircle className="text-lg" />
+          New expense
         </Button>
       </div>
       <Table isStriped isCompact aria-label="Recurring Expenses">
@@ -61,7 +63,7 @@ export const RecurringExpensesTable: React.FC<RecurringExpensesTableProps> = ({
         </TableHeader>
         <TableBody
           items={recurringExpenses}
-          emptyContent={"No recurring expenses to display."}
+          emptyContent={"No recurrent expenses to display."}
         >
           {(item) => (
             <TableRow key={item.id}>
