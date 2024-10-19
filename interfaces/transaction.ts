@@ -22,6 +22,13 @@ export enum TransactionStatus {
   COMPLETE = "complete",
 }
 
+export interface Summary {
+  totalIncomes: number;
+  totalExpenses: number;
+  totalPending: number;
+  totalBalance: number;
+}
+
 export interface TransactionEntity {
   id: string;
   description: string;
@@ -47,6 +54,7 @@ export interface Transaction extends Omit<TransactionEntity, "createdAt"> {
 export interface GetTransactionsResponse {
   accounts: { [key: string]: string };
   transactions: Transaction[];
+  summary: Summary;
 }
 
 export const transactionCategoryOptions = Object.entries(

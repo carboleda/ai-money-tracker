@@ -3,9 +3,12 @@ import { getAccountName } from "@/config/utils";
 import { Env } from "@/config/env";
 import { NextRequest, NextResponse } from "next/server";
 import {
+  GetTransactionsResponse,
+  Summary,
   Transaction,
   TransactionEntity,
   TransactionStatus,
+  TransactionType,
 } from "@/interfaces/transaction";
 
 type GetTransactionsParams = { params: { status: TransactionStatus } };
@@ -15,14 +18,16 @@ export async function GET(req: NextRequest, { params }: GetTransactionsParams) {
   const account = searchParams.get("acc");
   const collectionRef = db.collection(Collections.Transactions);
 
-  let q = collectionRef
-    .where("status", "==", params.status)
-    .where("createdAt", ">=", new Date(searchParams.get("start")!))
-    .where("createdAt", "<=", new Date(searchParams.get("end")!))
-    .orderBy(
-      "createdAt",
-      params.status === TransactionStatus.PENDING ? "asc" : "desc"
-    );
+  let q = collectionRef.orderBy(
+    "createdAt",
+    params.status === TransactionStatus.PENDING ? "asc" : "desc"
+  );
+
+  if (searchParams.has("start") && searchParams.has("end")) {
+    q = q
+      .where("createdAt", ">=", new Date(searchParams.get("start")!))
+      .where("createdAt", "<=", new Date(searchParams.get("end")!));
+  }
 
   if (account) {
     q = q.where("sourceAccount", "==", account);
@@ -42,5 +47,40 @@ export async function GET(req: NextRequest, { params }: GetTransactionsParams) {
     } as Transaction;
   });
 
-  return NextResponse.json({ accounts: Env.VALID_ACCOUNTS, transactions });
+  const summary = computeSummary(transactions);
+
+  return NextResponse.json({
+    accounts: Env.VALID_ACCOUNTS,
+    transactions: transactions.filter(
+      (transaction) => transaction.status === params.status
+    ),
+    summary,
+  } as GetTransactionsResponse);
+}
+
+function computeSummary(transactions: Transaction[]): Summary {
+  let totalIncomes = 0;
+  let totalExpenses = 0;
+  let totalPending = 0;
+
+  transactions.forEach((transaction) => {
+    if (transaction.status === TransactionStatus.PENDING) {
+      totalPending += transaction.amount;
+    }
+
+    if (transaction.type == TransactionType.EXPENSE) {
+      totalExpenses += transaction.amount;
+    } else {
+      totalIncomes += transaction.amount;
+    }
+  });
+
+  const totalBalance = totalIncomes - totalExpenses;
+
+  return {
+    totalIncomes,
+    totalExpenses,
+    totalPending,
+    totalBalance,
+  };
 }

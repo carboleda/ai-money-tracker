@@ -13,6 +13,7 @@ import { DateRangePicker } from "@nextui-org/date-picker";
 import { parseAbsoluteToLocal, ZonedDateTime } from "@internationalized/date";
 import { RangeValue } from "@react-types/shared";
 import { getMonthBounds } from "@/config/utils";
+import { SummaryPanel } from "@/components/SummaryPanel";
 
 export default function Transactions() {
   const currentMonthBounds = getMonthBounds(new Date());
@@ -31,10 +32,10 @@ export default function Transactions() {
 
   return (
     <section className="flex flex-col items-center justify-center gap-4">
-      <div className="flex flex-row w-full justify-start gap-2">
+      <div className="flex flex-col w-full justify-start items-start gap-2">
         <h1 className="page-title">All your transactions</h1>
+        <SummaryPanel summary={reesponse?.summary} />
       </div>
-      <TransactionInput />
 
       <div className="flex flex-row self-start gap-2">
         <DateRangePicker
@@ -51,6 +52,8 @@ export default function Transactions() {
           onChange={setSelectedAccount}
         />
       </div>
+
+      <TransactionInput />
 
       <TransactionTable
         transactions={reesponse?.transactions}

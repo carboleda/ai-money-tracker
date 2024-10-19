@@ -7,6 +7,7 @@ import {
   TransactionStatus,
 } from "@/interfaces/transaction";
 import { PendingTransactionTable } from "@/components/PendingTransaction";
+import { SummaryPanel } from "@/components/SummaryPanel";
 
 export default function PendingTransactions() {
   const { isLoading, data: reesponse } = useSWR<GetTransactionsResponse, Error>(
@@ -15,9 +16,14 @@ export default function PendingTransactions() {
 
   return (
     <section className="flex flex-col items-center justify-center gap-4">
-      <div className="flex flex-row w-full justify-start gap-2">
+      <div className="flex flex-col w-full justify-start items-start gap-2">
         <h1 className="page-title">Your pending transactions</h1>
+        <SummaryPanel summary={reesponse?.summary} />
       </div>
+
+      {/* <div className="flex flex-row w-full justify-start gap-2">
+        <h1 className="page-title">Your pending transactions</h1>
+      </div> */}
       <PendingTransactionTable
         transactions={reesponse?.transactions}
         accounts={reesponse?.accounts}

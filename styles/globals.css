@@ -4,6 +4,6 @@
 
 @layer components {
   .page-title {
-    @apply text-zinc-500 dark:text-zinc-400;
+    @apply text-zinc-500 dark:text-zinc-400 pb-2;
   }
 }

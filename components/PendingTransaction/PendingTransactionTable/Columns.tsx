@@ -1,5 +1,5 @@
 import { formatCurrency, formatDate } from "@/config/utils";
-import { Transaction } from "@/interfaces/transaction";
+import { Transaction, TransactionType } from "@/interfaces/transaction";
 import { Chip } from "@nextui-org/chip";
 import { TableCell } from "@nextui-org/table";
 import { useIsMobile } from "@/hooks/useIsMobile";
@@ -76,7 +76,7 @@ const renderCellDesktop = (key: any, item: Transaction): JSX.Element => {
                 <IconLink />
               </Link>
             )}
-            <TransactionTypeDecorator type={item.type}>
+            <TransactionTypeDecorator type={TransactionType.TRANSFER}>
               {formatCurrency(item.amount)}
             </TransactionTypeDecorator>
           </div>
@@ -114,7 +114,10 @@ const renderCellMobile = (key: any, item: Transaction): JSX.Element => {
               )}
             </div>
             <span className="text-end">
-              <TransactionTypeDecorator type={item.type} size="sm">
+              <TransactionTypeDecorator
+                type={TransactionType.TRANSFER}
+                size="sm"
+              >
                 {formatCurrency(item.amount)}
               </TransactionTypeDecorator>
               {item.category && (
