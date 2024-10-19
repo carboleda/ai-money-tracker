@@ -14,7 +14,7 @@ export default function RecurringExpenses() {
   return (
     <section className="flex flex-col items-center justify-center gap-4">
       <div className="flex flex-row w-full justify-start gap-2">
-        <h1 className="text-3xl font-bold">Recurring Expenses</h1>
+        <h1 className="page-title">Configure your recurrent expenses</h1>
       </div>
       <RecurringExpensesTable
         recurringExpenses={reesponse?.recurringExpensesConfig}

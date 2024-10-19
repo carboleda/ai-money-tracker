@@ -18,7 +18,7 @@ export const pages: Page[] = [
     icon: HiCollection,
   },
   {
-    label: "Recurring",
+    label: "Recurrent",
     href: "/recurring-expenses",
     icon: HiMiniArrowPathRoundedSquare,
   },
