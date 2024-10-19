@@ -205,6 +205,7 @@ export const RecurringExpenseModalForm: React.FC<
                 </Button>
                 <Button
                   color="primary"
+                  isLoading={isMutating}
                   disabled={areButtonsDisabled}
                   onPress={onSave}
                 >

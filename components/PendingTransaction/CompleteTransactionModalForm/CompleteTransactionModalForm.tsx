@@ -136,6 +136,7 @@ export const CompleteTransactionModalForm: React.FC<
                 </Button>
                 <Button
                   color="success"
+                  isLoading={isMutating}
                   disabled={areButtonsDisabled}
                   onPress={onSave}
                 >
