@@ -84,9 +84,11 @@ export const CompleteTransactionModalForm: React.FC<
   return (
     <>
       <Modal
+        placement="top-center"
+        backdrop="blur"
         isOpen={isOpen}
         onOpenChange={onOpenChangeHandler}
-        placement="top-center"
+        isDismissable={false}
       >
         <ModalContent>
           {(onClose) => (

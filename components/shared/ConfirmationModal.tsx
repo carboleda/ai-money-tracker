@@ -29,9 +29,11 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   return (
     <>
       <Modal
-        id="confirmatioon-modal"
+        id="confirmation-modal"
+        backdrop="blur"
         isOpen={isOpen}
         onOpenChange={() => onAction(Action.Cancel)}
+        isDismissable={false}
       >
         <ModalContent>
           {(onClose) => (

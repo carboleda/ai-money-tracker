@@ -111,9 +111,11 @@ export const RecurringExpenseModalForm: React.FC<
   return (
     <>
       <Modal
+        placement="top-center"
+        backdrop="blur"
         isOpen={isOpen}
         onOpenChange={onOpenChangeHandler}
-        placement="top-center"
+        isDismissable={false}
       >
         <ModalContent>
           {(onClose) => (
@@ -148,12 +150,15 @@ export const RecurringExpenseModalForm: React.FC<
                       </AutocompleteItem>
                     )}
                   </Autocomplete>
-                  <div className="w-full">
-                    <FrequencyDropdown
-                      selectedFrequency={frequencyInput}
-                      onChange={setFrequencyInput}
-                    />
-                  </div>
+
+                  <Input
+                    label="Amount"
+                    variant="bordered"
+                    type="number"
+                    isRequired
+                    value={amountInput?.toString()}
+                    onValueChange={(v) => setAmountInput(parseFloat(v))}
+                  />
                 </div>
                 <div className="flex gap-2">
                   <DatePicker
@@ -166,14 +171,12 @@ export const RecurringExpenseModalForm: React.FC<
                     }
                     onChange={(v) => setDueDateInput(v.toDate().toISOString())}
                   />
-                  <Input
-                    label="Amount"
-                    variant="bordered"
-                    type="number"
-                    isRequired
-                    value={amountInput?.toString()}
-                    onValueChange={(v) => setAmountInput(parseFloat(v))}
-                  />
+                  <div className="w-full">
+                    <FrequencyDropdown
+                      selectedFrequency={frequencyInput}
+                      onChange={setFrequencyInput}
+                    />
+                  </div>
                 </div>
                 <Input
                   label="Payment Link"
