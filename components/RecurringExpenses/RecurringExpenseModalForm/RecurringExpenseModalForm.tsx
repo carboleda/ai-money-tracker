@@ -9,7 +9,14 @@ import {
 import { Input, Textarea } from "@nextui-org/input";
 import { Button } from "@nextui-org/button";
 import { DatePicker } from "@nextui-org/date-picker";
-import { parseAbsoluteToLocal } from "@internationalized/date";
+import {
+  parseAbsoluteToLocal,
+  ZonedDateTime,
+  startOfMonth,
+  endOfMonth,
+  startOfYear,
+  endOfYear,
+} from "@internationalized/date";
 import { Frequency, RecurringExpense } from "@/interfaces/recurringExpense";
 import { FrequencyDropdown } from "@/components/FrequencyDropdown";
 import { useMutateRecurringExpenses } from "@/hooks/useMutateRecurrentExpense";
@@ -19,6 +26,7 @@ import {
   transactionCategoryOptions,
 } from "@/interfaces/transaction";
 import { IconComment, IconLink } from "@/components/shared/icons";
+import { Env } from "@/config/env";
 
 interface RecurringExpenseModalFormProps {
   item?: RecurringExpense;
@@ -40,22 +48,43 @@ export const RecurringExpenseModalForm: React.FC<
   const [frequencyInput, setFrequencyInput] = useState<Frequency>(
     Frequency.Monthly
   );
-  const [dueDateInput, setDueDateInput] = useState<string>();
   const [amountInput, setAmountInput] = useState<number>();
+  const [dueDateInput, setDueDateInput] = useState<ZonedDateTime>();
+  const [dueDateMinMax, setDueDateMinMax] = useState<{
+    min: ZonedDateTime;
+    max: ZonedDateTime;
+  }>();
 
   const areButtonsDisabled = isMutating || validationError !== "";
+  const fixedMonth = parseAbsoluteToLocal(
+    new Date(Env.FIXED_MONTH).toISOString()
+  );
 
   useEffect(() => {
     if (item) {
       setDescriptionInput(item.description);
       setTransactonCategoryInput(item.category);
       setFrequencyInput(item.frequency);
-      setDueDateInput(item.dueDate);
+      setDueDateInput(
+        item.dueDate ? parseAbsoluteToLocal(item.dueDate) : undefined
+      );
       setAmountInput(item.amount);
       setPaymentLinkInput(item.paymentLink);
       setNotesInput(item.notes);
     }
   }, [item]);
+
+  useEffect(() => {
+    if (frequencyInput === Frequency.Monthly) {
+      const min = startOfMonth(fixedMonth);
+      const max = endOfMonth(fixedMonth);
+      setDueDateMinMax({ min, max });
+    } else {
+      const min = startOfYear(fixedMonth);
+      const max = endOfYear(fixedMonth);
+      setDueDateMinMax({ min, max });
+    }
+  }, [frequencyInput, isOpen]);
 
   const onOpenChangeHandler = (_open: boolean) => {
     onDismiss();
@@ -78,7 +107,7 @@ export const RecurringExpenseModalForm: React.FC<
     if (
       descriptionInput === "" ||
       !transactonCategoryInput ||
-      dueDateInput === "" ||
+      !dueDateInput ||
       amountInput === 0
     ) {
       setValidationError(
@@ -91,7 +120,7 @@ export const RecurringExpenseModalForm: React.FC<
     const payload: Omit<RecurringExpense, "id"> = {
       description: descriptionInput,
       frequency: frequencyInput,
-      dueDate: dueDateInput!,
+      dueDate: dueDateInput.toDate().toISOString(),
       amount: amountInput!,
       category: transactonCategoryInput,
       paymentLink: paymentLinkInput,
@@ -161,22 +190,22 @@ export const RecurringExpenseModalForm: React.FC<
                   />
                 </div>
                 <div className="flex gap-2">
-                  <DatePicker
-                    label="Due date"
-                    variant="bordered"
-                    granularity="day"
-                    isRequired
-                    value={
-                      dueDateInput ? parseAbsoluteToLocal(dueDateInput) : null
-                    }
-                    onChange={(v) => setDueDateInput(v.toDate().toISOString())}
-                  />
                   <div className="w-full">
                     <FrequencyDropdown
                       selectedFrequency={frequencyInput}
                       onChange={setFrequencyInput}
                     />
                   </div>
+                  <DatePicker
+                    label="Due date"
+                    variant="bordered"
+                    granularity="day"
+                    minValue={dueDateMinMax?.min}
+                    maxValue={dueDateMinMax?.max}
+                    value={dueDateInput}
+                    onChange={(v) => setDueDateInput(v)}
+                    isRequired
+                  />
                 </div>
                 <Input
                   label="Payment Link"

@@ -8,6 +8,7 @@ export class Env {
   static EARLY_REMINDER_DAYS_AHEAD = parseInt(
     process.env.EARLY_REMINDER_DAYS_AHEAD || "1"
   );
+  static FIXED_MONTH = process.env.NEXT_PUBLIC_FIXED_MONTH || "2024-10-15";
 
   static FIREBASE_SERVICE_ACCOUNT = JSON.parse(
     process.env.FIREBASE_SERVICE_ACCOUNT || "{}"
