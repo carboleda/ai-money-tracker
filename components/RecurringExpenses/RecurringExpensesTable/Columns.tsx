@@ -4,7 +4,7 @@ import {
   formatTimeDate,
 } from "@/config/utils";
 import { Chip } from "@nextui-org/chip";
-import { TableCell } from "@nextui-org/table";
+import { TableCell, TableRow } from "@nextui-org/table";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { TableColumn } from "@/interfaces/global";
 import { TransactionTypeDecorator } from "@/components/TransactionTypeDecorator";
@@ -76,6 +76,25 @@ const renderCellDesktop = (key: any, item: RecurringExpense): JSX.Element => {
   }
 };
 
+const renderSeparatorDesktop = (
+  id: string,
+  colSpan: number,
+  title: string
+): JSX.Element => {
+  return (
+    <TableRow key={id}>
+      <TableCell colSpan={colSpan} className="text-center px-0">
+        <div className="py-3 my-3 font-bold text-zinc-200 bg-blue-600 rounded-md">
+          {title}
+        </div>
+      </TableCell>
+      <TableCell className="hidden">&nbsp;</TableCell>
+      <TableCell className="hidden">&nbsp;</TableCell>
+      <TableCell className="hidden">&nbsp;</TableCell>
+    </TableRow>
+  );
+};
+
 const renderCellMobile = (key: any, item: RecurringExpense): JSX.Element => {
   switch (key) {
     case "expense":
@@ -107,11 +126,31 @@ const renderCellMobile = (key: any, item: RecurringExpense): JSX.Element => {
   }
 };
 
+const renderSeparatorMobile = (
+  id: string,
+  colSpan: number,
+  title: string
+): JSX.Element => {
+  return (
+    <TableRow key={id}>
+      <TableCell colSpan={colSpan} className="text-center px-0">
+        <div className="py-3 my-3 font-bold text-zinc-200 bg-blue-600 rounded-md">
+          {title}
+        </div>
+      </TableCell>
+      <TableCell className="hidden">&nbsp;</TableCell>
+    </TableRow>
+  );
+};
+
 export const useRenderCell = () => {
   const isMobile = useIsMobile();
 
   const columns = isMobile ? columnsMobile : columnsDesktop;
   const renderCell = isMobile ? renderCellMobile : renderCellDesktop;
+  const renderSeparator = isMobile
+    ? renderSeparatorMobile
+    : renderSeparatorDesktop;
 
-  return { columns, renderCell };
+  return { columns, renderCell, renderSeparator };
 };

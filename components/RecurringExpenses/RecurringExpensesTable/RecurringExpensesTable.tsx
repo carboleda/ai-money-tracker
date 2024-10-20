@@ -31,7 +31,7 @@ export const RecurringExpensesTable: React.FC<RecurringExpensesTableProps> = ({
   const [selectedItem, setSelectedItem] = useState<RecurringExpense>();
   const [isOpen, setOpen] = useState(false);
   const { isMutating, deleteConfig } = useMutateRecurringExpenses();
-  const { columns, renderCell } = useRenderCell();
+  const { columns, renderCell, renderSeparator } = useRenderCell();
 
   const transactions = useMemo(() => {
     if (!recurringExpenses) return recurringExpenses;
@@ -88,20 +88,10 @@ export const RecurringExpensesTable: React.FC<RecurringExpensesTableProps> = ({
         >
           {(item) => {
             if (item.id === "others") {
-              return (
-                <TableRow key={item.id}>
-                  <TableCell
-                    colSpan={columns.length}
-                    className="text-center px-0"
-                  >
-                    <div className="py-3 my-3 font-bold text-zinc-200 bg-blue-600 rounded-md">
-                      OTHER FREQUENCIES
-                    </div>
-                  </TableCell>
-                  <TableCell className="hidden">&nbsp;</TableCell>
-                  <TableCell className="hidden">&nbsp;</TableCell>
-                  <TableCell className="hidden">&nbsp;</TableCell>
-                </TableRow>
+              return renderSeparator(
+                item.id,
+                columns.length,
+                "YEARLY / BIMONTHLY EXPENSES"
               );
             }
 
