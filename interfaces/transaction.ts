@@ -14,7 +14,10 @@ export enum TransactionCategory {
   Servicios = "Servicios",
   Transporte = "Transporte",
   Vivienda = "Vivienda",
+  Majo = "Majo",
   Zeus = "Zeus",
+  Ocio = "Ocio",
+  Impuesto = "Impuesto",
 }
 
 export enum TransactionStatus {

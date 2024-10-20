@@ -91,7 +91,7 @@ export const RecurringExpensesTable: React.FC<RecurringExpensesTableProps> = ({
               return renderSeparator(
                 item.id,
                 columns.length,
-                "YEARLY / BIMONTHLY EXPENSES"
+                "BIANNUAL AND YEARLY EXPENSES"
               );
             }
 

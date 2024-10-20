@@ -81,11 +81,12 @@ export const formatFrequency = (frequency: Frequency, dueDate: string) => {
     )} ${date.getDate()}${daySuffix}`;
   }
 
-  const months = computeBiannualDates(date)
-    .map((month) => monthFormatter.format(month))
+  const day = `${date.getDate()}${daySuffix}`;
+  const dates = computeBiannualDates(date)
+    .map((month) => `${monthFormatter.format(month)} ${day}`)
     .join(" and ");
 
-  return `Every 6 months at ${date.getDate()}${daySuffix} in ${months}`;
+  return `Every 6 months on ${dates}`;
 };
 
 export const dateDiffInDays = (date1: Date, date2: Date) => {

@@ -167,7 +167,7 @@ export const RecurringExpenseModalForm: React.FC<
                     label="Category"
                     variant="bordered"
                     isRequired
-                    items={transactionCategoryOptions}
+                    defaultItems={transactionCategoryOptions}
                     selectedKey={transactonCategoryInput}
                     onSelectionChange={(v) =>
                       setTransactonCategoryInput(v as TransactionCategory)
