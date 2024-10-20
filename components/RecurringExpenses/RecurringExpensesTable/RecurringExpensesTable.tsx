@@ -8,12 +8,12 @@ import {
   TableHeader,
   TableRow,
 } from "@nextui-org/table";
-import { RecurringExpense } from "@/interfaces/recurringExpense";
+import { Frequency, RecurringExpense } from "@/interfaces/recurringExpense";
 import { TableSkeleton } from "./TableSkeleton";
 import { Button } from "@nextui-org/button";
 import { IconEdit } from "@/components/shared/icons";
 import { RecurringExpenseModalForm } from "../RecurringExpenseModalForm/RecurringExpenseModalForm";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { DeleteTableItemButton } from "@/components/DeleteTableItemButton";
 import { useMutateRecurringExpenses } from "@/hooks/useMutateRecurrentExpense";
 import { useRenderCell } from "./Columns";
@@ -32,6 +32,22 @@ export const RecurringExpensesTable: React.FC<RecurringExpensesTableProps> = ({
   const [isOpen, setOpen] = useState(false);
   const { isMutating, deleteConfig } = useMutateRecurringExpenses();
   const { columns, renderCell } = useRenderCell();
+
+  const transactions = useMemo(() => {
+    if (!recurringExpenses) return recurringExpenses;
+
+    const { monthly = [], others = [] } = Object.groupBy(
+      recurringExpenses,
+      (expense) =>
+        expense.frequency == Frequency.Monthly ? "monthly" : "others"
+    );
+
+    return [
+      ...monthly,
+      { id: "others" } as unknown as RecurringExpense,
+      ...others,
+    ];
+  }, [recurringExpenses]);
 
   if (isLoading || !recurringExpenses) return <TableSkeleton />;
 
@@ -53,7 +69,12 @@ export const RecurringExpensesTable: React.FC<RecurringExpensesTableProps> = ({
           New expense
         </Button>
       </div>
-      <Table isStriped isCompact aria-label="Recurring Expenses">
+      <Table
+        isStriped
+        isCompact
+        aria-label="Recurrent Expenses"
+        disabledKeys={["others"]}
+      >
         <TableHeader columns={columns}>
           {(column) => (
             <TableColumn key={column.key} className={`${column.className}`}>
@@ -62,40 +83,60 @@ export const RecurringExpensesTable: React.FC<RecurringExpensesTableProps> = ({
           )}
         </TableHeader>
         <TableBody
-          items={recurringExpenses}
+          items={transactions}
           emptyContent={"No recurrent expenses to display."}
         >
-          {(item) => (
-            <TableRow key={item.id}>
-              {(columnKey) => {
-                if (columnKey === "actions") {
-                  return (
-                    <TableCell>
-                      <div className="text-center flex flex-row justify-center">
-                        <Button
-                          isIconOnly
-                          color="warning"
-                          variant="light"
-                          className="self-center"
-                          aria-label="Edit"
-                          onClick={() => onEdit(item)}
-                        >
-                          <IconEdit />
-                        </Button>
-                        <DeleteTableItemButton
-                          itemId={item.id}
-                          isDisabled={isMutating}
-                          deleteTableItem={deleteConfig}
-                        />
-                      </div>
-                    </TableCell>
-                  );
-                }
+          {(item) => {
+            if (item.id === "others") {
+              return (
+                <TableRow key={item.id}>
+                  <TableCell
+                    colSpan={columns.length}
+                    className="text-center px-0"
+                  >
+                    <div className="py-3 my-3 font-bold text-zinc-200 bg-blue-600 rounded-md">
+                      OTHER FREQUENCIES
+                    </div>
+                  </TableCell>
+                  <TableCell className="hidden">&nbsp;</TableCell>
+                  <TableCell className="hidden">&nbsp;</TableCell>
+                  <TableCell className="hidden">&nbsp;</TableCell>
+                </TableRow>
+              );
+            }
 
-                return renderCell(columnKey, item);
-              }}
-            </TableRow>
-          )}
+            return (
+              <TableRow key={item.id}>
+                {(columnKey) => {
+                  if (columnKey === "actions") {
+                    return (
+                      <TableCell>
+                        <div className="text-center flex flex-row justify-center">
+                          <Button
+                            isIconOnly
+                            color="warning"
+                            variant="light"
+                            className="self-center"
+                            aria-label="Edit"
+                            onClick={() => onEdit(item)}
+                          >
+                            <IconEdit />
+                          </Button>
+                          <DeleteTableItemButton
+                            itemId={item.id}
+                            isDisabled={isMutating}
+                            deleteTableItem={deleteConfig}
+                          />
+                        </div>
+                      </TableCell>
+                    );
+                  }
+
+                  return renderCell(columnKey, item);
+                }}
+              </TableRow>
+            );
+          }}
         </TableBody>
       </Table>
       <RecurringExpenseModalForm
