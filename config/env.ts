@@ -1,4 +1,5 @@
 export class Env {
+  // General environment variables
   static NODE_ENV = process.env.NODE_ENV;
   static VALID_ACCOUNTS = JSON.parse(
     process.env.VALID_ACCOUNTS || "{}"
@@ -8,23 +9,29 @@ export class Env {
   static EARLY_REMINDER_DAYS_AHEAD = parseInt(
     process.env.EARLY_REMINDER_DAYS_AHEAD || "1"
   );
-  static FIXED_MONTH = process.env.NEXT_PUBLIC_FIXED_MONTH || "2024-10-15";
-
   static FIREBASE_SERVICE_ACCOUNT = JSON.parse(
     process.env.FIREBASE_SERVICE_ACCOUNT || "{}"
   ) as Record<string, string>;
-  static NEXT_PUBLIC_FIREBASE_APP_CONFIG = JSON.parse(
-    process.env.NEXT_PUBLIC_FIREBASE_APP_CONFIG || "{}"
-  ) as Record<string, string>;
-  static NEXT_PUBLIC_FIREBASE_VAPID_KEY =
-    process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY || "";
+  static AUTH_COOKIE_SIGNATURE_KEYS = JSON.parse(
+    process.env.AUTH_COOKIE_SIGNATURE_KEYS || "[]"
+  );
 
+  // Gemini environment variables
   static GEMINI_API_KEY = process.env.GEMINI_API_KEY || "";
   static GEMINI_MODEL_NAME = process.env.GEMINI_MODEL_NAME || "";
   static PROMPT_TEMPLATE = (process.env.PROMPT_TEMPLATE || "").replace(
     /\\"/g,
     '"'
   );
+
+  // Public environment variables
+  static NEXT_PUBLIC_FIXED_MONTH =
+    process.env.NEXT_PUBLIC_FIXED_MONTH || "2024-10-15";
+  static NEXT_PUBLIC_FIREBASE_APP_CONFIG = JSON.parse(
+    process.env.NEXT_PUBLIC_FIREBASE_APP_CONFIG || "{}"
+  ) as Record<string, string>;
+  static NEXT_PUBLIC_FIREBASE_VAPID_KEY =
+    process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY || "";
 
   static isDev = ["development", "local"].includes(Env.NODE_ENV);
   static isServer = typeof window === "undefined";

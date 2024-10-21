@@ -57,7 +57,7 @@ export const RecurringExpenseModalForm: React.FC<
 
   const areButtonsDisabled = isMutating || validationError !== "";
   const fixedMonth = parseAbsoluteToLocal(
-    new Date(Env.FIXED_MONTH).toISOString()
+    new Date(Env.NEXT_PUBLIC_FIXED_MONTH).toISOString()
   );
 
   useEffect(() => {
