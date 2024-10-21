@@ -8,8 +8,9 @@ import {
 } from "@/interfaces/transaction";
 import { PendingTransactionTable } from "@/components/PendingTransaction";
 import { SummaryPanel } from "@/components/SummaryPanel";
+import { withAuth } from "@/app/withAuth";
 
-export default function PendingTransactions() {
+function PendingTransactions() {
   const { isLoading, data: reesponse } = useSWR<GetTransactionsResponse, Error>(
     `/api/transaction/${TransactionStatus.PENDING}`
   );
@@ -21,9 +22,6 @@ export default function PendingTransactions() {
         <SummaryPanel summary={reesponse?.summary} />
       </div>
 
-      {/* <div className="flex flex-row w-full justify-start gap-2">
-        <h1 className="page-title">Your pending transactions</h1>
-      </div> */}
       <PendingTransactionTable
         transactions={reesponse?.transactions}
         accounts={reesponse?.accounts}
@@ -32,3 +30,4 @@ export default function PendingTransactions() {
     </section>
   );
 }
+export default withAuth(PendingTransactions);

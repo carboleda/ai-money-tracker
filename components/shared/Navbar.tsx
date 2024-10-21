@@ -15,8 +15,6 @@ import {
   IconLinkedin,
 } from "@/components/shared/icons";
 
-import { TabsMenu } from "./TabsMenu";
-
 export const Navbar = () => {
   return (
     <div className="flex flex-col w-full gap-4 justify-between items-center mt-3">
@@ -72,7 +70,6 @@ export const Navbar = () => {
           <ThemeSwitch />
         </div>
       </div>
-      <TabsMenu />
     </div>
   );
 };

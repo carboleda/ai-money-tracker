@@ -4,8 +4,9 @@ import React from "react";
 import useSWR from "swr";
 import { RecurringExpensesTable } from "@/components/RecurringExpenses";
 import { GetRecurringExpensesResponse } from "@/interfaces/recurringExpense";
+import { withAuth } from "@/app/withAuth";
 
-export default function RecurringExpenses() {
+function RecurringExpenses() {
   const { isLoading, data: reesponse } = useSWR<
     GetRecurringExpensesResponse,
     Error
@@ -23,3 +24,5 @@ export default function RecurringExpenses() {
     </section>
   );
 }
+
+export default withAuth(RecurringExpenses);
