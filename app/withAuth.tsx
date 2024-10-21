@@ -3,7 +3,7 @@ import { TabsMenu } from "@/components/shared/TabsMenu";
 type ComponentProps = any;
 
 export function withAuth(Component: React.FC) {
-  return function (props: ComponentProps) {
+  return function withAuth(props: ComponentProps) {
     return (
       <div className="pt-2">
         <TabsMenu />

@@ -84,7 +84,7 @@ export const RecurringExpenseModalForm: React.FC<
       const max = endOfYear(fixedMonth);
       setDueDateMinMax({ min, max });
     }
-  }, [frequencyInput, isOpen]);
+  }, [frequencyInput, fixedMonth]);
 
   const onOpenChangeHandler = (_open: boolean) => {
     onDismiss();
