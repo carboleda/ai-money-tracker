@@ -61,11 +61,9 @@ export const Navbar = async () => {
           </div>
         </div>
 
-        <div className="flex items-center sm:hidden pl-4 justify-end gap-1">
-          <Link isExternal href={siteConfig.links.github} aria-label="Github">
-            <GithubIcon className="text-default-500" />
-          </Link>
+        <div className="flex items-center sm:hidden pl-4 justify-end gap-2">
           <ThemeSwitch />
+          <UserAvatar user={tokens?.decodedToken} />
         </div>
       </div>
     </div>

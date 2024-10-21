@@ -44,7 +44,14 @@ export const UserAvatar: React.FC<UserAvatarProps> = ({ user }) => {
     <>
       <Dropdown>
         <DropdownTrigger>
-          <Avatar isBordered color="primary" src={user?.picture} />
+          <Avatar
+            className="w-5 h-5 md:w-8 md:h-8"
+            color="primary"
+            src={user?.picture}
+            showFallback
+            name={user?.name?.charAt(0)}
+            isBordered
+          />
         </DropdownTrigger>
         <DropdownMenu
           aria-label="Profile Actions"
