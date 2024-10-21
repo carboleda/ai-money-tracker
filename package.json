@@ -12,6 +12,7 @@
   "dependencies": {
     "@google/generative-ai": "^0.8.0",
     "@nextui-org/autocomplete": "^2.1.5",
+    "@nextui-org/avatar": "^2.0.33",
     "@nextui-org/chip": "^2.0.32",
     "@nextui-org/code": "^2.0.32",
     "@nextui-org/date-picker": "^2.1.6",
@@ -44,6 +45,7 @@
     "firebase-admin": "^12.4.0",
     "framer-motion": "^11.5.4",
     "next": "14.2.8",
+    "next-firebase-auth-edge": "1.7.1",
     "next-themes": "^0.2.1",
     "postcss": "8.4.45",
     "react": "18.3.1",

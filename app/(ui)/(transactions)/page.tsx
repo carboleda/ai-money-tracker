@@ -14,8 +14,9 @@ import { parseAbsoluteToLocal, ZonedDateTime } from "@internationalized/date";
 import { RangeValue } from "@react-types/shared";
 import { getMonthBounds } from "@/config/utils";
 import { SummaryPanel } from "@/components/SummaryPanel";
+import { withAuth } from "@/app/withAuth";
 
-export default function Transactions() {
+function Transactions() {
   const currentMonthBounds = getMonthBounds(new Date());
   const [selectedAccount, setSelectedAccount] = useState<string>("");
   const [dateWithin, setDateWithin] = React.useState<RangeValue<ZonedDateTime>>(
@@ -62,3 +63,5 @@ export default function Transactions() {
     </section>
   );
 }
+
+export default withAuth(Transactions);
