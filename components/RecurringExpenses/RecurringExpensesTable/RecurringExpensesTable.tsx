@@ -12,17 +12,34 @@ import { Frequency, RecurringExpense } from "@/interfaces/recurringExpense";
 import { TableSkeleton } from "./TableSkeleton";
 import { Button } from "@nextui-org/button";
 import { IconEdit } from "@/components/shared/icons";
+import { HiOutlineSearch } from "react-icons/hi";
 import { RecurringExpenseModalForm } from "../RecurringExpenseModalForm/RecurringExpenseModalForm";
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { DeleteTableItemButton } from "@/components/DeleteTableItemButton";
 import { useMutateRecurringExpenses } from "@/hooks/useMutateRecurrentExpense";
 import { useRenderCell } from "./Columns";
 import { HiOutlinePlusCircle } from "react-icons/hi";
+import { Input } from "@nextui-org/input";
 
 interface RecurringExpensesTableProps {
   isLoading: boolean;
   recurringExpenses: RecurringExpense[] | undefined;
 }
+
+const groupByFrequency = (recurringExpenses: RecurringExpense[]) => {
+  const { monthly = [], others = [] } = Object.groupBy(
+    recurringExpenses,
+    (expense) => (expense.frequency == Frequency.Monthly ? "monthly" : "others")
+  );
+
+  const separator = { id: "others" } as unknown as RecurringExpense;
+
+  return [
+    ...monthly,
+    ...(monthly.length && others.length ? [separator] : []),
+    ...others,
+  ];
+};
 
 export const RecurringExpensesTable: React.FC<RecurringExpensesTableProps> = ({
   isLoading,
@@ -30,50 +47,83 @@ export const RecurringExpensesTable: React.FC<RecurringExpensesTableProps> = ({
 }) => {
   const [selectedItem, setSelectedItem] = useState<RecurringExpense>();
   const [isOpen, setOpen] = useState(false);
+  const [filterValue, setFilterValue] = useState("");
   const { isMutating, deleteConfig } = useMutateRecurringExpenses();
   const { columns, renderCell, renderSeparator } = useRenderCell();
 
   const transactions = useMemo(() => {
     if (!recurringExpenses) return recurringExpenses;
 
-    const { monthly = [], others = [] } = Object.groupBy(
-      recurringExpenses,
-      (expense) =>
-        expense.frequency == Frequency.Monthly ? "monthly" : "others"
-    );
+    let filteredRecurringExpenses = [...recurringExpenses];
 
-    return [
-      ...monthly,
-      { id: "others" } as unknown as RecurringExpense,
-      ...others,
-    ];
-  }, [recurringExpenses]);
+    if (filterValue) {
+      filteredRecurringExpenses = filteredRecurringExpenses.filter(
+        (expense) =>
+          expense.description
+            .toLowerCase()
+            .includes(filterValue.toLowerCase()) ||
+          expense.category.toLowerCase().includes(filterValue.toLowerCase())
+      );
+    }
+
+    return groupByFrequency(filteredRecurringExpenses);
+  }, [recurringExpenses, filterValue]);
+
+  const onDialogDismissed = useCallback(() => {
+    setSelectedItem(undefined);
+    setOpen(false);
+  }, []);
+
+  const onEdit = useCallback((item: RecurringExpense) => {
+    setSelectedItem(item);
+    setOpen(true);
+  }, []);
+
+  const onSearchChange = useCallback((value?: string) => {
+    if (value) {
+      setFilterValue(value);
+    } else {
+      setFilterValue("");
+    }
+  }, []);
+
+  const onClear = useCallback(() => {
+    setFilterValue("");
+  }, []);
+
+  const renderTopContent = () => (
+    <div className="flex flex-col gap-4">
+      <div className="flex justify-between gap-3 items-end">
+        <Input
+          isClearable
+          className="w-full sm:max-w-[44%]"
+          placeholder="Search by description..."
+          startContent={<HiOutlineSearch />}
+          value={filterValue}
+          onClear={() => onClear()}
+          onValueChange={onSearchChange}
+        />
+        <div className="flex w-full justify-end">
+          <Button color="primary" onPress={() => setOpen(true)}>
+            <HiOutlinePlusCircle className="text-lg" />
+            New expense
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
 
   if (isLoading || !recurringExpenses) return <TableSkeleton />;
 
-  const onDialogDismissed = () => {
-    setSelectedItem(undefined);
-    setOpen(false);
-  };
-
-  const onEdit = (item: RecurringExpense) => {
-    setSelectedItem(item);
-    setOpen(true);
-  };
-
   return (
     <>
-      <div className="flex w-full justify-end">
-        <Button color="primary" onPress={() => setOpen(true)}>
-          <HiOutlinePlusCircle className="text-lg" />
-          New expense
-        </Button>
-      </div>
       <Table
         isStriped
         isCompact
         aria-label="Recurrent Expenses"
         disabledKeys={["others"]}
+        topContentPlacement="outside"
+        topContent={renderTopContent()}
       >
         <TableHeader columns={columns}>
           {(column) => (
