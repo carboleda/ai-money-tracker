@@ -9,6 +9,8 @@ import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { FcGoogle } from "react-icons/fc";
 import { FirebaseError } from "firebase/app";
 import { Code } from "@nextui-org/code";
+import { Image } from "@nextui-org/image";
+import { siteConfig } from "@/config/site";
 
 function LoginPage() {
   const [errorMessage, setErrorMessage] = React.useState("");
@@ -55,9 +57,14 @@ function LoginPage() {
 
   return (
     <div className="flex flex-col h-full justify-center items-center">
-      <div className="w-full max-w-md p-8 dark:bg-zinc-900 shadow-lg rounded-lg">
-        <h1 className="text-2xl font-bold text-center mb-10">Sign In</h1>
-        <div className="flex flex-col gap-5 justify-center items-center">
+      <div className="flex flex-col items-center w-full max-w-md p-8 dark:bg-zinc-900 shadow-lg rounded-lg">
+        <div className="flex justify-center items-center gap-3">
+          <Image width={40} alt="App logo" src={siteConfig.icons.logo} />
+          <h1 className="text-2xl font-bold text-center">Sign In</h1>
+        </div>
+        <h4 className="text-zinc-400">Welcome to AI Money Track</h4>
+
+        <div className="flex flex-col gap-5 justify-center items-center mt-20">
           <Button
             onClick={onGoogleLogin}
             variant="flat"
