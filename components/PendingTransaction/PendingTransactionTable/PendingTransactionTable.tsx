@@ -56,7 +56,7 @@ export const PendingTransactionTable: React.FC<
         </TableHeader>
         <TableBody
           items={transactions}
-          emptyContent={"No transactions to display."}
+          emptyContent={"You're up to date, well done 👏!."}
         >
           {(item) => (
             <TableRow key={item.id}>
