@@ -23,6 +23,10 @@ export const Navbar = async () => {
     serviceAccount: Env.NEXT_PUBLIC_FIREBASE_APP_CONFIG as any,
   });
 
+  if (!tokens) {
+    return null;
+  }
+
   return (
     <div className="flex flex-col w-full gap-4 justify-between items-center mt-3">
       <div className="flex flex-row justify-between items-center w-full">
