@@ -31,6 +31,28 @@ function Transactions() {
     `/api/transaction/${TransactionStatus.COMPLETE}/?acc=${selectedAccount}&start=${dateWithinStart}&end=${dateWithinEnd}`
   );
 
+  const renderTopContent = () => (
+    <div className="flex flex-col gap-4">
+      <div className="flex justify-between gap-3 items-end">
+        <div className="flex flex-row self-start gap-2">
+          <DateRangePicker
+            label="Date within"
+            variant="bordered"
+            granularity="day"
+            isRequired
+            value={dateWithin}
+            onChange={setDateWithin}
+          />
+          <BankAccounDropdown
+            accounts={reesponse?.accounts}
+            label="Filter by account"
+            onChange={setSelectedAccount}
+          />
+        </div>
+      </div>
+    </div>
+  );
+
   return (
     <section className="flex flex-col items-center justify-center gap-4">
       <div className="flex flex-col w-full justify-start items-start gap-2">
@@ -38,27 +60,12 @@ function Transactions() {
         <SummaryPanel summary={reesponse?.summary} />
       </div>
 
-      <div className="flex flex-row self-start gap-2">
-        <DateRangePicker
-          label="Date within"
-          variant="bordered"
-          granularity="day"
-          isRequired
-          value={dateWithin}
-          onChange={setDateWithin}
-        />
-        <BankAccounDropdown
-          accounts={reesponse?.accounts}
-          label="Filter by account"
-          onChange={setSelectedAccount}
-        />
-      </div>
-
       <TransactionInput />
 
       <TransactionTable
         transactions={reesponse?.transactions}
         isLoading={isLoading}
+        topContent={renderTopContent()}
       />
     </section>
   );

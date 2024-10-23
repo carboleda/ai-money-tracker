@@ -16,11 +16,13 @@ import { useRenderCell } from "./Columns";
 
 interface TranactionTableProps {
   isLoading: boolean;
+  topContent?: React.ReactNode;
   transactions: Transaction[] | undefined;
 }
 
 export const TransactionTable: React.FC<TranactionTableProps> = ({
   isLoading,
+  topContent,
   transactions,
 }) => {
   const { isMutating, deleteTransaction } = useMutateTransaction();
@@ -30,7 +32,13 @@ export const TransactionTable: React.FC<TranactionTableProps> = ({
 
   return (
     <>
-      <Table isStriped isCompact aria-label="Transactions">
+      <Table
+        isStriped
+        isCompact
+        aria-label="Transactions"
+        topContentPlacement="outside"
+        topContent={topContent}
+      >
         <TableHeader columns={columns}>
           {(column) => (
             <TableColumn key={column.key} className={`${column.className}`}>
