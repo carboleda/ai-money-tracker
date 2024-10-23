@@ -10,7 +10,7 @@ import {
 } from "@nextui-org/dropdown";
 import { signOut } from "firebase/auth";
 import { useRouter } from "next/navigation";
-import React, { Key } from "react";
+import React, { Key, useTransition } from "react";
 
 interface UserAvatarProps {
   user?: {
@@ -21,6 +21,7 @@ interface UserAvatarProps {
 
 export const UserAvatar: React.FC<UserAvatarProps> = ({ user }) => {
   const router = useRouter();
+  const [_, startTransition] = useTransition();
 
   const onAction = (key: Key) => {
     if (key === "signOut") {
@@ -34,6 +35,12 @@ export const UserAvatar: React.FC<UserAvatarProps> = ({ user }) => {
     await fetch("/api/logout");
 
     router.push("/login");
+
+    startTransition(() => {
+      // Refresh the current route and fetch new data from the server without
+      // losing client-side browser or React state.
+      router.refresh();
+    });
   };
 
   if (!user) {
@@ -45,7 +52,7 @@ export const UserAvatar: React.FC<UserAvatarProps> = ({ user }) => {
       <Dropdown>
         <DropdownTrigger>
           <Avatar
-            className="w-5 h-5 md:w-8 md:h-8"
+            className="w-9 h-9"
             color="primary"
             src={user?.picture}
             showFallback
