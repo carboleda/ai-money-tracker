@@ -7,6 +7,7 @@ import { TableColumn } from "@/interfaces/global";
 import { TransactionTypeDecorator } from "@/components/TransactionTypeDecorator";
 import Link from "next/link";
 import { IconComment, IconLink } from "@/components/shared/icons";
+import { NotePopover } from "@/components/NotePopover";
 
 const columnsDesktop: TableColumn[] = [
   {
@@ -57,11 +58,7 @@ const renderCellDesktop = (key: any, item: Transaction): JSX.Element => {
             </span>
 
             <span className="text-gray-400">{item.description}</span>
-            {item.notes && (
-              <span onClick={() => navigator.clipboard.writeText(item.notes!)}>
-                <IconComment size={20} />
-              </span>
-            )}
+            {item.notes && <NotePopover content={item.notes} />}
           </div>
         </TableCell>
       );
@@ -95,13 +92,7 @@ const renderCellMobile = (key: any, item: Transaction): JSX.Element => {
           <div className="flex flex-col items-start gap-2">
             <div className="flex flex-row items-center gap-2">
               <span>{item.description}</span>
-              {item.notes && (
-                <span
-                  onClick={() => navigator.clipboard.writeText(item.notes!)}
-                >
-                  <IconComment size={20} />
-                </span>
-              )}
+              {item.notes && <NotePopover content={item.notes} />}
             </div>
             <div className="flex flex-row items-center gap-2">
               <span className="text-gray-400">
