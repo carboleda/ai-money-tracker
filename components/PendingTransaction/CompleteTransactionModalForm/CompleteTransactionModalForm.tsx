@@ -9,7 +9,7 @@ import {
 import { Input } from "@nextui-org/input";
 import { Button } from "@nextui-org/button";
 import { DatePicker } from "@nextui-org/date-picker";
-import { parseAbsoluteToLocal } from "@internationalized/date";
+import { parseAbsoluteToLocal, ZonedDateTime } from "@internationalized/date";
 import { Transaction, TransactionStatus } from "@/interfaces/transaction";
 import { BankAccounDropdown } from "@/components/BankAccounsDropdown";
 import { useMutateTransaction } from "@/hooks/useMutateTransaction";
@@ -27,14 +27,17 @@ export const CompleteTransactionModalForm: React.FC<
   const { isMutating, updateTransaction } = useMutateTransaction();
   const [validationError, setValidationError] = useState<string>("");
   const [selectedAccount, setSelectedAccount] = useState<string>("");
-  const [paymentDateInput, setPaymentDateInput] = useState<string>();
+  const [paymentDateInput, setPaymentDateInput] =
+    useState<ZonedDateTime | null>();
   const [amountInput, setAmountInput] = useState<number>();
 
   const areButtonsDisabled = isMutating || validationError !== "";
 
   useEffect(() => {
     if (item) {
-      setPaymentDateInput(item.createdAt);
+      setPaymentDateInput(
+        item.createdAt ? parseAbsoluteToLocal(item.createdAt) : null
+      );
       setAmountInput(item.amount);
     }
   }, [item]);
@@ -51,13 +54,8 @@ export const CompleteTransactionModalForm: React.FC<
   };
 
   const clearError = () => setValidationError("");
-
   const onSave = () => {
-    if (
-      selectedAccount === "" ||
-      paymentDateInput === "" ||
-      amountInput === 0
-    ) {
+    if (selectedAccount === "" || !paymentDateInput || amountInput === 0) {
       setValidationError(
         "Filled all the required fields. Please fill them out."
       );
@@ -65,11 +63,22 @@ export const CompleteTransactionModalForm: React.FC<
     }
 
     clearError();
+
+    const now = new Date();
+    const createdAt = paymentDateInput
+      .set({
+        hour: now.getHours(),
+        minute: now.getMinutes(),
+        second: now.getSeconds(),
+      })
+      .toDate()
+      .toISOString();
+
     const payload: Transaction = {
       ...item!,
       sourceAccount: selectedAccount,
       amount: amountInput!,
-      createdAt: paymentDateInput!,
+      createdAt,
       status: TransactionStatus.COMPLETE,
     };
 
@@ -94,7 +103,10 @@ export const CompleteTransactionModalForm: React.FC<
           {(onClose) => (
             <>
               <ModalHeader className="flex flex-col gap-1">
-                Complete transaction
+                <span>Complete transaction</span>
+                <span className="text-sm font-normal subtitle">
+                  {item?.description}
+                </span>
               </ModalHeader>
               <ModalBody>
                 <div className="self-start w-full">
@@ -115,15 +127,12 @@ export const CompleteTransactionModalForm: React.FC<
                   label="Paid on"
                   variant="bordered"
                   granularity="day"
-                  value={
-                    paymentDateInput
-                      ? parseAbsoluteToLocal(paymentDateInput)
-                      : null
-                  }
-                  onChange={(v) =>
-                    setPaymentDateInput(v.toDate().toISOString())
-                  }
+                  value={paymentDateInput}
+                  onChange={setPaymentDateInput}
                 />
+                <span className="text-red-500 text-center">
+                  {validationError}
+                </span>
               </ModalBody>
               <ModalFooter>
                 <Button

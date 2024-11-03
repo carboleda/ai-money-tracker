@@ -3,8 +3,7 @@
 import { Input } from "@nextui-org/input";
 import { Spinner } from "@nextui-org/spinner";
 import { IconBrain } from "./shared/icons";
-import { useState } from "react";
-import { KeyboardEvent } from "@react-types/shared";
+import { FormEvent, useState } from "react";
 import { usePlaceholderAnimation } from "@/hooks/usePlaceholderAnimation";
 import { useMutateTransaction } from "@/hooks/useMutateTransaction";
 import { siteConfig } from "@/config/site";
@@ -19,8 +18,11 @@ export const TransactionInput = () => {
   const clearInput = () => setInputText("");
   const clearError = () => setValidationError("");
 
-  const onCreateTransaction = (e: KeyboardEvent) => {
-    if (e.key === "Enter" && inputText) {
+  const onCreateTransaction = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (inputText) {
       const missinFields = getMissingFieldsInPrompt(inputText);
       if (missinFields.length) {
         setValidationError(
@@ -37,28 +39,29 @@ export const TransactionInput = () => {
   };
 
   return (
-    <Input
-      aria-label="Create transaction"
-      labelPlacement="outside"
-      type="text"
-      size="lg"
-      isClearable
-      placeholder={placeholder}
-      value={inputText}
-      readOnly={isMutating}
-      classNames={{
-        inputWrapper: "bg-default-100",
-        input: "input-placeholder-animation text-sm",
-      }}
-      startContent={
-        <IconBrain className="text-base text-default-400 pointer-events-none flex-shrink-0" />
-      }
-      endContent={isMutating && <Spinner size="sm" />}
-      onValueChange={setInputText}
-      onClear={clearError}
-      onKeyDown={onCreateTransaction}
-      isInvalid={!!validationError}
-      errorMessage={validationError}
-    />
+    <form className="w-full" onSubmit={onCreateTransaction}>
+      <Input
+        aria-label="Create transaction"
+        labelPlacement="outside"
+        type="text"
+        size="lg"
+        isClearable
+        placeholder={placeholder}
+        value={inputText}
+        readOnly={isMutating}
+        classNames={{
+          inputWrapper: "bg-default-100",
+          input: "input-placeholder-animation text-sm",
+        }}
+        startContent={
+          <IconBrain className="text-base text-default-400 pointer-events-none flex-shrink-0" />
+        }
+        endContent={isMutating && <Spinner size="sm" />}
+        onValueChange={setInputText}
+        onClear={clearError}
+        isInvalid={!!validationError}
+        errorMessage={validationError}
+      />
+    </form>
   );
 };

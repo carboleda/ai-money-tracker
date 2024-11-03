@@ -66,12 +66,13 @@ function computeSummary(transactions: Transaction[]): Summary {
   transactions.forEach((transaction) => {
     if (transaction.status === TransactionStatus.PENDING) {
       totalPending += transaction.amount;
+      return;
     }
 
-    if (transaction.type == TransactionType.EXPENSE) {
-      totalExpenses += transaction.amount;
-    } else {
+    if (transaction.type == TransactionType.INCOME) {
       totalIncomes += transaction.amount;
+    } else {
+      totalExpenses += transaction.amount;
     }
   });
 
