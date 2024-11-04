@@ -23,7 +23,7 @@ function PendingTransactions() {
       </div>
 
       <PendingTransactionTable
-        transactions={reesponse?.transactions}
+        pendingTransactions={reesponse?.transactions}
         accounts={reesponse?.accounts}
         isLoading={isLoading}
       />

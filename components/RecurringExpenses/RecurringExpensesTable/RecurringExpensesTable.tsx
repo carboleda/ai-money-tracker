@@ -80,11 +80,7 @@ export const RecurringExpensesTable: React.FC<RecurringExpensesTableProps> = ({
   }, []);
 
   const onSearchChange = useCallback((value?: string) => {
-    if (value) {
-      setFilterValue(value);
-    } else {
-      setFilterValue("");
-    }
+    setFilterValue(value || "");
   }, []);
 
   const onClear = useCallback(() => {

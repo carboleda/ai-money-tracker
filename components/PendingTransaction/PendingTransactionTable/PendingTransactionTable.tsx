@@ -14,39 +14,91 @@ import { useMutateTransaction } from "@/hooks/useMutateTransaction";
 import { DeleteTableItemButton } from "../../DeleteTableItemButton";
 import { Button } from "@nextui-org/button";
 import { CompleteTransactionModalForm } from "../CompleteTransactionModalForm/CompleteTransactionModalForm";
-import { useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { IconCheckCircle } from "@/components/shared/icons";
 import { useRenderCell } from "./Columns";
+import { Input } from "@nextui-org/input";
+import { HiOutlineSearch } from "react-icons/hi";
 
 interface PendingTransactionTableProps {
   isLoading: boolean;
-  transactions: Transaction[] | undefined;
+  pendingTransactions: Transaction[] | undefined;
   accounts?: { [key: string]: string };
 }
 
 export const PendingTransactionTable: React.FC<
   PendingTransactionTableProps
-> = ({ isLoading, transactions, accounts }) => {
+> = ({ isLoading, pendingTransactions, accounts }) => {
   const [selectedItem, setSelectedItem] = useState<Transaction>();
   const [isOpen, setOpen] = useState(false);
+  const [filterValue, setFilterValue] = useState("");
   const { isMutating, deleteTransaction } = useMutateTransaction();
   const { columns, renderCell } = useRenderCell();
 
-  if (isLoading || !transactions) return <TableSkeleton />;
+  const transactions = useMemo(() => {
+    if (!pendingTransactions) return pendingTransactions;
 
-  const onConfirm = (item: Transaction) => {
+    let filteredPendingTransations = [...pendingTransactions];
+
+    if (filterValue) {
+      filteredPendingTransations = filteredPendingTransations.filter(
+        (transaction) =>
+          transaction.description
+            .toLowerCase()
+            .includes(filterValue.toLowerCase()) ||
+          transaction.category
+            ?.toLowerCase()
+            .includes(filterValue.toLowerCase())
+      );
+    }
+
+    return filteredPendingTransations;
+  }, [pendingTransactions, filterValue]);
+
+  const onConfirm = useCallback((item: Transaction) => {
     setSelectedItem(item);
     setOpen(true);
-  };
+  }, []);
 
-  const onDialogDismissed = () => {
+  const onDialogDismissed = useCallback(() => {
     setSelectedItem(undefined);
     setOpen(false);
-  };
+  }, []);
+
+  const onSearchChange = useCallback((value?: string) => {
+    setFilterValue(value || "");
+  }, []);
+
+  const onClear = useCallback(() => {
+    setFilterValue("");
+  }, []);
+
+  const renderTopContent = () => (
+    <div className="flex flex-col gap-4">
+      <div className="flex justify-between gap-3 items-end">
+        <Input
+          isClearable
+          className="w-full sm:max-w-[44%]"
+          placeholder="Search by description..."
+          startContent={<HiOutlineSearch />}
+          value={filterValue}
+          onClear={() => onClear()}
+          onValueChange={onSearchChange}
+        />
+      </div>
+    </div>
+  );
+
+  if (isLoading || !transactions) return <TableSkeleton />;
 
   return (
     <>
-      <Table isStriped isCompact aria-label="Pending Transactions">
+      <Table
+        isStriped
+        isCompact
+        aria-label="Pending Transactions"
+        topContent={renderTopContent()}
+      >
         <TableHeader columns={columns}>
           {(column) => (
             <TableColumn key={column.key} className={`${column.className}`}>
