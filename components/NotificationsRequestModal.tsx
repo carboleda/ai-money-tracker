@@ -1,10 +1,14 @@
+"use client";
+
 import { useDisclosure } from "@nextui-org/modal";
-import { useEffect } from "react";
+import { Checkbox } from "@nextui-org/checkbox";
+import { useEffect, useRef } from "react";
 import { Env } from "@/config/env";
 import { getMessaging, getToken } from "firebase/messaging";
 import { FirebaseApp } from "firebase/app";
 import { useMutateUser } from "@/hooks/useMutateUser";
 import { Action, ConfirmationModal } from "./shared/ConfirmationModal";
+import { useLocalStorage } from "@/hooks/useLocalStorage";
 
 interface NotificationRequestModalProps {
   firebaseApp?: FirebaseApp;
@@ -16,19 +20,28 @@ export const NotificationRequestModal: React.FC<
 > = ({ firebaseApp, onPermissionGranted }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { updateUser } = useMutateUser();
+  const doNotAskAgainCheckox = useRef<HTMLInputElement>(null);
+  const [doNotAskAgain, setDoNotAskAgain] = useLocalStorage(
+    "doNotAskAgain",
+    false
+  );
   const permission = Env.isServer ? "granted" : Notification.permission;
 
   useEffect(() => {
-    if (permission !== "granted") {
+    if (permission !== "granted" && !doNotAskAgain) {
       onOpen();
     }
-  }, [permission, onOpen]);
+  }, [permission, doNotAskAgain, onOpen]);
 
   const onAction = async (action: Action) => {
     try {
       onClose();
 
       if (action !== Action.Yes) {
+        setDoNotAskAgain(doNotAskAgainCheckox.current?.checked!);
+        if (doNotAskAgainCheckox.current?.checked) {
+          location.reload();
+        }
         return;
       }
 
@@ -54,7 +67,7 @@ export const NotificationRequestModal: React.FC<
   return (
     <>
       <ConfirmationModal
-        title="Money Track wants to keep you informed! 🔔"
+        title="Money Tracker wants to keep you informed! 🔔"
         isOpen={isOpen}
         onAction={onAction}
       >
@@ -68,6 +81,8 @@ export const NotificationRequestModal: React.FC<
           <li>◦ Receive timely reminders for bills and payments.</li>
           <li>◦ Never miss a payment or an opportunity to save again!.</li>
         </ul>
+
+        <Checkbox ref={doNotAskAgainCheckox}>Don&apos;t ask again</Checkbox>
       </ConfirmationModal>
     </>
   );

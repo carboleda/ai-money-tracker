@@ -1,6 +1,7 @@
 "use client";
 
 import { auth } from "@/firebase/client/auth";
+import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { Avatar } from "@nextui-org/avatar";
 import {
   Dropdown,
@@ -11,6 +12,8 @@ import {
 import { signOut } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import React, { Key, useTransition } from "react";
+import { HiBell } from "react-icons/hi";
+import { HiArrowRightEndOnRectangle } from "react-icons/hi2";
 
 interface UserAvatarProps {
   user?: {
@@ -22,10 +25,17 @@ interface UserAvatarProps {
 export const UserAvatar: React.FC<UserAvatarProps> = ({ user }) => {
   const router = useRouter();
   const [_, startTransition] = useTransition();
+  const [doNotAskAgain, setDoNotAskAgain] = useLocalStorage(
+    "doNotAskAgain",
+    false
+  );
 
   const onAction = (key: Key) => {
     if (key === "signOut") {
       onSignOut();
+    } else if (key === "notifications") {
+      setDoNotAskAgain(false);
+      location.reload();
     }
   };
 
@@ -49,14 +59,14 @@ export const UserAvatar: React.FC<UserAvatarProps> = ({ user }) => {
 
   return (
     <>
-      <Dropdown>
+      <Dropdown showArrow={true}>
         <DropdownTrigger>
           <Avatar
             className="w-9 h-9"
             color="primary"
             src={user?.picture}
-            showFallback
             name={user?.name?.charAt(0)}
+            showFallback
             isBordered
           />
         </DropdownTrigger>
@@ -66,7 +76,17 @@ export const UserAvatar: React.FC<UserAvatarProps> = ({ user }) => {
           disabledKeys={["name"]}
         >
           <DropdownItem key="name">{user?.name}</DropdownItem>
-          <DropdownItem key="signOut">Sign Out</DropdownItem>
+          {doNotAskAgain && (
+            <DropdownItem key="notifications" startContent={<HiBell />}>
+              Enable Push Notifications
+            </DropdownItem>
+          )}
+          <DropdownItem
+            key="signOut"
+            startContent={<HiArrowRightEndOnRectangle />}
+          >
+            Sign Out
+          </DropdownItem>
         </DropdownMenu>
       </Dropdown>
     </>
