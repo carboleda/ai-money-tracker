@@ -24,6 +24,7 @@ Showcase the power of Gen AI by generating transactions entries from text inputs
 - [react-icons - Heroicons](https://react-icons.github.io/react-icons)
 - [react-placeholder-typing](https://github.com/pashanitw/react-placeholder-typing/tree/master)
 - [Rate Limiting](https://vercel.com/guides/rate-limiting-edge-middleware-vercel-kv)
+- [Currency formater](https://s-yadav.github.io/react-number-format/docs/numeric_format)
 - [Web Push Notifications]()
     - [Get started with the Notifications API](https://web.dev/articles/codelab-notifications-get-started)
     - [Common Notification Patterns](https://web-push-book.gauntface.com/common-notification-patterns/)

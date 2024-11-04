@@ -27,6 +27,11 @@ import {
 } from "@/interfaces/transaction";
 import { IconComment, IconLink } from "@/components/shared/icons";
 import { Env } from "@/config/env";
+import { MaskedCurrencyInput } from "@/components/shared/MaskedCurrencyInput";
+
+const fixedMonth = parseAbsoluteToLocal(
+  new Date(Env.NEXT_PUBLIC_FIXED_MONTH).toISOString()
+);
 
 interface RecurringExpenseModalFormProps {
   item?: RecurringExpense;
@@ -56,9 +61,6 @@ export const RecurringExpenseModalForm: React.FC<
   }>();
 
   const areButtonsDisabled = isMutating || validationError !== "";
-  const fixedMonth = parseAbsoluteToLocal(
-    new Date(Env.NEXT_PUBLIC_FIXED_MONTH).toISOString()
-  );
 
   useEffect(() => {
     if (item) {
@@ -88,7 +90,7 @@ export const RecurringExpenseModalForm: React.FC<
       const max = endOfYear(fixedMonth);
       setDueDateMinMax({ min, max });
     }
-  }, [item, frequencyInput, fixedMonth]);
+  }, [item, frequencyInput]);
 
   const onOpenChangeHandler = (_open: boolean) => {
     onDismiss();
@@ -184,13 +186,13 @@ export const RecurringExpenseModalForm: React.FC<
                     )}
                   </Autocomplete>
 
-                  <Input
+                  <MaskedCurrencyInput
                     label="Amount"
                     variant="bordered"
-                    type="number"
+                    type="text"
                     isRequired
                     value={amountInput?.toString()}
-                    onValueChange={(v) => setAmountInput(parseFloat(v))}
+                    onValueChange={(v) => setAmountInput(v.floatValue)}
                   />
                 </div>
                 <div className="flex gap-2">

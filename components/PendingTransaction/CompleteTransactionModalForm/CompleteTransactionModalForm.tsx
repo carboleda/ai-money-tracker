@@ -6,13 +6,13 @@ import {
   ModalBody,
   ModalFooter,
 } from "@nextui-org/modal";
-import { Input } from "@nextui-org/input";
 import { Button } from "@nextui-org/button";
 import { DatePicker } from "@nextui-org/date-picker";
 import { parseAbsoluteToLocal, ZonedDateTime } from "@internationalized/date";
 import { Transaction, TransactionStatus } from "@/interfaces/transaction";
 import { BankAccounDropdown } from "@/components/BankAccounsDropdown";
 import { useMutateTransaction } from "@/hooks/useMutateTransaction";
+import { MaskedCurrencyInput } from "@/components/shared/MaskedCurrencyInput";
 
 interface CompleteTransactionModalFormProps {
   item?: Transaction;
@@ -116,12 +116,12 @@ export const CompleteTransactionModalForm: React.FC<
                     onChange={setSelectedAccount}
                   />
                 </div>
-                <Input
+                <MaskedCurrencyInput
                   label="Amount"
                   variant="bordered"
-                  type="number"
+                  type="text"
                   value={amountInput?.toString()}
-                  onValueChange={(v) => setAmountInput(parseFloat(v))}
+                  onValueChange={(v) => setAmountInput(v.floatValue)}
                 />
                 <DatePicker
                   label="Paid on"
