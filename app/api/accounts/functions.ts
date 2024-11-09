@@ -3,59 +3,70 @@ import { TransactionEntity, TransactionType } from "@/interfaces/transaction";
 import { OnEvent } from "../event-bus/decorators";
 import { EventTypes } from "../event-bus";
 import { QueryDocumentSnapshot } from "firebase-admin/firestore";
+import { Account, AccountEntity } from "@/interfaces/account";
 
 export class AccountShareFunctions {
   @OnEvent(EventTypes.TRANSACTION_CREATED)
   static async onTransactionCreated(transaction: TransactionEntity) {
-    console.log("onTransactionCreated", { transaction });
-    const accountDocument = await AccountShareFunctions.getAccountDocument(
-      transaction.sourceAccount
-    );
+    const accountEntities: AccountEntity[] = [];
+    if (transaction.type === TransactionType.TRANSFER) {
+      accountEntities.push({
+        account: transaction.sourceAccount,
+        balance: transaction.amount * -1,
+      });
 
-    const transactionAmount =
-      transaction.amount *
-      (transaction.type === TransactionType.EXPENSE ? -1 : 1);
-
-    if (accountDocument) {
-      await AccountShareFunctions.updateAccountBalance(
-        accountDocument,
-        transactionAmount
-      );
-      return;
+      accountEntities.push({
+        account: transaction.destinationAccount!,
+        balance: transaction.amount,
+      });
+    } else {
+      accountEntities.push({
+        account: transaction.sourceAccount,
+        balance:
+          transaction.amount *
+          (transaction.type === TransactionType.EXPENSE ? -1 : 1),
+      });
     }
 
-    await AccountShareFunctions.createInitialAccount(
-      transaction.sourceAccount,
-      transactionAmount
-    );
+    for await (const account of accountEntities) {
+      await AccountShareFunctions.updateOrCreateAccount(
+        account.account,
+        account.balance
+      );
+    }
   }
 
   @OnEvent(EventTypes.TRANSACTION_DELETED)
   static async onTransactionDeleted(transaction: TransactionEntity) {
-    console.log("onTransactionDeleted", { transaction });
-    const accountDocument = await AccountShareFunctions.getAccountDocument(
-      transaction.sourceAccount
-    );
+    const accountEntities: AccountEntity[] = [];
+    if (transaction.type === TransactionType.TRANSFER) {
+      accountEntities.push({
+        account: transaction.sourceAccount,
+        balance: transaction.amount,
+      });
 
-    const transactionAmount =
-      transaction.amount *
-      (transaction.type === TransactionType.EXPENSE ? 1 : -1);
-
-    if (accountDocument) {
-      await AccountShareFunctions.updateAccountBalance(
-        accountDocument,
-        transactionAmount
-      );
-      return;
+      accountEntities.push({
+        account: transaction.destinationAccount!,
+        balance: transaction.amount * -1,
+      });
+    } else {
+      accountEntities.push({
+        account: transaction.sourceAccount,
+        balance:
+          transaction.amount *
+          (transaction.type === TransactionType.EXPENSE ? 1 : -1),
+      });
     }
 
-    await AccountShareFunctions.createInitialAccount(
-      transaction.sourceAccount,
-      transactionAmount
-    );
+    for (const account of accountEntities) {
+      await AccountShareFunctions.updateOrCreateAccount(
+        account.account,
+        account.balance
+      );
+    }
   }
 
-  static async getAccountDocument(
+  private static async getAccountDocument(
     account: string
   ): Promise<QueryDocumentSnapshot | null> {
     const accounts = await db
@@ -70,7 +81,22 @@ export class AccountShareFunctions {
     return null;
   }
 
-  static async updateAccountBalance(
+  private static async updateOrCreateAccount(account: string, balance: number) {
+    const accountDocument = await AccountShareFunctions.getAccountDocument(
+      account
+    );
+
+    if (accountDocument) {
+      return AccountShareFunctions.updateAccountBalance(
+        accountDocument,
+        balance
+      );
+    }
+
+    await AccountShareFunctions.createInitialAccount(account, balance);
+  }
+
+  private static async updateAccountBalance(
     accountDocument: QueryDocumentSnapshot,
     transactionAmount: number
   ) {
@@ -80,10 +106,24 @@ export class AccountShareFunctions {
     accountDocument.ref.update(accountEntity);
   }
 
-  static async createInitialAccount(account: string, balance: number) {
+  private static async createInitialAccount(account: string, balance: number) {
     await db.collection(Collections.Accounts).add({
       account,
       balance,
     });
+  }
+
+  static async getAllAccounts(): Promise<Account[]> {
+    const snapshot = await db.collection(Collections.Accounts).get();
+
+    const accounts = snapshot.docs.map((doc) => {
+      const docData = { ...doc.data() } as AccountEntity;
+      return {
+        ...docData,
+        id: doc.id,
+      } as Account;
+    });
+
+    return accounts;
   }
 }
