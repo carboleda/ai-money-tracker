@@ -10,6 +10,7 @@ import {
   TransactionStatus,
   TransactionType,
 } from "@/interfaces/transaction";
+import { Filter } from "firebase-admin/firestore";
 
 type GetTransactionsParams = { params: { status: TransactionStatus } };
 
@@ -30,7 +31,14 @@ export async function GET(req: NextRequest, { params }: GetTransactionsParams) {
   }
 
   if (account) {
-    q = q.where("sourceAccount", "==", account);
+    q = q.where(
+      Filter.and(
+        Filter.or(
+          Filter.where("sourceAccount", "==", account),
+          Filter.where("destinationAccount", "==", account)
+        )
+      )
+    );
   }
 
   const snapshot = await q.get();
