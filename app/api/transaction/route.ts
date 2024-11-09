@@ -9,7 +9,8 @@ import {
   TransactionStatus,
 } from "@/interfaces/transaction";
 import { Timestamp, UpdateData } from "firebase-admin/firestore";
-import { apiEventBus, EventTypes } from "../event-bus";
+import { EventTypes, EventBus } from "../event-bus";
+import "@/app/api/accounts/functions";
 
 export async function POST(req: NextRequest) {
   const trasactionText = await req.text();
@@ -31,7 +32,7 @@ export async function POST(req: NextRequest) {
     .collection(Collections.Transactions)
     .add(transactionData);
 
-  apiEventBus.emit(EventTypes.TRANSACTION_CREATED, transactionData);
+  await EventBus.publish(EventTypes.TRANSACTION_CREATED, transactionData);
 
   return NextResponse.json({ id: docRef.id });
 }
@@ -48,7 +49,7 @@ export async function PUT(req: NextRequest) {
     .doc(id)
     .update(entity as UpdateData<TransactionEntity>);
 
-  apiEventBus.emit(EventTypes.TRANSACTION_CREATED, entity);
+  await EventBus.publish(EventTypes.TRANSACTION_CREATED, entity);
 
   return NextResponse.json({ id });
 }
@@ -60,7 +61,7 @@ export async function DELETE(req: NextRequest) {
     const doc = db.collection(Collections.Transactions).doc(id);
     const transaction = (await doc.get()).data() as TransactionEntity;
 
-    apiEventBus.emit(EventTypes.TRANSACTION_DELETED, transaction);
+    await EventBus.publish(EventTypes.TRANSACTION_DELETED, transaction);
 
     await doc.delete();
     return new NextResponse(null, {
@@ -79,10 +80,10 @@ export async function DELETE(req: NextRequest) {
 async function generateTransactionJson(text: string) {
   const prompt = `${Env.PROMPT_TEMPLATE} ${text}`;
 
-  console.log("propmt", prompt);
+  // console.log("propmt", prompt);
   const result = await genAIModel.generateContent(prompt);
   const responseText = result.response.text();
-  console.log("result", responseText);
+  // console.log("result", responseText);
   const aiData = JSON.parse(responseText.replace(/\```(json)?/g, ""));
   console.log("aiData", aiData);
 

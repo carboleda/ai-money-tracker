@@ -1,6 +1,6 @@
-import { apiEventBus } from ".";
+import { EventBus, EventTypes } from ".";
 
-export function OnEvent(name: string) {
+export function OnEvent(name: EventTypes) {
   return function (
     _target: any,
     _methodName: string,
@@ -8,7 +8,8 @@ export function OnEvent(name: string) {
   ) {
     const originalMethod = descriptor.value;
 
-    apiEventBus.on(name, originalMethod);
+    // apiEventBus.on(name, originalMethod);
+    EventBus.subscribe(name, originalMethod);
 
     return descriptor;
   };
