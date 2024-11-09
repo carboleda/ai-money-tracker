@@ -2,6 +2,7 @@ import { IconType } from "react-icons";
 import { HiCollection } from "react-icons/hi";
 import { HiMiniArrowPathRoundedSquare } from "react-icons/hi2";
 import { HiBell } from "react-icons/hi";
+import { HiChartPie } from "react-icons/hi2";
 
 export type SiteConfig = typeof siteConfig;
 
@@ -26,6 +27,11 @@ export const pages: Page[] = [
     label: "Recurrent",
     href: "/recurring-expenses",
     icon: HiMiniArrowPathRoundedSquare,
+  },
+  {
+    label: "Summary",
+    href: "/summary",
+    icon: HiChartPie,
   },
 ];
 

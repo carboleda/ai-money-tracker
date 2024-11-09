@@ -56,10 +56,10 @@ export default function RootLayout({
               <Navbar />
               {children}
             </main>
-            <footer className="w-full flex items-center justify-center py-3 gap-4">
+            <footer className="w-full flex items-center justify-center pb-2 gap-4">
               <Link
                 isExternal
-                className="flex items-center gap-1 text-current"
+                className="flex items-center gap-1 text-xs"
                 href="https://carlosarboleda.co"
                 title="carlosarboleda.co"
               >
@@ -69,7 +69,7 @@ export default function RootLayout({
               <span> | </span>
               <Link
                 isExternal
-                className="flex items-center gap-1 text-current"
+                className="flex items-center gap-1 text-xs"
                 href="https://nextui-docs-v2.vercel.app?utm_source=next-app-template"
                 title="nextui.org homepage"
               >
