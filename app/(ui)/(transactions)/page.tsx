@@ -14,7 +14,7 @@ import { parseAbsoluteToLocal, ZonedDateTime } from "@internationalized/date";
 import { RangeValue } from "@react-types/shared";
 import { getMonthBounds } from "@/config/utils";
 import { SummaryPanel } from "@/components/SummaryPanel";
-import { withAuth } from "@/app/withAuth";
+import { withAuth } from "@/app/(ui)/withAuth";
 
 function Transactions() {
   const currentMonthBounds = getMonthBounds(new Date());

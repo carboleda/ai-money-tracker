@@ -8,7 +8,7 @@ import {
 } from "@/interfaces/transaction";
 import { PendingTransactionTable } from "@/components/PendingTransaction";
 import { SummaryPanel } from "@/components/SummaryPanel";
-import { withAuth } from "@/app/withAuth";
+import { withAuth } from "@/app/(ui)/withAuth";
 
 function PendingTransactions() {
   const { isLoading, data: reesponse } = useSWR<GetTransactionsResponse, Error>(

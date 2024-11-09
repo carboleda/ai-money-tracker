@@ -4,7 +4,7 @@ import React from "react";
 import useSWR from "swr";
 import { RecurringExpensesTable } from "@/components/RecurringExpenses";
 import { GetRecurringExpensesResponse } from "@/interfaces/recurringExpense";
-import { withAuth } from "@/app/withAuth";
+import { withAuth } from "@/app/(ui)/withAuth";
 
 function RecurringExpenses() {
   const { isLoading, data: reesponse } = useSWR<
