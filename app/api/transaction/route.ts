@@ -8,7 +8,8 @@ import {
   TransactionEntity,
   TransactionStatus,
 } from "@/interfaces/transaction";
-import { Timestamp } from "firebase-admin/firestore";
+import { Timestamp, UpdateData } from "firebase-admin/firestore";
+import { apiEventBus, EventTypes } from "../event-bus";
 
 export async function POST(req: NextRequest) {
   const trasactionText = await req.text();
@@ -30,19 +31,24 @@ export async function POST(req: NextRequest) {
     .collection(Collections.Transactions)
     .add(transactionData);
 
+  apiEventBus.emit(EventTypes.TRANSACTION_CREATED, transactionData);
+
   return NextResponse.json({ id: docRef.id });
 }
 
 export async function PUT(req: NextRequest) {
   const { id, ...transactionData } = (await req.json()) as Transaction;
+  const entity = {
+    ...transactionData,
+    createdAt: Timestamp.fromDate(new Date(transactionData.createdAt)),
+  } as TransactionEntity;
 
   await db
     .collection(Collections.Transactions)
     .doc(id)
-    .update({
-      ...transactionData,
-      createdAt: Timestamp.fromDate(new Date(transactionData.createdAt)),
-    });
+    .update(entity as UpdateData<TransactionEntity>);
+
+  apiEventBus.emit(EventTypes.TRANSACTION_CREATED, entity);
 
   return NextResponse.json({ id });
 }
@@ -50,7 +56,13 @@ export async function PUT(req: NextRequest) {
 export async function DELETE(req: NextRequest) {
   try {
     const id = await req.text();
-    await db.collection(Collections.Transactions).doc(id).delete();
+
+    const doc = db.collection(Collections.Transactions).doc(id);
+    const transaction = (await doc.get()).data() as TransactionEntity;
+
+    apiEventBus.emit(EventTypes.TRANSACTION_DELETED, transaction);
+
+    await doc.delete();
     return new NextResponse(null, {
       status: 204,
       statusText: "Document successfully deleted!",
