@@ -14,7 +14,7 @@ interface FilterParams {
   endDate?: Date | null;
 }
 
-export class GetTransactionsShareFunctions {
+export class FilterTransactionsShareFunctions {
   static async searchTransactions(
     params: FilterParams
   ): Promise<Transaction[]> {

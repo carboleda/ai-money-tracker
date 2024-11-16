@@ -39,7 +39,7 @@ export interface TransactionEntity {
   notes?: string;
   type: TransactionType;
   status: TransactionStatus;
-  category?: TransactionCategory;
+  category?: TransactionCategory | string;
   sourceAccount: string;
   destinationAccount?: string;
   amount: number;

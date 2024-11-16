@@ -4,7 +4,7 @@ import {
   GetTransactionsResponse,
   TransactionStatus,
 } from "@/interfaces/transaction";
-import { GetTransactionsShareFunctions } from "./functions";
+import { FilterTransactionsShareFunctions } from "./functions";
 import { SummaryShareFunctions } from "../../summary/functions";
 
 type GetTransactionsParams = { params: { status: TransactionStatus } };
@@ -16,12 +16,13 @@ export async function GET(req: NextRequest, { params }: GetTransactionsParams) {
   const startDate = searchParams.get("start");
   const endDate = searchParams.get("end");
 
-  const transactions = await GetTransactionsShareFunctions.searchTransactions({
-    status,
-    account,
-    startDate: startDate ? new Date(startDate!) : null,
-    endDate: endDate ? new Date(endDate!) : null,
-  });
+  const transactions =
+    await FilterTransactionsShareFunctions.searchTransactions({
+      status,
+      account,
+      startDate: startDate ? new Date(startDate!) : null,
+      endDate: endDate ? new Date(endDate!) : null,
+    });
 
   const summary = SummaryShareFunctions.computeSummary(transactions);
 
