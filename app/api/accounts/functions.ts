@@ -4,6 +4,7 @@ import { OnEvent } from "../event-bus/decorators";
 import { EventTypes } from "../event-bus";
 import { QueryDocumentSnapshot } from "firebase-admin/firestore";
 import { Account, AccountEntity } from "@/interfaces/account";
+import { getAccountName } from "@/config/utils";
 
 export class AccountShareFunctions {
   @OnEvent(EventTypes.TRANSACTION_CREATED)
@@ -121,6 +122,7 @@ export class AccountShareFunctions {
       return {
         ...docData,
         id: doc.id,
+        account: getAccountName(docData.account),
       } as Account;
     });
 

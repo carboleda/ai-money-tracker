@@ -6,3 +6,7 @@ export interface AccountEntity {
 export interface Account extends AccountEntity {
   id: string;
 }
+
+export interface GetAccountsResponse {
+  accounts: Account[];
+}
