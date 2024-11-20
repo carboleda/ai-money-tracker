@@ -1,3 +1,4 @@
+import { Account } from "@/interfaces/account";
 import {
   Summary,
   Transaction,
@@ -65,12 +66,10 @@ export class SummaryShareFunctions {
     });
   }
 
-  static getSummaryByAccount(
-    transactions: Transaction[]
-  ): Record<string, number> {
+  static getSummaryByAccount(transactions: Transaction[]): Account[] {
     const accountGroups = _.groupBy(transactions, "sourceAccount");
 
-    return Object.entries(accountGroups).reduce(
+    const totalByAccount = Object.entries(accountGroups).reduce(
       (accountDic, [account, trxs]) => {
         const total = trxs!.reduce((acc, transaction) => {
           if (transaction.type === TransactionType.INCOME) {
@@ -94,5 +93,11 @@ export class SummaryShareFunctions {
       },
       {} as Record<string, number>
     );
+
+    return Object.entries(totalByAccount).map(([key, total]) => ({
+      id: key,
+      account: key,
+      balance: total,
+    }));
   }
 }
