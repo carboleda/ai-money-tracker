@@ -54,6 +54,11 @@ export interface Transaction extends Omit<TransactionEntity, "createdAt"> {
   createdAt: string;
 }
 
+export interface CreateTranactionFromText {
+  text: string;
+  createdAt?: string;
+}
+
 export interface GetTransactionsResponse {
   accounts: { [key: string]: string };
   transactions: Transaction[];

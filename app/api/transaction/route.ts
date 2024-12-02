@@ -4,6 +4,7 @@ import { getMissingFieldsInPrompt } from "@/config/utils";
 import { Env } from "@/config/env";
 import { NextRequest, NextResponse } from "next/server";
 import {
+  CreateTranactionFromText,
   Transaction,
   TransactionEntity,
   TransactionStatus,
@@ -13,19 +14,21 @@ import { EventTypes, EventBus } from "../event-bus";
 import "@/app/api/accounts/functions";
 
 export async function POST(req: NextRequest) {
-  const trasactionText = await req.text();
-  const missingFields = getMissingFieldsInPrompt(trasactionText);
+  const { text, createdAt } = (await req.json()) as CreateTranactionFromText;
+  const missingFields = getMissingFieldsInPrompt(text);
 
   if (missingFields.length > 0) {
     return new NextResponse(null, { status: 400 });
   }
 
-  const trasactionJson = await generateTransactionJson(trasactionText);
+  const trasactionJson = await generateTransactionJson(text);
 
   const transactionData = {
     ...trasactionJson,
     status: TransactionStatus.COMPLETE,
-    createdAt: Timestamp.fromDate(new Date()),
+    createdAt: createdAt
+      ? Timestamp.fromDate(new Date(createdAt))
+      : Timestamp.fromDate(new Date()),
   } as TransactionEntity;
 
   const docRef = await db

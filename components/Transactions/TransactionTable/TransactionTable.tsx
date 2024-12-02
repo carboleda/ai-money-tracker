@@ -11,7 +11,7 @@ import {
 import { Transaction } from "@/interfaces/transaction";
 import { TableSkeleton } from "./TableSkeleton";
 import { useMutateTransaction } from "@/hooks/useMutateTransaction";
-import { DeleteTableItemButton } from "../DeleteTableItemButton";
+import { DeleteTableItemButton } from "@/components/DeleteTableItemButton";
 import { useRenderCell } from "./Columns";
 
 interface TranactionTableProps {

@@ -1,6 +1,6 @@
 "use client";
 
-import { Input } from "@nextui-org/input";
+import { Input, Textarea } from "@nextui-org/input";
 import { Spinner } from "@nextui-org/spinner";
 import { IconBrain } from "./shared/icons";
 import { FormEvent, useState } from "react";
@@ -8,8 +8,19 @@ import { usePlaceholderAnimation } from "@/hooks/usePlaceholderAnimation";
 import { useMutateTransaction } from "@/hooks/useMutateTransaction";
 import { siteConfig } from "@/config/site";
 import { getMissingFieldsInPrompt } from "@/config/utils";
+import { set } from "lodash";
 
-export const TransactionInput = () => {
+export interface TransactionInputProps {
+  isRequired?: boolean;
+  createOnSubmit?: boolean;
+  onChanged?: (value: string) => void;
+}
+
+export const TransactionInput: React.FC<TransactionInputProps> = ({
+  isRequired = false,
+  createOnSubmit = true,
+  onChanged,
+}) => {
   const [inputText, setInputText] = useState<string>("");
   const [validationError, setValidationError] = useState<string>("");
   const [placeholder] = usePlaceholderAnimation(siteConfig.placeholders);
@@ -17,6 +28,11 @@ export const TransactionInput = () => {
 
   const clearInput = () => setInputText("");
   const clearError = () => setValidationError("");
+
+  const onValueChange = (value: string) => {
+    setInputText(value);
+    onChanged && onChanged(value);
+  };
 
   const onCreateTransaction = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -32,20 +48,27 @@ export const TransactionInput = () => {
       }
 
       clearError();
-      createTransaction(inputText)
+
+      if (!createOnSubmit) {
+        return;
+      }
+
+      createTransaction({ text: inputText })
         .then(clearInput)
         .catch((error) => setValidationError(error));
     }
   };
 
   return (
-    <form className="w-full" onSubmit={onCreateTransaction}>
-      <Input
+    <form
+      className="w-full"
+      {...(createOnSubmit && { onSubmit: onCreateTransaction })}
+    >
+      <Textarea
         aria-label="Create transaction"
         labelPlacement="outside"
         type="text"
         size="lg"
-        isClearable
         placeholder={placeholder}
         value={inputText}
         readOnly={isMutating}
@@ -57,9 +80,10 @@ export const TransactionInput = () => {
           <IconBrain className="text-base text-default-400 pointer-events-none flex-shrink-0" />
         }
         endContent={isMutating && <Spinner size="sm" />}
-        onValueChange={setInputText}
+        onValueChange={onValueChange}
         onClear={clearError}
         isInvalid={!!validationError}
+        isRequired={isRequired}
         errorMessage={validationError}
       />
     </form>

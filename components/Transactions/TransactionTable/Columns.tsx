@@ -2,7 +2,7 @@ import { formatCurrency, formatTimeDate } from "@/config/utils";
 import { Transaction } from "@/interfaces/transaction";
 import { Chip } from "@nextui-org/chip";
 import { TableCell } from "@nextui-org/table";
-import { TransactionTypeDecorator } from "../TransactionTypeDecorator";
+import { TransactionTypeDecorator } from "@/components/TransactionTypeDecorator";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { TableColumn } from "@/interfaces/global";
 

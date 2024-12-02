@@ -1,5 +1,8 @@
 import useSWRMutation from "swr/mutation";
-import { Transaction } from "@/interfaces/transaction";
+import {
+  CreateTranactionFromText,
+  Transaction,
+} from "@/interfaces/transaction";
 import { sendRequest } from "@/config/request";
 
 const KEY = "/api/transaction";
@@ -7,8 +10,11 @@ const KEY = "/api/transaction";
 export const useMutateTransaction = () => {
   const { trigger, isMutating } = useSWRMutation(KEY, sendRequest(KEY));
 
-  const createTransaction = async (text: string) => {
-    return trigger({ method: "POST", body: text }).then((res) => {
+  const createTransaction = async (payload: CreateTranactionFromText) => {
+    return trigger({
+      method: "POST",
+      body: JSON.stringify(payload),
+    }).then((res) => {
       if (res.status !== 200) {
         return Promise.reject(res.statusText);
       }
