@@ -1,7 +1,7 @@
 import { getFirestore } from "firebase-admin/firestore";
 import { Env } from "@/config/env";
 
-const suffix = Env.isDev ? "-dev" : "";
+const suffix = false && Env.isDev ? "-dev" : "";
 
 export const Collections = {
   Users: `users${suffix}`,
