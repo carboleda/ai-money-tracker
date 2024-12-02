@@ -8,7 +8,9 @@ import {
   TransactionEntity,
   TransactionStatus,
 } from "@/interfaces/transaction";
-import { Timestamp } from "firebase-admin/firestore";
+import { Timestamp, UpdateData } from "firebase-admin/firestore";
+import { EventTypes, EventBus } from "../event-bus";
+import "@/app/api/accounts/functions";
 
 export async function POST(req: NextRequest) {
   const trasactionText = await req.text();
@@ -30,19 +32,24 @@ export async function POST(req: NextRequest) {
     .collection(Collections.Transactions)
     .add(transactionData);
 
+  await EventBus.publish(EventTypes.TRANSACTION_CREATED, transactionData);
+
   return NextResponse.json({ id: docRef.id });
 }
 
 export async function PUT(req: NextRequest) {
   const { id, ...transactionData } = (await req.json()) as Transaction;
+  const entity = {
+    ...transactionData,
+    createdAt: Timestamp.fromDate(new Date(transactionData.createdAt)),
+  } as TransactionEntity;
 
   await db
     .collection(Collections.Transactions)
     .doc(id)
-    .update({
-      ...transactionData,
-      createdAt: Timestamp.fromDate(new Date(transactionData.createdAt)),
-    });
+    .update(entity as UpdateData<TransactionEntity>);
+
+  await EventBus.publish(EventTypes.TRANSACTION_CREATED, entity);
 
   return NextResponse.json({ id });
 }
@@ -50,7 +57,13 @@ export async function PUT(req: NextRequest) {
 export async function DELETE(req: NextRequest) {
   try {
     const id = await req.text();
-    await db.collection(Collections.Transactions).doc(id).delete();
+
+    const doc = db.collection(Collections.Transactions).doc(id);
+    const transaction = (await doc.get()).data() as TransactionEntity;
+
+    await EventBus.publish(EventTypes.TRANSACTION_DELETED, transaction);
+
+    await doc.delete();
     return new NextResponse(null, {
       status: 204,
       statusText: "Document successfully deleted!",
@@ -67,10 +80,10 @@ export async function DELETE(req: NextRequest) {
 async function generateTransactionJson(text: string) {
   const prompt = `${Env.PROMPT_TEMPLATE} ${text}`;
 
-  console.log("propmt", prompt);
+  // console.log("propmt", prompt);
   const result = await genAIModel.generateContent(prompt);
   const responseText = result.response.text();
-  console.log("result", responseText);
+  // console.log("result", responseText);
   const aiData = JSON.parse(responseText.replace(/\```(json)?/g, ""));
   console.log("aiData", aiData);
 
