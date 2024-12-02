@@ -4,7 +4,6 @@ import { getMissingFieldsInPrompt } from "@/config/utils";
 import { Env } from "@/config/env";
 import { NextRequest, NextResponse } from "next/server";
 import {
-  CreateTranactionFromText,
   Transaction,
   TransactionEntity,
   TransactionStatus,
@@ -14,14 +13,28 @@ import { EventTypes, EventBus } from "../event-bus";
 import "@/app/api/accounts/functions";
 
 export async function POST(req: NextRequest) {
-  const { text, createdAt } = (await req.json()) as CreateTranactionFromText;
-  const missingFields = getMissingFieldsInPrompt(text);
+  const formData = await req.formData();
+  const text = formData.get("text")?.toString();
+  const picture = formData.get("picture")?.toString();
+  const createdAt = formData.get("createdAt")?.toString();
 
-  if (missingFields.length > 0) {
-    return new NextResponse(null, { status: 400 });
+  if (!text && !picture) {
+    return new NextResponse(null, {
+      status: 400,
+      statusText: "Either description or picture is required",
+    });
   }
 
-  const trasactionJson = await generateTransactionJson(text);
+  let trasactionJson;
+  if (text) {
+    const missingFields = getMissingFieldsInPrompt(text);
+
+    if (missingFields.length > 0) {
+      return new NextResponse(null, { status: 400 });
+    }
+
+    trasactionJson = await generateTransactionJson(text);
+  }
 
   const transactionData = {
     ...trasactionJson,

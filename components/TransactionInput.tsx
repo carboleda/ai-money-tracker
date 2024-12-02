@@ -67,6 +67,7 @@ export const TransactionInput: React.FC<TransactionInputProps> = ({
       <Textarea
         aria-label="Create transaction"
         labelPlacement="outside"
+        variant="bordered"
         type="text"
         size="lg"
         placeholder={placeholder}

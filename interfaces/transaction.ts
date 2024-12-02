@@ -54,8 +54,9 @@ export interface Transaction extends Omit<TransactionEntity, "createdAt"> {
   createdAt: string;
 }
 
-export interface CreateTranactionFromText {
-  text: string;
+export interface CreateTranaction {
+  text?: string;
+  picture?: string;
   createdAt?: string;
 }
 

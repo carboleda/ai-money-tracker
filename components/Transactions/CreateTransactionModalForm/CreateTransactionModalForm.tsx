@@ -11,6 +11,10 @@ import { DatePicker } from "@nextui-org/date-picker";
 import { ZonedDateTime } from "@internationalized/date";
 import { TransactionInput } from "@/components/TransactionInput";
 import { useMutateTransaction } from "@/hooks/useMutateTransaction";
+import { FreeTextMode } from "./mode/FreeTextMode";
+import { Switch } from "@nextui-org/switch";
+import { HiCamera, HiDocumentText } from "react-icons/hi";
+import { CameraMode } from "./mode/CameraMode";
 
 interface CreateTransactionModalFormProps {
   isOpen: boolean;
@@ -21,8 +25,10 @@ export const CreateTransactionModalForm: React.FC<
   CreateTransactionModalFormProps
 > = ({ onDismiss, isOpen }) => {
   const [validationError, setValidationError] = useState<string>("");
+  const [isFreeText, setIsFreeText] = useState<boolean>(true);
   const [textInput, setTextInput] = useState<string>("");
   const [createdAtInput, setCreatedAtInput] = useState<ZonedDateTime>();
+  const [picture, setPicture] = useState<string>();
   const { isMutating, createTransaction } = useMutateTransaction();
 
   const areButtonsDisabled = isMutating || validationError !== "";
@@ -51,6 +57,7 @@ export const CreateTransactionModalForm: React.FC<
 
     createTransaction({
       text: textInput,
+      picture,
       createdAt: createdAtInput?.toDate()?.toISOString(),
     })
       .then(() => {
@@ -76,18 +83,27 @@ export const CreateTransactionModalForm: React.FC<
                 New transaction
               </ModalHeader>
               <ModalBody>
-                <TransactionInput
-                  onChanged={setTextInput}
-                  createOnSubmit={false}
-                  isRequired
-                />
-                <DatePicker
-                  label="Transaction date"
-                  variant="bordered"
-                  granularity="minute"
-                  value={createdAtInput}
-                  onChange={(v) => setCreatedAtInput(v)}
-                />
+                <Switch
+                  defaultSelected
+                  size="md"
+                  color="secondary"
+                  isSelected={isFreeText}
+                  onValueChange={setIsFreeText}
+                  startContent={<HiDocumentText />}
+                  endContent={<HiCamera />}
+                >
+                  {isFreeText ? "Free text mode" : "Camera mode"}
+                </Switch>
+                {isFreeText ? (
+                  <FreeTextMode
+                    setText={setTextInput}
+                    setCreatedAtInput={setCreatedAtInput}
+                    createdAt={createdAtInput}
+                    setCreatedAt={setCreatedAtInput}
+                  />
+                ) : (
+                  <CameraMode setPicture={setPicture} />
+                )}
               </ModalBody>
               <ModalFooter>
                 <Button

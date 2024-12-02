@@ -2,7 +2,7 @@ import { mutate } from "swr";
 
 export interface Request {
   method: "POST" | "DELETE" | "PUT";
-  body: string;
+  body: string | FormData;
 }
 
 export const sendRequest =
