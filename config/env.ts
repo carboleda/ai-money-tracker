@@ -15,6 +15,7 @@ export class Env {
   static AUTH_COOKIE_SIGNATURE_KEYS = JSON.parse(
     process.env.AUTH_COOKIE_SIGNATURE_KEYS || "[]"
   );
+  static COLLECTION_SUFFIX = process.env.COLLECTION_SUFFIX || "";
 
   // Gemini environment variables
   static GEMINI_API_KEY = process.env.GEMINI_API_KEY || "";
