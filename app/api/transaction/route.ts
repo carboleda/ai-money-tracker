@@ -1,9 +1,8 @@
 import { db, Collections } from "@/firebase/server";
-import { genAIModel } from "@/config/genAI";
 import { getMissingFieldsInPrompt } from "@/config/utils";
-import { Env } from "@/config/env";
 import { NextRequest, NextResponse } from "next/server";
 import {
+  GeneratedTransaction,
   Transaction,
   TransactionEntity,
   TransactionStatus,
@@ -11,6 +10,7 @@ import {
 import { Timestamp, UpdateData } from "firebase-admin/firestore";
 import { EventTypes, EventBus } from "../event-bus";
 import "@/app/api/accounts/functions";
+import { extractData } from "@/genai";
 
 export async function POST(req: NextRequest) {
   const formData = await req.formData();
@@ -25,24 +25,30 @@ export async function POST(req: NextRequest) {
     });
   }
 
-  let trasactionJson;
   if (text) {
     const missingFields = getMissingFieldsInPrompt(text);
 
     if (missingFields.length > 0) {
       return new NextResponse(null, { status: 400 });
     }
+  }
 
-    trasactionJson = await generateTransactionJson(text);
+  const trasactionJson = await extractData(text, picture);
+
+  if (!trasactionJson || trasactionJson?.error) {
+    return new NextResponse(null, {
+      status: 400,
+      statusText: trasactionJson?.error ?? "Invalid transaction",
+    });
   }
 
   const transactionData = {
-    ...trasactionJson,
+    ...(trasactionJson as GeneratedTransaction.TransactionData),
     status: TransactionStatus.COMPLETE,
     createdAt: createdAt
       ? Timestamp.fromDate(new Date(createdAt))
       : Timestamp.fromDate(new Date()),
-  } as TransactionEntity;
+  } as Omit<TransactionEntity, "id">;
 
   const docRef = await db
     .collection(Collections.Transactions)
@@ -91,17 +97,4 @@ export async function DELETE(req: NextRequest) {
       statusText: `Error removing document ${error}`,
     });
   }
-}
-
-async function generateTransactionJson(text: string) {
-  const prompt = `${Env.PROMPT_TEMPLATE} ${text}`;
-
-  // console.log("propmt", prompt);
-  const result = await genAIModel.generateContent(prompt);
-  const responseText = result.response.text();
-  // console.log("result", responseText);
-  const aiData = JSON.parse(responseText.replace(/\```(json)?/g, ""));
-  console.log("aiData", aiData);
-
-  return aiData;
 }

@@ -10,7 +10,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@google/generative-ai": "^0.8.0",
+    "@google/generative-ai": "0.21.0",
     "@nextui-org/autocomplete": "^2.1.5",
     "@nextui-org/avatar": "^2.0.33",
     "@nextui-org/chip": "^2.0.32",
