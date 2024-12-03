@@ -40,7 +40,6 @@ export class SummaryShareFunctions {
     transactions: Transaction[]
   ): { category: string; total: number }[] {
     const categoryGroups = _.groupBy(transactions, "category");
-
     return Object.entries(categoryGroups).map(([category, transactions]) => {
       const total =
         transactions?.reduce(
@@ -56,7 +55,6 @@ export class SummaryShareFunctions {
     transactions: Transaction[]
   ): { type: string; total: number }[] {
     const transactionTypeGroups = _.groupBy(transactions, "type");
-
     return Object.entries(transactionTypeGroups).map(([type, transactions]) => {
       const total = transactions.reduce(
         (acc, transaction) => acc + transaction.amount,

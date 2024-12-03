@@ -10,10 +10,12 @@ export async function GET(req: Request) {
       status: TransactionStatus.COMPLETE,
     });
 
-  const mappedTransactions = transactions.map((transaction) => ({
-    ...transaction,
-    category: transaction.category ?? transaction.description,
-  }));
+  const mappedTransactions = transactions
+    .filter((transaction) => transaction.status === TransactionStatus.COMPLETE)
+    .map((transaction) => ({
+      ...transaction,
+      category: transaction.category ?? transaction.description,
+    }));
 
   const byCategory =
     SummaryShareFunctions.getSummaryByCategory(mappedTransactions);
