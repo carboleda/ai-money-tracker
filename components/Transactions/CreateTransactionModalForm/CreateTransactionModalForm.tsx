@@ -7,14 +7,13 @@ import {
   ModalFooter,
 } from "@nextui-org/modal";
 import { Button } from "@nextui-org/button";
-import { DatePicker } from "@nextui-org/date-picker";
 import { ZonedDateTime } from "@internationalized/date";
-import { TransactionInput } from "@/components/TransactionInput";
 import { useMutateTransaction } from "@/hooks/useMutateTransaction";
 import { FreeTextMode } from "./mode/FreeTextMode";
 import { Switch } from "@nextui-org/switch";
 import { HiCamera, HiDocumentText } from "react-icons/hi";
 import { CameraMode } from "./mode/CameraMode";
+import { Chip } from "@nextui-org/chip";
 
 interface CreateTransactionModalFormProps {
   isOpen: boolean;
@@ -46,9 +45,9 @@ export const CreateTransactionModalForm: React.FC<
   const clearError = () => setValidationError("");
 
   const onSave = () => {
-    if (!textInput) {
+    if (!textInput && !picture) {
       setValidationError(
-        "Filled all the required fields. Please fill them out."
+        "Text or picture are requited. Please fill one of them out."
       );
       return;
     }
@@ -103,6 +102,17 @@ export const CreateTransactionModalForm: React.FC<
                   />
                 ) : (
                   <CameraMode setPicture={setPicture} />
+                )}
+
+                {validationError && (
+                  <Chip
+                    variant="flat"
+                    color="danger"
+                    radius="sm"
+                    className="text-wrap h-fit p-2"
+                  >
+                    {validationError}
+                  </Chip>
                 )}
               </ModalBody>
               <ModalFooter>
