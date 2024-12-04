@@ -1,5 +1,9 @@
 import { Collections, db } from "@/firebase/server";
-import { TransactionEntity, TransactionType } from "@/interfaces/transaction";
+import {
+  TransactionEntity,
+  TransactionStatus,
+  TransactionType,
+} from "@/interfaces/transaction";
 import { OnEvent } from "../event-bus/decorators";
 import { EventTypes } from "../event-bus";
 import { QueryDocumentSnapshot } from "firebase-admin/firestore";
@@ -9,6 +13,10 @@ import { getAccountName } from "@/config/utils";
 export class AccountShareFunctions {
   @OnEvent(EventTypes.TRANSACTION_CREATED)
   static async onTransactionCreated(transaction: TransactionEntity) {
+    if (transaction.status === TransactionStatus.PENDING) {
+      return;
+    }
+
     const accountEntities: AccountEntity[] = [];
     if (transaction.type === TransactionType.TRANSFER) {
       accountEntities.push({
@@ -40,6 +48,10 @@ export class AccountShareFunctions {
   @OnEvent(EventTypes.TRANSACTION_DELETED)
   static async onTransactionDeleted(transaction: TransactionEntity) {
     const accountEntities: AccountEntity[] = [];
+    if (transaction.status === TransactionStatus.PENDING) {
+      return;
+    }
+
     if (transaction.type === TransactionType.TRANSFER) {
       accountEntities.push({
         account: transaction.sourceAccount,
