@@ -53,7 +53,7 @@ export const TransactionInput: React.FC<TransactionInputProps> = ({
         return;
       }
 
-      createTransaction({ text: inputText })
+      createTransaction({ text: inputText, createdAt: "" })
         .then(clearInput)
         .catch((error) => setValidationError(error));
     }

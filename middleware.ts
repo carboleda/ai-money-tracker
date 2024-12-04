@@ -50,9 +50,9 @@ export default async function middleware(request: NextRequest) {
     }
   }
 
-  if (Env.isDev) {
-    return NextResponse.next();
-  }
+  // if (Env.isDev) {
+  //   return NextResponse.next();
+  // }
 
   return authMiddleware(request, {
     loginPath: "/api/login",
