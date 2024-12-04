@@ -54,13 +54,13 @@ export const CreateTransactionModalForm: React.FC<
   const clearError = () => setValidationError("");
 
   const validateForm = () => {
-    if (isFreeText && !(textInput || createdAtInput)) {
+    if (isFreeText && !(textInput && createdAtInput)) {
       throw new Error(
         "Description and Date are requited. Please fill them out."
       );
     }
 
-    if (!isFreeText && !(picture || selectedAccount)) {
+    if (!isFreeText && !(picture && selectedAccount)) {
       throw new Error(
         "Back account and Picture are requited. Please fill them out."
       );
