@@ -42,8 +42,8 @@ function Transactions() {
 
   const renderTopContent = () => (
     <div className="flex flex-col gap-4">
-      <div className="flex justify-between gap-3 items-end">
-        <div className="flex flex-row self-start gap-2">
+      <div className="flex flex-wrap justify-between gap-3 items-end">
+        <div className="flex flex-row justify-items-stretch gap-2 w-full md:w-fit">
           <DateRangePicker
             label="Date within"
             variant="bordered"
@@ -52,15 +52,17 @@ function Transactions() {
             value={dateWithin}
             onChange={setDateWithin}
           />
-          <BankAccounDropdown
-            accounts={reesponse?.accounts}
-            label="Filter by account"
-            onChange={setSelectedAccount}
-          />
+          <div className="justify-self-end">
+            <BankAccounDropdown
+              accounts={reesponse?.accounts}
+              label="Filter by account"
+              onChange={setSelectedAccount}
+            />
+          </div>
         </div>
-        <div className="flex w-full justify-end">
-          <Button color="primary" onPress={() => setOpen(true)}>
-            <HiOutlinePlusCircle className="text-lg" />
+        <div className="flex justify-end w-full md:w-fit">
+          <Button color="primary" radius="sm" onPress={() => setOpen(true)}>
+            <HiOutlinePlusCircle className="text-2xl" />
             New trans.
           </Button>
         </div>
@@ -75,11 +77,10 @@ function Transactions() {
           <h1 className="page-title">All your transactions</h1>
           <SummaryPanel summary={reesponse?.summary} />
         </div>
-
+        {renderTopContent()}
         <TransactionTable
           transactions={reesponse?.transactions}
           isLoading={isLoading}
-          topContent={renderTopContent()}
         />
       </section>
       <CreateTransactionModalForm

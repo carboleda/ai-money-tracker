@@ -97,6 +97,7 @@ export const PendingTransactionTable: React.FC<
         isStriped
         isCompact
         aria-label="Pending Transactions"
+        topContentPlacement="outside"
         topContent={renderTopContent()}
       >
         <TableHeader columns={columns}>
