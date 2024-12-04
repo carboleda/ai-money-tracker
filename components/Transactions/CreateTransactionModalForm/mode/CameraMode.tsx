@@ -65,7 +65,6 @@ export const CameraMode: React.FC<CameraModeProps> = ({
             width={CAMARE_WIDTH}
             height={CAMERA_HEIGHT}
             audio={false}
-            mirrored={true}
             forceScreenshotSourceSize={true}
             videoConstraints={videoConstraints}
             onClick={onCapture}
