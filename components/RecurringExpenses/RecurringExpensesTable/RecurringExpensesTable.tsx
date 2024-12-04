@@ -89,7 +89,7 @@ export const RecurringExpensesTable: React.FC<RecurringExpensesTableProps> = ({
 
   const renderTopContent = () => (
     <div className="flex flex-col gap-4">
-      <div className="flex justify-between gap-3 items-end">
+      <div className="flex justify-between gap-3 items-center w-full">
         <Input
           isClearable
           className="w-full sm:max-w-[44%]"
@@ -99,10 +99,15 @@ export const RecurringExpensesTable: React.FC<RecurringExpensesTableProps> = ({
           onClear={() => onClear()}
           onValueChange={onSearchChange}
         />
-        <div className="flex w-full justify-end">
-          <Button color="primary" onPress={() => setOpen(true)}>
+        <div className="flex w-fit justify-end">
+          <Button
+            color="primary"
+            radius="sm"
+            variant="solid"
+            isIconOnly
+            onPress={() => setOpen(true)}
+          >
             <HiOutlinePlusCircle className="text-lg" />
-            New expense
           </Button>
         </div>
       </div>

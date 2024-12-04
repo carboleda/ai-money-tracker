@@ -61,6 +61,7 @@ export const SummaryPanel: React.FC<SummaryPanelProps> = ({
             color={color as ChipProps["color"]}
             size={isMobile ? "sm" : "md"}
             variant="flat"
+            radius="sm"
             avatar={icon}
           >
             {formatCurrency(summary[key])}

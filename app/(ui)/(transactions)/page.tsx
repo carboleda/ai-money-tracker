@@ -63,12 +63,17 @@ function Transactions() {
             />
           </div>
         </div>
-        <div className="flex justify-end w-full md:w-fit">
-          <Button color="primary" radius="sm" onPress={() => setOpen(true)}>
-            <HiOutlinePlusCircle className="text-2xl" />
+        {/* <div className="flex justify-end w-full md:w-fit">
+          <Button
+            color="primary"
+            radius="sm"
+            variant="flat"
+            onPress={() => setOpen(true)}
+          >
+            <HiOutlinePlusCircle className="text-xl" />
             New trans.
           </Button>
-        </div>
+        </div> */}
       </div>
     </div>
   );
@@ -77,7 +82,18 @@ function Transactions() {
     <>
       <section className="flex flex-col items-center justify-center gap-4">
         <div className="flex flex-col w-full justify-start items-start gap-2">
-          <h1 className="page-title">All your transactions</h1>
+          <div className="flex justify-between items-center w-full">
+            <h1 className="page-title">All your transactions</h1>
+            <Button
+              color="primary"
+              radius="sm"
+              variant="solid"
+              isIconOnly
+              onPress={() => setOpen(true)}
+            >
+              <HiOutlinePlusCircle className="text-xl" />
+            </Button>
+          </div>
           <SummaryPanel
             summary={reesponse?.summary}
             includedKeys={[
