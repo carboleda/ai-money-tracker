@@ -41,7 +41,7 @@ function Transactions() {
   };
 
   const renderTopContent = () => (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4 w-full">
       <div className="flex flex-wrap justify-between gap-3 items-end">
         <div className="flex flex-row justify-items-stretch gap-2 w-full md:w-fit">
           <DateRangePicker
@@ -84,6 +84,7 @@ function Transactions() {
         />
       </section>
       <CreateTransactionModalForm
+        accounts={reesponse?.accounts}
         isOpen={isOpen}
         onDismiss={onDialogDismissed}
       />

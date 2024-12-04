@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   Modal,
   ModalContent,
@@ -16,55 +16,86 @@ import { CameraMode } from "./mode/CameraMode";
 import { Chip } from "@nextui-org/chip";
 
 interface CreateTransactionModalFormProps {
+  accounts?: { [key: string]: string };
   isOpen: boolean;
   onDismiss: () => void;
 }
 
 export const CreateTransactionModalForm: React.FC<
   CreateTransactionModalFormProps
-> = ({ onDismiss, isOpen }) => {
+> = ({ accounts, onDismiss, isOpen }) => {
   const [validationError, setValidationError] = useState<string>("");
   const [isFreeText, setIsFreeText] = useState<boolean>(true);
   const [textInput, setTextInput] = useState<string>("");
-  const [createdAtInput, setCreatedAtInput] = useState<ZonedDateTime>();
   const [picture, setPicture] = useState<string>();
+  const [selectedAccount, setSelectedAccount] = useState<string>("");
+  const [createdAtInput, setCreatedAtInput] = useState<ZonedDateTime>();
   const { isMutating, createTransaction } = useMutateTransaction();
 
   const areButtonsDisabled = isMutating || validationError !== "";
 
-  const onOpenChangeHandler = (_open: boolean) => {
-    onDismiss();
-    clearInputs();
-  };
+  const onOpenChangeHandler = useCallback(
+    (_open?: boolean) => {
+      onDismiss();
+      clearInputs();
+      clearError();
+    },
+    [onDismiss]
+  );
 
   const clearInputs = () => {
     setCreatedAtInput(undefined);
     setTextInput("");
+    setPicture("");
+    setSelectedAccount("");
+    setCreatedAtInput(undefined);
   };
 
   const clearError = () => setValidationError("");
 
-  const onSave = () => {
-    if (!textInput && !picture) {
-      setValidationError(
-        "Text or picture are requited. Please fill one of them out."
+  const validateForm = () => {
+    if (isFreeText && !(textInput || createdAtInput)) {
+      throw new Error(
+        "Description and Date are requited. Please fill them out."
       );
-      return;
+    }
+
+    if (!isFreeText && !(picture || selectedAccount)) {
+      throw new Error(
+        "Back account and Picture are requited. Please fill them out."
+      );
     }
 
     clearError();
-
-    createTransaction({
-      text: textInput,
-      picture,
-      createdAt: createdAtInput?.toDate()?.toISOString(),
-    })
-      .then(() => {
-        clearInputs();
-        onDismiss();
-      })
-      .catch((error) => setValidationError(error));
   };
+
+  const onSave = async () => {
+    try {
+      validateForm();
+
+      if (isFreeText) {
+        await createTransaction({
+          text: textInput,
+          createdAt: createdAtInput!.toDate().toISOString(),
+        });
+      } else {
+        await createTransaction({
+          picture: picture!,
+          sourceAccount: selectedAccount,
+        });
+      }
+
+      onOpenChangeHandler();
+    } catch (error) {
+      setValidationError((error as Error).message);
+    }
+  };
+
+  useEffect(() => {
+    if (!isOpen) {
+      onOpenChangeHandler();
+    }
+  }, [isOpen, onOpenChangeHandler]);
 
   return (
     <>
@@ -101,7 +132,11 @@ export const CreateTransactionModalForm: React.FC<
                     setCreatedAt={setCreatedAtInput}
                   />
                 ) : (
-                  <CameraMode setPicture={setPicture} />
+                  <CameraMode
+                    accounts={accounts}
+                    setPicture={setPicture}
+                    setSelectedAccount={setSelectedAccount}
+                  />
                 )}
 
                 {validationError && (

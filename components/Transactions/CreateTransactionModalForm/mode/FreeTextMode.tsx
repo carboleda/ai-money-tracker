@@ -22,6 +22,7 @@ export const FreeTextMode: React.FC<FreeTextModeProps> = ({
         label="Transaction date"
         variant="bordered"
         granularity="minute"
+        isRequired
         value={createdAt}
         onChange={(v) => setCreatedAt(v)}
       />

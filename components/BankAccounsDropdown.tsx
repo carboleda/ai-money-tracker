@@ -10,12 +10,14 @@ import { Button } from "@nextui-org/button";
 interface BankAccounDropdownProps {
   accounts: { [key: string]: string } | undefined;
   label?: string;
+  isRequired?: boolean;
   onChange: (accountKey: string) => void;
 }
 
 export const BankAccounDropdown: React.FC<BankAccounDropdownProps> = ({
   accounts = {},
   label = "Bank Account",
+  isRequired = false,
   onChange,
 }) => {
   const [selectedKeys, setSelectedKeys] = useState(new Set<string>([]));
@@ -42,7 +44,9 @@ export const BankAccounDropdown: React.FC<BankAccounDropdownProps> = ({
           className="h-14 w-full justify-start py-6 px-3 rounded-xl"
         >
           <div className="text-start mh-5">
-            <label className="text-xs text-default-600">{label}</label>
+            <label className="text-xs text-default-600">
+              {label} {isRequired && <span className="text-red-600">*</span>}
+            </label>
             <div>{selectedValue}</div>
           </div>
         </Button>

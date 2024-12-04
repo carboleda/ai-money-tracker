@@ -54,11 +54,23 @@ export interface Transaction extends Omit<TransactionEntity, "createdAt"> {
   createdAt: string;
 }
 
-export interface CreateTranaction {
-  text?: string;
-  picture?: string;
-  createdAt?: string;
+export interface CreateFreeTextTranaction {
+  text: string;
+  createdAt: string;
+  picture?: never;
+  sourceAccount?: never;
 }
+
+export interface CreatePictureTranaction {
+  text?: never;
+  createdAt?: never;
+  picture: string;
+  sourceAccount: string;
+}
+
+export type CreateTranaction =
+  | CreateFreeTextTranaction
+  | CreatePictureTranaction;
 
 export interface GetTransactionsResponse {
   accounts: { [key: string]: string };

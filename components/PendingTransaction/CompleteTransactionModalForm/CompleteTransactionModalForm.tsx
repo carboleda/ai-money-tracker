@@ -111,8 +111,9 @@ export const CompleteTransactionModalForm: React.FC<
               <ModalBody>
                 <div className="self-start w-full">
                   <BankAccounDropdown
-                    accounts={accounts}
                     label="Bank account"
+                    isRequired
+                    accounts={accounts}
                     onChange={setSelectedAccount}
                   />
                 </div>
@@ -120,6 +121,7 @@ export const CompleteTransactionModalForm: React.FC<
                   label="Amount"
                   variant="bordered"
                   type="text"
+                  isRequired
                   value={amountInput?.toString()}
                   onValueChange={(v) => setAmountInput(v.floatValue)}
                 />
@@ -127,6 +129,7 @@ export const CompleteTransactionModalForm: React.FC<
                   label="Paid on"
                   variant="bordered"
                   granularity="day"
+                  isRequired
                   value={paymentDateInput}
                   onChange={setPaymentDateInput}
                 />
