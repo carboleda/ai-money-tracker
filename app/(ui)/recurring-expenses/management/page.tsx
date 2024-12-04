@@ -19,7 +19,10 @@ function PendingTransactions() {
     <section className="flex flex-col items-center justify-center gap-4">
       <div className="flex flex-col w-full justify-start items-start gap-2">
         <h1 className="page-title">What you have to pay this month</h1>
-        <SummaryPanel summary={reesponse?.summary} />
+        <SummaryPanel
+          summary={reesponse?.summary}
+          includedKeys={["totalPending"]}
+        />
       </div>
 
       <PendingTransactionTable

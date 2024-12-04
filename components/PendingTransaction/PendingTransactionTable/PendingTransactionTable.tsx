@@ -74,8 +74,8 @@ export const PendingTransactionTable: React.FC<
   }, []);
 
   const renderTopContent = () => (
-    <div className="flex flex-col gap-4">
-      <div className="flex justify-between gap-3 items-end">
+    <div className="flex flex-row gap-4">
+      <div className="flex justify-between gap-3 items-center w-full">
         <Input
           isClearable
           className="w-full sm:max-w-[44%]"
@@ -85,6 +85,9 @@ export const PendingTransactionTable: React.FC<
           onClear={() => onClear()}
           onValueChange={onSearchChange}
         />
+        <span className="w-fit text-end subtitle text-sm">
+          Total {pendingTransactions?.length} pending transactions
+        </span>
       </div>
     </div>
   );

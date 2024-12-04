@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import useSWR from "swr";
 import {
   GetTransactionsResponse,
+  Summary,
   TransactionStatus,
 } from "@/interfaces/transaction";
 import {
@@ -19,8 +20,10 @@ import { SummaryPanel } from "@/components/SummaryPanel";
 import { withAuth } from "@/app/(ui)/withAuth";
 import { HiOutlinePlusCircle } from "react-icons/hi";
 import { Button } from "@nextui-org/button";
+import { useIsMobile } from "@/hooks/useIsMobile";
 
 function Transactions() {
+  const isMobile = useIsMobile();
   const [isOpen, setOpen] = useState(false);
   const currentMonthBounds = getMonthBounds(new Date());
   const [selectedAccount, setSelectedAccount] = useState<string>("");
@@ -75,7 +78,15 @@ function Transactions() {
       <section className="flex flex-col items-center justify-center gap-4">
         <div className="flex flex-col w-full justify-start items-start gap-2">
           <h1 className="page-title">All your transactions</h1>
-          <SummaryPanel summary={reesponse?.summary} />
+          <SummaryPanel
+            summary={reesponse?.summary}
+            includedKeys={[
+              ...(!isMobile ? ["totalIncomes" as keyof Summary] : []),
+              "totalExpenses",
+              "totalPending",
+              "totalBalance",
+            ]}
+          />
         </div>
         {renderTopContent()}
         <TransactionTable
