@@ -13,7 +13,10 @@ import { getAccountName } from "@/config/utils";
 export class AccountShareFunctions {
   @OnEvent(EventTypes.TRANSACTION_CREATED)
   static async onTransactionCreated(transaction: TransactionEntity) {
-    if (transaction.status === TransactionStatus.PENDING) {
+    if (
+      transaction.status === TransactionStatus.PENDING ||
+      !(transaction.sourceAccount && transaction.destinationAccount)
+    ) {
       return;
     }
 
@@ -48,7 +51,10 @@ export class AccountShareFunctions {
   @OnEvent(EventTypes.TRANSACTION_DELETED)
   static async onTransactionDeleted(transaction: TransactionEntity) {
     const accountEntities: AccountEntity[] = [];
-    if (transaction.status === TransactionStatus.PENDING) {
+    if (
+      transaction.status === TransactionStatus.PENDING ||
+      !(transaction.sourceAccount && transaction.destinationAccount)
+    ) {
       return;
     }
 
