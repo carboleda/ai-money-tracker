@@ -127,7 +127,6 @@ export const CreateTransactionModalForm: React.FC<
                 {isFreeText ? (
                   <FreeTextMode
                     setText={setTextInput}
-                    setCreatedAtInput={setCreatedAtInput}
                     createdAt={createdAtInput}
                     setCreatedAt={setCreatedAtInput}
                   />
@@ -144,7 +143,7 @@ export const CreateTransactionModalForm: React.FC<
                     variant="flat"
                     color="danger"
                     radius="sm"
-                    className="text-wrap h-fit p-2"
+                    className="text-wrap max-w-full w-full h-fit p-2"
                   >
                     {validationError}
                   </Chip>

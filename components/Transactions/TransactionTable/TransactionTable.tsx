@@ -13,20 +13,38 @@ import { TableSkeleton } from "./TableSkeleton";
 import { useMutateTransaction } from "@/hooks/useMutateTransaction";
 import { DeleteTableItemButton } from "@/components/DeleteTableItemButton";
 import { useRenderCell } from "./Columns";
+import { Button } from "@nextui-org/button";
+import { IconEdit } from "@/components/shared/icons";
+import { useState } from "react";
+import { UpdateTransactionModalForm } from "@/components/Transactions/UpdateTransactionModalForm";
 
 interface TranactionTableProps {
   isLoading: boolean;
   topContent?: React.ReactNode;
-  transactions: Transaction[] | undefined;
+  transactions?: Transaction[];
+  accounts?: { [key: string]: string };
 }
 
 export const TransactionTable: React.FC<TranactionTableProps> = ({
   isLoading,
   topContent,
   transactions,
+  accounts,
 }) => {
+  const [selectedItem, setSelectedItem] = useState<Transaction>();
+  const [isOpen, setOpen] = useState(false);
   const { isMutating, deleteTransaction } = useMutateTransaction();
   const { columns, renderCell } = useRenderCell();
+
+  const onDialogDismissed = () => {
+    setSelectedItem(undefined);
+    setOpen(false);
+  };
+
+  const onEdit = (item: Transaction) => {
+    setSelectedItem(item);
+    setOpen(true);
+  };
 
   if (isLoading || !transactions) return <TableSkeleton />;
 
@@ -57,6 +75,16 @@ export const TransactionTable: React.FC<TranactionTableProps> = ({
                   return (
                     <TableCell>
                       <div className="flex flex-row justify-center">
+                        <Button
+                          isIconOnly
+                          color="warning"
+                          variant="light"
+                          className="self-center"
+                          aria-label="Edit"
+                          onClick={() => onEdit(item)}
+                        >
+                          <IconEdit />
+                        </Button>
                         <DeleteTableItemButton
                           itemId={item.id}
                           isDisabled={isMutating}
@@ -72,6 +100,12 @@ export const TransactionTable: React.FC<TranactionTableProps> = ({
           )}
         </TableBody>
       </Table>
+      <UpdateTransactionModalForm
+        item={selectedItem}
+        accounts={accounts}
+        isOpen={isOpen}
+        onDismiss={onDialogDismissed}
+      />
     </>
   );
 };

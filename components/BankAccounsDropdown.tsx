@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   Dropdown,
   DropdownTrigger,
@@ -10,6 +10,7 @@ import { Button } from "@nextui-org/button";
 interface BankAccounDropdownProps {
   accounts: { [key: string]: string } | undefined;
   label?: string;
+  value?: string;
   isRequired?: boolean;
   onChange: (accountKey: string) => void;
 }
@@ -17,6 +18,7 @@ interface BankAccounDropdownProps {
 export const BankAccounDropdown: React.FC<BankAccounDropdownProps> = ({
   accounts = {},
   label = "Bank Account",
+  value,
   isRequired = false,
   onChange,
 }) => {
@@ -29,6 +31,12 @@ export const BankAccounDropdown: React.FC<BankAccounDropdownProps> = ({
         .join(", "),
     [selectedKeys, accounts]
   );
+
+  useEffect(() => {
+    if (value) {
+      setSelectedKeys(new Set([value]));
+    }
+  }, [value]);
 
   const onSelectionChange = (keys: any) => {
     setSelectedKeys(keys);

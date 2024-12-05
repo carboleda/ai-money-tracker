@@ -13,6 +13,7 @@ import { Transaction, TransactionStatus } from "@/interfaces/transaction";
 import { BankAccounDropdown } from "@/components/BankAccounsDropdown";
 import { useMutateTransaction } from "@/hooks/useMutateTransaction";
 import { MaskedCurrencyInput } from "@/components/shared/MaskedCurrencyInput";
+import { Chip } from "@nextui-org/chip";
 
 interface CompleteTransactionModalFormProps {
   item?: Transaction;
@@ -133,9 +134,16 @@ export const CompleteTransactionModalForm: React.FC<
                   value={paymentDateInput}
                   onChange={setPaymentDateInput}
                 />
-                <span className="text-red-500 text-center">
-                  {validationError}
-                </span>
+                {validationError && (
+                  <Chip
+                    variant="flat"
+                    color="danger"
+                    radius="sm"
+                    className="text-wrap max-w-full w-full h-fit p-2"
+                  >
+                    {validationError}
+                  </Chip>
+                )}
               </ModalBody>
               <ModalFooter>
                 <Button

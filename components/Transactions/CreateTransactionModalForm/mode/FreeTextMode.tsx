@@ -5,7 +5,6 @@ import { TransactionInput } from "@/components/TransactionInput";
 
 interface FreeTextModeProps {
   setText: (text: string) => void;
-  setCreatedAtInput: (createdAt: ZonedDateTime) => void;
   createdAt?: ZonedDateTime;
   setCreatedAt: (createdAt: ZonedDateTime) => void;
 }

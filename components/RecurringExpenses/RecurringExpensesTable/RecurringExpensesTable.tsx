@@ -69,23 +69,23 @@ export const RecurringExpensesTable: React.FC<RecurringExpensesTableProps> = ({
     return groupByFrequency(filteredRecurringExpenses);
   }, [recurringExpenses, filterValue]);
 
-  const onDialogDismissed = useCallback(() => {
+  const onDialogDismissed = () => {
     setSelectedItem(undefined);
     setOpen(false);
-  }, []);
+  };
 
-  const onEdit = useCallback((item: RecurringExpense) => {
+  const onEdit = (item: RecurringExpense) => {
     setSelectedItem(item);
     setOpen(true);
-  }, []);
+  };
 
-  const onSearchChange = useCallback((value?: string) => {
+  const onSearchChange = (value?: string) => {
     setFilterValue(value || "");
-  }, []);
+  };
 
-  const onClear = useCallback(() => {
+  const onClear = () => {
     setFilterValue("");
-  }, []);
+  };
 
   const renderTopContent = () => (
     <div className="flex flex-col gap-4">

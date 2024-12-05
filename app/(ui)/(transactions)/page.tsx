@@ -107,6 +107,7 @@ function Transactions() {
         {renderTopContent()}
         <TransactionTable
           transactions={reesponse?.transactions}
+          accounts={reesponse?.accounts}
           isLoading={isLoading}
         />
       </section>

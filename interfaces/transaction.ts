@@ -8,16 +8,20 @@ export enum TransactionType {
 
 export enum TransactionCategory {
   Alimentos = "Alimentos",
+  Mercado = "Mercado",
   Educacion = "Educación",
   Inversion = "Inversión",
   Salud = "Salud",
   Servicios = "Servicios",
   Transporte = "Transporte",
   Vivienda = "Vivienda",
-  Majo = "Majo",
+  Bebe = "Bebé",
   Zeus = "Zeus",
   Ocio = "Ocio",
   Impuesto = "Impuesto",
+  Retiros = "Retiros",
+  Vestuario = "Vestuario",
+  Otros = "Otros",
 }
 
 export enum TransactionStatus {
