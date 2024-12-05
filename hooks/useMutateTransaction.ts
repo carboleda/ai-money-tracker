@@ -11,6 +11,8 @@ export const useMutateTransaction = () => {
     const formData = new FormData();
     payload.text && formData.append("text", payload.text);
     payload.picture && formData.append("picture", payload.picture);
+    payload.sourceAccount &&
+      formData.append("sourceAccount", payload.sourceAccount);
     payload.createdAt && formData.append("createdAt", payload.createdAt);
 
     return trigger({
@@ -18,7 +20,7 @@ export const useMutateTransaction = () => {
       body: formData,
     }).then((res) => {
       if (res.status !== 200) {
-        return Promise.reject(res.statusText);
+        return Promise.reject(new Error(res.statusText));
       }
 
       return res.json();

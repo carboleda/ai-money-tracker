@@ -17,6 +17,7 @@ export async function POST(req: NextRequest) {
   const text = formData.get("text")?.toString();
   const picture = formData.get("picture")?.toString();
   const createdAt = formData.get("createdAt")?.toString();
+  const sourceAccount = formData.get("sourceAccount")?.toString();
 
   if (!text && !picture) {
     return new NextResponse(null, {
@@ -33,21 +34,24 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  const trasactionJson = await extractData(text, picture);
+  const generatedResponse = await extractData(text, picture);
 
-  if (!trasactionJson || trasactionJson?.error) {
+  if (!generatedResponse || generatedResponse?.error) {
     return new NextResponse(null, {
       status: 400,
-      statusText: trasactionJson?.error ?? "Invalid transaction",
+      statusText: generatedResponse?.error ?? "Invalid transaction",
     });
   }
 
+  const generatedTransaction =
+    generatedResponse as GeneratedTransaction.TransactionData;
   const transactionData = {
-    ...(trasactionJson as GeneratedTransaction.TransactionData),
-    status: TransactionStatus.COMPLETE,
+    ...generatedTransaction,
+    sourceAccount: generatedTransaction.sourceAccount ?? sourceAccount,
     createdAt: createdAt
       ? Timestamp.fromDate(new Date(createdAt))
       : Timestamp.fromDate(new Date()),
+    status: TransactionStatus.COMPLETE,
   } as Omit<TransactionEntity, "id">;
 
   const docRef = await db
@@ -79,6 +83,7 @@ export async function PUT(req: NextRequest) {
 export async function DELETE(req: NextRequest) {
   try {
     const id = await req.text();
+    console.log("DELETE -> id", { id });
 
     const doc = db.collection(Collections.Transactions).doc(id);
     const transaction = (await doc.get()).data() as TransactionEntity;
