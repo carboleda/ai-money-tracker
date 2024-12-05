@@ -4,6 +4,8 @@ import React, { useRef, useState } from "react";
 import Image from "next/image";
 import Webcam from "react-webcam";
 import { BankAccounDropdown } from "@/components/BankAccounsDropdown";
+import { Switch } from "@nextui-org/switch";
+import { HiLightBulb, HiOutlineLightBulb } from "react-icons/hi2";
 
 const CAMARE_WIDTH = 400;
 const CAMERA_HEIGHT = 300;
@@ -25,7 +27,9 @@ export const CameraMode: React.FC<CameraModeProps> = ({
   setPicture,
 }) => {
   const webcamRef = useRef<Webcam>(null);
+  const trackRef = useRef<MediaStreamTrack>();
   const [imgSrc, setImgSrc] = useState<string>();
+  const [isFlashEnabled, setIsFlashEnabled] = useState<boolean>(false);
 
   const onCapture = () => {
     const imageSrc = webcamRef.current?.getScreenshot() ?? undefined;
@@ -37,14 +41,36 @@ export const CameraMode: React.FC<CameraModeProps> = ({
     setImgSrc(undefined);
   };
 
+  const onFlashChange = (isFlashEnabled: boolean) => {
+    setIsFlashEnabled(isFlashEnabled);
+
+    // let there be light!
+    trackRef.current?.applyConstraints({
+      advanced: [{ torch: isFlashEnabled }],
+    });
+  };
+
   return (
     <>
-      <div className="self-start w-full">
+      <div className="flex gap-2 self-start w-full">
         <BankAccounDropdown
           label="Bank account"
           isRequired
           accounts={accounts}
           onChange={setSelectedAccount}
+        />
+        <Switch
+          size="md"
+          color="warning"
+          isSelected={isFlashEnabled}
+          onValueChange={onFlashChange}
+          thumbIcon={({ isSelected, className }) =>
+            isSelected ? (
+              <HiOutlineLightBulb className={className} />
+            ) : (
+              <HiLightBulb className={className} />
+            )
+          }
         />
       </div>
       {imgSrc ? (
@@ -68,6 +94,21 @@ export const CameraMode: React.FC<CameraModeProps> = ({
             forceScreenshotSourceSize={true}
             videoConstraints={videoConstraints}
             onClick={onCapture}
+            onUserMedia={(stream: MediaStream) => {
+              const track = stream.getVideoTracks()[0];
+
+              //Create image capture object and get camera capabilities
+              const imageCapture = new ImageCapture(track);
+              imageCapture
+                .getPhotoCapabilities()
+                .then((photoCapabilities: PhotoCapabilities) => {
+                  //todo: check if camera has a torch
+                  console.log("photoCapabilities", { photoCapabilities });
+                  if (photoCapabilities?.fillLightMode?.length > 0) {
+                    trackRef.current = track;
+                  }
+                });
+            }}
           />
         </div>
       )}

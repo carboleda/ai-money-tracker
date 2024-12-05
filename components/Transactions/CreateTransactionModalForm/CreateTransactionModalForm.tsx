@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { Key, useCallback, useEffect, useState } from "react";
 import {
   Modal,
   ModalContent,
@@ -14,6 +14,7 @@ import { Switch } from "@nextui-org/switch";
 import { HiCamera, HiDocumentText } from "react-icons/hi";
 import { CameraMode } from "./mode/CameraMode";
 import { Chip } from "@nextui-org/chip";
+import { Tab, Tabs } from "@nextui-org/tabs";
 
 interface CreateTransactionModalFormProps {
   accounts?: { [key: string]: string };
@@ -42,6 +43,12 @@ export const CreateTransactionModalForm: React.FC<
     },
     [onDismiss]
   );
+
+  const onTabChange = (tab: Key) => {
+    setIsFreeText(tab === "freeText");
+    clearInputs();
+    clearError();
+  };
 
   const clearInputs = () => {
     setCreatedAtInput(undefined);
@@ -113,30 +120,46 @@ export const CreateTransactionModalForm: React.FC<
                 New transaction
               </ModalHeader>
               <ModalBody>
-                <Switch
-                  defaultSelected
-                  size="md"
-                  color="secondary"
-                  isSelected={isFreeText}
-                  onValueChange={setIsFreeText}
-                  startContent={<HiDocumentText />}
-                  endContent={<HiCamera />}
+                <Tabs
+                  aria-label="Modes"
+                  color="primary"
+                  radius="sm"
+                  selectedKey={isFreeText ? "freeText" : "camera"}
+                  onSelectionChange={onTabChange}
                 >
-                  {isFreeText ? "Free text mode" : "Camera mode"}
-                </Switch>
-                {isFreeText ? (
-                  <FreeTextMode
-                    setText={setTextInput}
-                    createdAt={createdAtInput}
-                    setCreatedAt={setCreatedAtInput}
-                  />
-                ) : (
-                  <CameraMode
-                    accounts={accounts}
-                    setPicture={setPicture}
-                    setSelectedAccount={setSelectedAccount}
-                  />
-                )}
+                  <Tab
+                    key="freeText"
+                    title={
+                      <div className="flex items-center gap-1">
+                        <HiDocumentText />
+                        <span>Free text mode</span>
+                      </div>
+                    }
+                    className="flex flex-col gap-2"
+                  >
+                    <FreeTextMode
+                      setText={setTextInput}
+                      createdAt={createdAtInput}
+                      setCreatedAt={setCreatedAtInput}
+                    />
+                  </Tab>
+                  <Tab
+                    key="camera"
+                    title={
+                      <div className="flex items-center gap-1">
+                        <HiCamera />
+                        <span>Camera mode</span>
+                      </div>
+                    }
+                    className="flex flex-col gap-2"
+                  >
+                    <CameraMode
+                      accounts={accounts}
+                      setPicture={setPicture}
+                      setSelectedAccount={setSelectedAccount}
+                    />
+                  </Tab>
+                </Tabs>
 
                 {validationError && (
                   <Chip

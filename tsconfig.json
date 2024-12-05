@@ -22,7 +22,8 @@
     ],
     "paths": {
       "@/*": ["./*"]
-    }
+    },
+    "types": ["w3c-image-capture"]
   },
   "include": [
     "next-env.d.ts",
