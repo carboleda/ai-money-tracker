@@ -66,7 +66,7 @@ export interface Transaction extends Omit<TransactionEntity, "createdAt"> {
 
 export interface CreateFreeTextTranaction {
   text: string;
-  createdAt: string;
+  createdAt?: string;
   picture?: never;
   sourceAccount?: never;
 }
@@ -97,9 +97,10 @@ export namespace GeneratedTransaction {
     description: string;
     amount: number;
     type: string;
-    category: string;
     sourceAccount: string;
-    destinationAccount: string;
+    category?: string;
+    createdAt?: string;
+    destinationAccount?: string;
     error: never;
   }
 

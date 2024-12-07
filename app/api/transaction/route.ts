@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
   const formData = await req.formData();
   const text = formData.get("text")?.toString();
   const picture = formData.get("picture")?.toString();
-  const createdAt = formData.get("createdAt")?.toString();
+  const createdAtManual = formData.get("createdAt")?.toString();
   const sourceAccount = formData.get("sourceAccount")?.toString();
 
   if (!text && !picture) {
@@ -45,14 +45,16 @@ export async function POST(req: NextRequest) {
 
   const generatedTransaction =
     generatedResponse as GeneratedTransaction.TransactionData;
+
   const transactionData = {
     ...generatedTransaction,
     sourceAccount: sourceAccount
       ? sourceAccount
       : generatedTransaction.sourceAccount,
-    createdAt: createdAt
-      ? Timestamp.fromDate(new Date(createdAt))
-      : Timestamp.fromDate(new Date()),
+    createdAt: getProperCreatedAtDate(
+      createdAtManual,
+      generatedTransaction.createdAt
+    ),
     status: TransactionStatus.COMPLETE,
   } as Omit<TransactionEntity, "id">;
 
@@ -105,3 +107,18 @@ export async function DELETE(req: NextRequest) {
     });
   }
 }
+
+const getProperCreatedAtDate = (
+  createdAtManual?: string,
+  createdAtGenerated?: string
+) => {
+  if (createdAtManual) {
+    return Timestamp.fromDate(new Date(createdAtManual));
+  }
+
+  if (createdAtGenerated) {
+    return Timestamp.fromDate(new Date(createdAtGenerated));
+  }
+
+  return Timestamp.fromDate(new Date());
+};

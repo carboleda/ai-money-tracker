@@ -61,10 +61,8 @@ export const CreateTransactionModalForm: React.FC<CreateTransactionModalFormProp
   const clearError = () => setValidationError("");
 
   const validateForm = () => {
-    if (isFreeText && !(textInput && createdAtInput)) {
-      throw new Error(
-        "Description and Date are requited. Please fill them out."
-      );
+    if (isFreeText && !textInput) {
+      throw new Error("Description is requited. Please fill it out.");
     }
 
     if (!isFreeText && !(picture && selectedAccount)) {
@@ -83,7 +81,7 @@ export const CreateTransactionModalForm: React.FC<CreateTransactionModalFormProp
       if (isFreeText) {
         await createTransaction({
           text: textInput,
-          createdAt: createdAtInput!.toDate().toISOString(),
+          createdAt: createdAtInput?.toDate()?.toISOString(),
         });
       } else {
         await createTransaction({
