@@ -24,6 +24,10 @@
         "type": "string",
         "description": "Source account if it applies. This is the account where the money comes from"
       },
+      "destinationAccount": {
+        "type": "string",
+        "description": "Destination account if it applies. This is the account where the money goes to"
+      },
       "createdAt": {
         "type": "string",
         "description": "Transaction date and time in ISO format yyyy-MM-dd'T'HH:mm"

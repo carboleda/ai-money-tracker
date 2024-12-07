@@ -45,6 +45,7 @@ export async function POST(req: NextRequest) {
 
   const generatedTransaction =
     generatedResponse as GeneratedTransaction.TransactionData;
+  console.log("POST -> generatedTransaction", { generatedTransaction });
 
   const transactionData = {
     ...generatedTransaction,

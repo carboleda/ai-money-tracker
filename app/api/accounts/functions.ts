@@ -57,6 +57,40 @@ export class AccountShareFunctions {
       oldTransaction,
       newTransaction,
     });
+
+    const oldAccountEntities = AccountShareFunctions.handleEvent(
+      oldTransaction,
+      true
+    );
+    const newAccountEntities = AccountShareFunctions.handleEvent(
+      newTransaction,
+      false
+    );
+
+    const mergedAccountEntities = [
+      ...oldAccountEntities,
+      ...newAccountEntities,
+    ];
+
+    if (mergedAccountEntities.length === 0) {
+      return;
+    }
+
+    const updates = mergedAccountEntities.reduce((updates, update) => {
+      if (!updates[update.account]) {
+        updates[update.account] = 0;
+      }
+
+      updates[update.account] += update.balance;
+
+      return updates;
+    }, {} as Record<string, number>);
+
+    return Promise.all(
+      Object.entries(updates).map(async ([account, balance]) =>
+        AccountShareFunctions.updateOrCreateAccount(account, balance)
+      )
+    );
   }
 
   static async getAllAccounts(): Promise<Account[]> {

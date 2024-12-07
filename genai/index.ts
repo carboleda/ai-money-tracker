@@ -12,15 +12,15 @@ const generationConfig = {
   temperature: 0,
 };
 const systemInstruction = `Act as an accountant assistant, you will help me to record my money transactions.
-  I share the transactions with you either as a text description or an invoice picture.
+I share the transactions with you either as a text description or an invoice picture.
 
-  ### INSTRUCTIONS ###
-  - If I provide a text describing the transaction, it will follow the following pattern: 'DESCRIPTION by AMOUNT, ACCOUNT'.
-  - Transfer transactions will have the following pattern: 'TRANSFER DESCRIPTION from ACCOUNT to ACCOUNT by AMOUNT'.
-  - If the provided a text and it is not clear or is not a valid transaction, you must report the error.
-  - If the provided an image, but it is not clear or is not a valid invoice, you must report the error.
-  - In any case, you must use the available tools to record the transactions.
-  ### INSTRUCTIONS ###`;
+### INSTRUCTIONS ###
+- If I provide a text describing the transaction, it will follow the following pattern: 'DESCRIPTION by AMOUNT, ACCOUNT'.
+- Transfer transactions will have the following pattern: 'Transference DESCRIPTION from SOURCE_ACCOUNT to DESTINATION_ACCOUNT by AMOUNT'.
+- If the provided a text and it is not clear or is not a valid transaction, you must report the error.
+- If the provided an image, but it is not clear or is not a valid invoice, you must report the error.
+- In any case, you must use the available tools to record the transactions.
+### INSTRUCTIONS ###`;
 
 const model = genAI.getGenerativeModel({
   model: "gemini-1.5-flash",
@@ -69,7 +69,7 @@ export async function extractData(
 ): Promise<GeneratedTransaction.GeneratedResponse> {
   const result = await model.generateContent(getRequestPart(text, picture));
 
-  console.log(result, { depth: null });
+  // console.log(result, { depth: null });
 
   if (!result?.response?.candidates) {
     return null;
