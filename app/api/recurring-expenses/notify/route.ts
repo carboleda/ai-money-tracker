@@ -89,7 +89,7 @@ function getNotification(
   const createdAt = transaction.createdAt.toDate();
 
   if (createdAt <= now) {
-    const dayDiff = dateDiffInDays(now, createdAt);
+    const dayDiff = Math.abs(dateDiffInDays(now, createdAt));
     return {
       title: `[ACTION REQUIRED]: Payment due`,
       body: `Payment for ${transaction.description} is due ${dayDiff} days ago, pay it ASAP.`,

@@ -6,8 +6,9 @@ import { useIsMobile } from "@/hooks/useIsMobile";
 import { TableColumn } from "@/interfaces/global";
 import { TransactionTypeDecorator } from "@/components/TransactionTypeDecorator";
 import Link from "next/link";
-import { IconComment, IconLink } from "@/components/shared/icons";
+import { IconLink } from "@/components/shared/icons";
 import { NotePopover } from "@/components/NotePopover";
+import { DueDateIndicator } from "@/components/shared/DueDateIndicator";
 
 const columnsDesktop: TableColumn[] = [
   {
@@ -51,7 +52,7 @@ const renderCellDesktop = (key: any, item: Transaction): JSX.Element => {
           <div className="flex flex-row items-start gap-2">
             <span className="text-gray-400">
               {item.category && (
-                <Chip radius="sm" variant="flat" size="sm" className="ml-2">
+                <Chip radius="sm" variant="flat" size="sm">
                   {item.category}
                 </Chip>
               )}
@@ -63,7 +64,14 @@ const renderCellDesktop = (key: any, item: Transaction): JSX.Element => {
         </TableCell>
       );
     case "date":
-      return <TableCell>{formatDate(new Date(item.createdAt))}</TableCell>;
+      return (
+        <TableCell>
+          <div className="flex items-center gap-0">
+            <DueDateIndicator dueDate={item.createdAt} />
+            {formatDate(new Date(item.createdAt))}
+          </div>
+        </TableCell>
+      );
     case "amount":
       return (
         <TableCell>
@@ -91,7 +99,10 @@ const renderCellMobile = (key: any, item: Transaction): JSX.Element => {
         <TableCell>
           <div className="flex flex-col items-start gap-2">
             <div className="flex flex-row items-center gap-2">
-              <span>{item.description}</span>
+              <div className="flex items-center gap-0">
+                <DueDateIndicator dueDate={item.createdAt} />
+                <span>{item.description}</span>
+              </div>
               {item.notes && <NotePopover content={item.notes} />}
             </div>
             <div className="flex flex-row items-center gap-2">

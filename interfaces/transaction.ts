@@ -29,6 +29,12 @@ export enum TransactionStatus {
   COMPLETE = "complete",
 }
 
+export enum TransactionOverdueStatus {
+  OVERDUE = "overdue",
+  SOON = "soon",
+  UPCOMING = "upcoming",
+}
+
 export interface Summary {
   totalIncomes: number;
   totalExpenses: number;

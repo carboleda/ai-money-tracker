@@ -1,5 +1,6 @@
 import { Env } from "@/config/env";
 import { Frequency } from "@/interfaces/recurringExpense";
+import { TransactionOverdueStatus } from "@/interfaces/transaction";
 
 const requiredFields = ["amount", "account"];
 const validationRegex =
@@ -100,7 +101,24 @@ export const formatFrequency = (frequency: Frequency, dueDate: string) => {
 };
 
 export const dateDiffInDays = (date1: Date, date2: Date) => {
-  const diffInMilliseconds = Math.abs(date2.getTime() - date1.getTime());
+  const diffInMilliseconds = date2.getTime() - date1.getTime();
   const diffInDays = Math.ceil(diffInMilliseconds / (1000 * 60 * 60 * 24));
   return diffInDays;
+};
+
+export const getTransactionOverdueStatus = (
+  date: string
+): TransactionOverdueStatus => {
+  const now = new Date();
+  const dayDiff = dateDiffInDays(now, new Date(date));
+
+  if (dayDiff < 0) {
+    return TransactionOverdueStatus.OVERDUE;
+  }
+
+  if (dayDiff > 1 && dayDiff <= 4) {
+    return TransactionOverdueStatus.SOON;
+  }
+
+  return TransactionOverdueStatus.UPCOMING;
 };
