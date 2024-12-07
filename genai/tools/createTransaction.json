@@ -18,7 +18,7 @@
       },
       "category": {
         "type": "string",
-        "description": "Transaction category, e.g. Alimentos, Educación, Salud, Transporte, Ocio, Servicios"
+        "description": "Transaction category, e.g. Alimentos, Educación, Salud, Transporte, Ocio, Servicios. Category is only required for expenses and incomes"
       },
       "sourceAccount": {
         "type": "string",
@@ -29,6 +29,6 @@
         "description": "Transaction date and time in ISO format yyyy-MM-dd'T'HH:mm"
       }
     },
-    "required": ["description", "amount", "type", "category"]
+    "required": ["description", "amount", "type", "sourceAccount"]
   }
 }

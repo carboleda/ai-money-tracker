@@ -47,7 +47,9 @@ export async function POST(req: NextRequest) {
     generatedResponse as GeneratedTransaction.TransactionData;
   const transactionData = {
     ...generatedTransaction,
-    sourceAccount: generatedTransaction.sourceAccount ?? sourceAccount,
+    sourceAccount: sourceAccount
+      ? sourceAccount
+      : generatedTransaction.sourceAccount,
     createdAt: createdAt
       ? Timestamp.fromDate(new Date(createdAt))
       : Timestamp.fromDate(new Date()),

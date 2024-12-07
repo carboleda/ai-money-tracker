@@ -147,7 +147,7 @@ export const UpdateTransactionModalForm: React.FC<UpdateTransactionModalFormProp
                   {item?.type === TransactionType.TRANSFER && (
                     <BankAccounDropdown
                       label="Destination account"
-                      onChange={setDescriptionInput}
+                      onChange={setDestinationAccountInput}
                       value={destinationAccountInput}
                       isRequired
                     />

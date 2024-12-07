@@ -16,6 +16,7 @@ const systemInstruction = `Act as an accountant assistant, you will help me to r
 
   ### INSTRUCTIONS ###
   - If I provide a text describing the transaction, it will follow the following pattern: 'DESCRIPTION by AMOUNT, ACCOUNT'.
+  - Transfer transactions will have the following pattern: 'TRANSFER DESCRIPTION from ACCOUNT to ACCOUNT by AMOUNT'.
   - If the provided a text and it is not clear or is not a valid transaction, you must report the error.
   - If the provided an image, but it is not clear or is not a valid invoice, you must report the error.
   - In any case, you must use the available tools to record the transactions.
