@@ -6,9 +6,9 @@ import {
   DropdownItem,
 } from "@nextui-org/dropdown";
 import { Button } from "@nextui-org/button";
+import { Env } from "@/config/env";
 
 interface BankAccounDropdownProps {
-  accounts: { [key: string]: string } | undefined;
   label?: string;
   value?: string;
   isRequired?: boolean;
@@ -16,7 +16,6 @@ interface BankAccounDropdownProps {
 }
 
 export const BankAccounDropdown: React.FC<BankAccounDropdownProps> = ({
-  accounts = {},
   label = "Bank Account",
   value,
   isRequired = false,
@@ -27,9 +26,9 @@ export const BankAccounDropdown: React.FC<BankAccounDropdownProps> = ({
   const selectedValue = useMemo(
     () =>
       Array.from(selectedKeys)
-        .map((key) => accounts[key] ?? "")
+        .map((key) => Env.VALID_ACCOUNTS[key] ?? "")
         .join(", "),
-    [selectedKeys, accounts]
+    [selectedKeys]
   );
 
   useEffect(() => {
@@ -67,7 +66,7 @@ export const BankAccounDropdown: React.FC<BankAccounDropdownProps> = ({
         selectedKeys={selectedKeys}
         onSelectionChange={onSelectionChange}
       >
-        {Object.entries(accounts).map(([key, label]) => {
+        {Object.entries(Env.VALID_ACCOUNTS).map(([key, label]) => {
           return <DropdownItem key={key}>{label}</DropdownItem>;
         })}
       </DropdownMenu>

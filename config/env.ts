@@ -2,7 +2,7 @@ export class Env {
   // General environment variables
   static NODE_ENV = process.env.NODE_ENV;
   static VALID_ACCOUNTS = JSON.parse(
-    process.env.VALID_ACCOUNTS || "{}"
+    process.env.NEXT_PUBLIC_VALID_ACCOUNTS || "{}"
   ) as Record<string, string>;
   static RATE_LIMIT_ENABLED = process.env.RATE_LIMIT_ENABLED === "true";
   static CRON_SECRET = process.env.CRON_SECRET;

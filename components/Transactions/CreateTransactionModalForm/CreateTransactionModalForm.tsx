@@ -17,14 +17,14 @@ import { Chip } from "@nextui-org/chip";
 import { Tab, Tabs } from "@nextui-org/tabs";
 
 interface CreateTransactionModalFormProps {
-  accounts?: { [key: string]: string };
   isOpen: boolean;
   onDismiss: () => void;
 }
 
-export const CreateTransactionModalForm: React.FC<
-  CreateTransactionModalFormProps
-> = ({ accounts, onDismiss, isOpen }) => {
+export const CreateTransactionModalForm: React.FC<CreateTransactionModalFormProps> = ({
+  onDismiss,
+  isOpen,
+}) => {
   const [validationError, setValidationError] = useState<string>("");
   const [isFreeText, setIsFreeText] = useState<boolean>(true);
   const [textInput, setTextInput] = useState<string>("");
@@ -154,7 +154,6 @@ export const CreateTransactionModalForm: React.FC<
                     className="flex flex-col gap-2"
                   >
                     <CameraMode
-                      accounts={accounts}
                       setPicture={setPicture}
                       setSelectedAccount={setSelectedAccount}
                     />

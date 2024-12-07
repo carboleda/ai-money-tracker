@@ -15,26 +15,31 @@ import {
   Transaction,
   TransactionCategory,
   transactionCategoryOptions,
+  TransactionType,
 } from "@/interfaces/transaction";
 import { MaskedCurrencyInput } from "@/components/shared/MaskedCurrencyInput";
 import { useMutateTransaction } from "@/hooks/useMutateTransaction";
 import { Chip } from "@nextui-org/chip";
 import { BankAccounDropdown } from "@/components/BankAccounsDropdown";
+import { getAccountId } from "@/config/utils";
 
 interface UpdateTransactionModalFormProps {
   item?: Transaction;
-  accounts?: { [key: string]: string };
   isOpen: boolean;
   onDismiss: () => void;
 }
 
-export const UpdateTransactionModalForm: React.FC<
-  UpdateTransactionModalFormProps
-> = ({ item, accounts, onDismiss, isOpen }) => {
+export const UpdateTransactionModalForm: React.FC<UpdateTransactionModalFormProps> = ({
+  item,
+  onDismiss,
+  isOpen,
+}) => {
   const { isMutating, updateTransaction } = useMutateTransaction();
   const [validationError, setValidationError] = useState<string>("");
   const [descriptionInput, setDescriptionInput] = useState<string>("");
-  const [selectedAccount, setSelectedAccount] = useState<string>("");
+  const [sourceAccountInput, setSourceAccountInput] = useState<string>("");
+  const [destinationAccountInput, setDestinationAccountInput] =
+    useState<string>("");
   const [transactonCategoryInput, setTransactonCategoryInput] =
     useState<TransactionCategory>();
   const [amountInput, setAmountInput] = useState<number>();
@@ -45,18 +50,16 @@ export const UpdateTransactionModalForm: React.FC<
   useEffect(() => {
     if (item) {
       setDescriptionInput(item.description);
-      setSelectedAccount(
-        Object.entries(accounts!).find(
-          ([k, v]) => v === item.sourceAccount
-        )?.[0] || ""
-      );
+      setSourceAccountInput(getAccountId(item.sourceAccount) || "");
+      item.destinationAccount &&
+        setDestinationAccountInput(getAccountId(item.destinationAccount) || "");
       setTransactonCategoryInput(item.category as TransactionCategory);
       setCreatedAtInput(
         item.createdAt ? parseAbsoluteToLocal(item.createdAt) : undefined
       );
       setAmountInput(item.amount);
     }
-  }, [item, accounts]);
+  }, [item]);
 
   const onOpenChangeHandler = (_open: boolean) => {
     onDismiss();
@@ -65,6 +68,8 @@ export const UpdateTransactionModalForm: React.FC<
 
   const clearInputs = () => {
     setDescriptionInput("");
+    setSourceAccountInput("");
+    setDestinationAccountInput("");
     setTransactonCategoryInput(undefined);
     setCreatedAtInput(undefined);
     setAmountInput(0);
@@ -75,8 +80,7 @@ export const UpdateTransactionModalForm: React.FC<
   const validateForm = () => {
     if (
       !descriptionInput ||
-      !selectedAccount ||
-      !transactonCategoryInput ||
+      !sourceAccountInput ||
       !createdAtInput ||
       amountInput === 0
     ) {
@@ -93,7 +97,8 @@ export const UpdateTransactionModalForm: React.FC<
       const payload: Transaction = {
         ...item!,
         description: descriptionInput,
-        sourceAccount: selectedAccount,
+        sourceAccount: sourceAccountInput,
+        destinationAccount: destinationAccountInput,
         createdAt: createdAtInput!.toDate().toISOString(),
         amount: amountInput!,
         category: transactonCategoryInput,
@@ -132,19 +137,27 @@ export const UpdateTransactionModalForm: React.FC<
                   value={descriptionInput}
                   onValueChange={setDescriptionInput}
                 />
-                <BankAccounDropdown
-                  label="Bank account"
-                  accounts={accounts}
-                  onChange={setSelectedAccount}
-                  value={selectedAccount}
-                  isRequired
-                />
+                <div className="flex gap-2">
+                  <BankAccounDropdown
+                    label="Source account"
+                    onChange={setSourceAccountInput}
+                    value={sourceAccountInput}
+                    isRequired
+                  />
+                  {item?.type === TransactionType.TRANSFER && (
+                    <BankAccounDropdown
+                      label="Destination account"
+                      onChange={setDescriptionInput}
+                      value={destinationAccountInput}
+                      isRequired
+                    />
+                  )}
+                </div>
                 <div className="flex gap-2">
                   <Autocomplete
                     allowsCustomValue
                     label="Category"
                     variant="bordered"
-                    isRequired
                     defaultItems={transactionCategoryOptions}
                     selectedKey={transactonCategoryInput}
                     onSelectionChange={(v) =>

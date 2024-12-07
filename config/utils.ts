@@ -33,7 +33,9 @@ export const formatDate = (date: Date) => dateFormatter.format(date);
 
 export const getMonthBounds = (date: Date) => {
   const start = new Date(date.getFullYear(), date.getMonth(), 1);
+  start.setHours(0, 0, 0, 0);
   const end = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+  end.setHours(23, 59, 59, 999);
 
   return { start, end };
 };
@@ -46,8 +48,16 @@ export const getMissingFieldsInPrompt = (inputText: string) => {
   });
 };
 
-export const getAccountName = (account: string) => {
-  return Env.VALID_ACCOUNTS[account] || "Unknown";
+export const getAccountName = (accountId: string) => {
+  return Env.VALID_ACCOUNTS[accountId] || "Unknown";
+};
+
+export const getAccountId = (accountName: string) => {
+  return (
+    Object.entries(Env.VALID_ACCOUNTS).find(
+      ([_, value]) => value === accountName
+    )?.[0] || "Unknown"
+  );
 };
 
 export const computeBiannualDates = (date: Date): [Date, Date] => {

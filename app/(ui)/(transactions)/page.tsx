@@ -57,7 +57,6 @@ function Transactions() {
           />
           <div className="justify-self-end">
             <BankAccounDropdown
-              accounts={reesponse?.accounts}
               label="Filter by account"
               onChange={setSelectedAccount}
             />
@@ -107,12 +106,10 @@ function Transactions() {
         {renderTopContent()}
         <TransactionTable
           transactions={reesponse?.transactions}
-          accounts={reesponse?.accounts}
           isLoading={isLoading}
         />
       </section>
       <CreateTransactionModalForm
-        accounts={reesponse?.accounts}
         isOpen={isOpen}
         onDismiss={onDialogDismissed}
       />

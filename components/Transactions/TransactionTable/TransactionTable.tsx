@@ -22,14 +22,12 @@ interface TranactionTableProps {
   isLoading: boolean;
   topContent?: React.ReactNode;
   transactions?: Transaction[];
-  accounts?: { [key: string]: string };
 }
 
 export const TransactionTable: React.FC<TranactionTableProps> = ({
   isLoading,
   topContent,
   transactions,
-  accounts,
 }) => {
   const [selectedItem, setSelectedItem] = useState<Transaction>();
   const [isOpen, setOpen] = useState(false);
@@ -102,7 +100,6 @@ export const TransactionTable: React.FC<TranactionTableProps> = ({
       </Table>
       <UpdateTransactionModalForm
         item={selectedItem}
-        accounts={accounts}
         isOpen={isOpen}
         onDismiss={onDialogDismissed}
       />

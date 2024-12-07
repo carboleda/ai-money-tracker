@@ -17,14 +17,13 @@ import { Chip } from "@nextui-org/chip";
 
 interface CompleteTransactionModalFormProps {
   item?: Transaction;
-  accounts?: { [key: string]: string };
   isOpen: boolean;
   onDismiss: () => void;
 }
 
 export const CompleteTransactionModalForm: React.FC<
   CompleteTransactionModalFormProps
-> = ({ item, accounts, onDismiss, isOpen }) => {
+> = ({ item, onDismiss, isOpen }) => {
   const { isMutating, updateTransaction } = useMutateTransaction();
   const [validationError, setValidationError] = useState<string>("");
   const [selectedAccount, setSelectedAccount] = useState<string>("");
@@ -114,7 +113,6 @@ export const CompleteTransactionModalForm: React.FC<
                   <BankAccounDropdown
                     label="Bank account"
                     isRequired
-                    accounts={accounts}
                     onChange={setSelectedAccount}
                   />
                 </div>

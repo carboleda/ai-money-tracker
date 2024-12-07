@@ -27,7 +27,6 @@ function PendingTransactions() {
 
       <PendingTransactionTable
         pendingTransactions={reesponse?.transactions}
-        accounts={reesponse?.accounts}
         isLoading={isLoading}
       />
     </section>

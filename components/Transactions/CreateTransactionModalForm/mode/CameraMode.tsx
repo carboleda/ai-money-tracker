@@ -16,13 +16,11 @@ const videoConstraints: MediaStreamConstraints["video"] = {
 };
 
 export interface CameraModeProps {
-  accounts?: { [key: string]: string };
   setPicture: (picture?: string) => void;
   setSelectedAccount: (account: string) => void;
 }
 
 export const CameraMode: React.FC<CameraModeProps> = ({
-  accounts,
   setSelectedAccount,
   setPicture,
 }) => {
@@ -54,9 +52,8 @@ export const CameraMode: React.FC<CameraModeProps> = ({
     <>
       <div className="flex gap-2 self-start w-full">
         <BankAccounDropdown
-          label="Bank account"
+          label="Source account"
           isRequired
-          accounts={accounts}
           onChange={setSelectedAccount}
         />
         <Switch

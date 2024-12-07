@@ -23,12 +23,12 @@ import { HiOutlineSearch } from "react-icons/hi";
 interface PendingTransactionTableProps {
   isLoading: boolean;
   pendingTransactions: Transaction[] | undefined;
-  accounts?: { [key: string]: string };
 }
 
-export const PendingTransactionTable: React.FC<
-  PendingTransactionTableProps
-> = ({ isLoading, pendingTransactions, accounts }) => {
+export const PendingTransactionTable: React.FC<PendingTransactionTableProps> = ({
+  isLoading,
+  pendingTransactions,
+}) => {
   const [selectedItem, setSelectedItem] = useState<Transaction>();
   const [isOpen, setOpen] = useState(false);
   const [filterValue, setFilterValue] = useState("");
@@ -148,7 +148,6 @@ export const PendingTransactionTable: React.FC<
       </Table>
       <CompleteTransactionModalForm
         item={selectedItem}
-        accounts={accounts}
         isOpen={isOpen}
         onDismiss={onDialogDismissed}
       />
