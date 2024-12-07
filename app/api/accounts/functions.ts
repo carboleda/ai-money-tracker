@@ -4,54 +4,23 @@ import {
   TransactionStatus,
   TransactionType,
 } from "@/interfaces/transaction";
-import { OnEvent } from "../event-bus/decorators";
-import { EventTypes } from "../event-bus";
+import { OnEvent } from "@/app/api/event-bus/decorators";
+import { EventTypes, SingleParamEvent, UpdateEvent } from "../event-bus";
 import { QueryDocumentSnapshot } from "firebase-admin/firestore";
 import { Account, AccountEntity } from "@/interfaces/account";
 import { getAccountName } from "@/config/utils";
 
 export class AccountShareFunctions {
   @OnEvent(EventTypes.TRANSACTION_CREATED)
-  static async onTransactionCreated(transaction: TransactionEntity) {
-    console.log(
-      "AccountShareFunctions.onTransactionCreated(RECEIVED)",
-      transaction
+  static async onTransactionCreated(
+    transaction: SingleParamEvent<TransactionEntity>
+  ) {
+    console.log("onTransactionCreated(RECEIVED)", transaction);
+    const accountEntities = AccountShareFunctions.handleEvent(
+      transaction,
+      false
     );
-    if (
-      transaction.status === TransactionStatus.PENDING ||
-      (!transaction.sourceAccount && !transaction.destinationAccount)
-    ) {
-      return;
-    }
-
-    console.log(
-      "AccountShareFunctions.onTransactionCreated(VALIDATING)",
-      transaction
-    );
-    const accountEntities: AccountEntity[] = [];
-    if (transaction.type === TransactionType.TRANSFER) {
-      accountEntities.push({
-        account: transaction.sourceAccount,
-        balance: transaction.amount * -1,
-      });
-
-      accountEntities.push({
-        account: transaction.destinationAccount!,
-        balance: transaction.amount,
-      });
-    } else {
-      accountEntities.push({
-        account: transaction.sourceAccount,
-        balance:
-          transaction.amount *
-          (transaction.type === TransactionType.EXPENSE ? -1 : 1),
-      });
-    }
-
-    console.log(
-      "AccountShareFunctions.onTransactionCreated(UPDATING ACCOUNTS)",
-      { accountEntities }
-    );
+    console.log("onTransactionCreated(UPDATING ACCOUNTS)", { accountEntities });
     for await (const account of accountEntities) {
       await AccountShareFunctions.updateOrCreateAccount(
         account.account,
@@ -61,52 +30,83 @@ export class AccountShareFunctions {
   }
 
   @OnEvent(EventTypes.TRANSACTION_DELETED)
-  static async onTransactionDeleted(transaction: TransactionEntity) {
-    console.log(
-      "AccountShareFunctions.onTransactionDeleted(RECEIVED)",
-      transaction
+  static async onTransactionDeleted(
+    transaction: SingleParamEvent<TransactionEntity>
+  ) {
+    console.log("onTransactionDeleted(RECEIVED)", transaction);
+    const accountEntities = AccountShareFunctions.handleEvent(
+      transaction,
+      true
     );
-    if (
-      transaction.status === TransactionStatus.PENDING ||
-      (!transaction.sourceAccount && !transaction.destinationAccount)
-    ) {
-      return;
-    }
 
-    console.log(
-      "AccountShareFunctions.onTransactionDeleted(VALIDATING)",
-      transaction
-    );
-    const accountEntities: AccountEntity[] = [];
-    if (transaction.type === TransactionType.TRANSFER) {
-      accountEntities.push({
-        account: transaction.sourceAccount,
-        balance: transaction.amount,
-      });
-
-      accountEntities.push({
-        account: transaction.destinationAccount!,
-        balance: transaction.amount * -1,
-      });
-    } else {
-      accountEntities.push({
-        account: transaction.sourceAccount,
-        balance:
-          transaction.amount *
-          (transaction.type === TransactionType.EXPENSE ? 1 : -1),
-      });
-    }
-
-    console.log(
-      "AccountShareFunctions.onTransactionDeleted(UPDATING ACCOUNTS)",
-      { accountEntities }
-    );
+    console.log("onTransactionDeleted(UPDATING ACCOUNTS)", { accountEntities });
     for (const account of accountEntities) {
       await AccountShareFunctions.updateOrCreateAccount(
         account.account,
         account.balance
       );
     }
+  }
+
+  @OnEvent(EventTypes.TRANSACTION_UPDATED)
+  static async onTransactionUpdated({
+    oldData: oldTransaction,
+    newData: newTransaction,
+  }: UpdateEvent<TransactionEntity>) {
+    console.log("onTransactionUpdated(RECEIVED)", {
+      oldTransaction,
+      newTransaction,
+    });
+  }
+
+  static async getAllAccounts(): Promise<Account[]> {
+    const snapshot = await db.collection(Collections.Accounts).get();
+
+    const accounts = snapshot.docs.map((doc) => {
+      const docData = { ...doc.data() } as AccountEntity;
+      return {
+        ...docData,
+        id: doc.id,
+        account: getAccountName(docData.account),
+      } as Account;
+    });
+
+    return accounts;
+  }
+
+  private static handleEvent(
+    transaction: TransactionEntity,
+    isRollback: boolean
+  ) {
+    if (
+      transaction.status === TransactionStatus.PENDING ||
+      (!transaction.sourceAccount && !transaction.destinationAccount)
+    ) {
+      return [];
+    }
+
+    const accountEntities: AccountEntity[] = [];
+    if (transaction.type === TransactionType.TRANSFER) {
+      accountEntities.push({
+        account: transaction.sourceAccount,
+        balance: transaction.amount * (isRollback ? 1 : -1),
+      });
+
+      accountEntities.push({
+        account: transaction.destinationAccount!,
+        balance: transaction.amount * (isRollback ? -1 : 1),
+      });
+    } else {
+      accountEntities.push({
+        account: transaction.sourceAccount,
+        balance:
+          transaction.amount *
+          (transaction.type === TransactionType.EXPENSE ? -1 : 1) *
+          (isRollback ? -1 : 1),
+      });
+    }
+
+    return accountEntities;
   }
 
   private static async getAccountDocument(
@@ -154,20 +154,5 @@ export class AccountShareFunctions {
       account,
       balance,
     });
-  }
-
-  static async getAllAccounts(): Promise<Account[]> {
-    const snapshot = await db.collection(Collections.Accounts).get();
-
-    const accounts = snapshot.docs.map((doc) => {
-      const docData = { ...doc.data() } as AccountEntity;
-      return {
-        ...docData,
-        id: doc.id,
-        account: getAccountName(docData.account),
-      } as Account;
-    });
-
-    return accounts;
   }
 }

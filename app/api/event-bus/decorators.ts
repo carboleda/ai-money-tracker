@@ -1,14 +1,13 @@
-import { EventBus, EventTypes } from ".";
+import { EventBus, EventTypes, EventCallback } from ".";
 
-export function OnEvent(name: EventTypes) {
+export function OnEvent<T>(name: EventTypes) {
   return function (
     _target: any,
     _methodName: string,
     descriptor: PropertyDescriptor
   ) {
-    const originalMethod = descriptor.value;
+    const originalMethod = descriptor.value as EventCallback<T>;
 
-    // apiEventBus.on(name, originalMethod);
     EventBus.subscribe(name, originalMethod);
 
     return descriptor;

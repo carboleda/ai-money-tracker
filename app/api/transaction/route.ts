@@ -69,17 +69,20 @@ export async function POST(req: NextRequest) {
 
 export async function PUT(req: NextRequest) {
   const { id, ...transactionData } = (await req.json()) as Transaction;
-  const entity = {
+  const newTransaction = {
     ...transactionData,
     createdAt: Timestamp.fromDate(new Date(transactionData.createdAt)),
   } as TransactionEntity;
 
-  await db
-    .collection(Collections.Transactions)
-    .doc(id)
-    .update(entity as UpdateData<TransactionEntity>);
+  const doc = db.collection(Collections.Transactions).doc(id);
+  const oldTransaction = (await doc.get()).data() as TransactionEntity;
 
-  await EventBus.publish(EventTypes.TRANSACTION_CREATED, entity);
+  doc.update(newTransaction as UpdateData<TransactionEntity>);
+
+  await EventBus.publish<TransactionEntity>(EventTypes.TRANSACTION_UPDATED, {
+    oldData: oldTransaction,
+    newData: newTransaction,
+  });
 
   return NextResponse.json({ id });
 }
