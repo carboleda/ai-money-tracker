@@ -8,11 +8,11 @@ export enum EventTypes {
 export class EventBus {
   static async publish(event: EventTypes, data: any) {
     console.log("EventBus.publish", { event, data });
-    PubSub.publishSync(event, data);
+    return PubSub.publishSync(event, data);
   }
 
   static subscribe(event: EventTypes, callback: (data: any) => void) {
-    PubSub.subscribe(event, (_: string, data: any) => {
+    return PubSub.subscribe(event, (_: string, data: any) => {
       callback(data);
     });
   }

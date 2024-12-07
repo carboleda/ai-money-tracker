@@ -13,6 +13,10 @@ import { getAccountName } from "@/config/utils";
 export class AccountShareFunctions {
   @OnEvent(EventTypes.TRANSACTION_CREATED)
   static async onTransactionCreated(transaction: TransactionEntity) {
+    console.log(
+      "AccountShareFunctions.onTransactionCreated(RECEIVED)",
+      transaction
+    );
     if (
       transaction.status === TransactionStatus.PENDING ||
       !(transaction.sourceAccount && transaction.destinationAccount)
@@ -20,6 +24,10 @@ export class AccountShareFunctions {
       return;
     }
 
+    console.log(
+      "AccountShareFunctions.onTransactionCreated(VALIDATING)",
+      transaction
+    );
     const accountEntities: AccountEntity[] = [];
     if (transaction.type === TransactionType.TRANSFER) {
       accountEntities.push({
@@ -40,6 +48,10 @@ export class AccountShareFunctions {
       });
     }
 
+    console.log(
+      "AccountShareFunctions.onTransactionCreated(UPDATING ACCOUNTS)",
+      { accountEntities }
+    );
     for await (const account of accountEntities) {
       await AccountShareFunctions.updateOrCreateAccount(
         account.account,
@@ -50,6 +62,10 @@ export class AccountShareFunctions {
 
   @OnEvent(EventTypes.TRANSACTION_DELETED)
   static async onTransactionDeleted(transaction: TransactionEntity) {
+    console.log(
+      "AccountShareFunctions.onTransactionDeleted(RECEIVED)",
+      transaction
+    );
     const accountEntities: AccountEntity[] = [];
     if (
       transaction.status === TransactionStatus.PENDING ||
@@ -58,6 +74,10 @@ export class AccountShareFunctions {
       return;
     }
 
+    console.log(
+      "AccountShareFunctions.onTransactionDeleted(VALIDATING)",
+      transaction
+    );
     if (transaction.type === TransactionType.TRANSFER) {
       accountEntities.push({
         account: transaction.sourceAccount,
@@ -77,6 +97,10 @@ export class AccountShareFunctions {
       });
     }
 
+    console.log(
+      "AccountShareFunctions.onTransactionDeleted(UPDATING ACCOUNTS)",
+      { accountEntities }
+    );
     for (const account of accountEntities) {
       await AccountShareFunctions.updateOrCreateAccount(
         account.account,
