@@ -24,11 +24,11 @@
         "type": "string",
         "description": "Source account if it applies. This is the account where the money comes from"
       },
-      "date": {
+      "createdAt": {
         "type": "string",
         "description": "Transaction date and time in ISO format yyyy-MM-dd'T'HH:mm"
       }
     },
-    "required": ["description", "amount", "type"]
+    "required": ["description", "amount", "type", "category"]
   }
 }
