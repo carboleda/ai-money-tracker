@@ -19,7 +19,7 @@ export class AccountShareFunctions {
     );
     if (
       transaction.status === TransactionStatus.PENDING ||
-      !(transaction.sourceAccount && transaction.destinationAccount)
+      (!transaction.sourceAccount && !transaction.destinationAccount)
     ) {
       return;
     }
@@ -66,10 +66,9 @@ export class AccountShareFunctions {
       "AccountShareFunctions.onTransactionDeleted(RECEIVED)",
       transaction
     );
-    const accountEntities: AccountEntity[] = [];
     if (
       transaction.status === TransactionStatus.PENDING ||
-      !(transaction.sourceAccount && transaction.destinationAccount)
+      (!transaction.sourceAccount && !transaction.destinationAccount)
     ) {
       return;
     }
@@ -78,6 +77,7 @@ export class AccountShareFunctions {
       "AccountShareFunctions.onTransactionDeleted(VALIDATING)",
       transaction
     );
+    const accountEntities: AccountEntity[] = [];
     if (transaction.type === TransactionType.TRANSFER) {
       accountEntities.push({
         account: transaction.sourceAccount,
