@@ -24,7 +24,7 @@ export async function GET(req: NextRequest, { params }: GetTransactionsParams) {
       endDate: endDate ? new Date(endDate!) : null,
     });
 
-  const summary = SummaryShareFunctions.computeSummary(transactions);
+  const summary = await SummaryShareFunctions.computeSummary(transactions);
 
   return NextResponse.json({
     accounts: Env.VALID_ACCOUNTS,

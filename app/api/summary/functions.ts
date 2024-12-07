@@ -6,9 +6,10 @@ import {
   TransactionType,
 } from "@/interfaces/transaction";
 import _ from "lodash";
+import { AccountShareFunctions } from "../accounts/functions";
 
 export class SummaryShareFunctions {
-  static computeSummary(transactions: Transaction[]): Summary {
+  static async computeSummary(transactions: Transaction[]): Promise<Summary> {
     let totalIncomes = 0;
     let totalExpenses = 0;
     let totalPending = 0;
@@ -26,7 +27,11 @@ export class SummaryShareFunctions {
       }
     });
 
-    const totalBalance = totalIncomes - totalExpenses;
+    const accounts = await AccountShareFunctions.getAllAccounts();
+    const totalBalance = accounts.reduce(
+      (acc, account) => acc + account.balance,
+      0
+    );
 
     return {
       totalIncomes,
