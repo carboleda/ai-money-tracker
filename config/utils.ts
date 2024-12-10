@@ -116,7 +116,7 @@ export const getTransactionOverdueStatus = (
     return TransactionOverdueStatus.OVERDUE;
   }
 
-  if (dayDiff > 1 && dayDiff <= 4) {
+  if (dayDiff >= 0 && dayDiff <= 3) {
     return TransactionOverdueStatus.SOON;
   }
 
