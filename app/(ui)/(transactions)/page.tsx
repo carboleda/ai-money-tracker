@@ -12,7 +12,6 @@ import {
   TransactionTable,
 } from "@/components/Transactions";
 import { BankAccounDropdown } from "@/components/BankAccounsDropdown";
-import { DateRangePicker } from "@nextui-org/date-picker";
 import { parseAbsoluteToLocal, ZonedDateTime } from "@internationalized/date";
 import { RangeValue } from "@react-types/shared";
 import { getMonthBounds } from "@/config/utils";
@@ -21,18 +20,17 @@ import { withAuth } from "@/app/(ui)/withAuth";
 import { HiOutlinePlusCircle } from "react-icons/hi";
 import { Button } from "@nextui-org/button";
 import { useIsMobile } from "@/hooks/useIsMobile";
+import { CustomDateRangePicker } from "@/components/shared/CustomDateRangePicker";
 
 function Transactions() {
   const isMobile = useIsMobile();
   const [isOpen, setOpen] = useState(false);
   const currentMonthBounds = getMonthBounds(new Date());
   const [selectedAccount, setSelectedAccount] = useState<string>("");
-  const [dateWithin, setDateWithin] = React.useState<RangeValue<ZonedDateTime>>(
-    {
-      start: parseAbsoluteToLocal(currentMonthBounds.start.toISOString()),
-      end: parseAbsoluteToLocal(currentMonthBounds.end.toISOString()),
-    }
-  );
+  const [dateWithin, setDateWithin] = useState<RangeValue<ZonedDateTime>>({
+    start: parseAbsoluteToLocal(currentMonthBounds.start.toISOString()),
+    end: parseAbsoluteToLocal(currentMonthBounds.end.toISOString()),
+  });
   const dateWithinStart = dateWithin.start.toDate().toISOString();
   const dateWithinEnd = dateWithin.end.toDate().toISOString();
   const { isLoading, data: reesponse } = useSWR<GetTransactionsResponse, Error>(
@@ -47,7 +45,7 @@ function Transactions() {
     <div className="flex flex-col gap-4 w-full">
       <div className="flex flex-wrap justify-between gap-3 items-end">
         <div className="flex flex-row justify-items-stretch gap-2 w-full md:w-fit">
-          <DateRangePicker
+          <CustomDateRangePicker
             label="Date within"
             variant="bordered"
             granularity="day"
