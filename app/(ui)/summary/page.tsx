@@ -18,6 +18,7 @@ import { TransactionType } from "@/interfaces/transaction";
 import { CustomDateRangePicker } from "@/components/shared/CustomDateRangePicker";
 import { parseAbsoluteToLocal, ZonedDateTime } from "@internationalized/date";
 import { RangeValue } from "@react-types/shared";
+import { Accordion, AccordionItem } from "@nextui-org/accordion";
 
 function renderTable(
   columns: string[],
@@ -97,7 +98,7 @@ function Summary() {
   ];
 
   return (
-    <section className="flex flex-col gap-2">
+    <section className="flex flex-col gap-4">
       <div className="flex flex-col w-full justify-start items-start gap-2">
         <h1 className="page-title">A summary of how your money flows 💸</h1>
       </div>
@@ -126,6 +127,37 @@ function Summary() {
               {tile.data}
             </div>
           ))}
+      </div>
+
+      <div className="w-full flex flex-row flex-wrap justify-start">
+        {!isLoading && (
+          <>
+            <span className="subtitle text-xl font-bold my-2">AI Summary</span>
+            <Accordion isCompact variant="shadow" defaultExpandedKeys={["1"]}>
+              <AccordionItem
+                key="1"
+                aria-label="Accordion 1"
+                title="Accordion 1"
+              >
+                Hello
+              </AccordionItem>
+              <AccordionItem
+                key="2"
+                aria-label="Accordion 2"
+                title="Accordion 2"
+              >
+                Hello
+              </AccordionItem>
+              <AccordionItem
+                key="3"
+                aria-label="Accordion 3"
+                title="Accordion 3"
+              >
+                Hello
+              </AccordionItem>
+            </Accordion>
+          </>
+        )}
       </div>
     </section>
   );
