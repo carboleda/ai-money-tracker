@@ -10,21 +10,20 @@ import { Button } from "@nextui-org/button";
 import { ZonedDateTime } from "@internationalized/date";
 import { useMutateTransaction } from "@/hooks/useMutateTransaction";
 import { FreeTextMode } from "./mode/FreeTextMode";
-import { Switch } from "@nextui-org/switch";
 import { HiCamera, HiDocumentText } from "react-icons/hi";
 import { CameraMode } from "./mode/CameraMode";
 import { Chip } from "@nextui-org/chip";
 import { Tab, Tabs } from "@nextui-org/tabs";
+import { getMissingFieldsInPrompt } from "@/config/utils";
 
 interface CreateTransactionModalFormProps {
   isOpen: boolean;
   onDismiss: () => void;
 }
 
-export const CreateTransactionModalForm: React.FC<CreateTransactionModalFormProps> = ({
-  onDismiss,
-  isOpen,
-}) => {
+export const CreateTransactionModalForm: React.FC<
+  CreateTransactionModalFormProps
+> = ({ onDismiss, isOpen }) => {
   const [validationError, setValidationError] = useState<string>("");
   const [isFreeText, setIsFreeText] = useState<boolean>(true);
   const [textInput, setTextInput] = useState<string>("");
@@ -63,6 +62,16 @@ export const CreateTransactionModalForm: React.FC<CreateTransactionModalFormProp
   const validateForm = () => {
     if (isFreeText && !textInput) {
       throw new Error("Description is requited. Please fill it out.");
+    }
+
+    if (isFreeText) {
+      const missinFields = getMissingFieldsInPrompt(textInput);
+      if (missinFields.length) {
+        const error = `Include the ${missinFields.join(
+          " and "
+        )} in your prompt!`;
+        throw new Error(error);
+      }
     }
 
     if (!isFreeText && !(picture && selectedAccount)) {

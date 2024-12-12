@@ -1,6 +1,6 @@
 "use client";
 
-import { Input, Textarea } from "@nextui-org/input";
+import { Textarea } from "@nextui-org/input";
 import { Spinner } from "@nextui-org/spinner";
 import { IconBrain } from "./shared/icons";
 import { FormEvent, useState } from "react";
@@ -8,7 +8,6 @@ import { usePlaceholderAnimation } from "@/hooks/usePlaceholderAnimation";
 import { useMutateTransaction } from "@/hooks/useMutateTransaction";
 import { siteConfig } from "@/config/site";
 import { getMissingFieldsInPrompt } from "@/config/utils";
-import { set } from "lodash";
 
 export interface TransactionInputProps {
   isRequired?: boolean;

@@ -22,7 +22,7 @@ export const FreeTextMode: React.FC<FreeTextModeProps> = ({
         variant="bordered"
         granularity="minute"
         value={createdAt}
-        onChange={(v) => setCreatedAt(v)}
+        onChange={(v) => setCreatedAt(v!)}
       />
     </>
   );
