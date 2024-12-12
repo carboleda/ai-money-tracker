@@ -2,7 +2,7 @@
 
 import { Textarea } from "@nextui-org/input";
 import { Spinner } from "@nextui-org/spinner";
-import { IconBrain } from "./shared/icons";
+import { IconBrain } from "@/components/shared/icons";
 import { FormEvent, useState } from "react";
 import { usePlaceholderAnimation } from "@/hooks/usePlaceholderAnimation";
 import { useMutateTransaction } from "@/hooks/useMutateTransaction";

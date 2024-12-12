@@ -13,12 +13,14 @@ import {
   TableRow,
 } from "@nextui-org/table";
 import { formatCurrency, getMonthBounds } from "@/config/utils";
+import { IconBrain } from "@/components/shared/icons";
 import { TransactionTypeDecorator } from "@/components/TransactionTypeDecorator";
 import { TransactionType } from "@/interfaces/transaction";
 import { CustomDateRangePicker } from "@/components/shared/CustomDateRangePicker";
 import { parseAbsoluteToLocal, ZonedDateTime } from "@internationalized/date";
 import { RangeValue } from "@react-types/shared";
 import { Accordion, AccordionItem } from "@nextui-org/accordion";
+import { Button } from "@nextui-org/button";
 
 function renderTable(
   columns: string[],
@@ -132,7 +134,12 @@ function Summary() {
       <div className="w-full flex flex-row flex-wrap justify-start">
         {!isLoading && (
           <>
-            <span className="subtitle text-xl font-bold my-2">AI Summary</span>
+            <span className="flex items-center gap-2 subtitle text-xl font-bold my-2">
+              AI Summary
+              <Button variant="light" isIconOnly>
+                <IconBrain className="text-base text-default-400 pointer-events-none flex-shrink-0" />
+              </Button>
+            </span>
             <Accordion isCompact variant="shadow" defaultExpandedKeys={["1"]}>
               <AccordionItem
                 key="1"
