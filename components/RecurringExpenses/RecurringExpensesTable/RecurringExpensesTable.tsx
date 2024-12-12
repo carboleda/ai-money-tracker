@@ -159,7 +159,7 @@ export const RecurringExpensesTable: React.FC<RecurringExpensesTableProps> = ({
                             variant="light"
                             className="self-center"
                             aria-label="Edit"
-                            onClick={() => onEdit(item)}
+                            onPress={() => onEdit(item)}
                           >
                             <IconEdit />
                           </Button>

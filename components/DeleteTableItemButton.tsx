@@ -45,7 +45,7 @@ export const DeleteTableItemButton: React.FC<DeleteTableItemButtonProps> = ({
         className="self-center"
         aria-label="Remove"
         disabled={isDisabled}
-        onClick={onClick}
+        onPress={onClick}
       >
         {isWaitingConfirmation ? <IconCheckCircle /> : <IconDelete />}
       </Button>

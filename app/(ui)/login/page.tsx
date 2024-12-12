@@ -66,7 +66,7 @@ function LoginPage() {
 
         <div className="flex flex-col gap-5 justify-center items-center mt-20">
           <Button
-            onClick={onGoogleLogin}
+            onPress={onGoogleLogin}
             variant="flat"
             color="primary"
             className="w-fit"

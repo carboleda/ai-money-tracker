@@ -45,9 +45,9 @@ export const CustomDateRangePicker: React.FC<CustomDateRangePickerProps> = ({
   // });
 
   const onDateChange = useCallback(
-    (value: RangeValue<ZonedDateTime>) => {
+    (value: RangeValue<ZonedDateTime> | null) => {
       // setDateWithin(value);
-      props.onChange(value);
+      props.onChange(value!); // FIXME: remove the ! operator
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [props.onChange]

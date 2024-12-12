@@ -132,7 +132,7 @@ export const PendingTransactionTable: React.FC<PendingTransactionTableProps> = (
                           variant="light"
                           className="self-center"
                           aria-label="Confirm"
-                          onClick={() => onConfirm(item)}
+                          onPress={() => onConfirm(item)}
                         >
                           <IconCheckCircle />
                         </Button>
