@@ -24,10 +24,6 @@ I share the transactions with you either as a text description or an invoice pic
 
 const model = genAI.getGenerativeModel({
   model: "gemini-1.5-flash",
-  // https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/function-calling#functioncallingconfig
-  toolConfig: { functionCallingConfig: { mode: FunctionCallingMode.ANY } },
-  tools,
-  systemInstruction,
   generationConfig,
 });
 
@@ -67,7 +63,18 @@ export async function extractData(
   text?: string,
   picture?: string
 ): Promise<GeneratedTransaction.GeneratedResponse> {
-  const result = await model.generateContent(getRequestPart(text, picture));
+  const result = await model.generateContent({
+    tools,
+    systemInstruction,
+    // https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/function-calling#functioncallingconfig
+    toolConfig: { functionCallingConfig: { mode: FunctionCallingMode.ANY } },
+    contents: [
+      {
+        role: "user",
+        parts: getRequestPart(text, picture),
+      },
+    ],
+  });
 
   // console.log(result, { depth: null });
 
