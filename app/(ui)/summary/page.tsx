@@ -64,10 +64,6 @@ function Summary() {
     `/api/summary?start=${dateWithinStart}&end=${dateWithinEnd}`
   );
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
-
   const tiles = [
     {
       title: "Accounts balance",
@@ -76,19 +72,6 @@ function Summary() {
         renderTable(
           ["ACCOUNT", "BANLANCE"],
           response.accountsBalance.map((account) => ({
-            id: account.id,
-            name: account.account,
-            amount: account.balance,
-          }))
-        ),
-    },
-    {
-      title: "Movements by account",
-      data:
-        response?.accountsBalance &&
-        renderTable(
-          ["ACCOUNT", "BANLANCE"],
-          response.byAccount.map((account) => ({
             id: account.id,
             name: account.account,
             amount: account.balance,
@@ -130,17 +113,19 @@ function Summary() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 grid-flow-row items-start gap-4">
-        {tiles.map((tile, index) => (
-          <div
-            key={index}
-            className="w-full flex flex-row flex-wrap justify-start"
-          >
-            <span className="subtitle text-xl font-bold my-2">
-              {tile.title}
-            </span>
-            {tile.data}
-          </div>
-        ))}
+        {isLoading && <span>Loading...</span>}
+        {!isLoading &&
+          tiles.map((tile, index) => (
+            <div
+              key={index}
+              className="w-full flex flex-row flex-wrap justify-start"
+            >
+              <span className="subtitle text-xl font-bold my-2">
+                {tile.title}
+              </span>
+              {tile.data}
+            </div>
+          ))}
       </div>
     </section>
   );

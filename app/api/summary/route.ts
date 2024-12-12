@@ -3,6 +3,7 @@ import { SummaryShareFunctions } from "./functions";
 import { FilterTransactionsShareFunctions } from "../transaction/[status]/functions";
 import { TransactionStatus } from "@/interfaces/transaction";
 import { AccountShareFunctions } from "../accounts/functions";
+
 export async function GET(req: NextRequest) {
   const searchParams = req.nextUrl.searchParams;
   const startDate = searchParams.get("start");
@@ -25,8 +26,6 @@ export async function GET(req: NextRequest) {
   const byCategory =
     SummaryShareFunctions.getSummaryByCategory(mappedTransactions);
   const byType = SummaryShareFunctions.getSummaryByType(mappedTransactions);
-  const byAccount =
-    SummaryShareFunctions.getSummaryByAccount(mappedTransactions);
 
   const accountsBalance = await AccountShareFunctions.getAllAccounts();
 
@@ -34,6 +33,5 @@ export async function GET(req: NextRequest) {
     accountsBalance,
     byCategory,
     byType,
-    byAccount,
   });
 }
