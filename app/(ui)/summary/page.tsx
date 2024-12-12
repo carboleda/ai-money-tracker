@@ -3,98 +3,50 @@
 import React from "react";
 import useSWR from "swr";
 import { withAuth } from "@/app/(ui)/withAuth";
-import { TransactionTypeDecorator } from "@/components/TransactionTypeDecorator";
-import { TransactionType } from "@/interfaces/transaction";
-import { formatCurrency } from "@/config/utils";
 import { GetSummaryResponse } from "@/interfaces/summary";
 import {
-  LineChart,
-  Line,
-  CartesianGrid,
-  XAxis,
-  YAxis,
-  ResponsiveContainer,
-  PieChart,
-  Pie,
-  Legend,
-  Tooltip,
-  Cell,
-  BarChart,
-  Bar,
-  LabelList,
-} from "recharts";
+  Table,
+  TableBody,
+  TableCell,
+  TableColumn,
+  TableHeader,
+  TableRow,
+} from "@nextui-org/table";
+import { formatCurrency } from "@/config/utils";
+import { TransactionTypeDecorator } from "@/components/TransactionTypeDecorator";
+import { TransactionType } from "@/interfaces/transaction";
 
-const RADIAN = Math.PI / 180;
-const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
-
-const renderCustomizedPieLabel = (dataKey: string) => {
-  return function render(data: any) {
-    const { cx, cy, midAngle, innerRadius, outerRadius } = data;
-    const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
-    const x = cx + radius * Math.cos(-midAngle * RADIAN);
-    const y = cy + radius * Math.sin(-midAngle * RADIAN);
-
-    return (
-      <text
-        x={x}
-        y={y}
-        fill="white"
-        className="text-small font-semibold"
-        textAnchor={x > cx ? "start" : "end"}
-        dominantBaseline="central"
-      >
-        {formatCurrency(data[dataKey])}
-      </text>
-    );
-  };
-};
-
-const renderPieChart = (data: any[], dataKey: string, nameKey: string) => (
-  <ResponsiveContainer width="100%" height={200}>
-    <PieChart>
-      <Pie
-        data={data}
-        dataKey={dataKey}
-        nameKey={nameKey}
-        cx="50%"
-        cy="50%"
-        outerRadius={50}
-        labelLine={false}
-      >
-        <LabelList
-          dataKey={dataKey}
-          formatter={formatCurrency}
-          position="outside"
-          fontSize={10}
-        />
-        {data.map((_entry, index) => (
-          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-        ))}
-      </Pie>
-      <Legend />
-    </PieChart>
-  </ResponsiveContainer>
-);
-
-const renderBarChart = (data: any[], dataKey: string, nameKey: string) => (
-  <ResponsiveContainer width="100%" height={200}>
-    <BarChart width={150} height={40} data={data}>
-      <Bar yAxisId="left" dataKey={dataKey} fill="#8884d8">
-        <LabelList
-          dataKey={dataKey}
-          formatter={formatCurrency}
-          position="top"
-          fontSize={10}
-        />
-        {data.map((_entry, index) => (
-          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-        ))}
-      </Bar>
-      <XAxis dataKey={nameKey} fontSize={10} />
-      <YAxis yAxisId="left" orientation="left" stroke="#8884d8" fontSize={10} />
-    </BarChart>
-  </ResponsiveContainer>
-);
+function renderTable(
+  columns: string[],
+  data: { id: string; name: string; amount: number }[]
+) {
+  return (
+    <Table aria-label="Example static collection table">
+      <TableHeader>
+        <TableColumn>{columns[0]}</TableColumn>
+        <TableColumn className="text-end">{columns[1]}</TableColumn>
+      </TableHeader>
+      <TableBody emptyContent={"No rows to display."}>
+        {data.map((item) => (
+          <TableRow key={item.id}>
+            <TableCell className="capitalize">{item.name}</TableCell>
+            <TableCell className="text-end">
+              <TransactionTypeDecorator
+                type={
+                  item.amount > 0
+                    ? TransactionType.INCOME
+                    : TransactionType.EXPENSE
+                }
+              >
+                {formatCurrency(item.amount)}
+              </TransactionTypeDecorator>
+            </TableCell>
+          </TableRow>
+        )) ?? []}
+      </TableBody>
+    </Table>
+  );
+}
 
 function Summary() {
   const { isLoading, data: response } = useSWR<GetSummaryResponse, Error>(
@@ -105,22 +57,69 @@ function Summary() {
     return <div>Loading...</div>;
   }
 
+  const tiles = [
+    {
+      title: "Accounts balance",
+      data:
+        response?.accountsBalance &&
+        renderTable(
+          ["ACCOUNT", "BANLANCE"],
+          response.accountsBalance.map((account) => ({
+            id: account.id,
+            name: account.account,
+            amount: account.balance,
+          }))
+        ),
+    },
+    {
+      title: "Movements by account",
+      data:
+        response?.accountsBalance &&
+        renderTable(
+          ["ACCOUNT", "BANLANCE"],
+          response.byAccount.map((account) => ({
+            id: account.id,
+            name: account.account,
+            amount: account.balance,
+          }))
+        ),
+    },
+    {
+      title: "Movements by Type",
+      data:
+        response?.byType &&
+        renderTable(
+          ["TYPE", "AMOUNT"],
+          response.byType
+            .map((type) => ({
+              id: type.type,
+              name: type.type,
+              amount:
+                type.total * (type.type === TransactionType.INCOME ? 1 : -1),
+            }))
+            .sort((a, b) => b.amount - a.amount)
+        ),
+    },
+  ];
+
   return (
-    <section className="flex flex-col items-center justify-center gap-4">
+    <section className="flex flex-col gap-2">
       <div className="flex flex-col w-full justify-start items-start gap-2">
-        <h1 className="page-title">All your transactions</h1>
+        <h1 className="page-title">A summary of how your money flows 💸</h1>
       </div>
 
-      <div className="w-full flex flex-row flex-wrap justify-start">
-        <div className="w-full md:w-1/2">
-          {renderBarChart(response?.byAccount || [], "balance", "account")}
-        </div>
-        <div className="w-full md:w-1/2">
-          {renderPieChart(response?.byType || [], "total", "type")}
-        </div>
-        <div className="w-full">
-          {renderBarChart(response?.byCategory || [], "total", "category")}
-        </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 grid-flow-row items-start gap-4">
+        {tiles.map((tile, index) => (
+          <div
+            key={index}
+            className="w-full flex flex-row flex-wrap justify-start"
+          >
+            <span className="subtitle text-xl font-bold my-2">
+              {tile.title}
+            </span>
+            {tile.data}
+          </div>
+        ))}
       </div>
     </section>
   );
