@@ -185,7 +185,7 @@ export const UpdateTransactionModalForm: React.FC<UpdateTransactionModalFormProp
                   variant="bordered"
                   granularity="minute"
                   value={createdAtInput}
-                  onChange={(v) => setCreatedAtInput(v)}
+                  onChange={(v) => setCreatedAtInput(v!)}
                   isRequired
                   hideTimeZone
                 />

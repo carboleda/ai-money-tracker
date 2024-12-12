@@ -209,7 +209,7 @@ export const RecurringExpenseModalForm: React.FC<
                     minValue={dueDateMinMax?.min}
                     maxValue={dueDateMinMax?.max}
                     value={dueDateInput}
-                    onChange={(v) => setDueDateInput(v)}
+                    onChange={(v) => setDueDateInput(v!)}
                     isRequired
                   />
                 </div>
