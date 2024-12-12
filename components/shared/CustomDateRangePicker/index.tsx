@@ -15,7 +15,8 @@ import { HiArrowCircleLeft } from "react-icons/hi";
 enum RangeList {
   this = "This month",
   last = "Last month",
-  three = "Three months",
+  two = "Two months ago",
+  quarter = "Since last quarter",
   custom = "Custom range",
 }
 
@@ -39,14 +40,9 @@ export const CustomDateRangePicker: React.FC<CustomDateRangePickerProps> = ({
     () => mapSelectedKeyToValue[selectedKey],
     [selectedKey]
   );
-  // const [dateWithin, setDateWithin] = useState<RangeValue<ZonedDateTime>>({
-  //   start: parseAbsoluteToLocal(currentMonthBounds.start.toISOString()),
-  //   end: parseAbsoluteToLocal(currentMonthBounds.end.toISOString()),
-  // });
 
   const onDateChange = useCallback(
     (value: RangeValue<ZonedDateTime> | null) => {
-      // setDateWithin(value);
       props.onChange(value!); // FIXME: remove the ! operator
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -59,10 +55,18 @@ export const CustomDateRangePicker: React.FC<CustomDateRangePickerProps> = ({
       bounds = getMonthBounds(
         new Date(new Date().getFullYear(), new Date().getMonth() - 1, 1)
       );
-    } else if (selectedKey === ("three" as RangeList)) {
+    } else if (selectedKey === ("two" as RangeList)) {
       bounds = getMonthBounds(
         new Date(new Date().getFullYear(), new Date().getMonth() - 2, 1)
       );
+    } else if (selectedKey === ("quarter" as RangeList)) {
+      const querterBounds = getMonthBounds(
+        new Date(new Date().getFullYear(), new Date().getMonth() - 3, 1)
+      );
+      bounds = {
+        start: querterBounds.start,
+        end: currentMonthBounds.end,
+      };
     } else {
       bounds = currentMonthBounds;
     }
@@ -98,7 +102,7 @@ export const CustomDateRangePicker: React.FC<CustomDateRangePickerProps> = ({
         >
           <div className="text-start mh-5">
             <label className="text-xs text-default-600">
-              Date within{" "}
+              {props.label}{" "}
               {props.isRequired && <span className="text-red-600">*</span>}
             </label>
             <div>{selectedValue}</div>

@@ -106,7 +106,7 @@ function Summary() {
       </div>
       <div className="flex flex-row justify-items-stretch gap-2 w-full md:w-fit">
         <CustomDateRangePicker
-          label="Date within"
+          label="Filter the summary by date"
           variant="bordered"
           granularity="day"
           isRequired
