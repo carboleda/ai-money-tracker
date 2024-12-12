@@ -1,13 +1,18 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { SummaryShareFunctions } from "./functions";
 import { FilterTransactionsShareFunctions } from "../transaction/[status]/functions";
 import { TransactionStatus } from "@/interfaces/transaction";
 import { AccountShareFunctions } from "../accounts/functions";
+export async function GET(req: NextRequest) {
+  const searchParams = req.nextUrl.searchParams;
+  const startDate = searchParams.get("start");
+  const endDate = searchParams.get("end");
 
-export async function GET(req: Request) {
   const transactions =
     await FilterTransactionsShareFunctions.searchTransactions({
       status: TransactionStatus.COMPLETE,
+      startDate: startDate ? new Date(startDate) : null,
+      endDate: endDate ? new Date(endDate) : null,
     });
 
   const mappedTransactions = transactions
