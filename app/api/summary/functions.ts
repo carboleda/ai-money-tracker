@@ -27,11 +27,7 @@ export class SummaryShareFunctions {
       }
     });
 
-    const accounts = await AccountShareFunctions.getAllAccounts();
-    const totalBalance = accounts.reduce(
-      (acc, account) => acc + account.balance,
-      0
-    );
+    const totalBalance = totalIncomes - totalExpenses;
 
     return {
       totalIncomes,
@@ -39,6 +35,10 @@ export class SummaryShareFunctions {
       totalPending,
       totalBalance,
     };
+  }
+
+  static computeBalance(accounts: Account[]): number {
+    return accounts.reduce((acc, account) => acc + account.balance, 0);
   }
 
   static getSummaryByCategory(

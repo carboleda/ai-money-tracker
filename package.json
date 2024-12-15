@@ -39,6 +39,7 @@
     "@types/w3c-image-capture": "^1.0.10",
     "@upstash/ratelimit": "^1.1.3",
     "@vercel/kv": "^1.0.1",
+    "ag-charts-react": "^11.0.0",
     "autoprefixer": "10.4.20",
     "clsx": "^2.1.1",
     "dotenv": "^16.4.5",

@@ -28,10 +28,12 @@ export async function GET(req: NextRequest) {
   const byType = SummaryShareFunctions.getSummaryByType(mappedTransactions);
 
   const accountsBalance = await AccountShareFunctions.getAllAccounts();
+  const totalBalance = SummaryShareFunctions.computeBalance(accountsBalance);
 
   return NextResponse.json({
     accountsBalance,
     byCategory,
     byType,
+    totalBalance,
   });
 }

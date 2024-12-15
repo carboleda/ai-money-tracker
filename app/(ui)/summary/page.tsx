@@ -13,18 +13,18 @@ import {
   TableRow,
 } from "@nextui-org/table";
 import { formatCurrency, getMonthBounds } from "@/config/utils";
-import { IconBrain } from "@/components/shared/icons";
-import { TransactionTypeDecorator } from "@/components/TransactionTypeDecorator";
 import { TransactionType } from "@/interfaces/transaction";
 import { CustomDateRangePicker } from "@/components/shared/CustomDateRangePicker";
 import { parseAbsoluteToLocal, ZonedDateTime } from "@internationalized/date";
 import { RangeValue } from "@react-types/shared";
-import { Accordion, AccordionItem } from "@nextui-org/accordion";
-import { Button } from "@nextui-org/button";
+import { CategoriesChart } from "@/components/CategoriesChart";
+import { Chip, ChipProps } from "@nextui-org/chip";
+
+type Color = ChipProps["color"];
 
 function renderTable(
   columns: string[],
-  data: { id: string; name: string; amount: number }[]
+  data: { id: string; name: string; amount: number; color: Color }[]
 ) {
   return (
     <Table aria-label="Example static collection table">
@@ -37,15 +37,9 @@ function renderTable(
           <TableRow key={item.id}>
             <TableCell className="capitalize">{item.name}</TableCell>
             <TableCell className="text-end">
-              <TransactionTypeDecorator
-                type={
-                  item.amount > 0
-                    ? TransactionType.INCOME
-                    : TransactionType.EXPENSE
-                }
-              >
+              <Chip radius="sm" variant="flat" size="md" color={item.color}>
                 {formatCurrency(item.amount)}
-              </TransactionTypeDecorator>
+              </Chip>
             </TableCell>
           </TableRow>
         )) ?? []}
@@ -74,11 +68,22 @@ function Summary() {
         response?.accountsBalance &&
         renderTable(
           ["ACCOUNT", "BANLANCE"],
-          response.accountsBalance.map((account) => ({
-            id: account.id,
-            name: account.account,
-            amount: account.balance,
-          }))
+          [
+            ...response.accountsBalance.map((account) => ({
+              id: account.id,
+              name: account.account,
+              amount: account.balance,
+              color: (account.balance > 0 ? "success" : "danger") as Color,
+            })),
+            {
+              id: "balance",
+              name: "Balance",
+              amount: response.totalBalance,
+              color: (response.totalBalance > 0
+                ? "primary"
+                : "danger") as Color,
+            },
+          ]
         ),
     },
     {
@@ -93,6 +98,9 @@ function Summary() {
               name: type.type,
               amount:
                 type.total * (type.type === TransactionType.INCOME ? 1 : -1),
+              color: (type.type === TransactionType.INCOME
+                ? "success"
+                : "danger") as Color,
             }))
             .sort((a, b) => b.amount - a.amount)
         ),
@@ -132,6 +140,10 @@ function Summary() {
       </div>
 
       <div className="w-full flex flex-row flex-wrap justify-start">
+        {!isLoading && <CategoriesChart data={response?.byCategory} />}
+      </div>
+
+      {/* <div className="w-full flex flex-row flex-wrap justify-start">
         {!isLoading && (
           <>
             <span className="flex items-center gap-2 subtitle text-xl font-bold my-2">
@@ -165,7 +177,7 @@ function Summary() {
             </Accordion>
           </>
         )}
-      </div>
+      </div> */}
     </section>
   );
 }

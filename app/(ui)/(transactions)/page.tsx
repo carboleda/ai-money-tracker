@@ -95,7 +95,6 @@ function Transactions() {
             summary={reesponse?.summary}
             includedKeys={[
               ...(!isMobile ? ["totalIncomes" as keyof Summary] : []),
-              "totalBalance",
               "totalExpenses",
               "totalPending",
             ]}
