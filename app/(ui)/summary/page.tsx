@@ -137,47 +137,16 @@ function Summary() {
               {tile.data}
             </div>
           ))}
-      </div>
 
-      <div className="w-full flex flex-row flex-wrap justify-start">
-        {!isLoading && <CategoriesChart data={response?.byCategory} />}
-      </div>
-
-      {/* <div className="w-full flex flex-row flex-wrap justify-start">
-        {!isLoading && (
-          <>
-            <span className="flex items-center gap-2 subtitle text-xl font-bold my-2">
-              AI Summary
-              <Button variant="light" isIconOnly>
-                <IconBrain className="text-base text-default-400 pointer-events-none flex-shrink-0" />
-              </Button>
+        <div className="w-full flex flex-row flex-wrap justify-start">
+          {!isLoading && (
+            <span className="subtitle text-xl font-bold my-2">
+              Movements by Category
             </span>
-            <Accordion isCompact variant="shadow" defaultExpandedKeys={["1"]}>
-              <AccordionItem
-                key="1"
-                aria-label="Accordion 1"
-                title="Accordion 1"
-              >
-                Hello
-              </AccordionItem>
-              <AccordionItem
-                key="2"
-                aria-label="Accordion 2"
-                title="Accordion 2"
-              >
-                Hello
-              </AccordionItem>
-              <AccordionItem
-                key="3"
-                aria-label="Accordion 3"
-                title="Accordion 3"
-              >
-                Hello
-              </AccordionItem>
-            </Accordion>
-          </>
-        )}
-      </div> */}
+          )}
+          {!isLoading && <CategoriesChart data={response?.byCategory} />}
+        </div>
+      </div>
     </section>
   );
 }
