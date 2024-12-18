@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { ReactNode, useState } from "react";
 import useSWR from "swr";
 import { withAuth } from "@/app/(ui)/withAuth";
 import { GetSummaryResponse } from "@/interfaces/summary";
@@ -18,13 +18,16 @@ import { CustomDateRangePicker } from "@/components/shared/CustomDateRangePicker
 import { parseAbsoluteToLocal, ZonedDateTime } from "@internationalized/date";
 import { RangeValue } from "@react-types/shared";
 import { CategoriesChart } from "@/components/charts/CategoriesChart";
-import { Chip, ChipProps } from "@nextui-org/chip";
+import { ChipProps } from "@nextui-org/chip";
+import { TransactionTypeDecorator } from "@/components/TransactionTypeDecorator";
+import { HiFire } from "react-icons/hi";
 
 type Color = ChipProps["color"];
+const BALANCE_ALERT_THRESHOLD = 10_000_000; // FIXME: Move to config
 
 function renderTable(
   columns: string[],
-  data: { id: string; name: string; amount: number; color: Color }[]
+  data: { id: string; name: ReactNode; amount: number; color: Color }[]
 ) {
   return (
     <Table aria-label="Example static collection table">
@@ -37,9 +40,9 @@ function renderTable(
           <TableRow key={item.id}>
             <TableCell className="capitalize">{item.name}</TableCell>
             <TableCell className="text-end">
-              <Chip radius="sm" variant="flat" size="md" color={item.color}>
+              <TransactionTypeDecorator color={item.color}>
                 {formatCurrency(item.amount)}
-              </Chip>
+              </TransactionTypeDecorator>
             </TableCell>
           </TableRow>
         )) ?? []}
@@ -77,11 +80,16 @@ function Summary() {
             })),
             {
               id: "balance",
-              name: "Balance",
+              name: (
+                <span className="flex gap-2 items-center font-bold">
+                  GLOBAL BALANCE{" "}
+                  {response.totalBalance < BALANCE_ALERT_THRESHOLD && (
+                    <HiFire className="text-lg text-red-500" />
+                  )}
+                </span>
+              ),
               amount: response.totalBalance,
-              color: (response.totalBalance > 0
-                ? "primary"
-                : "danger") as Color,
+              color: "primary" as Color,
             },
           ]
         ),
@@ -100,10 +108,18 @@ function Summary() {
                 type.total * (type.type === TransactionType.INCOME ? 1 : -1),
               color: (type.type === TransactionType.INCOME
                 ? "success"
-                : "danger") as Color,
+                : type.type === TransactionType.EXPENSE
+                ? "danger"
+                : "warning") as Color,
             }))
             .sort((a, b) => b.amount - a.amount)
         ),
+    },
+    {
+      title: "Movements by Category",
+      data: response?.byCategory && (
+        <CategoriesChart data={response?.byCategory} />
+      ),
     },
   ];
 
@@ -131,21 +147,12 @@ function Summary() {
               key={index}
               className="w-full flex flex-row flex-wrap justify-start"
             >
-              <span className="subtitle text-xl font-bold my-2">
+              <span className="subtitle text-lg font-bold my-2">
                 {tile.title}
               </span>
               {tile.data}
             </div>
           ))}
-
-        <div className="w-full flex flex-row flex-wrap justify-start">
-          {!isLoading && (
-            <span className="subtitle text-xl font-bold my-2">
-              Movements by Category
-            </span>
-          )}
-          {!isLoading && <CategoriesChart data={response?.byCategory} />}
-        </div>
       </div>
     </section>
   );
