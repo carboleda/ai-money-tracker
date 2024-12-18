@@ -7,6 +7,8 @@ export enum TransactionType {
 }
 
 export enum TransactionCategory {
+  Salario = "Salario",
+  TC = "TC",
   Alimentos = "Alimentos",
   Mercado = "Mercado",
   Educacion = "Educación",
