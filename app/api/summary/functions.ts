@@ -27,7 +27,8 @@ export class SummaryShareFunctions {
       }
     });
 
-    const totalBalance = totalIncomes - totalExpenses;
+    const accounts = await AccountShareFunctions.getAllAccounts();
+    const totalBalance = SummaryShareFunctions.computeBalance(accounts);
 
     return {
       totalIncomes,

@@ -94,6 +94,7 @@ function Transactions() {
           <SummaryPanel
             summary={reesponse?.summary}
             includedKeys={[
+              "totalBalance",
               ...(!isMobile ? ["totalIncomes" as keyof Summary] : []),
               "totalExpenses",
               "totalPending",
