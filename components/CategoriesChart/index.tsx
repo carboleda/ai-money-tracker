@@ -61,6 +61,11 @@ export const CategoriesChart: React.FC<CategoriesChartProps> = ({ data }) => {
         position: "bottom",
       },
     ],
+    overlays: {
+      unsupportedBrowser: {
+        enabled: false,
+      },
+    },
     theme: "ag-financial-dark",
   });
 
