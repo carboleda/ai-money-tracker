@@ -8,13 +8,17 @@ import {
   TableHeader,
   TableRow,
 } from "@nextui-org/table";
-import { Frequency, RecurringExpense } from "@/interfaces/recurringExpense";
+import {
+  Frequency,
+  FrequencyGroup,
+  RecurringExpense,
+} from "@/interfaces/recurringExpense";
 import { TableSkeleton } from "./TableSkeleton";
 import { Button } from "@nextui-org/button";
 import { IconEdit } from "@/components/shared/icons";
 import { HiOutlineSearch } from "react-icons/hi";
 import { RecurringExpenseModalForm } from "../RecurringExpenseModalForm/RecurringExpenseModalForm";
-import { useCallback, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { DeleteTableItemButton } from "@/components/DeleteTableItemButton";
 import { useMutateRecurringExpenses } from "@/hooks/useMutateRecurrentExpense";
 import { useRenderCell } from "./Columns";
@@ -23,16 +27,21 @@ import { Input } from "@nextui-org/input";
 
 interface RecurringExpensesTableProps {
   isLoading: boolean;
-  recurringExpenses: RecurringExpense[] | undefined;
+  recurringExpenses?: RecurringExpense[];
 }
 
 const groupByFrequency = (recurringExpenses: RecurringExpense[]) => {
   const { monthly = [], others = [] } = Object.groupBy(
     recurringExpenses,
-    (expense) => (expense.frequency == Frequency.Monthly ? "monthly" : "others")
+    (expense) =>
+      expense.frequency == Frequency.Monthly
+        ? FrequencyGroup.Monthly
+        : FrequencyGroup.Others
   );
 
-  const separator = { id: "others" } as unknown as RecurringExpense;
+  const separator = {
+    id: FrequencyGroup.Others,
+  } as unknown as RecurringExpense;
 
   return [
     ...monthly,
@@ -122,7 +131,7 @@ export const RecurringExpensesTable: React.FC<RecurringExpensesTableProps> = ({
         isStriped
         isCompact
         aria-label="Recurrent Expenses"
-        disabledKeys={["others"]}
+        disabledKeys={[FrequencyGroup.Others]}
         topContentPlacement="outside"
         topContent={renderTopContent()}
       >
@@ -138,7 +147,7 @@ export const RecurringExpensesTable: React.FC<RecurringExpensesTableProps> = ({
           emptyContent={"No recurrent expenses to display."}
         >
           {(item) => {
-            if (item.id === "others") {
+            if (item.id === FrequencyGroup.Others) {
               return renderSeparator(
                 item.id,
                 columns.length,

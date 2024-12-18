@@ -1,5 +1,7 @@
 import { Collections, db } from "@/firebase/server";
 import {
+  Frequency,
+  FrequencyGroup,
   RecurringExpense,
   RecurringExpenseEntity,
 } from "@/interfaces/recurringExpense";
@@ -20,7 +22,21 @@ export async function GET(req: NextRequest) {
     };
   });
 
-  return NextResponse.json({ recurringExpensesConfig });
+  const groupTotal = recurringExpensesConfig.reduce(
+    (acc, curr) => {
+      const group =
+        curr.frequency === Frequency.Monthly
+          ? FrequencyGroup.Monthly
+          : FrequencyGroup.Others;
+
+      acc[group] += curr.amount;
+
+      return acc;
+    },
+    { [FrequencyGroup.Monthly]: 0, [FrequencyGroup.Others]: 0 }
+  );
+
+  return NextResponse.json({ recurringExpensesConfig, groupTotal });
 }
 
 export async function POST(req: NextRequest) {

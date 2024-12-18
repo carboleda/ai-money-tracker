@@ -7,6 +7,11 @@ export enum Frequency {
   Yearly = "yearly",
 }
 
+export enum FrequencyGroup {
+  Monthly = "monthly",
+  Others = "others",
+}
+
 export const frequencyOptions = Object.entries(Frequency).reduce(
   (acc, [key, value]) => {
     acc[value] = key;
@@ -26,11 +31,13 @@ export interface RecurringExpenseEntity {
   notes?: string;
 }
 
-export interface RecurringExpense extends Omit<RecurringExpenseEntity, "dueDate"> {
+export interface RecurringExpense
+  extends Omit<RecurringExpenseEntity, "dueDate"> {
   id: string;
   dueDate: string;
 }
 
 export interface GetRecurringExpensesResponse {
   recurringExpensesConfig: RecurringExpense[];
+  groupTotal: Record<FrequencyGroup, number>;
 }

@@ -1,34 +1,49 @@
 import { TransactionType } from "@/interfaces/transaction";
-import { ReactNode } from "react";
-import { Chip } from "@nextui-org/chip";
+import { PropsWithChildren } from "react";
+import { Chip, ChipProps } from "@nextui-org/chip";
+import { Skeleton } from "@nextui-org/skeleton";
 
-interface TransactionTypeDecoratorProps {
-  type: TransactionType;
-  size?: "sm" | "md" | "lg";
-  children: ReactNode;
-}
+type TransactionTypeDecoratorProps = (
+  | {
+      type: TransactionType;
+      color?: never; // Explicitly disallow color
+    }
+  | {
+      type?: never; // Explicitly disallow type
+      color: ChipProps["color"];
+    }
+) &
+  PropsWithChildren<{
+    size?: "sm" | "md" | "lg";
+    avatar?: React.ReactNode;
+  }>;
 
-export const TransactionTypeDecorator: React.FC<
-  TransactionTypeDecoratorProps
-> = ({ type, size, children }) => {
-  if (type === TransactionType.INCOME)
-    return (
-      <Chip radius="sm" color="success" variant="flat" size={size}>
-        {children}
-      </Chip>
-    );
-  if (type === TransactionType.EXPENSE)
-    return (
-      <Chip radius="sm" color="danger" variant="flat" size={size}>
-        {children}
-      </Chip>
-    );
-  if (type === TransactionType.TRANSFER)
-    return (
-      <Chip radius="sm" color="warning" variant="flat" size={size}>
-        {children}
-      </Chip>
-    );
+const colorMapper: Record<TransactionType, ChipProps["color"]> = {
+  [TransactionType.INCOME]: "success",
+  [TransactionType.EXPENSE]: "danger",
+  [TransactionType.TRANSFER]: "warning",
+};
 
-  return <></>;
+export const TransactionTypeDecorator: React.FC<TransactionTypeDecoratorProps> = ({
+  type,
+  color,
+  size,
+  avatar,
+  children,
+}) => {
+  if (!children) {
+    return <Skeleton className="w-20 h-5 rounded-md" />;
+  }
+
+  return (
+    <Chip
+      radius="sm"
+      variant="flat"
+      size={size}
+      avatar={avatar}
+      color={color ?? colorMapper[type!]}
+    >
+      {children}
+    </Chip>
+  );
 };

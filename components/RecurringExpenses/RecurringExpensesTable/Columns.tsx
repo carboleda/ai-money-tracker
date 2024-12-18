@@ -1,15 +1,10 @@
-import {
-  formatCurrency,
-  formatFrequency,
-  formatTimeDate,
-} from "@/config/utils";
+import { formatCurrency, formatFrequency } from "@/config/utils";
 import { Chip } from "@nextui-org/chip";
 import { TableCell, TableRow } from "@nextui-org/table";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { TableColumn } from "@/interfaces/global";
 import { TransactionTypeDecorator } from "@/components/TransactionTypeDecorator";
-import { RecurringExpense } from "@/interfaces/recurringExpense";
-import { TransactionType } from "@/interfaces/transaction";
+import { Frequency, RecurringExpense } from "@/interfaces/recurringExpense";
 
 const columnsDesktop: TableColumn[] = [
   {
@@ -66,7 +61,11 @@ const renderCellDesktop = (key: any, item: RecurringExpense): JSX.Element => {
     case "amount":
       return (
         <TableCell className="text-end">
-          <TransactionTypeDecorator type={TransactionType.TRANSFER}>
+          <TransactionTypeDecorator
+            color={
+              item.frequency === Frequency.Monthly ? "primary" : "secondary"
+            }
+          >
             {formatCurrency(item.amount)}
           </TransactionTypeDecorator>
         </TableCell>
@@ -107,7 +106,9 @@ const renderCellMobile = (key: any, item: RecurringExpense): JSX.Element => {
             </span>
             <span>
               <TransactionTypeDecorator
-                type={TransactionType.TRANSFER}
+                color={
+                  item.frequency === Frequency.Monthly ? "primary" : "secondary"
+                }
                 size="sm"
               >
                 {formatCurrency(item.amount)}
