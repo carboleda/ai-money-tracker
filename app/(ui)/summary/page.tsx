@@ -17,7 +17,7 @@ import { TransactionType } from "@/interfaces/transaction";
 import { CustomDateRangePicker } from "@/components/shared/CustomDateRangePicker";
 import { parseAbsoluteToLocal, ZonedDateTime } from "@internationalized/date";
 import { RangeValue } from "@react-types/shared";
-import { CategoriesChart } from "@/components/CategoriesChart";
+import { CategoriesChart } from "@/components/charts/CategoriesChart";
 import { Chip, ChipProps } from "@nextui-org/chip";
 
 type Color = ChipProps["color"];

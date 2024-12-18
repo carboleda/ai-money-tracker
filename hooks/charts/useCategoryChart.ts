@@ -1,25 +1,30 @@
-"use client";
-
-import React, { useEffect, useState } from "react";
-import { AgCharts } from "ag-charts-react";
 import {
   AgBarSeriesThemeableOptions,
   AgChartOptions,
 } from "ag-charts-community";
-import stc from "string-to-color";
 import { CategorySummary } from "@/interfaces/summary";
-import { formatCurrency } from "@/config/utils";
 import { useTheme } from "next-themes";
-import { useIsMobile } from "@/hooks/useIsMobile";
+import { useIsMobile } from "../useIsMobile";
+import { useEffect, useState } from "react";
+import { formatCurrency } from "@/config/utils";
+import stc from "string-to-color";
+
+const ligthColor = "#FFFFFF";
+const darkColor = "#18181B";
 
 export interface CategoriesChartProps {
   data?: CategorySummary[];
 }
 
-export const CategoriesChart: React.FC<CategoriesChartProps> = ({ data }) => {
+export interface CategoriesChartResult {
+  options: AgChartOptions;
+}
+
+export const useCategoryChart = ({ data }: CategoriesChartProps) => {
   const { theme } = useTheme();
   const isMobile = useIsMobile();
 
+  const isDark = theme === "dark";
   const sortedData = data?.toSorted((a, b) => b.total - a.total);
 
   const [options, setOptions] = useState<AgChartOptions>({
@@ -39,7 +44,7 @@ export const CategoriesChart: React.FC<CategoriesChartProps> = ({ data }) => {
         }),
         label: {
           formatter: ({ value }) => formatCurrency(value),
-          color: "#FFFFFF",
+          color: ligthColor,
           padding: 15,
           fontWeight: "normal",
           placement: "inside-start",
@@ -59,6 +64,9 @@ export const CategoriesChart: React.FC<CategoriesChartProps> = ({ data }) => {
       {
         type: "number",
         position: "bottom",
+        label: {
+          formatter: ({ value }) => `${formatCurrency(value / 1000, false)}K`,
+        },
       },
     ],
     overlays: {
@@ -66,7 +74,6 @@ export const CategoriesChart: React.FC<CategoriesChartProps> = ({ data }) => {
         enabled: false,
       },
     },
-    theme: "ag-financial-dark",
   });
 
   useEffect(() => {
@@ -75,23 +82,19 @@ export const CategoriesChart: React.FC<CategoriesChartProps> = ({ data }) => {
         prev.series![0] as AgBarSeriesThemeableOptions<CategorySummary>;
       serie.label = {
         ...serie.label,
-        color: theme === "dark" ? "#FFFFFF" : "#18181B",
+        color: isDark ? ligthColor : darkColor,
       };
 
       return {
         ...prev,
         background: {
-          fill: theme === "dark" ? "#18181B" : "#FFFFFF",
+          fill: isDark ? darkColor : ligthColor,
         },
         series: [serie as any],
-        theme: theme === "dark" ? "ag-financial-dark" : "ag-financial",
+        theme: isDark ? "ag-financial-dark" : "ag-financial",
       };
     });
-  }, [theme]);
+  }, [isDark]);
 
-  return (
-    <div className="w-full p-5 rounded-xl shadow-md border-1 dark:shadow-none dark:border-0 dark:bg-zinc-900">
-      <AgCharts options={options} />
-    </div>
-  );
+  return { options };
 };

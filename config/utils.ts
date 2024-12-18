@@ -9,6 +9,11 @@ const currencyFormater = new Intl.NumberFormat("en-US", {
   style: "currency",
   currency: "USD",
 });
+const currencyFormaterNoFractionDigits = new Intl.NumberFormat("en-US", {
+  style: "currency",
+  currency: "USD",
+  maximumFractionDigits: 0,
+});
 const monthFormatter = new Intl.DateTimeFormat("en-US", {
   month: "long",
 });
@@ -25,8 +30,11 @@ const dateFormatter = new Intl.DateTimeFormat("en-US", {
   day: "numeric",
 });
 
-export const formatCurrency = (amount: number) =>
-  currencyFormater.format(amount);
+export const formatCurrency = (amount: number, withFractionDigits = true) =>
+  (withFractionDigits
+    ? currencyFormater
+    : currencyFormaterNoFractionDigits
+  ).format(amount);
 
 export const formatTimeDate = (date: Date) => dateTimeFormatter.format(date);
 
