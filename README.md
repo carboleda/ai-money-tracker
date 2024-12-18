@@ -22,6 +22,7 @@ Showcase the power of Gen AI by generating transactions entries from text inputs
 ## Resources
 - [React SVG Icons](https://reactsvgicons.com/search)
 - [react-icons - Heroicons](https://react-icons.github.io/react-icons)
+- [AG Charts](https://www.ag-grid.com/charts/)
 - [react-placeholder-typing](https://github.com/pashanitw/react-placeholder-typing/tree/master)
 - [Rate Limiting](https://vercel.com/guides/rate-limiting-edge-middleware-vercel-kv)
 - [Currency formater](https://s-yadav.github.io/react-number-format/docs/numeric_format)
