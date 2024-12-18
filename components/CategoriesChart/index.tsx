@@ -3,69 +3,29 @@
 import React, { useEffect, useState } from "react";
 import { AgCharts } from "ag-charts-react";
 import {
-  AgBarSeriesLabelOptions,
   AgBarSeriesThemeableOptions,
   AgChartOptions,
 } from "ag-charts-community";
+import stc from "string-to-color";
 import { CategorySummary } from "@/interfaces/summary";
 import { formatCurrency } from "@/config/utils";
 import { useTheme } from "next-themes";
 import { useIsMobile } from "@/hooks/useIsMobile";
-import { TransactionCategory } from "@/interfaces/transaction";
 
 export interface CategoriesChartProps {
   data?: CategorySummary[];
 }
 
-const getCategoryColor = (category: TransactionCategory): string => {
-  switch (category) {
-    case TransactionCategory.Salario:
-      return "#31ba4d";
-    case TransactionCategory.TC:
-      return "#9c3f53";
-    case TransactionCategory.Alimentos:
-      return "#FF6384";
-    case TransactionCategory.Mercado:
-      return "#36A2EB";
-    case TransactionCategory.Educacion:
-      return "#FFCE56";
-    case TransactionCategory.Inversion:
-      return "#4BC0C0";
-    case TransactionCategory.Salud:
-      return "#9966FF";
-    case TransactionCategory.Servicios:
-      return "#FF9F40";
-    case TransactionCategory.Transporte:
-      return "#FFCD56";
-    case TransactionCategory.Vivienda:
-      return "#4BC0C0";
-    case TransactionCategory.Bebe:
-      return "#FF6384";
-    case TransactionCategory.Zeus:
-      return "#36A2EB";
-    case TransactionCategory.Ocio:
-      return "#FFCE56";
-    case TransactionCategory.Impuesto:
-      return "#9966FF";
-    case TransactionCategory.Retiros:
-      return "#FF9F40";
-    case TransactionCategory.Vestuario:
-      return "#FFCD56";
-    case TransactionCategory.Otros:
-      return "#4BC0C0";
-    default:
-      return "#56aac9";
-  }
-};
-
 export const CategoriesChart: React.FC<CategoriesChartProps> = ({ data }) => {
   const { theme } = useTheme();
   const isMobile = useIsMobile();
 
+  const sortedData = data?.toSorted((a, b) => b.total - a.total);
+
   const [options, setOptions] = useState<AgChartOptions>({
-    ...(!isMobile && { width: 500, height: 500 }),
-    ...(isMobile && { width: 350, height: 500 }),
-    data,
+    width: isMobile ? 350 : 500,
+    height: isMobile ? 350 : 500,
+    data: sortedData,
     series: [
       {
         type: "bar",
@@ -73,8 +33,9 @@ export const CategoriesChart: React.FC<CategoriesChartProps> = ({ data }) => {
         xKey: "category",
         yKey: "total",
         cornerRadius: 5,
-        itemStyler: ({ yKey, xValue }) => ({
-          fill: getCategoryColor(xValue),
+        itemStyler: ({ xValue }) => ({
+          fill: stc(xValue),
+          fillOpacity: 0.6,
         }),
         label: {
           formatter: ({ value }) => formatCurrency(value),
@@ -107,7 +68,11 @@ export const CategoriesChart: React.FC<CategoriesChartProps> = ({ data }) => {
     setOptions((prev) => {
       const serie =
         prev.series![0] as AgBarSeriesThemeableOptions<CategorySummary>;
-      serie.label!.color = theme === "dark" ? "#FFFFFF" : "#000000";
+      serie.label = {
+        ...serie.label,
+        color: theme === "dark" ? "#FFFFFF" : "#18181B",
+      };
+
       return {
         ...prev,
         background: {
@@ -120,7 +85,7 @@ export const CategoriesChart: React.FC<CategoriesChartProps> = ({ data }) => {
   }, [theme]);
 
   return (
-    <div className="w-full p-5 rounded-xl drop-shadow-md border-1 dark:drop-shadow-none dark:border-0 dark:bg-zinc-900">
+    <div className="w-full p-5 rounded-xl shadow-md border-1 dark:shadow-none dark:border-0 dark:bg-zinc-900">
       <AgCharts options={options} />
     </div>
   );
