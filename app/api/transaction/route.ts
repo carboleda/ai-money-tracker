@@ -9,7 +9,7 @@ import {
 } from "@/interfaces/transaction";
 import { Timestamp, UpdateData } from "firebase-admin/firestore";
 import { EventTypes, EventBus } from "../event-bus";
-import "@/app/api/accounts/functions";
+import "@/app/api/accounts/events";
 import { extractData } from "@/genai";
 
 export async function POST(req: NextRequest) {

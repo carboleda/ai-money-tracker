@@ -1,98 +1,9 @@
 import { Collections, db } from "@/firebase/server";
-import {
-  TransactionEntity,
-  TransactionStatus,
-  TransactionType,
-} from "@/interfaces/transaction";
-import { OnEvent } from "@/app/api/event-bus/decorators";
-import { EventTypes, SingleParamEvent, UpdateEvent } from "../event-bus";
 import { QueryDocumentSnapshot } from "firebase-admin/firestore";
 import { Account, AccountEntity } from "@/interfaces/account";
 import { getAccountName } from "@/config/utils";
 
 export class AccountShareFunctions {
-  @OnEvent(EventTypes.TRANSACTION_CREATED)
-  static async onTransactionCreated(
-    transaction: SingleParamEvent<TransactionEntity>
-  ) {
-    console.log("onTransactionCreated(RECEIVED)", transaction);
-    const accountEntities = AccountShareFunctions.handleEvent(
-      transaction,
-      false
-    );
-    console.log("onTransactionCreated(UPDATING ACCOUNTS)", { accountEntities });
-    for await (const account of accountEntities) {
-      await AccountShareFunctions.updateOrCreateAccount(
-        account.account,
-        account.balance
-      );
-    }
-  }
-
-  @OnEvent(EventTypes.TRANSACTION_DELETED)
-  static async onTransactionDeleted(
-    transaction: SingleParamEvent<TransactionEntity>
-  ) {
-    console.log("onTransactionDeleted(RECEIVED)", transaction);
-    const accountEntities = AccountShareFunctions.handleEvent(
-      transaction,
-      true
-    );
-
-    console.log("onTransactionDeleted(UPDATING ACCOUNTS)", { accountEntities });
-    for (const account of accountEntities) {
-      await AccountShareFunctions.updateOrCreateAccount(
-        account.account,
-        account.balance
-      );
-    }
-  }
-
-  @OnEvent(EventTypes.TRANSACTION_UPDATED)
-  static async onTransactionUpdated({
-    oldData: oldTransaction,
-    newData: newTransaction,
-  }: UpdateEvent<TransactionEntity>) {
-    console.log("onTransactionUpdated(RECEIVED)", {
-      oldTransaction,
-      newTransaction,
-    });
-
-    const oldAccountEntities = AccountShareFunctions.handleEvent(
-      oldTransaction,
-      true
-    );
-    const newAccountEntities = AccountShareFunctions.handleEvent(
-      newTransaction,
-      false
-    );
-
-    const mergedAccountEntities = [
-      ...oldAccountEntities,
-      ...newAccountEntities,
-    ];
-
-    if (mergedAccountEntities.length === 0) {
-      return;
-    }
-
-    const updates = mergedAccountEntities.reduce((updates, update) => {
-      if (!updates[update.account]) {
-        updates[update.account] = 0;
-      }
-
-      updates[update.account] += update.balance;
-
-      return updates;
-    }, {} as Record<string, number>);
-
-    return Promise.all(
-      Object.entries(updates).map(async ([account, balance]) =>
-        AccountShareFunctions.updateOrCreateAccount(account, balance)
-      )
-    );
-  }
-
   static async getAllAccounts(): Promise<Account[]> {
     const snapshot = await db.collection(Collections.Accounts).get();
 
@@ -108,42 +19,7 @@ export class AccountShareFunctions {
     return accounts;
   }
 
-  private static handleEvent(
-    transaction: TransactionEntity,
-    isRollback: boolean
-  ) {
-    if (
-      transaction.status === TransactionStatus.PENDING ||
-      (!transaction.sourceAccount && !transaction.destinationAccount)
-    ) {
-      return [];
-    }
-
-    const accountEntities: AccountEntity[] = [];
-    if (transaction.type === TransactionType.TRANSFER) {
-      accountEntities.push({
-        account: transaction.sourceAccount,
-        balance: transaction.amount * (isRollback ? 1 : -1),
-      });
-
-      accountEntities.push({
-        account: transaction.destinationAccount!,
-        balance: transaction.amount * (isRollback ? -1 : 1),
-      });
-    } else {
-      accountEntities.push({
-        account: transaction.sourceAccount,
-        balance:
-          transaction.amount *
-          (transaction.type === TransactionType.EXPENSE ? -1 : 1) *
-          (isRollback ? -1 : 1),
-      });
-    }
-
-    return accountEntities;
-  }
-
-  private static async getAccountDocument(
+  static async getAccountDocument(
     account: string
   ): Promise<QueryDocumentSnapshot | null> {
     const accounts = await db
@@ -158,7 +34,7 @@ export class AccountShareFunctions {
     return null;
   }
 
-  private static async updateOrCreateAccount(account: string, balance: number) {
+  static async updateOrCreateAccount(account: string, balance: number) {
     const accountDocument = await AccountShareFunctions.getAccountDocument(
       account
     );
@@ -173,7 +49,7 @@ export class AccountShareFunctions {
     await AccountShareFunctions.createInitialAccount(account, balance);
   }
 
-  private static async updateAccountBalance(
+  static async updateAccountBalance(
     accountDocument: QueryDocumentSnapshot,
     transactionAmount: number
   ) {
@@ -183,7 +59,7 @@ export class AccountShareFunctions {
     accountDocument.ref.update(accountEntity);
   }
 
-  private static async createInitialAccount(account: string, balance: number) {
+  static async createInitialAccount(account: string, balance: number) {
     await db.collection(Collections.Accounts).add({
       account,
       balance,
