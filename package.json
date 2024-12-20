@@ -52,6 +52,7 @@
     "lodash": "4.17.21",
     "next": "14.2.8",
     "next-firebase-auth-edge": "1.7.1",
+    "next-intl": "^3.26.2",
     "next-themes": "^0.2.1",
     "postcss": "8.4.45",
     "pubsub-js": "^1.9.5",

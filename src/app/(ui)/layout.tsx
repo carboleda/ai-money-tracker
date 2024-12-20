@@ -6,6 +6,9 @@ import { Providers } from "./providers";
 import { Navbar } from "@/components/shared/Navbar";
 import { Link } from "@nextui-org/link";
 import clsx from "clsx";
+import { NextIntlClientProvider } from "next-intl";
+import { getLocale, getMessages } from "next-intl/server";
+import { Footer } from "@/components/shared/Footer";
 
 export const metadata: Metadata = {
   title: {
@@ -23,13 +26,16 @@ export const viewport: Viewport = {
   ],
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const locale = await getLocale();
+  const messages = await getMessages();
+
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang={locale} suppressHydrationWarning>
       <head>
         <link
           rel="icon"
@@ -53,35 +59,17 @@ export default function RootLayout({
           fontSans.variable
         )}
       >
-        <Providers themeProps={{ attribute: "class", defaultTheme: "dark" }}>
-          <div className="relative flex flex-col h-screen">
-            <main className="container mx-auto max-w-7xl px-4 flex-grow">
-              <Navbar />
-              {children}
-            </main>
-            <footer className="w-full flex items-center justify-center pb-2 gap-4">
-              <Link
-                isExternal
-                className="flex items-center gap-1 text-xs"
-                href="https://carlosarboleda.co"
-                title="carlosarboleda.co"
-              >
-                <span className="text-default-600">Developed by</span>
-                <p className="text-primary">Carlos Arboleda</p>
-              </Link>
-              <span> | </span>
-              <Link
-                isExternal
-                className="flex items-center gap-1 text-xs"
-                href="https://nextui-docs-v2.vercel.app?utm_source=next-app-template"
-                title="nextui.org homepage"
-              >
-                <span className="text-default-600">Powered by</span>
-                <p className="text-primary">NextUI</p>
-              </Link>
-            </footer>
-          </div>
-        </Providers>
+        <NextIntlClientProvider messages={messages}>
+          <Providers themeProps={{ attribute: "class", defaultTheme: "dark" }}>
+            <div className="relative flex flex-col h-screen">
+              <main className="container mx-auto max-w-7xl px-4 flex-grow">
+                <Navbar />
+                {children}
+              </main>
+              <Footer />
+            </div>
+          </Providers>
+        </NextIntlClientProvider>
       </body>
     </html>
   );

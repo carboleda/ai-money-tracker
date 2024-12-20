@@ -14,22 +14,22 @@ export interface Page {
 
 export const pages: Page[] = [
   {
-    label: "Transactions",
+    label: "transactions",
     href: "/",
     icon: HiCollection,
   },
   {
-    label: "Pending",
+    label: "pending",
     href: "/recurring-expenses/management",
     icon: HiBell,
   },
   {
-    label: "Recurrent",
+    label: "recurrent",
     href: "/recurring-expenses",
     icon: HiMiniArrowPathRoundedSquare,
   },
   {
-    label: "Summary",
+    label: "summary",
     href: "/summary",
     icon: HiChartPie,
   },

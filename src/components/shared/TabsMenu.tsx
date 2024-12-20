@@ -1,6 +1,7 @@
 import { siteConfig } from "@/config/site";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { Tabs, Tab } from "@nextui-org/tabs";
+import { useTranslations } from "next-intl";
 import { usePathname } from "next/navigation";
 
 const keyLabel = new Map(
@@ -10,6 +11,7 @@ const keyLabel = new Map(
 export const TabsMenu: React.FC<object> = ({}) => {
   const pathname = usePathname();
   const isMobile = useIsMobile();
+  const t = useTranslations("Common");
 
   return (
     <div className="flex w-full flex-col">
@@ -30,7 +32,7 @@ export const TabsMenu: React.FC<object> = ({}) => {
             title={
               <div className="flex flex-col md:flex-row items-center md:space-x-2">
                 <page.icon className="dark:text-white size-4 md:size-6" />
-                <span>{page.label}</span>
+                <span>{t(page.label)}</span>
               </div>
             }
           />

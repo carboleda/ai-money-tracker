@@ -11,11 +11,13 @@ import { FirebaseError } from "firebase/app";
 import { Code } from "@nextui-org/code";
 import { Image } from "@nextui-org/image";
 import { siteConfig } from "@/config/site";
+import { useTranslations } from "use-intl";
 
 function LoginPage() {
   const [errorMessage, setErrorMessage] = React.useState("");
   const router = useRouter();
   const [_, startTransition] = useTransition();
+  const t = useTranslations("Login");
 
   const onGoogleLogin = async () => {
     try {
@@ -51,18 +53,18 @@ function LoginPage() {
         });
       }
 
-      setErrorMessage("Could not sign in with Google. Please try again.");
+      setErrorMessage(t("signInErrorMessage"));
     }
   };
 
   return (
     <div className="flex flex-col h-full justify-center items-center">
       <div className="flex flex-col items-center w-full max-w-md p-8 dark:bg-zinc-900 shadow-lg rounded-lg">
-        <div className="flex justify-center items-center gap-3">
+        <div className="flex justify-center items-center gap-3 pb-4">
           <Image width={40} alt="App logo" src={siteConfig.icons.logo} />
-          <h1 className="text-2xl font-bold text-center">Sign In</h1>
+          <h1 className="text-2xl font-bold text-center">{t("title")}</h1>
         </div>
-        <h4 className="text-zinc-400">Welcome to AI Money Track</h4>
+        <h4 className="text-zinc-400">{t("subtitle")}</h4>
 
         <div className="flex flex-col gap-5 justify-center items-center mt-20">
           <Button
@@ -72,7 +74,7 @@ function LoginPage() {
             className="w-fit"
           >
             <FcGoogle size={20} />
-            Sign in with Google
+            {t("signInWithButton")}
           </Button>
 
           {errorMessage && (

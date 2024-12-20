@@ -1,0 +1,16 @@
+{
+  "Common": {
+    "transactions": "Transactions",
+    "pending": "Pending",
+    "recurrent": "Recurrent",
+    "summary": "Summary",
+    "developedBy": "Developed by",
+    "poweredBy": "Powered by"
+  },
+  "Login": {
+    "title": "Sign In",
+    "subtitle": "Welcome to AI Money Track",
+    "signInWithButton": "Sign in with Google",
+    "signInErrorMessage": "Could not sign in with Google. Please try again."
+  }
+}
