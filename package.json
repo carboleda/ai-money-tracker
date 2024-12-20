@@ -3,8 +3,8 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "dev": "node -r dotenv/config config/swEnvBuild.js dotenv_config_path=.env.local && next dev",
-    "dev:s": "node -r dotenv/config config/swEnvBuild.js dotenv_config_path=.env.local && next dev --experimental-https",
+    "dev": "node -r dotenv/config src/config/swEnvBuild.js dotenv_config_path=.env.local && next dev",
+    "dev:s": "node -r dotenv/config src/config/swEnvBuild.js dotenv_config_path=.env.local && next dev --experimental-https",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"

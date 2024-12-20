@@ -21,16 +21,16 @@
       }
     ],
     "paths": {
-      "@/*": ["./*"]
+      "@/*": ["./src/*"]
     },
     "types": ["w3c-image-capture"]
   },
   "include": [
     "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx",
+    "./src/**/*.ts",
+    "./src/**/*.tsx",
     ".next/types/**/*.ts",
-    "middleware.ts"
+    "./src/middleware.ts"
   ],
   "exclude": ["node_modules"]
 }
