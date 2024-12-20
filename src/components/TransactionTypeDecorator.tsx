@@ -24,13 +24,9 @@ const colorMapper: Record<TransactionType, ChipProps["color"]> = {
   [TransactionType.TRANSFER]: "warning",
 };
 
-export const TransactionTypeDecorator: React.FC<TransactionTypeDecoratorProps> = ({
-  type,
-  color,
-  size,
-  avatar,
-  children,
-}) => {
+export const TransactionTypeDecorator: React.FC<
+  TransactionTypeDecoratorProps
+> = ({ type, color, size, avatar, children }) => {
   if (!children) {
     return <Skeleton className="w-20 h-5 rounded-md" />;
   }
