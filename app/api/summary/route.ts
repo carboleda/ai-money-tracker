@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { SummaryShareFunctions } from "./functions";
 import { FilterTransactionsShareFunctions } from "../transaction/[status]/functions";
-import { TransactionStatus } from "@/interfaces/transaction";
+import { Transaction, TransactionStatus } from "@/interfaces/transaction";
 import { AccountShareFunctions } from "../accounts/functions";
 
 export async function GET(req: NextRequest) {
@@ -21,7 +21,7 @@ export async function GET(req: NextRequest) {
     .map((transaction) => ({
       ...transaction,
       category: transaction.category ?? transaction.description,
-    }));
+    })) as Transaction[];
 
   const byCategory =
     SummaryShareFunctions.getSummaryByCategory(mappedTransactions);
@@ -31,9 +31,12 @@ export async function GET(req: NextRequest) {
   const totalBalance = SummaryShareFunctions.computeBalance(accountsBalance);
 
   return NextResponse.json({
-    accountsBalance,
-    byCategory,
-    byType,
-    totalBalance,
+    summary: {
+      accountsBalance,
+      byCategory,
+      byType,
+      totalBalance,
+    },
+    transactions: mappedTransactions,
   });
 }

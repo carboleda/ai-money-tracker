@@ -46,17 +46,17 @@ const renderCellDesktop = (key: any, item: Transaction): JSX.Element => {
         <TableCell>
           <div className="flex flex-col items-start gap-2">
             <div>
+              {item.sourceAccount}
               <span>
-                {item.sourceAccount}
+                {item.destinationAccount && (
+                  <span> &#10141; {item.destinationAccount}</span>
+                )}
                 {item.category && (
                   <Chip radius="sm" variant="flat" className="ml-2">
                     {item.category}
                   </Chip>
                 )}
               </span>
-              {item.destinationAccount && (
-                <span> &#10141; {item.destinationAccount}</span>
-              )}
             </div>
             <span className="text-gray-400">{item.description}</span>
           </div>

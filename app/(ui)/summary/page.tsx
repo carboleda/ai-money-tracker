@@ -30,7 +30,7 @@ function renderTable(
   data: { id: string; name: ReactNode; amount: number; color: Color }[]
 ) {
   return (
-    <Table aria-label="Example static collection table">
+    <Table isCompact isStriped aria-label="Example static collection table">
       <TableHeader>
         <TableColumn>{columns[0]}</TableColumn>
         <TableColumn className="text-end">{columns[1]}</TableColumn>
@@ -68,11 +68,11 @@ function Summary() {
     {
       title: "Accounts balance",
       data:
-        response?.accountsBalance &&
+        response?.summary?.accountsBalance &&
         renderTable(
           ["ACCOUNT", "BANLANCE"],
           [
-            ...response.accountsBalance.map((account) => ({
+            ...response?.summary?.accountsBalance.map((account) => ({
               id: account.id,
               name: account.account,
               amount: account.balance,
@@ -83,12 +83,13 @@ function Summary() {
               name: (
                 <span className="flex gap-2 items-center font-bold">
                   GLOBAL BALANCE{" "}
-                  {response.totalBalance < BALANCE_ALERT_THRESHOLD && (
+                  {response?.summary?.totalBalance <
+                    BALANCE_ALERT_THRESHOLD && (
                     <HiFire className="text-lg text-red-500" />
                   )}
                 </span>
               ),
-              amount: response.totalBalance,
+              amount: response?.summary?.totalBalance,
               color: "primary" as Color,
             },
           ]
@@ -97,10 +98,10 @@ function Summary() {
     {
       title: "Movements by Type",
       data:
-        response?.byType &&
+        response?.summary?.byType &&
         renderTable(
           ["TYPE", "AMOUNT"],
-          response.byType
+          response?.summary?.byType
             .map((type) => ({
               id: type.type,
               name: type.type,
@@ -117,8 +118,11 @@ function Summary() {
     },
     {
       title: "Movements by Category",
-      data: response?.byCategory && (
-        <CategoriesChart data={response?.byCategory} />
+      data: response?.summary?.byCategory && (
+        <CategoriesChart
+          data={response?.summary?.byCategory}
+          detail={response?.transactions}
+        />
       ),
     },
   ];

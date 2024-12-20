@@ -1,4 +1,5 @@
 import { Account } from "./account";
+import { Transaction } from "./transaction";
 
 export interface CategorySummary {
   category: string;
@@ -10,10 +11,15 @@ export interface TypeSummary {
   total: number;
 }
 
-export interface GetSummaryResponse {
+export interface Summary {
   accountsBalance: Account[];
   byCategory: CategorySummary[];
   byType: TypeSummary[];
   byAccount: Account[];
   totalBalance: number;
+}
+
+export interface GetSummaryResponse {
+  summary: Summary;
+  transactions: Transaction[];
 }

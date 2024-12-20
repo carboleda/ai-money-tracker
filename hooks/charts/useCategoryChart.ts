@@ -1,6 +1,7 @@
 import {
   AgBarSeriesThemeableOptions,
   AgChartOptions,
+  AgNodeClickEvent,
 } from "ag-charts-community";
 import { CategorySummary } from "@/interfaces/summary";
 import { useTheme } from "next-themes";
@@ -14,23 +15,26 @@ const darkColor = "#18181B";
 
 export interface CategoriesChartProps {
   data?: CategorySummary[];
+  onCategoryClick?: (category: CategorySummary) => void;
 }
 
 export interface CategoriesChartResult {
   options: AgChartOptions;
 }
 
-export const useCategoryChart = ({ data }: CategoriesChartProps) => {
+export const useCategoryChart = ({
+  data,
+  onCategoryClick,
+}: CategoriesChartProps) => {
   const { theme } = useTheme();
   const isMobile = useIsMobile();
 
   const isDark = theme === "dark";
-  const sortedData = data?.toSorted((a, b) => b.total - a.total);
 
   const [options, setOptions] = useState<AgChartOptions>({
     width: isMobile ? 350 : 500,
     height: isMobile ? 350 : 500,
-    data: sortedData,
+    data: [],
     series: [
       {
         type: "bar",
@@ -38,12 +42,12 @@ export const useCategoryChart = ({ data }: CategoriesChartProps) => {
         xKey: "category",
         yKey: "total",
         cornerRadius: 5,
-        itemStyler: ({ xValue }) => ({
+        itemStyler: ({ xValue }: { xValue: string }) => ({
           fill: stc(xValue),
           fillOpacity: 0.6,
         }),
         label: {
-          formatter: ({ value }) => formatCurrency(value),
+          formatter: ({ value }: { value: number }) => formatCurrency(value),
           color: ligthColor,
           padding: 15,
           fontWeight: "normal",
@@ -51,8 +55,12 @@ export const useCategoryChart = ({ data }: CategoriesChartProps) => {
         },
         tooltip: {
           enabled: true,
-          renderer: ({ datum }) =>
+          renderer: ({ datum }: { datum: CategorySummary }) =>
             `${datum.category} ${formatCurrency(datum.total)}`,
+        },
+        listeners: {
+          nodeClick: (event: AgNodeClickEvent<"nodeClick", CategorySummary>) =>
+            onCategoryClick && onCategoryClick(event.datum),
         },
       },
     ],
@@ -65,7 +73,8 @@ export const useCategoryChart = ({ data }: CategoriesChartProps) => {
         type: "number",
         position: "bottom",
         label: {
-          formatter: ({ value }) => `${formatCurrency(value / 1000, false)}K`,
+          formatter: ({ value }: { value: number }) =>
+            `${formatCurrency(value / 1000, false)}K`,
         },
       },
     ],
@@ -77,7 +86,17 @@ export const useCategoryChart = ({ data }: CategoriesChartProps) => {
   });
 
   useEffect(() => {
-    setOptions((prev) => {
+    const sortedData = data?.toSorted((a, b) => b.total - a.total);
+    setOptions((prev: any) => {
+      return {
+        ...prev,
+        data: sortedData,
+      };
+    });
+  }, [data]);
+
+  useEffect(() => {
+    setOptions((prev: any) => {
       const serie =
         prev.series![0] as AgBarSeriesThemeableOptions<CategorySummary>;
       serie.label = {
