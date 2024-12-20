@@ -17,6 +17,8 @@ import { Button } from "@nextui-org/button";
 import { IconEdit } from "@/components/shared/icons";
 import { useState } from "react";
 import { UpdateTransactionModalForm } from "@/components/Transactions/UpdateTransactionModalForm";
+import { useTranslations } from "next-intl";
+import { LocaleNamespace } from "@/i18n/namespace";
 
 interface TranactionTableProps {
   isLoading: boolean;
@@ -29,6 +31,7 @@ export const TransactionTable: React.FC<TranactionTableProps> = ({
   topContent,
   transactions,
 }) => {
+  const t = useTranslations(LocaleNamespace.Transactions);
   const [selectedItem, setSelectedItem] = useState<Transaction>();
   const [isOpen, setOpen] = useState(false);
   const { isMutating, deleteTransaction } = useMutateTransaction();
@@ -51,21 +54,18 @@ export const TransactionTable: React.FC<TranactionTableProps> = ({
       <Table
         isStriped
         isCompact
-        aria-label="Transactions"
+        aria-label={t("subtitle")}
         topContentPlacement="outside"
         topContent={topContent}
       >
         <TableHeader columns={columns}>
           {(column) => (
             <TableColumn key={column.key} className={`${column.className}`}>
-              {column.label}
+              {t(column.label).toUpperCase()}
             </TableColumn>
           )}
         </TableHeader>
-        <TableBody
-          items={transactions}
-          emptyContent={"No transactions to display."}
-        >
+        <TableBody items={transactions} emptyContent={t("emptyContent")}>
           {(item) => (
             <TableRow key={item.id}>
               {(columnKey) => {

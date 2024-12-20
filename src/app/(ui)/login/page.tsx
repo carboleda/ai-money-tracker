@@ -12,12 +12,13 @@ import { Code } from "@nextui-org/code";
 import { Image } from "@nextui-org/image";
 import { siteConfig } from "@/config/site";
 import { useTranslations } from "use-intl";
+import { LocaleNamespace } from "@/i18n/namespace";
 
 function LoginPage() {
   const [errorMessage, setErrorMessage] = React.useState("");
   const router = useRouter();
   const [_, startTransition] = useTransition();
-  const t = useTranslations("Login");
+  const t = useTranslations(LocaleNamespace.Login);
 
   const onGoogleLogin = async () => {
     try {

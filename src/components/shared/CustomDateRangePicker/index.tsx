@@ -11,13 +11,15 @@ import {
   DropdownTrigger,
 } from "@nextui-org/dropdown";
 import { HiArrowCircleLeft } from "react-icons/hi";
+import { useTranslations } from "next-intl";
+import { LocaleNamespace } from "@/i18n/namespace";
 
 enum RangeList {
-  this = "This month",
-  last = "Last month",
-  two = "Two months ago",
-  quarter = "Since last quarter",
-  custom = "Custom range",
+  this = "this",
+  last = "last",
+  two = "two",
+  quarter = "quarter",
+  custom = "custom",
 }
 
 export interface CustomDateRangePickerProps
@@ -26,20 +28,15 @@ export interface CustomDateRangePickerProps
   onChange: (value: RangeValue<ZonedDateTime>) => void;
 }
 
-const mapSelectedKeyToValue = Object.fromEntries(Object.entries(RangeList));
 const currentMonthBounds = getMonthBounds(new Date());
 
 export const CustomDateRangePicker: React.FC<CustomDateRangePickerProps> = ({
   ...props
 }) => {
-  const [selectedKey, setSelectedKey] = useState<RangeList>(
-    "this" as RangeList
-  );
+  const t = useTranslations(LocaleNamespace.Transactions);
+  const [selectedKey, setSelectedKey] = useState<RangeList>(RangeList.this);
 
-  const selectedValue = useMemo(
-    () => mapSelectedKeyToValue[selectedKey],
-    [selectedKey]
-  );
+  const selectedValue = useMemo(() => t(selectedKey), [selectedKey, t]);
 
   const onDateChange = useCallback(
     (value: RangeValue<ZonedDateTime> | null) => {
@@ -51,15 +48,15 @@ export const CustomDateRangePicker: React.FC<CustomDateRangePickerProps> = ({
 
   useEffect(() => {
     let bounds: { start: Date; end: Date };
-    if (selectedKey === ("last" as RangeList)) {
+    if (selectedKey === RangeList.last) {
       bounds = getMonthBounds(
         new Date(new Date().getFullYear(), new Date().getMonth() - 1, 1)
       );
-    } else if (selectedKey === ("two" as RangeList)) {
+    } else if (selectedKey === RangeList.two) {
       bounds = getMonthBounds(
         new Date(new Date().getFullYear(), new Date().getMonth() - 2, 1)
       );
-    } else if (selectedKey === ("quarter" as RangeList)) {
+    } else if (selectedKey === RangeList.quarter) {
       const querterBounds = getMonthBounds(
         new Date(new Date().getFullYear(), new Date().getMonth() - 3, 1)
       );
@@ -77,7 +74,7 @@ export const CustomDateRangePicker: React.FC<CustomDateRangePickerProps> = ({
     });
   }, [onDateChange, selectedKey]);
 
-  if (selectedKey === ("custom" as RangeList)) {
+  if (selectedKey === RangeList.custom) {
     return (
       <DateRangePicker
         {...props}
@@ -85,7 +82,7 @@ export const CustomDateRangePicker: React.FC<CustomDateRangePickerProps> = ({
         startContent={
           <HiArrowCircleLeft
             className="text-5xl"
-            onClick={() => setSelectedKey("this" as RangeList)}
+            onClick={() => setSelectedKey(RangeList.this)}
           />
         }
       />
@@ -110,7 +107,7 @@ export const CustomDateRangePicker: React.FC<CustomDateRangePickerProps> = ({
         </Button>
       </DropdownTrigger>
       <DropdownMenu
-        aria-label="Date range"
+        aria-label={t("dateRangeFilter")}
         variant="flat"
         closeOnSelect={true}
         selectionMode="single"
@@ -120,7 +117,7 @@ export const CustomDateRangePicker: React.FC<CustomDateRangePickerProps> = ({
         }
       >
         {Object.entries(RangeList).map(([key, value]) => (
-          <DropdownItem key={key}>{value}</DropdownItem>
+          <DropdownItem key={key}>{t(value)}</DropdownItem>
         ))}
       </DropdownMenu>
     </Dropdown>

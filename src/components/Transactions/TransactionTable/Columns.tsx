@@ -9,20 +9,20 @@ import { TableColumn } from "@/interfaces/global";
 const columnsDesktop: TableColumn[] = [
   {
     key: "description",
-    label: "DESCRIPTION",
+    label: "description",
   },
   {
     key: "date",
-    label: "DATE",
+    label: "date",
   },
   {
     key: "amount",
-    label: "AMOUNT",
+    label: "amount",
     className: "text-end",
   },
   {
     key: "actions",
-    label: "ACTIONS",
+    label: "actions",
     className: "text-center",
   },
 ];
@@ -30,11 +30,11 @@ const columnsDesktop: TableColumn[] = [
 const columnsMobile: TableColumn[] = [
   {
     key: "transaction",
-    label: "TRANSACTION",
+    label: "transaction",
   },
   {
     key: "actions",
-    label: "ACTIONS",
+    label: "actions",
     className: "text-center",
   },
 ];

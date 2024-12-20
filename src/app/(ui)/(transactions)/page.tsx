@@ -21,8 +21,10 @@ import { HiOutlinePlusCircle } from "react-icons/hi";
 import { Button } from "@nextui-org/button";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { CustomDateRangePicker } from "@/components/shared/CustomDateRangePicker";
+import { useTranslations } from "next-intl";
 
 function Transactions() {
+  const t = useTranslations();
   const isMobile = useIsMobile();
   const [isOpen, setOpen] = useState(false);
   const currentMonthBounds = getMonthBounds(new Date());
@@ -46,7 +48,7 @@ function Transactions() {
       <div className="flex flex-wrap justify-between gap-3 items-end">
         <div className="flex flex-row justify-items-stretch gap-2 w-full md:w-fit">
           <CustomDateRangePicker
-            label="Date within"
+            label={t("Transactions.dateRangeFilter")}
             variant="bordered"
             granularity="day"
             isRequired
@@ -55,7 +57,7 @@ function Transactions() {
           />
           <div className="justify-self-end">
             <BankAccounDropdown
-              label="Filter by account"
+              label={t("Transactions.accountFilter")}
               onChange={setSelectedAccount}
             />
           </div>
@@ -80,7 +82,7 @@ function Transactions() {
       <section className="flex flex-col items-center justify-center gap-4">
         <div className="flex flex-col w-full justify-start items-start gap-2">
           <div className="flex justify-between items-center w-full">
-            <h1 className="page-title">All your transactions</h1>
+            <h1 className="page-title">{t("Transactions.subtitle")}</h1>
             <Button
               color="primary"
               radius="sm"
