@@ -1,6 +1,6 @@
 import { FunctionDeclaration, Tool } from "@google/generative-ai";
-import createTransaction from "./createTransaction.json";
-import invalidTransaction from "./invalidTransaction.json";
+import createTransaction from "./createTransaction";
+import invalidTransaction from "./invalidTransaction";
 
 export const tools: Tool[] = [
   {

@@ -8,7 +8,7 @@ export enum TransactionType {
 
 export enum TransactionCategory {
   Salario = "Salario",
-  TC = "TC",
+  PagoTC = "Pago TC",
   Alimentos = "Alimentos",
   Mercado = "Mercado",
   Educacion = "Educación",
@@ -112,8 +112,9 @@ export namespace GeneratedTransaction {
     | null;
 }
 
-export const transactionCategoryOptions = Object.entries(
-  TransactionCategory
-).reduce((acc, [key, value]) => {
-  return [...acc, { value: key, label: value }];
-}, [] as Record<string, string>[]);
+export const transactionCategoryOptions = Object.entries(TransactionCategory).reduce(
+  (acc, [_key, value]) => {
+    return [...acc, { value: value, label: value }];
+  },
+  [] as Record<string, string>[]
+);
