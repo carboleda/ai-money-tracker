@@ -64,7 +64,7 @@ export interface PendingTransactionEntity
 export interface Transaction extends Omit<TransactionEntity, "createdAt"> {
   id: string;
   createdAt: string;
-  isReccurent: boolean;
+  isReccurent?: boolean;
 }
 
 export interface CreateFreeTextTranaction {
