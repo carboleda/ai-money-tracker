@@ -2,11 +2,13 @@ import { Account } from "@/interfaces/account";
 import {
   Summary,
   Transaction,
+  TransactionCategory,
   TransactionStatus,
   TransactionType,
 } from "@/interfaces/transaction";
 import _ from "lodash";
 import { AccountShareFunctions } from "../accounts/functions";
+import { RecurrentVsVariable } from "@/interfaces/summary";
 
 export class SummaryShareFunctions {
   static async computeSummary(transactions: Transaction[]): Promise<Summary> {
@@ -103,5 +105,47 @@ export class SummaryShareFunctions {
       account: key,
       balance: total,
     }));
+  }
+
+  static getRecurrentVsVariableComparison(
+    transactions: Transaction[]
+  ): RecurrentVsVariable {
+    const init = {
+      recurrentCount: 0,
+      variableCount: 0,
+      recurrentTotal: 0,
+      variableTotal: 0,
+    };
+    const recurrentCategories = [TransactionCategory.Mercado];
+    const isReccurent = (transaction: Transaction): boolean =>
+      transaction.status === TransactionStatus.COMPLETE &&
+      transaction.type === TransactionType.EXPENSE &&
+      (transaction.isReccurent ||
+        recurrentCategories.includes(
+          transaction.category! as TransactionCategory
+        ));
+
+    const summary = transactions.reduce((acc, transaction) => {
+      if (isReccurent(transaction)) {
+        acc.recurrentCount++;
+        acc.recurrentTotal += transaction.amount;
+      } else {
+        acc.variableCount++;
+        acc.variableTotal += transaction.amount;
+      }
+
+      return acc;
+    }, init);
+
+    return {
+      count: [
+        { value: summary.recurrentCount, type: "recurrent" },
+        { value: summary.variableCount, type: "variable" },
+      ],
+      total: [
+        { value: summary.recurrentTotal, type: "recurrent" },
+        { value: summary.variableTotal, type: "variable" },
+      ],
+    } as RecurrentVsVariable;
   }
 }

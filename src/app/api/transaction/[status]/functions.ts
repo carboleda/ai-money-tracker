@@ -54,6 +54,7 @@ export class FilterTransactionsShareFunctions {
           docData.destinationAccount &&
           getAccountName(docData.destinationAccount),
         createdAt: docData.createdAt.toDate().toISOString(),
+        isReccurent: !!docData.id,
       } as Transaction;
     });
   }

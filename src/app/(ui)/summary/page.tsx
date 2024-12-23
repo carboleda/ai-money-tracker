@@ -21,6 +21,7 @@ import { CategoriesChart } from "@/components/charts/CategoriesChart";
 import { ChipProps } from "@nextui-org/chip";
 import { TransactionTypeDecorator } from "@/components/TransactionTypeDecorator";
 import { HiFire } from "react-icons/hi";
+import { FixedVsVariableChart } from "@/components/charts/FixedVsVariableChart";
 
 type Color = ChipProps["color"];
 const BALANCE_ALERT_THRESHOLD = 10_000_000; // FIXME: Move to config
@@ -96,7 +97,7 @@ function Summary() {
         ),
     },
     {
-      title: "Movements by Type",
+      title: "Transactions by Type",
       data:
         response?.summary?.byType &&
         renderTable(
@@ -117,12 +118,18 @@ function Summary() {
         ),
     },
     {
-      title: "Movements by Category",
+      title: "Transactions by Category",
       data: response?.summary?.byCategory && (
         <CategoriesChart
           data={response?.summary?.byCategory}
           detail={response?.transactions}
         />
+      ),
+    },
+    {
+      title: "Recurrent vs Variable transactions",
+      data: response?.summary?.recurrentVsVariable && (
+        <FixedVsVariableChart data={response?.summary?.recurrentVsVariable} />
       ),
     },
   ];

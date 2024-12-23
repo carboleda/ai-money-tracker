@@ -26,6 +26,8 @@ export async function GET(req: NextRequest) {
   const byCategory =
     SummaryShareFunctions.getSummaryByCategory(mappedTransactions);
   const byType = SummaryShareFunctions.getSummaryByType(mappedTransactions);
+  const recurrentVsVariable =
+    SummaryShareFunctions.getRecurrentVsVariableComparison(mappedTransactions);
 
   const accountsBalance = await AccountShareFunctions.getAllAccounts();
   const totalBalance = SummaryShareFunctions.computeBalance(accountsBalance);
@@ -35,6 +37,7 @@ export async function GET(req: NextRequest) {
       accountsBalance,
       byCategory,
       byType,
+      recurrentVsVariable,
       totalBalance,
     },
     transactions: mappedTransactions,
