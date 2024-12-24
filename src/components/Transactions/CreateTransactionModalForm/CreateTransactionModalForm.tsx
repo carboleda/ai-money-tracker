@@ -15,6 +15,7 @@ import { CameraMode } from "./mode/CameraMode";
 import { Chip } from "@nextui-org/chip";
 import { Tab, Tabs } from "@nextui-org/tabs";
 import { getMissingFieldsInPrompt } from "@/config/utils";
+import { useTranslations } from "use-intl";
 
 interface CreateTransactionModalFormProps {
   isOpen: boolean;
@@ -24,6 +25,7 @@ interface CreateTransactionModalFormProps {
 export const CreateTransactionModalForm: React.FC<
   CreateTransactionModalFormProps
 > = ({ onDismiss, isOpen }) => {
+  const t = useTranslations();
   const [validationError, setValidationError] = useState<string>("");
   const [isFreeText, setIsFreeText] = useState<boolean>(true);
   const [textInput, setTextInput] = useState<string>("");
@@ -61,7 +63,7 @@ export const CreateTransactionModalForm: React.FC<
 
   const validateForm = () => {
     if (isFreeText && !textInput) {
-      throw new Error("Description is requited. Please fill it out.");
+      throw new Error(t("Transactions.descriptionIsRequired"));
     }
 
     if (isFreeText) {

@@ -81,7 +81,7 @@ export const TransactionTable: React.FC<TranactionTableProps> = ({
                           color="warning"
                           variant="light"
                           className="self-center"
-                          aria-label="Edit"
+                          aria-label={t("edit")}
                           onPress={() => onEdit(item)}
                         >
                           <IconEdit />

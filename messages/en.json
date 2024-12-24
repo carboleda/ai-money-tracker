@@ -10,6 +10,7 @@
   "date": "Date",
   "amount": "Amount",
   "actions": "Actions",
+  "edit": "Edit",
   "dateRangeFilter": "Date within",
   "accountFilter": "Filter by account",
   "this": "This month",
@@ -25,6 +26,8 @@
   },
   "Transactions": {
     "subtitle": "All your transactions",
-    "emptyContent": "No transactions to display."
+    "emptyContent": "No transactions to display.",
+    "descriptionIsRequired": "Description is requited. Please fill it out.",
+    "descriptionIsInvalid": "Include the {{val}} in your prompt!"
   }
 }
