@@ -70,7 +70,7 @@ export const CreateTransactionModalForm: React.FC<
     if (isFreeText) {
       const missinFields = getMissingFieldsInPrompt(textInput);
       if (missinFields.length) {
-        throw new Error(t("descriptionIsInvalid", { val: missinFields }));
+        throw new Error(t("descriptionIsInvalid", { missinFields }));
       }
     }
 

@@ -2,9 +2,11 @@
   "subtitle": "All your transactions",
   "emptyContent": "No transactions to display.",
   "descriptionIsRequired": "Description is requited. Please fill it out.",
-  "descriptionIsInvalid": "Include the {{val, list}} in your prompt!",
+  "descriptionIsInvalid": "Include the {{missinFields, list}} in your prompt!",
   "bankAndAccountAreRquired": "Back account and Picture are requited. Please fill them out.",
   "newTransaction": "New Transaction",
   "freeTextMode": "Free text mode",
-  "cameraMode": "Camera mode"
+  "cameraMode": "Camera mode",
+  "transactionDate": "Transaction date",
+  "sourceAccount": "Source account"
 }

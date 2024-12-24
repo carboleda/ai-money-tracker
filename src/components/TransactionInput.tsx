@@ -8,6 +8,7 @@ import { usePlaceholderAnimation } from "@/hooks/usePlaceholderAnimation";
 import { useMutateTransaction } from "@/hooks/useMutateTransaction";
 import { siteConfig } from "@/config/site";
 import { getMissingFieldsInPrompt } from "@/config/utils";
+import { useTranslation } from "react-i18next";
 
 export interface TransactionInputProps {
   isRequired?: boolean;
@@ -20,6 +21,7 @@ export const TransactionInput: React.FC<TransactionInputProps> = ({
   createOnSubmit = true,
   onChanged,
 }) => {
+  const { t } = useTranslation();
   const [inputText, setInputText] = useState<string>("");
   const [validationError, setValidationError] = useState<string>("");
   const [placeholder] = usePlaceholderAnimation(siteConfig.placeholders);
@@ -40,9 +42,7 @@ export const TransactionInput: React.FC<TransactionInputProps> = ({
     if (inputText) {
       const missinFields = getMissingFieldsInPrompt(inputText);
       if (missinFields.length) {
-        setValidationError(
-          `Include the ${missinFields.join(" and ")} in your prompt!`
-        );
+        setValidationError(t("descriptionIsInvalid", { missinFields }));
         return;
       }
 
@@ -64,7 +64,7 @@ export const TransactionInput: React.FC<TransactionInputProps> = ({
       {...(createOnSubmit && { onSubmit: onCreateTransaction })}
     >
       <Textarea
-        aria-label="Create transaction"
+        aria-label={t("newTransaction")}
         labelPlacement="outside"
         variant="bordered"
         type="text"

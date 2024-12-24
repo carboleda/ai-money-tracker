@@ -1,0 +1,23 @@
+{
+  "transactions": "Transacciones",
+  "pending": "Pendiente",
+  "recurrent": "Recurrente",
+  "summary": "Resumen",
+  "developedBy": "Desarrollado por",
+  "poweredBy": "Impulsado por",
+  "description": "Descripción",
+  "transaction": "Transacción",
+  "date": "Fecha",
+  "amount": "Cantidad",
+  "actions": "Acciones",
+  "edit": "Editar",
+  "dateRangeFilter": "Fecha dentro de",
+  "accountFilter": "Filtrar por cuenta",
+  "this": "Este mes",
+  "last": "El mes pasado",
+  "two": "Hace dos meses",
+  "quarter": "Desde el último trimestre",
+  "custom": "Rango personalizado",
+  "cancel": "Cancelar",
+  "save": "Guardar"
+}
