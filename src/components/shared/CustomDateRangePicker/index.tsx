@@ -11,7 +11,7 @@ import {
   DropdownTrigger,
 } from "@nextui-org/dropdown";
 import { HiArrowCircleLeft } from "react-icons/hi";
-import { useTranslations } from "next-intl";
+import { useTranslation } from "@/i18n/i18nClient";
 
 enum RangeList {
   this = "this",
@@ -32,7 +32,7 @@ const currentMonthBounds = getMonthBounds(new Date());
 export const CustomDateRangePicker: React.FC<CustomDateRangePickerProps> = ({
   ...props
 }) => {
-  const t = useTranslations();
+  const { t } = useTranslation();
   const [selectedKey, setSelectedKey] = useState<RangeList>(RangeList.this);
 
   const selectedValue = useMemo(() => t(selectedKey), [selectedKey, t]);

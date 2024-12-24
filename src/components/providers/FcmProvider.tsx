@@ -3,7 +3,7 @@
 import { ReactNode } from "react";
 import { FirebaseApp } from "firebase/app";
 import { getMessaging, MessagePayload, onMessage } from "firebase/messaging";
-import { NotificationRequestModal } from "./NotificationsRequestModal";
+import { NotificationRequestModal } from "@/components/NotificationsRequestModal";
 
 interface FcmProviderProps {
   firebaseApp?: FirebaseApp;

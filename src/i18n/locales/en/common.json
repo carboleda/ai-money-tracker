@@ -18,16 +18,6 @@
   "two": "Two months ago",
   "quarter": "Since last quarter",
   "custom": "Custom range",
-  "Login": {
-    "title": "Sign In",
-    "subtitle": "Welcome to AI Money Track",
-    "signInWithButton": "Sign in with Google",
-    "signInErrorMessage": "Could not sign in with Google. Please try again."
-  },
-  "Transactions": {
-    "subtitle": "All your transactions",
-    "emptyContent": "No transactions to display.",
-    "descriptionIsRequired": "Description is requited. Please fill it out.",
-    "descriptionIsInvalid": "Include the {{val}} in your prompt!"
-  }
+  "cancel": "Cancel",
+  "save": "Save"
 }

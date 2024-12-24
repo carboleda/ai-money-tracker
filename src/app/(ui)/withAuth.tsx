@@ -1,4 +1,4 @@
-import FcmProvider from "@/components/FcmProvider";
+import FcmProvider from "@/components/providers/FcmProvider";
 import { TabsMenu } from "@/components/shared/TabsMenu";
 import { firebaseApp } from "@/firebase/client";
 

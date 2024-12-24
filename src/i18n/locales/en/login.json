@@ -1,0 +1,6 @@
+{
+  "title": "Sign In",
+  "subtitle": "Welcome to AI Money Track",
+  "signInWithButton": "Sign in with Google",
+  "signInErrorMessage": "Could not sign in with Google. Please try again."
+}

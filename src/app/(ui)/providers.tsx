@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 import { ThemeProviderProps } from "next-themes/dist/types";
 import { SWRConfig } from "swr";
+import TranslationsProvider from "@/components/providers/TranslationsProvider";
 
 export interface ProvidersProps {
   children: React.ReactNode;
@@ -27,7 +28,7 @@ export function Providers({ children, themeProps }: ProvidersProps) {
               fetch(resource, init).then((res) => res.json()),
           }}
         >
-          {children}
+          <TranslationsProvider>{children}</TranslationsProvider>
         </SWRConfig>
       </NextThemesProvider>
     </NextUIProvider>

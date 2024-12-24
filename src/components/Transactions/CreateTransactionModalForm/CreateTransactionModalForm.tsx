@@ -15,7 +15,8 @@ import { CameraMode } from "./mode/CameraMode";
 import { Chip } from "@nextui-org/chip";
 import { Tab, Tabs } from "@nextui-org/tabs";
 import { getMissingFieldsInPrompt } from "@/config/utils";
-import { useTranslations } from "use-intl";
+import { useTranslation } from "@/i18n/i18nClient";
+import { LocaleNamespace } from "@/i18n/namespace";
 
 interface CreateTransactionModalFormProps {
   isOpen: boolean;
@@ -25,7 +26,7 @@ interface CreateTransactionModalFormProps {
 export const CreateTransactionModalForm: React.FC<
   CreateTransactionModalFormProps
 > = ({ onDismiss, isOpen }) => {
-  const t = useTranslations();
+  const { t } = useTranslation(LocaleNamespace.Transactions);
   const [validationError, setValidationError] = useState<string>("");
   const [isFreeText, setIsFreeText] = useState<boolean>(true);
   const [textInput, setTextInput] = useState<string>("");
@@ -63,23 +64,18 @@ export const CreateTransactionModalForm: React.FC<
 
   const validateForm = () => {
     if (isFreeText && !textInput) {
-      throw new Error(t("Transactions.descriptionIsRequired"));
+      throw new Error(t("descriptionIsRequired"));
     }
 
     if (isFreeText) {
       const missinFields = getMissingFieldsInPrompt(textInput);
       if (missinFields.length) {
-        const error = `Include the ${missinFields.join(
-          " and "
-        )} in your prompt!`;
-        throw new Error(error);
+        throw new Error(t("descriptionIsInvalid", { val: missinFields }));
       }
     }
 
     if (!isFreeText && !(picture && selectedAccount)) {
-      throw new Error(
-        "Back account and Picture are requited. Please fill them out."
-      );
+      throw new Error(t("bankAndAccountAreRquired"));
     }
 
     clearError();
@@ -126,7 +122,7 @@ export const CreateTransactionModalForm: React.FC<
           {(onClose) => (
             <>
               <ModalHeader className="flex flex-col gap-1">
-                New transaction
+                {t("newTransaction")}
               </ModalHeader>
               <ModalBody>
                 <Tabs
@@ -140,8 +136,8 @@ export const CreateTransactionModalForm: React.FC<
                     key="freeText"
                     title={
                       <div className="flex items-center gap-1">
-                        <HiDocumentText />
-                        <span>Free text mode</span>
+                        <HiDocumentText className="text-lg" />
+                        <span>{t("freeTextMode")}</span>
                       </div>
                     }
                     className="flex flex-col gap-2"
@@ -156,8 +152,8 @@ export const CreateTransactionModalForm: React.FC<
                     key="camera"
                     title={
                       <div className="flex items-center gap-1">
-                        <HiCamera />
-                        <span>Camera mode</span>
+                        <HiCamera className="text-lg" />
+                        <span>{t("cameraMode")}</span>
                       </div>
                     }
                     className="flex flex-col gap-2"
@@ -187,7 +183,7 @@ export const CreateTransactionModalForm: React.FC<
                   disabled={areButtonsDisabled}
                   onPress={onClose}
                 >
-                  Cancel
+                  {t("cancel")}
                 </Button>
                 <Button
                   color="primary"
@@ -195,7 +191,7 @@ export const CreateTransactionModalForm: React.FC<
                   disabled={areButtonsDisabled}
                   onPress={onSave}
                 >
-                  Save
+                  {t("save")}
                 </Button>
               </ModalFooter>
             </>
