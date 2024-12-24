@@ -12,7 +12,7 @@ type GetTransactionsParams = { params: { status: TransactionStatus } };
 export async function GET(req: NextRequest, { params }: GetTransactionsParams) {
   const searchParams = req.nextUrl.searchParams;
   const status = params.status;
-  const account = searchParams.get("acc");
+  const account = searchParams.get("acc") ?? undefined;
   const startDate = searchParams.get("start");
   const endDate = searchParams.get("end");
 
@@ -24,7 +24,10 @@ export async function GET(req: NextRequest, { params }: GetTransactionsParams) {
       endDate: endDate ? new Date(endDate!) : null,
     });
 
-  const summary = await SummaryShareFunctions.computeSummary(transactions);
+  const summary = await SummaryShareFunctions.computeSummary(
+    transactions,
+    account
+  );
 
   return NextResponse.json({
     accounts: Env.VALID_ACCOUNTS,

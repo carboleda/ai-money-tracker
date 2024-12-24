@@ -9,9 +9,13 @@ import {
 import _ from "lodash";
 import { AccountShareFunctions } from "../accounts/functions";
 import { RecurrentVsVariable } from "@/interfaces/summary";
+import { getAccountId } from "@/config/utils";
 
 export class SummaryShareFunctions {
-  static async computeSummary(transactions: Transaction[]): Promise<Summary> {
+  static async computeSummary(
+    transactions: Transaction[],
+    account?: string
+  ): Promise<Summary> {
     let totalIncomes = 0;
     let totalExpenses = 0;
     let totalPending = 0;
@@ -20,6 +24,17 @@ export class SummaryShareFunctions {
       if (transaction.status === TransactionStatus.PENDING) {
         totalPending += transaction.amount;
         return;
+      }
+
+      if (
+        transaction.type === TransactionType.TRANSFER &&
+        account &&
+        transaction.destinationAccount
+      ) {
+        const accountId = getAccountId(transaction.destinationAccount);
+        if (accountId === account) {
+          return;
+        }
       }
 
       if (transaction.type == TransactionType.INCOME) {
