@@ -11,7 +11,7 @@ import { FirebaseError } from "firebase/app";
 import { Code } from "@nextui-org/code";
 import { Image } from "@nextui-org/image";
 import { siteConfig } from "@/config/site";
-import { useTranslation } from "@/i18n/i18nClient";
+import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
 
 function LoginPage() {

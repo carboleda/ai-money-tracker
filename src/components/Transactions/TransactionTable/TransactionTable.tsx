@@ -17,7 +17,7 @@ import { Button } from "@nextui-org/button";
 import { IconEdit } from "@/components/shared/icons";
 import { useState } from "react";
 import { UpdateTransactionModalForm } from "@/components/Transactions/UpdateTransactionModalForm";
-import { useTranslation } from "@/i18n/i18nClient";
+import { useTranslation } from "react-i18next";
 
 interface TranactionTableProps {
   isLoading: boolean;

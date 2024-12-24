@@ -15,7 +15,7 @@ import { CameraMode } from "./mode/CameraMode";
 import { Chip } from "@nextui-org/chip";
 import { Tab, Tabs } from "@nextui-org/tabs";
 import { getMissingFieldsInPrompt } from "@/config/utils";
-import { useTranslation } from "@/i18n/i18nClient";
+import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
 
 interface CreateTransactionModalFormProps {

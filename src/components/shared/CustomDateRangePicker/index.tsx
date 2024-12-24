@@ -11,7 +11,7 @@ import {
   DropdownTrigger,
 } from "@nextui-org/dropdown";
 import { HiArrowCircleLeft } from "react-icons/hi";
-import { useTranslation } from "@/i18n/i18nClient";
+import { useTranslation } from "react-i18next";
 
 enum RangeList {
   this = "this",

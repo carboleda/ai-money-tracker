@@ -21,7 +21,7 @@ import { HiOutlinePlusCircle } from "react-icons/hi";
 import { Button } from "@nextui-org/button";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { CustomDateRangePicker } from "@/components/shared/CustomDateRangePicker";
-import { useTranslation } from "@/i18n/i18nClient";
+import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
 
 function Transactions() {

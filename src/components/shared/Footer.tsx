@@ -1,6 +1,6 @@
 "use client";
 
-import { useTranslation } from "@/i18n/i18nClient";
+import { useTranslation } from "react-i18next";
 import { Link } from "@nextui-org/link";
 
 export const Footer: React.FC = () => {

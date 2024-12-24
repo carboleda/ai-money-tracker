@@ -1,5 +1,4 @@
 import "@/styles/globals.css";
-import "@/i18n/i18nClient";
 import { Metadata, Viewport } from "next";
 import { siteConfig } from "@/config/site";
 import { fontSans } from "@/config/fonts";

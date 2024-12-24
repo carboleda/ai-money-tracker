@@ -5,7 +5,7 @@ import i18next from "i18next";
 import { initReactI18next } from "react-i18next";
 import resourcesToBackend from "i18next-resources-to-backend";
 import LanguageDetector from "i18next-browser-languagedetector";
-import { getOptions, languages } from "@/i18n/next-i18next.config";
+import { getOptions, languages } from "@/i18n/config";
 
 interface TranslationsProviderProps {
   children: ReactNode;

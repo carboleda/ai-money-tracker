@@ -1,6 +1,6 @@
 import { siteConfig } from "@/config/site";
 import { useIsMobile } from "@/hooks/useIsMobile";
-import { useTranslation } from "@/i18n/i18nClient";
+import { useTranslation } from "react-i18next";
 import { Tabs, Tab } from "@nextui-org/tabs";
 import { usePathname } from "next/navigation";
 
