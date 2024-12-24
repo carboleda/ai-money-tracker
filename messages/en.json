@@ -1,12 +1,22 @@
 {
-  "Common": {
-    "transactions": "Transactions",
-    "pending": "Pending",
-    "recurrent": "Recurrent",
-    "summary": "Summary",
-    "developedBy": "Developed by",
-    "poweredBy": "Powered by"
-  },
+  "transactions": "Transactions",
+  "pending": "Pending",
+  "recurrent": "Recurrent",
+  "summary": "Summary",
+  "developedBy": "Developed by",
+  "poweredBy": "Powered by",
+  "description": "Description",
+  "transaction": "Transaction",
+  "date": "Date",
+  "amount": "Amount",
+  "actions": "Actions",
+  "dateRangeFilter": "Date within",
+  "accountFilter": "Filter by account",
+  "this": "This month",
+  "last": "Last month",
+  "two": "Two months ago",
+  "quarter": "Since last quarter",
+  "custom": "Custom range",
   "Login": {
     "title": "Sign In",
     "subtitle": "Welcome to AI Money Track",
@@ -15,17 +25,6 @@
   },
   "Transactions": {
     "subtitle": "All your transactions",
-    "dateRangeFilter": "Date within",
-    "accountFilter": "Filter by account",
-    "this": "This month",
-    "last": "Last month",
-    "two": "Two months ago",
-    "quarter": "Since last quarter",
-    "custom": "Custom range",
-    "emptyContent": "No transactions to display.",
-    "description": "Description",
-    "date": "Date",
-    "amount": "Amount",
-    "actions": "Actions"
+    "emptyContent": "No transactions to display."
   }
 }

@@ -48,7 +48,7 @@ function Transactions() {
       <div className="flex flex-wrap justify-between gap-3 items-end">
         <div className="flex flex-row justify-items-stretch gap-2 w-full md:w-fit">
           <CustomDateRangePicker
-            label={t("Transactions.dateRangeFilter")}
+            label={t("dateRangeFilter")}
             variant="bordered"
             granularity="day"
             isRequired
@@ -57,7 +57,7 @@ function Transactions() {
           />
           <div className="justify-self-end">
             <BankAccounDropdown
-              label={t("Transactions.accountFilter")}
+              label={t("accountFilter")}
               onChange={setSelectedAccount}
             />
           </div>

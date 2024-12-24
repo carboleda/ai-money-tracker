@@ -1,11 +1,10 @@
 "use client";
 
-import { LocaleNamespace } from "@/i18n/namespace";
 import { Link } from "@nextui-org/link";
 import { useTranslations } from "use-intl";
 
 export const Footer: React.FC = () => {
-  const t = useTranslations(LocaleNamespace.Common);
+  const t = useTranslations();
 
   return (
     <footer className="w-full flex items-center justify-center pb-2 gap-4">

@@ -12,7 +12,6 @@ import {
 } from "@nextui-org/dropdown";
 import { HiArrowCircleLeft } from "react-icons/hi";
 import { useTranslations } from "next-intl";
-import { LocaleNamespace } from "@/i18n/namespace";
 
 enum RangeList {
   this = "this",
@@ -33,7 +32,7 @@ const currentMonthBounds = getMonthBounds(new Date());
 export const CustomDateRangePicker: React.FC<CustomDateRangePickerProps> = ({
   ...props
 }) => {
-  const t = useTranslations(LocaleNamespace.Transactions);
+  const t = useTranslations();
   const [selectedKey, setSelectedKey] = useState<RangeList>(RangeList.this);
 
   const selectedValue = useMemo(() => t(selectedKey), [selectedKey, t]);
@@ -81,7 +80,7 @@ export const CustomDateRangePicker: React.FC<CustomDateRangePickerProps> = ({
         onChange={onDateChange}
         startContent={
           <HiArrowCircleLeft
-            className="text-5xl"
+            className="text-5xl cursor-pointer"
             onClick={() => setSelectedKey(RangeList.this)}
           />
         }

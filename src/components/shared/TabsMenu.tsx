@@ -1,6 +1,5 @@
 import { siteConfig } from "@/config/site";
 import { useIsMobile } from "@/hooks/useIsMobile";
-import { LocaleNamespace } from "@/i18n/namespace";
 import { Tabs, Tab } from "@nextui-org/tabs";
 import { useTranslations } from "next-intl";
 import { usePathname } from "next/navigation";
@@ -12,7 +11,7 @@ const keyLabel = new Map(
 export const TabsMenu: React.FC<object> = ({}) => {
   const pathname = usePathname();
   const isMobile = useIsMobile();
-  const t = useTranslations(LocaleNamespace.Common);
+  const t = useTranslations();
 
   return (
     <div className="flex w-full flex-col">

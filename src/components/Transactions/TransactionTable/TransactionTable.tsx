@@ -31,7 +31,7 @@ export const TransactionTable: React.FC<TranactionTableProps> = ({
   topContent,
   transactions,
 }) => {
-  const t = useTranslations(LocaleNamespace.Transactions);
+  const t = useTranslations();
   const [selectedItem, setSelectedItem] = useState<Transaction>();
   const [isOpen, setOpen] = useState(false);
   const { isMutating, deleteTransaction } = useMutateTransaction();
@@ -54,7 +54,7 @@ export const TransactionTable: React.FC<TranactionTableProps> = ({
       <Table
         isStriped
         isCompact
-        aria-label={t("subtitle")}
+        aria-label={t("Transactions.subtitle")}
         topContentPlacement="outside"
         topContent={topContent}
       >
@@ -65,7 +65,10 @@ export const TransactionTable: React.FC<TranactionTableProps> = ({
             </TableColumn>
           )}
         </TableHeader>
-        <TableBody items={transactions} emptyContent={t("emptyContent")}>
+        <TableBody
+          items={transactions}
+          emptyContent={t("Transactions.emptyContent")}
+        >
           {(item) => (
             <TableRow key={item.id}>
               {(columnKey) => {
