@@ -6,12 +6,13 @@ import {
   DropdownItem,
 } from "@nextui-org/dropdown";
 import { Button } from "@nextui-org/button";
-import { Env } from "@/config/env";
+import { getAccountList, getAccountName } from "@/config/utils";
 
 interface BankAccounDropdownProps {
   label?: string;
   value?: string;
   isRequired?: boolean;
+  skipDisabled?: boolean;
   onChange: (accountKey: string) => void;
 }
 
@@ -19,6 +20,7 @@ export const BankAccounDropdown: React.FC<BankAccounDropdownProps> = ({
   label = "Bank Account",
   value,
   isRequired = false,
+  skipDisabled = false,
   onChange,
 }) => {
   const [selectedKeys, setSelectedKeys] = useState(new Set<string>([]));
@@ -26,7 +28,7 @@ export const BankAccounDropdown: React.FC<BankAccounDropdownProps> = ({
   const selectedValue = useMemo(
     () =>
       Array.from(selectedKeys)
-        .map((key) => Env.VALID_ACCOUNTS[key] ?? "")
+        .map((key) => getAccountName(key) ?? "")
         .join(", "),
     [selectedKeys]
   );
@@ -66,9 +68,9 @@ export const BankAccounDropdown: React.FC<BankAccounDropdownProps> = ({
         selectedKeys={selectedKeys}
         onSelectionChange={onSelectionChange}
       >
-        {Object.entries(Env.VALID_ACCOUNTS).map(([key, label]) => {
-          return <DropdownItem key={key}>{label}</DropdownItem>;
-        })}
+        {getAccountList(skipDisabled).map(({ key, label }) => (
+          <DropdownItem key={key}>{label}</DropdownItem>
+        ))}
       </DropdownMenu>
     </Dropdown>
   );

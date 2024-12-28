@@ -143,6 +143,7 @@ export const UpdateTransactionModalForm: React.FC<UpdateTransactionModalFormProp
                     onChange={setSourceAccountInput}
                     value={sourceAccountInput}
                     isRequired
+                    skipDisabled
                   />
                   {item?.type === TransactionType.TRANSFER && (
                     <BankAccounDropdown
@@ -150,6 +151,7 @@ export const UpdateTransactionModalForm: React.FC<UpdateTransactionModalFormProp
                       onChange={setDestinationAccountInput}
                       value={destinationAccountInput}
                       isRequired
+                      skipDisabled
                     />
                   )}
                 </div>

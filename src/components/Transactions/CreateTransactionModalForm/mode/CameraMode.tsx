@@ -57,6 +57,7 @@ export const CameraMode: React.FC<CameraModeProps> = ({
         <BankAccounDropdown
           label={t("sourceAccount")}
           isRequired
+          skipDisabled
           onChange={setSelectedAccount}
         />
         <Switch

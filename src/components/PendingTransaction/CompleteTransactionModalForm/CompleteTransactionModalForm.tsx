@@ -113,6 +113,7 @@ export const CompleteTransactionModalForm: React.FC<
                   <BankAccounDropdown
                     label="Bank account"
                     isRequired
+                    skipDisabled
                     onChange={setSelectedAccount}
                   />
                 </div>

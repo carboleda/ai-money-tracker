@@ -58,15 +58,38 @@ export const getMissingFieldsInPrompt = (inputText: string) => {
 };
 
 export const getAccountName = (accountId: string) => {
-  return Env.VALID_ACCOUNTS[accountId] || "Unknown";
+  for (const [key, data] of Object.entries(Env.VALID_ACCOUNTS)) {
+    if (key === accountId) {
+      return data.label;
+    }
+  }
+
+  return "Unknown";
 };
 
 export const getAccountId = (accountName: string) => {
-  return (
-    Object.entries(Env.VALID_ACCOUNTS).find(
-      ([_, value]) => value === accountName
-    )?.[0] || "Unknown"
-  );
+  for (const [key, data] of Object.entries(Env.VALID_ACCOUNTS)) {
+    if (data.label === accountName) {
+      return key;
+    }
+  }
+
+  return "Unknown";
+};
+
+export const getAccountList = (skipDisabled = true) => {
+  return Object.keys(Env.VALID_ACCOUNTS)
+    .filter((key) => {
+      if (skipDisabled) {
+        return (Env.VALID_ACCOUNTS[key] as any).enabled;
+      }
+
+      return true;
+    })
+    .map((key) => {
+      const { label } = Env.VALID_ACCOUNTS[key] as any;
+      return { key, label };
+    });
 };
 
 export const computeBiannualDates = (date: Date): [Date, Date] => {

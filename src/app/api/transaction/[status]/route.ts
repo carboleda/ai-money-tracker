@@ -30,7 +30,6 @@ export async function GET(req: NextRequest, { params }: GetTransactionsParams) {
   );
 
   return NextResponse.json({
-    accounts: Env.VALID_ACCOUNTS,
     transactions: transactions.filter(
       (transaction) => transaction.status === params.status
     ),

@@ -3,7 +3,7 @@ export class Env {
   static NODE_ENV = process.env.NODE_ENV;
   static VALID_ACCOUNTS = JSON.parse(
     process.env.NEXT_PUBLIC_VALID_ACCOUNTS || "{}"
-  ) as Record<string, string>;
+  ) as Record<string, any>;
   static RATE_LIMIT_ENABLED = process.env.RATE_LIMIT_ENABLED === "true";
   static CRON_SECRET = process.env.CRON_SECRET;
   static EARLY_REMINDER_DAYS_AHEAD = parseInt(
