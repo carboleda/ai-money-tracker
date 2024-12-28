@@ -32,6 +32,7 @@ Showcase the power of Gen AI by generating transactions entries from text inputs
     - [Send and receive push messages - Progressive Web App Trainings](https://www.youtube.com/watch?v=N9zpRvFRmj8)
 - [Build a PWA with Next.js and TypeScript](https://t-i-show.medium.com/build-a-pwa-with-next-js-and-typescript-94ead0e3e6f2)
 - [Firestore Admin - Compound queries](https://cloud.google.com/firestore/docs/query-data/queries#compound_and_queries)
+- [i18n with Next.js 13/14 and app directory / App Router](https://locize.com/blog/next-app-dir-i18n/#step-5)
 
 ## How to Use
 

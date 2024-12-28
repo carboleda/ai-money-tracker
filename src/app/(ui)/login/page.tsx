@@ -11,14 +11,14 @@ import { FirebaseError } from "firebase/app";
 import { Code } from "@nextui-org/code";
 import { Image } from "@nextui-org/image";
 import { siteConfig } from "@/config/site";
-import { useTranslations } from "use-intl";
+import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
 
 function LoginPage() {
   const [errorMessage, setErrorMessage] = React.useState("");
   const router = useRouter();
   const [_, startTransition] = useTransition();
-  const t = useTranslations(LocaleNamespace.Login);
+  const { t } = useTranslation(LocaleNamespace.Login);
 
   const onGoogleLogin = async () => {
     try {

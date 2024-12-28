@@ -1,5 +1,5 @@
 export enum LocaleNamespace {
-  Common = "Common",
-  Login = "Login",
-  Transactions = "Transactions",
+  Common = "common",
+  Login = "login",
+  Transactions = "transactions",
 }

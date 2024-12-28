@@ -17,8 +17,7 @@ import { Button } from "@nextui-org/button";
 import { IconEdit } from "@/components/shared/icons";
 import { useState } from "react";
 import { UpdateTransactionModalForm } from "@/components/Transactions/UpdateTransactionModalForm";
-import { useTranslations } from "next-intl";
-import { LocaleNamespace } from "@/i18n/namespace";
+import { useTranslation } from "react-i18next";
 
 interface TranactionTableProps {
   isLoading: boolean;
@@ -31,7 +30,7 @@ export const TransactionTable: React.FC<TranactionTableProps> = ({
   topContent,
   transactions,
 }) => {
-  const t = useTranslations();
+  const { t } = useTranslation();
   const [selectedItem, setSelectedItem] = useState<Transaction>();
   const [isOpen, setOpen] = useState(false);
   const { isMutating, deleteTransaction } = useMutateTransaction();

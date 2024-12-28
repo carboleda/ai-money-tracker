@@ -3,6 +3,7 @@
 import { Env } from "@/config/env";
 import { auth } from "@/firebase/client/auth";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
+import { LocaleNamespace } from "@/i18n/namespace";
 import { Avatar } from "@nextui-org/avatar";
 import {
   Dropdown,
@@ -13,6 +14,7 @@ import {
 import { signOut } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import React, { Key, useTransition } from "react";
+import { useTranslation } from "react-i18next";
 import { HiBell } from "react-icons/hi";
 import { HiArrowRightEndOnRectangle } from "react-icons/hi2";
 
@@ -24,6 +26,7 @@ interface UserAvatarProps {
 }
 
 export const UserAvatar: React.FC<UserAvatarProps> = ({ user }) => {
+  const { t } = useTranslation(LocaleNamespace.Login);
   const router = useRouter();
   const [_, startTransition] = useTransition();
   const [doNotAskAgain, setDoNotAskAgain] = useLocalStorage(
@@ -79,7 +82,7 @@ export const UserAvatar: React.FC<UserAvatarProps> = ({ user }) => {
           <DropdownItem key="name">{user?.name}</DropdownItem>
           {doNotAskAgain && (
             <DropdownItem key="notifications" startContent={<HiBell />}>
-              Enable Push Notifications
+              {t("enablePushNotifications")}
             </DropdownItem>
           )}
           <DropdownItem

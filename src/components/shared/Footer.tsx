@@ -1,10 +1,10 @@
 "use client";
 
+import { useTranslation } from "react-i18next";
 import { Link } from "@nextui-org/link";
-import { useTranslations } from "use-intl";
 
 export const Footer: React.FC = () => {
-  const t = useTranslations();
+  const { t } = useTranslation();
 
   return (
     <footer className="w-full flex items-center justify-center pb-2 gap-4">

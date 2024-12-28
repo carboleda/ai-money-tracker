@@ -6,6 +6,8 @@ import Webcam from "react-webcam";
 import { BankAccounDropdown } from "@/components/BankAccounsDropdown";
 import { Switch } from "@nextui-org/switch";
 import { HiLightBulb, HiOutlineLightBulb } from "react-icons/hi2";
+import { useTranslation } from "react-i18next";
+import { LocaleNamespace } from "@/i18n/namespace";
 
 const CAMARE_WIDTH = 400;
 const CAMERA_HEIGHT = 300;
@@ -24,6 +26,7 @@ export const CameraMode: React.FC<CameraModeProps> = ({
   setSelectedAccount,
   setPicture,
 }) => {
+  const { t } = useTranslation(LocaleNamespace.Transactions);
   const webcamRef = useRef<Webcam>(null);
   const trackRef = useRef<MediaStreamTrack>();
   const [imgSrc, setImgSrc] = useState<string>();
@@ -52,7 +55,7 @@ export const CameraMode: React.FC<CameraModeProps> = ({
     <>
       <div className="flex gap-2 self-start w-full">
         <BankAccounDropdown
-          label="Source account"
+          label={t("sourceAccount")}
           isRequired
           onChange={setSelectedAccount}
         />

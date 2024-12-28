@@ -4,10 +4,7 @@ import { siteConfig } from "@/config/site";
 import { fontSans } from "@/config/fonts";
 import { Providers } from "./providers";
 import { Navbar } from "@/components/shared/Navbar";
-import { Link } from "@nextui-org/link";
 import clsx from "clsx";
-import { NextIntlClientProvider } from "next-intl";
-import { getLocale, getMessages } from "next-intl/server";
 import { Footer } from "@/components/shared/Footer";
 
 export const metadata: Metadata = {
@@ -31,11 +28,8 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const locale = await getLocale();
-  const messages = await getMessages();
-
   return (
-    <html lang={locale} suppressHydrationWarning>
+    <html suppressHydrationWarning>
       <head>
         <link
           rel="icon"
@@ -59,17 +53,15 @@ export default async function RootLayout({
           fontSans.variable
         )}
       >
-        <NextIntlClientProvider messages={messages}>
-          <Providers themeProps={{ attribute: "class", defaultTheme: "dark" }}>
-            <div className="relative flex flex-col h-screen">
-              <main className="container mx-auto max-w-7xl px-4 flex-grow">
-                <Navbar />
-                {children}
-              </main>
-              <Footer />
-            </div>
-          </Providers>
-        </NextIntlClientProvider>
+        <Providers themeProps={{ attribute: "class", defaultTheme: "dark" }}>
+          <div className="relative flex flex-col h-screen">
+            <main className="container mx-auto max-w-7xl px-4 flex-grow">
+              <Navbar />
+              {children}
+            </main>
+            <Footer />
+          </div>
+        </Providers>
       </body>
     </html>
   );

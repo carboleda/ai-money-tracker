@@ -21,10 +21,11 @@ import { HiOutlinePlusCircle } from "react-icons/hi";
 import { Button } from "@nextui-org/button";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { CustomDateRangePicker } from "@/components/shared/CustomDateRangePicker";
-import { useTranslations } from "next-intl";
+import { useTranslation } from "react-i18next";
+import { LocaleNamespace } from "@/i18n/namespace";
 
 function Transactions() {
-  const t = useTranslations();
+  const { t } = useTranslation(LocaleNamespace.Transactions);
   const isMobile = useIsMobile();
   const [isOpen, setOpen] = useState(false);
   const currentMonthBounds = getMonthBounds(new Date());
@@ -82,7 +83,7 @@ function Transactions() {
       <section className="flex flex-col items-center justify-center gap-4">
         <div className="flex flex-col w-full justify-start items-start gap-2">
           <div className="flex justify-between items-center w-full">
-            <h1 className="page-title">{t("Transactions.subtitle")}</h1>
+            <h1 className="page-title">{t("subtitle")}</h1>
             <Button
               color="primary"
               radius="sm"
