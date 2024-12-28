@@ -145,6 +145,13 @@ export class SummaryShareFunctions {
         ));
 
     const summary = transactions.reduce((acc, transaction) => {
+      if (
+        transaction.status === TransactionStatus.PENDING ||
+        transaction.type !== TransactionType.EXPENSE
+      ) {
+        return acc;
+      }
+
       if (isReccurent(transaction)) {
         acc.recurrentCount++;
         acc.recurrentTotal += transaction.amount;
