@@ -66,7 +66,11 @@ export class SummaryShareFunctions {
     return Object.entries(categoryGroups).map(([category, transactions]) => {
       const total =
         transactions?.reduce(
-          (acc, transaction) => acc + transaction.amount,
+          (acc, transaction) =>
+            acc +
+            (transaction.type === TransactionType.INCOME
+              ? transaction.amount
+              : transaction.amount * -1),
           0
         ) ?? 0;
 
