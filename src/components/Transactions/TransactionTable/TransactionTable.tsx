@@ -18,6 +18,7 @@ import { IconEdit } from "@/components/shared/icons";
 import { useState } from "react";
 import { UpdateTransactionModalForm } from "@/components/Transactions/UpdateTransactionModalForm";
 import { useTranslation } from "react-i18next";
+import { LocaleNamespace } from "@/i18n/namespace";
 
 interface TranactionTableProps {
   isLoading: boolean;
@@ -30,7 +31,7 @@ export const TransactionTable: React.FC<TranactionTableProps> = ({
   topContent,
   transactions,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(LocaleNamespace.Transactions);
   const [selectedItem, setSelectedItem] = useState<Transaction>();
   const [isOpen, setOpen] = useState(false);
   const { isMutating, deleteTransaction } = useMutateTransaction();
@@ -53,7 +54,7 @@ export const TransactionTable: React.FC<TranactionTableProps> = ({
       <Table
         isStriped
         isCompact
-        aria-label={t("Transactions.subtitle")}
+        aria-label={t("subtitle")}
         topContentPlacement="outside"
         topContent={topContent}
       >
@@ -64,10 +65,7 @@ export const TransactionTable: React.FC<TranactionTableProps> = ({
             </TableColumn>
           )}
         </TableHeader>
-        <TableBody
-          items={transactions}
-          emptyContent={t("Transactions.emptyContent")}
-        >
+        <TableBody items={transactions} emptyContent={t("emptyContent")}>
           {(item) => (
             <TableRow key={item.id}>
               {(columnKey) => {
