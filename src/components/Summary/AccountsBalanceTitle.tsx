@@ -6,6 +6,8 @@ import { Color, TileTable } from "@/components/Summary/TileTable";
 
 import { Account } from "@/interfaces/account";
 import { Skeleton } from "@nextui-org/skeleton";
+import { useTranslation } from "react-i18next";
+import { LocaleNamespace } from "@/i18n/namespace";
 
 export interface AccountsBalanceTitleProps {
   accountsBalance?: Account[];
@@ -18,6 +20,8 @@ export const AccountsBalanceTitle: React.FC<AccountsBalanceTitleProps> = ({
   accountsBalance,
   totalBalance,
 }) => {
+  const { t } = useTranslation(LocaleNamespace.Summary);
+
   if (!accountsBalance || !totalBalance) {
     return (
       <Skeleton className="rounded-lg w-full">
@@ -28,7 +32,7 @@ export const AccountsBalanceTitle: React.FC<AccountsBalanceTitleProps> = ({
 
   return (
     <TileTable
-      columns={["ACCOUNT", "BANLANCE"]}
+      columns={[t("account"), t("balance")]}
       data={[
         ...accountsBalance.map((account) => ({
           id: account.id,
@@ -40,7 +44,7 @@ export const AccountsBalanceTitle: React.FC<AccountsBalanceTitleProps> = ({
           id: "balance",
           name: (
             <span className="flex gap-2 items-center font-bold">
-              GLOBAL BALANCE{" "}
+              {t("globalBalance")}{" "}
               {totalBalance < BALANCE_ALERT_THRESHOLD && (
                 <HiFire className="text-lg text-red-500" />
               )}

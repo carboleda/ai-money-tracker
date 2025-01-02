@@ -6,6 +6,8 @@ import { Color, TileTable } from "@/components/Summary/TileTable";
 import { Skeleton } from "@nextui-org/skeleton";
 import { TypeSummary } from "@/interfaces/summary";
 import { TransactionType } from "@/interfaces/transaction";
+import { useTranslation } from "react-i18next";
+import { LocaleNamespace } from "@/i18n/namespace";
 
 export interface TransactionsByTypeTitleProps {
   byType?: TypeSummary[];
@@ -14,6 +16,8 @@ export interface TransactionsByTypeTitleProps {
 export const TransactionsByTypeTitle: React.FC<
   TransactionsByTypeTitleProps
 > = ({ byType }) => {
+  const { t } = useTranslation(LocaleNamespace.Summary);
+
   if (!byType) {
     return (
       <Skeleton className="rounded-lg w-full">
@@ -24,7 +28,7 @@ export const TransactionsByTypeTitle: React.FC<
 
   return (
     <TileTable
-      columns={["TYPE", "AMOUNT"]}
+      columns={[t("type"), t("amount")]}
       data={byType
         .map((type) => ({
           id: type.type,

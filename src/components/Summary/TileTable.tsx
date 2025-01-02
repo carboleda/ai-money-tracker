@@ -12,6 +12,8 @@ import {
 import { formatCurrency } from "@/config/utils";
 import { ChipProps } from "@nextui-org/chip";
 import { TransactionTypeDecorator } from "@/components/TransactionTypeDecorator";
+import { useTranslation } from "react-i18next";
+import { LocaleNamespace } from "@/i18n/namespace";
 
 export type Color = ChipProps["color"];
 
@@ -28,13 +30,14 @@ export interface TableTileProps {
 }
 
 export const TileTable: React.FC<TableTileProps> = ({ columns, data }) => {
+  const { t } = useTranslation(LocaleNamespace.Summary);
   return (
-    <Table isCompact isStriped aria-label="Example static collection table">
+    <Table isCompact isStriped aria-label="Summary table">
       <TableHeader>
         <TableColumn>{columns[0]}</TableColumn>
         <TableColumn className="text-end">{columns[1]}</TableColumn>
       </TableHeader>
-      <TableBody emptyContent={"No rows to display."}>
+      <TableBody emptyContent={t("emptyContent")}>
         {data.map((item) => (
           <TableRow key={item.id}>
             <TableCell className="capitalize">{item.name}</TableCell>

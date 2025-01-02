@@ -1,0 +1,14 @@
+{
+  "subtitle": "A summary of how your money flows 💸",
+  "emptyContent": "No rows to display.",
+  "accountBalance": "Account balance",
+  "transactionsByType": "Transactions by type",
+  "transactionsByCategory": "Transactions by category",
+  "reccurentVsVariable": "Recurrent vs Variable transactions",
+  "dateRangeFilter": "Filter the summary by date",
+  "account": "ACCOUNT",
+  "balance": "BALANCE",
+  "globalBalance": "GLOBAL BALANCE",
+  "type": "TYPE",
+  "amount": "AMOUNT"
+}
