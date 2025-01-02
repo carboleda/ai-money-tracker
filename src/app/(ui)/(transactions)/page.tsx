@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import useSWR from "swr";
 import {
   GetTransactionsResponse,
@@ -23,11 +23,13 @@ import { useIsMobile } from "@/hooks/useIsMobile";
 import { CustomDateRangePicker } from "@/components/shared/CustomDateRangePicker";
 import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
+import { SearchToolbar } from "@/components/Transactions/SearchToolbar";
 
 function Transactions() {
   const { t } = useTranslation(LocaleNamespace.Transactions);
   const isMobile = useIsMobile();
   const [isOpen, setOpen] = useState(false);
+  const [filterValue, setFilterValue] = useState("");
   const currentMonthBounds = getMonthBounds(new Date());
   const [selectedAccount, setSelectedAccount] = useState<string>("");
   const [dateWithin, setDateWithin] = useState<RangeValue<ZonedDateTime>>({
@@ -44,36 +46,50 @@ function Transactions() {
     setOpen(false);
   };
 
+  const transactions = useMemo(() => {
+    if (!reesponse?.transactions) return reesponse?.transactions;
+
+    let filteredTransations = [...reesponse?.transactions];
+
+    if (filterValue) {
+      filteredTransations = filteredTransations.filter(
+        (transaction) =>
+          transaction.description
+            .toLowerCase()
+            .includes(filterValue.toLowerCase()) ||
+          transaction.category
+            ?.toLowerCase()
+            .includes(filterValue.toLowerCase())
+      );
+    }
+
+    return filteredTransations;
+  }, [reesponse?.transactions, filterValue]);
+
   const renderTopContent = () => (
     <div className="flex flex-col gap-4 w-full">
       <div className="flex flex-wrap justify-between gap-3 items-end">
-        <div className="flex flex-row justify-items-stretch gap-2 w-full md:w-fit">
-          <CustomDateRangePicker
-            label={t("dateRangeFilter")}
-            variant="bordered"
-            granularity="day"
-            isRequired
-            value={dateWithin}
-            onChange={setDateWithin}
-          />
-          <div className="justify-self-end">
-            <BankAccounDropdown
-              label={t("accountFilter")}
-              onChange={setSelectedAccount}
-            />
-          </div>
-        </div>
-        {/* <div className="flex justify-end w-full md:w-fit">
-          <Button
-            color="primary"
-            radius="sm"
-            variant="flat"
-            onPress={() => setOpen(true)}
+        <div className="flex flex-row justify-items-stretch items-center gap-2 w-full md:w-fit">
+          <SearchToolbar
+            filterValue={filterValue}
+            onSearchChange={setFilterValue}
           >
-            <HiOutlinePlusCircle className="text-xl" />
-            New trans.
-          </Button>
-        </div> */}
+            <CustomDateRangePicker
+              label={t("dateRangeFilter")}
+              variant="bordered"
+              granularity="day"
+              isRequired
+              value={dateWithin}
+              onChange={setDateWithin}
+            />
+            <div className="justify-self-end">
+              <BankAccounDropdown
+                label={t("accountFilter")}
+                onChange={setSelectedAccount}
+              />
+            </div>
+          </SearchToolbar>
+        </div>
       </div>
     </div>
   );
@@ -105,10 +121,7 @@ function Transactions() {
           />
         </div>
         {renderTopContent()}
-        <TransactionTable
-          transactions={reesponse?.transactions}
-          isLoading={isLoading}
-        />
+        <TransactionTable transactions={transactions} isLoading={isLoading} />
       </section>
       <CreateTransactionModalForm
         isOpen={isOpen}
