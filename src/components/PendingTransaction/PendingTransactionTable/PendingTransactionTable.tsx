@@ -121,11 +121,6 @@ export const PendingTransactionTable: React.FC<PendingTransactionTableProps> = (
                   return (
                     <TableCell>
                       <div className="flex flex-row justify-center">
-                        <DeleteTableItemButton
-                          itemId={item.id}
-                          isDisabled={isMutating}
-                          deleteTableItem={deleteTransaction}
-                        />
                         <Button
                           isIconOnly
                           color="success"
@@ -136,6 +131,11 @@ export const PendingTransactionTable: React.FC<PendingTransactionTableProps> = (
                         >
                           <IconCheckCircle />
                         </Button>
+                        <DeleteTableItemButton
+                          itemId={item.id}
+                          isDisabled={isMutating}
+                          deleteTableItem={deleteTransaction}
+                        />
                       </div>
                     </TableCell>
                   );
