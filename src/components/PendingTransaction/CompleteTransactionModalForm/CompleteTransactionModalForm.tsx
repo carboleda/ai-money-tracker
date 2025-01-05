@@ -8,7 +8,12 @@ import {
 } from "@nextui-org/modal";
 import { Button } from "@nextui-org/button";
 import { DatePicker } from "@nextui-org/date-picker";
-import { parseAbsoluteToLocal, ZonedDateTime } from "@internationalized/date";
+import {
+  getLocalTimeZone,
+  now,
+  parseAbsoluteToLocal,
+  ZonedDateTime,
+} from "@internationalized/date";
 import { Transaction, TransactionStatus } from "@/interfaces/transaction";
 import { BankAccounDropdown } from "@/components/BankAccounsDropdown";
 import { useMutateTransaction } from "@/hooks/useMutateTransaction";
@@ -34,12 +39,8 @@ export const CompleteTransactionModalForm: React.FC<
   const areButtonsDisabled = isMutating || validationError !== "";
 
   useEffect(() => {
-    if (item) {
-      setPaymentDateInput(
-        item.createdAt ? parseAbsoluteToLocal(item.createdAt) : null
-      );
-      setAmountInput(item.amount);
-    }
+    setPaymentDateInput(now(getLocalTimeZone()));
+    setAmountInput(item?.amount);
   }, [item]);
 
   const onOpenChangeHandler = (_open: boolean) => {

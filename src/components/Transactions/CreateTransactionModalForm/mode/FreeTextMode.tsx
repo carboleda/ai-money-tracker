@@ -26,6 +26,7 @@ export const FreeTextMode: React.FC<FreeTextModeProps> = ({
         granularity="minute"
         value={createdAt}
         onChange={(v) => setCreatedAt(v!)}
+        hideTimeZone
       />
     </>
   );

@@ -7,7 +7,7 @@ import {
   ModalFooter,
 } from "@nextui-org/modal";
 import { Button } from "@nextui-org/button";
-import { ZonedDateTime } from "@internationalized/date";
+import { getLocalTimeZone, now, ZonedDateTime } from "@internationalized/date";
 import { useMutateTransaction } from "@/hooks/useMutateTransaction";
 import { FreeTextMode } from "./mode/FreeTextMode";
 import { HiCamera, HiDocumentText } from "react-icons/hi";
@@ -53,11 +53,10 @@ export const CreateTransactionModalForm: React.FC<
   };
 
   const clearInputs = () => {
-    setCreatedAtInput(undefined);
     setTextInput("");
     setPicture("");
     setSelectedAccount("");
-    setCreatedAtInput(undefined);
+    setCreatedAtInput(now(getLocalTimeZone()));
   };
 
   const clearError = () => setValidationError("");
