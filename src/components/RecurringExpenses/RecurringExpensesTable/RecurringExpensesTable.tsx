@@ -100,13 +100,16 @@ export const RecurringExpensesTable: React.FC<RecurringExpensesTableProps> = ({
     <div className="flex flex-col gap-4">
       <div className="flex justify-between gap-3 items-center w-full">
         <Input
-          isClearable
+          radius="md"
+          variant="faded"
+          classNames={{ inputWrapper: "py-6" }}
           className="w-full sm:max-w-[44%]"
           placeholder="Search by description..."
           startContent={<HiOutlineSearch />}
           value={filterValue}
           onClear={() => onClear()}
           onValueChange={onSearchChange}
+          isClearable
         />
         <div className="flex w-fit justify-end">
           <Button

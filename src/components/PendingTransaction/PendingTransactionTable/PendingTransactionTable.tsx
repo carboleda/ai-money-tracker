@@ -77,13 +77,16 @@ export const PendingTransactionTable: React.FC<PendingTransactionTableProps> = (
     <div className="flex flex-row gap-4">
       <div className="flex justify-between gap-3 items-center w-full">
         <Input
-          isClearable
+          radius="md"
+          variant="faded"
+          classNames={{ inputWrapper: "py-6" }}
           className="w-full sm:max-w-[44%]"
           placeholder="Search by description..."
           startContent={<HiOutlineSearch />}
           value={filterValue}
           onClear={() => onClear()}
           onValueChange={onSearchChange}
+          isClearable
         />
         <span className="w-fit text-end subtitle text-sm">
           Total {pendingTransactions?.length} pending transactions

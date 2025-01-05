@@ -63,15 +63,15 @@ export const SearchToolbar: React.FC<SearchToolbarProps> = ({
         {(isInputFocused || !isMobile) && (
           <Input
             radius="md"
-            variant="bordered"
-            className="w-fit"
+            variant="faded"
             classNames={{ inputWrapper: "py-6" }}
+            className="w-fit"
             placeholder={t("searchByDescription")}
             startContent={<HiOutlineSearch />}
             value={filterValue}
             onClear={onClear}
             onValueChange={onValueChange}
-            autoFocus
+            autoFocus={isMobile}
             isClearable
           />
         )}
