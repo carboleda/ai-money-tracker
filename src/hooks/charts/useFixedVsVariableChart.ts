@@ -109,25 +109,12 @@ export const useFixedVsVariableChart = ({
 
   useEffect(() => {
     setOptions((prev: any) => {
-      const series = prev.series.map(
-        (serie: AgBarSeriesThemeableOptions<RecurrentVsVariable>) => {
-          return {
-            ...serie,
-            label: {
-              ...serie.label,
-              color: isDark ? ligthColor : darkColor,
-            },
-          };
-        }
-      );
-
       return {
         ...prev,
         background: {
           fill: isDark ? darkColor : ligthColor,
         },
         theme: isDark ? "ag-financial-dark" : "ag-financial",
-        series,
       };
     });
   }, [isDark]);
