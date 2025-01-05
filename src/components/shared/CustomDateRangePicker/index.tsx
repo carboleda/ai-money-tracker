@@ -79,10 +79,19 @@ export const CustomDateRangePicker: React.FC<CustomDateRangePickerProps> = ({
         {...props}
         onChange={onDateChange}
         startContent={
-          <HiArrowCircleLeft
-            className="text-5xl cursor-pointer"
-            onClick={() => setSelectedKey(RangeList.this)}
-          />
+          <Button
+            className="min-w-0 min-h-0 w-fit h-fit"
+            variant="light"
+            color="default"
+            radius="full"
+            onPress={() => setSelectedKey(RangeList.this)}
+            isIconOnly
+          >
+            <HiArrowCircleLeft
+              className="text-5xl p-0 m-0 min-h-0 h-fit"
+              color="gray"
+            />
+          </Button>
         }
       />
     );
