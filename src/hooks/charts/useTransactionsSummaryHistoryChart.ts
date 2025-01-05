@@ -1,15 +1,12 @@
 import {
   AgBarSeriesThemeableOptions,
-  AgChartLabelOptions,
   AgChartOptions,
-  AgRadialSeriesLabelFormatterParams,
-  time,
 } from "ag-charts-community";
 import { useTheme } from "next-themes";
 import { useIsMobile } from "../useIsMobile";
 import { useEffect, useState } from "react";
 import { TransactionsSummaryHistory } from "@/interfaces/account";
-import { formatCurrency, formatDate, formatMonth } from "@/config/utils";
+import { formatCurrency, formatMonthYear } from "@/config/utils";
 
 const ligthColor = "#FFFFFF";
 const darkColor = "#18181B";
@@ -42,7 +39,7 @@ export const useTransactionsSummaryHistoryChart = ({
     series: [
       {
         type: "line",
-        xKey: "createdAt",
+        xKey: "month",
         xName: "Month",
         yKey: "incomes",
         yName: "Incomes",
@@ -60,7 +57,7 @@ export const useTransactionsSummaryHistoryChart = ({
       },
       {
         type: "line",
-        xKey: "createdAt",
+        xKey: "month",
         yKey: "expenses",
         yName: "Expenses",
         interpolation: { type: "smooth" },
@@ -77,7 +74,7 @@ export const useTransactionsSummaryHistoryChart = ({
       },
       {
         type: "line",
-        xKey: "createdAt",
+        xKey: "month",
         yKey: "transfers",
         yName: "Transfers",
         interpolation: { type: "smooth" },
@@ -97,15 +94,8 @@ export const useTransactionsSummaryHistoryChart = ({
     ],
     axes: [
       {
-        type: "time",
+        type: "category",
         position: "bottom",
-        nice: true,
-        interval: {
-          step: time.month,
-        },
-        label: {
-          format: "%b %Y",
-        },
       },
       {
         type: "number",
@@ -124,7 +114,7 @@ export const useTransactionsSummaryHistoryChart = ({
         ...prev,
         data: data?.map((item) => ({
           ...item,
-          createdAt: new Date(item.createdAt),
+          month: formatMonthYear(new Date(item.createdAt)),
         })),
       };
     });

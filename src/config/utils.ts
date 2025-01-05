@@ -17,6 +17,10 @@ const currencyFormaterNoFractionDigits = new Intl.NumberFormat("en-US", {
 const monthFormatter = new Intl.DateTimeFormat("en-US", {
   month: "long",
 });
+const monthYearFormatter = new Intl.DateTimeFormat("en-US", {
+  month: "short",
+  year: "numeric",
+});
 const dateTimeFormatter = new Intl.DateTimeFormat("en-US", {
   year: "numeric",
   month: "long",
@@ -40,7 +44,7 @@ export const formatTimeDate = (date: Date) => dateTimeFormatter.format(date);
 
 export const formatDate = (date: Date) => dateFormatter.format(date);
 
-export const formatMonth = (date: Date) => monthFormatter.format(date);
+export const formatMonthYear = (date: Date) => monthYearFormatter.format(date);
 
 export const getMonthBounds = (date: Date) => {
   const start = new Date(date.getFullYear(), date.getMonth(), 1);
