@@ -7,6 +7,8 @@ import { useIsMobile } from "../useIsMobile";
 import { useEffect, useState } from "react";
 import { TransactionsSummaryHistory } from "@/interfaces/account";
 import { formatCurrency, formatMonthYear } from "@/config/utils";
+import { useTranslation } from "react-i18next";
+import { LocaleNamespace } from "@/i18n/namespace";
 
 const ligthColor = "#FFFFFF";
 const darkColor = "#18181B";
@@ -22,6 +24,7 @@ export interface UseTransactionsSummaryHistoryChartResult {
 export const useTransactionsSummaryHistoryChart = ({
   data,
 }: UseTransactionsSummaryHistoryChartProps) => {
+  const { t } = useTranslation(LocaleNamespace.Summary);
   const { theme } = useTheme();
   const isMobile = useIsMobile();
 
@@ -42,7 +45,7 @@ export const useTransactionsSummaryHistoryChart = ({
         xKey: "month",
         xName: "Month",
         yKey: "incomes",
-        yName: "Incomes",
+        yName: t("incomes"),
         interpolation: { type: "smooth" },
         stroke: "green",
         marker: {
@@ -59,7 +62,7 @@ export const useTransactionsSummaryHistoryChart = ({
         type: "line",
         xKey: "month",
         yKey: "expenses",
-        yName: "Expenses",
+        yName: t("expenses"),
         interpolation: { type: "smooth" },
         stroke: "red",
         marker: {
@@ -76,7 +79,7 @@ export const useTransactionsSummaryHistoryChart = ({
         type: "line",
         xKey: "month",
         yKey: "transfers",
-        yName: "Transfers",
+        yName: t("transfers"),
         interpolation: { type: "smooth" },
         stroke: "orange",
         marker: {

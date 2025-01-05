@@ -46,7 +46,7 @@ function Summary() {
       data: <TransactionsByTypeTitle byType={response?.summary?.byType} />,
     },
     {
-      title: t("transactionsByType"),
+      title: t("transactionsSummaryHistory"),
       className: "md:col-span-2",
       data: response?.summary.transactionsSummaryHistory && (
         <TransactionsSummaryHistoryChart

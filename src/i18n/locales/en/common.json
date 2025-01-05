@@ -20,5 +20,9 @@
   "custom": "Custom range",
   "cancel": "Cancel",
   "save": "Save",
-  "searchByDescription": "Search by description..."
+  "searchByDescription": "Search by description...",
+  "month": "Month",
+  "incomes": "Incomes",
+  "expenses": "Expenses",
+  "transfers": "Transfers"
 }
