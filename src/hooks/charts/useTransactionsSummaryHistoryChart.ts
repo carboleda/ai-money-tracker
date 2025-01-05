@@ -109,6 +109,11 @@ export const useTransactionsSummaryHistoryChart = ({
         },
       },
     ],
+    overlays: {
+      unsupportedBrowser: {
+        enabled: false,
+      },
+    },
   });
 
   useEffect(() => {
