@@ -3,6 +3,7 @@ import { Skeleton } from "@nextui-org/skeleton";
 export type Tile = {
   title: string;
   data: React.ReactNode;
+  className?: string;
 };
 
 export interface TilesProps {
@@ -15,7 +16,7 @@ export const Tiles: React.FC<TilesProps> = ({ tiles }) => {
       {tiles.map((tile, index) => (
         <div
           key={index}
-          className="w-full flex flex-row flex-wrap justify-start"
+          className={`w-full flex flex-row flex-wrap justify-start ${tile.className}`}
         >
           <span className="subtitle text-lg font-bold my-2">{tile.title}</span>
           {tile.data ?? (

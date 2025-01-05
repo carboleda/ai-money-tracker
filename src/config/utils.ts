@@ -40,6 +40,8 @@ export const formatTimeDate = (date: Date) => dateTimeFormatter.format(date);
 
 export const formatDate = (date: Date) => dateFormatter.format(date);
 
+export const formatMonth = (date: Date) => monthFormatter.format(date);
+
 export const getMonthBounds = (date: Date) => {
   const start = new Date(date.getFullYear(), date.getMonth(), 1);
   start.setHours(0, 0, 0, 0);

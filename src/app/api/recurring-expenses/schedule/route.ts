@@ -13,6 +13,7 @@ import {
 } from "@/interfaces/transaction";
 import { Timestamp } from "firebase-admin/firestore";
 import { NextRequest, NextResponse } from "next/server";
+import { SummaryHistoryService } from "@/app/api/transaction/history/summaryHistoryService";
 
 export async function GET(req: NextRequest) {
   const authHeader = req.headers.get("authorization");
@@ -27,6 +28,15 @@ export async function GET(req: NextRequest) {
     });
   }
 
+  await Promise.all([
+    SummaryHistoryService.saveEntryForLastMonth(),
+    scheduleRecurringExpenses(),
+  ]);
+
+  return new NextResponse(null, { status: 200 });
+}
+
+async function scheduleRecurringExpenses() {
   console.log(`Fetching recurring expenses...`);
   const recurringExpenses: RecurringExpense[] = await getRecurringExpenses();
 
@@ -63,8 +73,6 @@ export async function GET(req: NextRequest) {
 
     await db.collection(Collections.Transactions).add(transaction);
   }
-
-  return new NextResponse(null, { status: 200 });
 }
 
 async function getRecurringExpenses(): Promise<RecurringExpense[]> {

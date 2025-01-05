@@ -1,4 +1,4 @@
-import { Account } from "./account";
+import { Account, TransactionsSummaryHistory } from "./account";
 import { Transaction } from "./transaction";
 
 export interface CategorySummary {
@@ -23,9 +23,9 @@ export interface RecurrentVsVariable {
 
 export interface Summary {
   accountsBalance: Account[];
+  transactionsSummaryHistory: TransactionsSummaryHistory[];
   byCategory: CategorySummary[];
   byType: TypeSummary[];
-  byAccount: Account[];
   recurrentVsVariable: RecurrentVsVariable;
   totalBalance: number;
 }

@@ -15,6 +15,7 @@ import { AccountsBalanceTitle } from "@/components/Summary/AccountsBalanceTitle"
 import { TransactionsByTypeTitle } from "@/components/Summary/TransactionsByTypeTitle";
 import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
+import { TransactionsSummaryHistoryChart } from "@/components/charts/TransactionsSummaryHistoryChart";
 
 const currentMonthBounds = getMonthBounds(new Date());
 
@@ -43,6 +44,15 @@ function Summary() {
     {
       title: t("transactionsByType"),
       data: <TransactionsByTypeTitle byType={response?.summary?.byType} />,
+    },
+    {
+      title: t("transactionsByType"),
+      className: "md:col-span-2",
+      data: response?.summary.transactionsSummaryHistory && (
+        <TransactionsSummaryHistoryChart
+          data={response?.summary.transactionsSummaryHistory}
+        />
+      ),
     },
     {
       title: t("transactionsByCategory"),

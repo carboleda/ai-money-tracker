@@ -7,6 +7,7 @@ export const Collections = {
   Users: `users${suffix}`,
   Accounts: `accounts${suffix}`,
   Transactions: `transactions${suffix}`,
+  TransactionsSummaryHistory: `accounts-history${suffix}`,
   RecurringExpenses: `recurring-expenses${suffix}`,
 } as const;
 
