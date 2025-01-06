@@ -38,8 +38,9 @@ export const SummaryPanel: React.FC<SummaryPanelProps> = ({
   includedKeys,
 }) => {
   const isMobile = useIsMobile();
-  const keys = (includedKeys ??
-    Object.keys(keyValueMapping)) as (keyof Summary)[];
+  const keys = (
+    (includedKeys ?? Object.keys(keyValueMapping)) as (keyof Summary)[]
+  ).filter((k) => k !== "totalTransfers");
 
   if (!summary) {
     return (
