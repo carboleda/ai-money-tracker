@@ -12,6 +12,9 @@ import { LocaleNamespace } from "@/i18n/namespace";
 
 const ligthColor = "#FFFFFF";
 const darkColor = "#18181B";
+const greenColor = "#17c964";
+const redColor = "#f54180";
+const yellowColor = "#f5a524";
 
 export interface UseTransactionsSummaryHistoryChartProps {
   data?: TransactionsSummaryHistory[];
@@ -46,8 +49,9 @@ export const useTransactionsSummaryHistoryChart = ({
         xName: "Month",
         yKey: "incomes",
         yName: t("incomes"),
+        visible: false,
         interpolation: { type: "smooth" },
-        stroke: "green",
+        stroke: greenColor,
         marker: {
           strokeWidth: 3,
           shape: "diamond",
@@ -64,7 +68,7 @@ export const useTransactionsSummaryHistoryChart = ({
         yKey: "expenses",
         yName: t("expenses"),
         interpolation: { type: "smooth" },
-        stroke: "red",
+        stroke: redColor,
         marker: {
           strokeWidth: 3,
           shape: "diamond",
@@ -80,11 +84,12 @@ export const useTransactionsSummaryHistoryChart = ({
         xKey: "month",
         yKey: "transfers",
         yName: t("transfers"),
+        visible: false,
         interpolation: { type: "smooth" },
-        stroke: "orange",
+        stroke: yellowColor,
         marker: {
-          fill: "orange",
-          stroke: "orange",
+          fill: yellowColor,
+          stroke: yellowColor,
           strokeWidth: 3,
           shape: "diamond",
         },

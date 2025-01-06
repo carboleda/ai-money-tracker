@@ -19,6 +19,7 @@ export class SummaryShareFunctions {
     let totalIncomes = 0;
     let totalExpenses = 0;
     let totalPending = 0;
+    let totalTransfers = 0;
 
     transactions.forEach((transaction) => {
       if (transaction.status === TransactionStatus.PENDING) {
@@ -31,6 +32,8 @@ export class SummaryShareFunctions {
         account &&
         transaction.destinationAccount
       ) {
+        totalTransfers += transaction.amount;
+
         const accountId = getAccountId(transaction.destinationAccount);
         if (accountId === account) {
           return;
@@ -51,6 +54,7 @@ export class SummaryShareFunctions {
       totalIncomes,
       totalExpenses,
       totalPending,
+      totalTransfers,
       totalBalance,
     };
   }

@@ -41,6 +41,7 @@ export interface Summary {
   totalIncomes: number;
   totalExpenses: number;
   totalPending: number;
+  totalTransfers: number;
   totalBalance: number;
 }
 

@@ -1,7 +1,11 @@
 import { FilterTransactionsShareFunctions } from "@/app/api/transaction/[status]/functions";
 import { Collections, db } from "@/firebase/server";
 import { SummaryShareFunctions } from "@/app/api/summary/functions";
-import { TransactionStatus, TransactionType } from "@/interfaces/transaction";
+import {
+  Transaction,
+  TransactionStatus,
+  TransactionType,
+} from "@/interfaces/transaction";
 import { getMonthBounds } from "@/config/utils";
 import {
   TransactionsSummaryHistory,
@@ -36,7 +40,7 @@ export class SummaryHistoryService {
     } as TransactionsSummaryHistoryEntity);
   }
 
-  static async getLastTwelveMonthsHistory() {
+  static async getLastTwelveMonthsHistory(transactions: Transaction[]) {
     const twelveMonthsAgo = new Date();
     twelveMonthsAgo.setMonth(twelveMonthsAgo.getMonth() - 12);
     twelveMonthsAgo.setDate(15);
@@ -48,7 +52,7 @@ export class SummaryHistoryService {
 
     const snapshot = await query.get();
 
-    return snapshot.docs.map((doc) => {
+    const history = snapshot.docs.map((doc) => {
       const docData = { ...doc.data() } as TransactionsSummaryHistoryEntity;
       return {
         ...docData,
@@ -56,6 +60,12 @@ export class SummaryHistoryService {
         createdAt: docData.createdAt.toDate().toISOString(),
       } as TransactionsSummaryHistory;
     });
+
+    history.push(
+      await SummaryHistoryService.getExpensesForCurrentMonth(transactions)
+    );
+
+    return history;
   }
 
   private static getValueForType(
@@ -63,6 +73,20 @@ export class SummaryHistoryService {
   ) {
     return (type: TransactionType) => {
       return transactionsByType.find((t) => t.type === type)?.total || 0;
+    };
+  }
+
+  private static async getExpensesForCurrentMonth(
+    transactions: Transaction[]
+  ): Promise<TransactionsSummaryHistory> {
+    const summary = await SummaryShareFunctions.computeSummary(transactions);
+
+    return {
+      id: "current",
+      incomes: summary.totalIncomes,
+      expenses: summary.totalExpenses,
+      transfers: summary.totalTransfers,
+      createdAt: new Date().toISOString(),
     };
   }
 }

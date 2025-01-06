@@ -11,16 +11,16 @@ export async function GET(req: NextRequest) {
   const startDate = searchParams.get("start");
   const endDate = searchParams.get("end");
 
-  const [transactions, accountsBalance, transactionsSummaryHistory] =
-    await Promise.all([
-      FilterTransactionsShareFunctions.searchTransactions({
-        status: TransactionStatus.COMPLETE,
-        startDate: startDate ? new Date(startDate) : null,
-        endDate: endDate ? new Date(endDate) : null,
-      }),
-      AccountShareFunctions.getAllAccounts(),
-      SummaryHistoryService.getLastTwelveMonthsHistory(),
-    ]);
+  const [transactions, accountsBalance] = await Promise.all([
+    FilterTransactionsShareFunctions.searchTransactions({
+      status: TransactionStatus.COMPLETE,
+      startDate: startDate ? new Date(startDate) : null,
+      endDate: endDate ? new Date(endDate) : null,
+    }),
+    AccountShareFunctions.getAllAccounts(),
+  ]);
+  const transactionsSummaryHistory =
+    await SummaryHistoryService.getLastTwelveMonthsHistory(transactions);
 
   const mappedTransactions = transactions
     .filter((transaction) => transaction.status === TransactionStatus.COMPLETE)
