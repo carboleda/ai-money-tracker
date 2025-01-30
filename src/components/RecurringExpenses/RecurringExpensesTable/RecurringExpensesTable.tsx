@@ -24,6 +24,8 @@ import { useMutateRecurringExpenses } from "@/hooks/useMutateRecurrentExpense";
 import { useRenderCell } from "./Columns";
 import { HiOutlinePlusCircle } from "react-icons/hi";
 import { Input } from "@nextui-org/input";
+import { useTranslation } from "react-i18next";
+import { LocaleNamespace } from "@/i18n/namespace";
 
 interface RecurringExpensesTableProps {
   isLoading: boolean;
@@ -54,6 +56,7 @@ export const RecurringExpensesTable: React.FC<RecurringExpensesTableProps> = ({
   isLoading,
   recurringExpenses,
 }) => {
+  const { t } = useTranslation(LocaleNamespace.RecurrentExpenses);
   const [selectedItem, setSelectedItem] = useState<RecurringExpense>();
   const [isOpen, setOpen] = useState(false);
   const [filterValue, setFilterValue] = useState("");
@@ -104,7 +107,7 @@ export const RecurringExpensesTable: React.FC<RecurringExpensesTableProps> = ({
           variant="faded"
           classNames={{ inputWrapper: "py-6" }}
           className="w-full sm:max-w-[44%]"
-          placeholder="Search by description..."
+          placeholder={t("searchByDescription")}
           startContent={<HiOutlineSearch />}
           value={filterValue}
           onClear={() => onClear()}
@@ -133,7 +136,7 @@ export const RecurringExpensesTable: React.FC<RecurringExpensesTableProps> = ({
       <Table
         isStriped
         isCompact
-        aria-label="Recurrent Expenses"
+        aria-label={t("recurrentExpenses")}
         disabledKeys={[FrequencyGroup.Others]}
         topContentPlacement="outside"
         topContent={renderTopContent()}
@@ -141,20 +144,17 @@ export const RecurringExpensesTable: React.FC<RecurringExpensesTableProps> = ({
         <TableHeader columns={columns}>
           {(column) => (
             <TableColumn key={column.key} className={`${column.className}`}>
-              {column.label}
+              {t(column.key)}
             </TableColumn>
           )}
         </TableHeader>
-        <TableBody
-          items={transactions}
-          emptyContent={"No recurrent expenses to display."}
-        >
+        <TableBody items={transactions} emptyContent={t("emptyContent")}>
           {(item) => {
             if (item.id === FrequencyGroup.Others) {
               return renderSeparator(
                 item.id,
                 columns.length,
-                "BIANNUAL AND YEARLY EXPENSES"
+                t("separatorTitle")
               );
             }
 

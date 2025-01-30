@@ -61,7 +61,7 @@ export const TransactionTable: React.FC<TranactionTableProps> = ({
         <TableHeader columns={columns}>
           {(column) => (
             <TableColumn key={column.key} className={`${column.className}`}>
-              {t(column.label).toUpperCase()}
+              {t(column.key)}
             </TableColumn>
           )}
         </TableHeader>

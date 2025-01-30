@@ -9,33 +9,30 @@ import { TableColumn } from "@/interfaces/global";
 const columnsDesktop: TableColumn[] = [
   {
     key: "description",
-    label: "description",
+    className: "uppercase",
   },
   {
     key: "date",
-    label: "date",
+    className: "uppercase",
   },
   {
     key: "amount",
-    label: "amount",
-    className: "text-end",
+    className: "uppercase text-end",
   },
   {
     key: "actions",
-    label: "actions",
-    className: "text-center",
+    className: "uppercase text-center",
   },
 ];
 
 const columnsMobile: TableColumn[] = [
   {
     key: "transaction",
-    label: "transaction",
+    className: "uppercase",
   },
   {
     key: "actions",
-    label: "actions",
-    className: "text-center",
+    className: "uppercase text-center",
   },
 ];
 

@@ -9,33 +9,30 @@ import { Frequency, RecurringExpense } from "@/interfaces/recurringExpense";
 const columnsDesktop: TableColumn[] = [
   {
     key: "description",
-    label: "DESCRIPTION",
+    className: "uppercase",
   },
   {
     key: "frequency",
-    label: "FREQUENCY",
+    className: "uppercase",
   },
   {
     key: "amount",
-    label: "AMOUNT",
-    className: "text-end",
+    className: "uppercase text-end",
   },
   {
     key: "actions",
-    label: "ACTIONS",
-    className: "text-center",
+    className: "uppercase text-center",
   },
 ];
 
 const columnsMobile: TableColumn[] = [
   {
     key: "expense",
-    label: "EXPENSE",
+    className: "uppercase",
   },
   {
     key: "actions",
-    label: "ACTIONS",
-    className: "text-center",
+    className: "uppercase text-center",
   },
 ];
 
@@ -82,7 +79,7 @@ const renderSeparatorDesktop = (
 ): JSX.Element => {
   return (
     <TableRow key={id}>
-      <TableCell colSpan={colSpan} className="text-center px-0">
+      <TableCell colSpan={colSpan} className="text-center px-3">
         <div className="py-3 my-3 font-bold text-zinc-200 bg-blue-600 rounded-md">
           {title}
         </div>
@@ -134,8 +131,8 @@ const renderSeparatorMobile = (
 ): JSX.Element => {
   return (
     <TableRow key={id}>
-      <TableCell colSpan={colSpan} className="text-center px-0">
-        <div className="py-3 my-3 font-bold text-zinc-200 bg-blue-600 rounded-md">
+      <TableCell colSpan={colSpan} className="text-center px-3">
+        <div className="py-3 my-3 mx-3 font-bold text-zinc-200 bg-blue-600 rounded-md">
           {title}
         </div>
       </TableCell>
