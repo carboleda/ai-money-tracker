@@ -79,13 +79,29 @@ export class SummaryHistoryService {
   private static async getExpensesForCurrentMonth(
     transactions: Transaction[]
   ): Promise<TransactionsSummaryHistory> {
-    const summary = await SummaryShareFunctions.computeSummary(transactions);
+    let totalIncomes = 0;
+    let totalExpenses = 0;
+    let totalTransfers = 0;
+
+    transactions.forEach((transaction) => {
+      if (transaction.status === TransactionStatus.PENDING) {
+        return;
+      }
+
+      if (transaction.type == TransactionType.INCOME) {
+        totalIncomes += transaction.amount;
+      } else if (transaction.type == TransactionType.TRANSFER) {
+        totalTransfers += transaction.amount;
+      } else {
+        totalExpenses += transaction.amount;
+      }
+    });
 
     return {
       id: "current",
-      incomes: summary.totalIncomes,
-      expenses: summary.totalExpenses,
-      transfers: summary.totalTransfers,
+      incomes: totalIncomes,
+      expenses: totalExpenses,
+      transfers: totalTransfers,
       createdAt: new Date().toISOString(),
     };
   }
