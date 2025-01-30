@@ -6,6 +6,9 @@
   "developedBy": "Developed by",
   "poweredBy": "Powered by",
   "description": "Description",
+  "frequency": "Frequency",
+  "category": "Category",
+  "dueDate": "Due date",
   "transaction": "Transaction",
   "date": "Date",
   "amount": "Amount",
@@ -22,6 +25,7 @@
   "save": "Save",
   "searchByDescription": "Search by description...",
   "month": "Month",
+  "expense": "Expense",
   "incomes": "Incomes",
   "expenses": "Expenses",
   "transfers": "Transfers"

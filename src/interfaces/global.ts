@@ -1,5 +1,5 @@
 export interface TableColumn {
   key: string;
-  label: string;
+  label?: string;
   className?: string;
 }

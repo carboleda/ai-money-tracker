@@ -3,4 +3,5 @@ export enum LocaleNamespace {
   Login = "login",
   Transactions = "transactions",
   Summary = "summary",
+  RecurrentExpenses = "recurrentExpenses",
 }

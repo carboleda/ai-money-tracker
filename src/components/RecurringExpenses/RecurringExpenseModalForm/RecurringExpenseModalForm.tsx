@@ -28,6 +28,8 @@ import {
 import { IconComment, IconLink } from "@/components/shared/icons";
 import { Env } from "@/config/env";
 import { MaskedCurrencyInput } from "@/components/shared/MaskedCurrencyInput";
+import { useTranslation } from "react-i18next";
+import { LocaleNamespace } from "@/i18n/namespace";
 
 const fixedMonth = parseAbsoluteToLocal(
   new Date(Env.NEXT_PUBLIC_FIXED_MONTH).toISOString()
@@ -42,6 +44,7 @@ interface RecurringExpenseModalFormProps {
 export const RecurringExpenseModalForm: React.FC<
   RecurringExpenseModalFormProps
 > = ({ item, onDismiss, isOpen }) => {
+  const { t } = useTranslation(LocaleNamespace.RecurrentExpenses);
   const { isMutating, createConfig, updateConfig } =
     useMutateRecurringExpenses();
   const [validationError, setValidationError] = useState<string>("");
@@ -116,9 +119,7 @@ export const RecurringExpenseModalForm: React.FC<
       !dueDateInput ||
       amountInput === 0
     ) {
-      setValidationError(
-        "Filled all the required fields. Please fill them out."
-      );
+      setValidationError(t("allFieldAreRequired"));
       return;
     }
 
@@ -156,12 +157,12 @@ export const RecurringExpenseModalForm: React.FC<
           {(onClose) => (
             <>
               <ModalHeader className="flex flex-col gap-1">
-                Recurrent Expense
+                {t("recurrentExpenses")}
               </ModalHeader>
               <ModalBody>
                 <Input
                   autoFocus
-                  label="Deescription"
+                  label={t("description")}
                   variant="bordered"
                   isRequired
                   value={descriptionInput}
@@ -170,7 +171,7 @@ export const RecurringExpenseModalForm: React.FC<
                 <div className="flex gap-2">
                   <Autocomplete
                     allowsCustomValue
-                    label="Category"
+                    label={t("category")}
                     variant="bordered"
                     isRequired
                     defaultItems={transactionCategoryOptions}
@@ -187,7 +188,7 @@ export const RecurringExpenseModalForm: React.FC<
                   </Autocomplete>
 
                   <MaskedCurrencyInput
-                    label="Amount"
+                    label={t("amount")}
                     variant="bordered"
                     type="text"
                     isRequired
@@ -203,7 +204,7 @@ export const RecurringExpenseModalForm: React.FC<
                     />
                   </div>
                   <DatePicker
-                    label="Due date"
+                    label={t("dueDate")}
                     variant="bordered"
                     granularity="day"
                     minValue={dueDateMinMax?.min}
@@ -214,15 +215,15 @@ export const RecurringExpenseModalForm: React.FC<
                   />
                 </div>
                 <Input
-                  label="Payment Link"
+                  label={t("paymentLink")}
                   variant="bordered"
                   startContent={<IconLink />}
                   value={paymentLinkInput}
                   onValueChange={setPaymentLinkInput}
                 />
                 <Textarea
-                  label="Notes"
-                  placeholder="Enter your notes here"
+                  label={t("notes")}
+                  placeholder={t("notesPlaceholder")}
                   variant="bordered"
                   startContent={<IconComment size={20} />}
                   value={notesInput}
@@ -236,7 +237,7 @@ export const RecurringExpenseModalForm: React.FC<
                   disabled={areButtonsDisabled}
                   onPress={onClose}
                 >
-                  Cancel
+                  {t("cancel")}
                 </Button>
                 <Button
                   color="primary"
@@ -244,7 +245,7 @@ export const RecurringExpenseModalForm: React.FC<
                   disabled={areButtonsDisabled}
                   onPress={onSave}
                 >
-                  Save
+                  {t("save")}
                 </Button>
               </ModalFooter>
             </>

@@ -10,9 +10,13 @@ import { formatCurrency } from "@/config/utils";
 import { TransactionTypeDecorator } from "@/components/TransactionTypeDecorator";
 import { HiFire } from "react-icons/hi";
 import { HiOutlineCalendar } from "react-icons/hi";
+import { useTranslation } from "react-i18next";
+import { LocaleNamespace } from "@/i18n/namespace";
 
 function RecurringExpenses() {
   const isMobile = useIsMobile();
+  const { t } = useTranslation(LocaleNamespace.RecurrentExpenses);
+
   const { isLoading, data: reesponse } = useSWR<
     GetRecurringExpensesResponse,
     Error
@@ -21,7 +25,7 @@ function RecurringExpenses() {
   return (
     <section className="flex flex-col items-center justify-center gap-4">
       <div className="flex flex-col w-full justify-start items-start gap-2">
-        <h1 className="page-title">Configure your recurrent expenses</h1>
+        <h1 className="page-title">{t("subtitle")}</h1>
         <div className="flex flex-wrap gap-2">
           <TransactionTypeDecorator
             color="primary"
@@ -31,7 +35,7 @@ function RecurringExpenses() {
             {reesponse?.groupTotal && (
               <>
                 <span className="font-bold hidden md:inline">
-                  Monthly&nbsp;
+                  {t("monthly")}&nbsp;
                 </span>
                 {formatCurrency(reesponse?.groupTotal.monthly)}
               </>
@@ -46,7 +50,7 @@ function RecurringExpenses() {
             {reesponse?.groupTotal && (
               <>
                 <span className="font-bold hidden md:inline">
-                  Biannual and Yearly&nbsp;
+                  {t("biannualAndYearly")}&nbsp;
                 </span>
                 {formatCurrency(reesponse?.groupTotal.others)}
               </>
