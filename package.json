@@ -11,6 +11,9 @@
   },
   "dependencies": {
     "@google/generative-ai": "0.21.0",
+    "@heroui/divider": "^2.2.6",
+    "@heroui/system": "^2.4.7",
+    "@heroui/theme": "^2.4.6",
     "@nextui-org/accordion": "^2.2.5",
     "@nextui-org/autocomplete": "^2.3.7",
     "@nextui-org/avatar": "^2.2.4",

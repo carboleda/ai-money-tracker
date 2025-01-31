@@ -16,6 +16,10 @@ import { Env } from "@/config/env";
 import { UserAvatar } from "../UserAvatar";
 
 export const Navbar = async () => {
+  if (!cookies()) {
+    return null;
+  }
+
   const tokens = await getTokens(cookies(), {
     apiKey: Env.FIREBASE_SERVICE_ACCOUNT.apiKey,
     cookieName: "AuthToken",

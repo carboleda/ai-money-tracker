@@ -4,5 +4,11 @@
   "signInWithButton": "Sign in with Google",
   "signInErrorMessage": "Could not sign in with Google. Please try again.",
   "enablePushNotifications": "Enable Push Notifications",
-  "signOut": "Sign Out"
+  "signOut": "Sign Out",
+  "unauthorized": "Unauthorized",
+  "unauthorizedMessage": {
+    "message": "You are not authorized to view this page.",
+    "advice": "Please sign in with a valid account."
+  },
+  "takeMeOut": "Take me out"
 }
