@@ -2,14 +2,14 @@
 
 import "@/firebase/client/";
 import React, { useTransition } from "react";
-import { Button } from "@nextui-org/button";
+import { Button } from "@heroui/button";
 import { useRouter } from "next/navigation";
 import { auth, provider } from "@/firebase/client/auth";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { FcGoogle } from "react-icons/fc";
 import { FirebaseError } from "firebase/app";
-import { Code } from "@nextui-org/code";
-import { Image } from "@nextui-org/image";
+import { Code } from "@heroui/code";
+import { Image } from "@heroui/image";
 import { siteConfig } from "@/config/site";
 import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";

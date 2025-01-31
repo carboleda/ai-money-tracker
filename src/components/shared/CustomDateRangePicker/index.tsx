@@ -1,5 +1,5 @@
-import { DateRangePicker, DateRangePickerProps } from "@nextui-org/date-picker";
-import { Button } from "@nextui-org/button";
+import { DateRangePicker, DateRangePickerProps } from "@heroui/date-picker";
+import { Button } from "@heroui/button";
 import { RangeValue } from "@react-types/shared";
 import { parseAbsoluteToLocal, ZonedDateTime } from "@internationalized/date";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -9,7 +9,7 @@ import {
   DropdownItem,
   DropdownMenu,
   DropdownTrigger,
-} from "@nextui-org/dropdown";
+} from "@heroui/dropdown";
 import { HiArrowCircleLeft } from "react-icons/hi";
 import { useTranslation } from "react-i18next";
 

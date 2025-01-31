@@ -5,10 +5,10 @@ import {
   ModalHeader,
   ModalBody,
   ModalFooter,
-} from "@nextui-org/modal";
-import { Input, Textarea } from "@nextui-org/input";
-import { Button } from "@nextui-org/button";
-import { DatePicker } from "@nextui-org/date-picker";
+} from "@heroui/modal";
+import { Input, Textarea } from "@heroui/input";
+import { Button } from "@heroui/button";
+import { DatePicker } from "@heroui/date-picker";
 import {
   parseAbsoluteToLocal,
   ZonedDateTime,
@@ -20,7 +20,7 @@ import {
 import { Frequency, RecurringExpense } from "@/interfaces/recurringExpense";
 import { FrequencyDropdown } from "@/components/FrequencyDropdown";
 import { useMutateRecurringExpenses } from "@/hooks/useMutateRecurrentExpense";
-import { Autocomplete, AutocompleteItem } from "@nextui-org/autocomplete";
+import { Autocomplete, AutocompleteItem } from "@heroui/autocomplete";
 import {
   TransactionCategory,
   transactionCategoryOptions,

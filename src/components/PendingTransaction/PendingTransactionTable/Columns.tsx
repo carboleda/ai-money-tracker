@@ -1,7 +1,7 @@
 import { formatCurrency, formatDate } from "@/config/utils";
 import { Transaction, TransactionType } from "@/interfaces/transaction";
-import { Chip } from "@nextui-org/chip";
-import { TableCell } from "@nextui-org/table";
+import { Chip } from "@heroui/chip";
+import { TableCell } from "@heroui/table";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { TableColumn } from "@/interfaces/global";
 import { TransactionTypeDecorator } from "@/components/TransactionTypeDecorator";

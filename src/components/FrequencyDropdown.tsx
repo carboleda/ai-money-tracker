@@ -4,8 +4,8 @@ import {
   DropdownTrigger,
   DropdownMenu,
   DropdownItem,
-} from "@nextui-org/dropdown";
-import { Button } from "@nextui-org/button";
+} from "@heroui/dropdown";
+import { Button } from "@heroui/button";
 import { Frequency, frequencyOptions } from "@/interfaces/recurringExpense";
 
 interface FrequencyDropdownProps {

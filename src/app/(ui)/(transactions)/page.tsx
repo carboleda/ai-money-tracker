@@ -18,7 +18,7 @@ import { getMonthBounds } from "@/config/utils";
 import { SummaryPanel } from "@/components/SummaryPanel";
 import { withAuth } from "@/app/(ui)/withAuth";
 import { HiOutlinePlusCircle } from "react-icons/hi";
-import { Button } from "@nextui-org/button";
+import { Button } from "@heroui/button";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { CustomDateRangePicker } from "@/components/shared/CustomDateRangePicker";
 import { useTranslation } from "react-i18next";

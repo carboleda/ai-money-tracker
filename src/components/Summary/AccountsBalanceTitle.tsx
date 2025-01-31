@@ -5,7 +5,7 @@ import { HiFire } from "react-icons/hi";
 import { Color, TileTable } from "@/components/Summary/TileTable";
 
 import { Account } from "@/interfaces/account";
-import { Skeleton } from "@nextui-org/skeleton";
+import { Skeleton } from "@heroui/skeleton";
 import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
 

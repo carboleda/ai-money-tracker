@@ -1,7 +1,7 @@
 import { TransactionType } from "@/interfaces/transaction";
 import { PropsWithChildren } from "react";
-import { Chip, ChipProps } from "@nextui-org/chip";
-import { Skeleton } from "@nextui-org/skeleton";
+import { Chip, ChipProps } from "@heroui/chip";
+import { Skeleton } from "@heroui/skeleton";
 
 type TransactionTypeDecoratorProps = (
   | {

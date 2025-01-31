@@ -1,5 +1,5 @@
 const {heroui} = require('@heroui/theme');
-import { nextui } from "@nextui-org/theme";
+import { heroui } from "@heroui/theme";
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
@@ -10,8 +10,8 @@ module.exports = {
     "./src/hooks/**/*.{js,ts}",
     "./src/config/**/*.{js,ts}",
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
-    "// \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"./node_modules/@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx}\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"",
-    "./node_modules/@nextui-org/theme/dist/components/(autocomplete|chip|code|date-picker|dropdown|image|input|link|modal|navbar|progress|skeleton|toggle|table|button|ripple|spinner|listbox|divider|popover|scroll-shadow|calendar|date-input|menu|checkbox|spacer).js",
+    "// \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"./node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"",
+    "./node_modules/@heroui/theme/dist/components/(autocomplete|chip|code|date-picker|dropdown|image|input|link|modal|navbar|progress|skeleton|toggle|table|button|ripple|spinner|listbox|divider|popover|scroll-shadow|calendar|date-input|menu|checkbox|spacer).js",
     "./node_modules/@heroui/theme/dist/components/divider.js"
   ],
   theme: {

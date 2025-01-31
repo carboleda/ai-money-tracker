@@ -1,8 +1,8 @@
 import { Transaction } from "@/interfaces/transaction";
-import { Button } from "@nextui-org/button";
+import { Button } from "@heroui/button";
 import { IconCheckCircle, IconDelete } from "./shared/icons";
 import { useEffect, useState } from "react";
-import { Progress } from "@nextui-org/progress";
+import { Progress } from "@heroui/progress";
 
 const CONFIRMATION_TIME = 4000;
 const CONFIRMATION_TICK = 10;

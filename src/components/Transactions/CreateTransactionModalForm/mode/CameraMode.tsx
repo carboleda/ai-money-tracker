@@ -4,7 +4,7 @@ import React, { useRef, useState } from "react";
 import Image from "next/image";
 import Webcam from "react-webcam";
 import { BankAccounDropdown } from "@/components/BankAccounsDropdown";
-import { Switch } from "@nextui-org/switch";
+import { Switch } from "@heroui/switch";
 import { HiLightBulb, HiOutlineLightBulb } from "react-icons/hi2";
 import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";

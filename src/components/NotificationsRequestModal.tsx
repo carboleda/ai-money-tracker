@@ -1,7 +1,7 @@
 "use client";
 
-import { useDisclosure } from "@nextui-org/modal";
-import { Checkbox } from "@nextui-org/checkbox";
+import { useDisclosure } from "@heroui/modal";
+import { Checkbox } from "@heroui/checkbox";
 import { useEffect, useRef } from "react";
 import { Env } from "@/config/env";
 import { getMessaging, getToken } from "firebase/messaging";

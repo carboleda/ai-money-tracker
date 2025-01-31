@@ -7,17 +7,17 @@ import {
   TableColumn,
   TableHeader,
   TableRow,
-} from "@nextui-org/table";
+} from "@heroui/table";
 import { Transaction } from "@/interfaces/transaction";
 import { TableSkeleton } from "./TableSkeleton";
 import { useMutateTransaction } from "@/hooks/useMutateTransaction";
 import { DeleteTableItemButton } from "../../DeleteTableItemButton";
-import { Button } from "@nextui-org/button";
+import { Button } from "@heroui/button";
 import { CompleteTransactionModalForm } from "../CompleteTransactionModalForm/CompleteTransactionModalForm";
 import { useCallback, useMemo, useState } from "react";
 import { IconCheckCircle } from "@/components/shared/icons";
 import { useRenderCell } from "./Columns";
-import { Input } from "@nextui-org/input";
+import { Input } from "@heroui/input";
 import { HiOutlineSearch } from "react-icons/hi";
 
 interface PendingTransactionTableProps {

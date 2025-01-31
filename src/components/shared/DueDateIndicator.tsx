@@ -1,6 +1,6 @@
 import { getTransactionOverdueStatus } from "@/config/utils";
 import { TransactionOverdueStatus } from "@/interfaces/transaction";
-import { Chip, ChipProps } from "@nextui-org/chip";
+import { Chip, ChipProps } from "@heroui/chip";
 import React, { PropsWithChildren } from "react";
 
 interface DueDateIndicatorProps extends PropsWithChildren {

@@ -5,12 +5,12 @@ import {
   ModalHeader,
   ModalBody,
   ModalFooter,
-} from "@nextui-org/modal";
-import { Input } from "@nextui-org/input";
-import { Button } from "@nextui-org/button";
-import { DatePicker } from "@nextui-org/date-picker";
+} from "@heroui/modal";
+import { Input } from "@heroui/input";
+import { Button } from "@heroui/button";
+import { DatePicker } from "@heroui/date-picker";
 import { parseAbsoluteToLocal, ZonedDateTime } from "@internationalized/date";
-import { Autocomplete, AutocompleteItem } from "@nextui-org/autocomplete";
+import { Autocomplete, AutocompleteItem } from "@heroui/autocomplete";
 import {
   Transaction,
   TransactionCategory,
@@ -19,7 +19,7 @@ import {
 } from "@/interfaces/transaction";
 import { MaskedCurrencyInput } from "@/components/shared/MaskedCurrencyInput";
 import { useMutateTransaction } from "@/hooks/useMutateTransaction";
-import { Chip } from "@nextui-org/chip";
+import { Chip } from "@heroui/chip";
 import { BankAccounDropdown } from "@/components/BankAccounsDropdown";
 import { getAccountId } from "@/config/utils";
 

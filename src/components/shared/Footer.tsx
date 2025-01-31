@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslation } from "react-i18next";
-import { Link } from "@nextui-org/link";
+import { Link } from "@heroui/link";
 
 export const Footer: React.FC = () => {
   const { t } = useTranslation();

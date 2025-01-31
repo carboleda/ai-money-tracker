@@ -1,9 +1,9 @@
 "use client";
 
 import { LocaleNamespace } from "@/i18n/namespace";
-import { Button } from "@nextui-org/button";
-import { Divider } from "@nextui-org/divider";
-import { Link } from "@nextui-org/link";
+import { Button } from "@heroui/button";
+import { Divider } from "@heroui/divider";
+import { Link } from "@heroui/link";
 import { useTranslation } from "react-i18next";
 import { RiForbidLine } from "react-icons/ri";
 

@@ -3,7 +3,7 @@
 import React from "react";
 import { Color, TileTable } from "@/components/Summary/TileTable";
 
-import { Skeleton } from "@nextui-org/skeleton";
+import { Skeleton } from "@heroui/skeleton";
 import { TypeSummary } from "@/interfaces/summary";
 import { TransactionType } from "@/interfaces/transaction";
 import { useTranslation } from "react-i18next";

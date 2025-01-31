@@ -8,9 +8,9 @@ import {
   TableColumn,
   TableHeader,
   TableRow,
-} from "@nextui-org/table";
+} from "@heroui/table";
 import { formatCurrency } from "@/config/utils";
-import { ChipProps } from "@nextui-org/chip";
+import { ChipProps } from "@heroui/chip";
 import { TransactionTypeDecorator } from "@/components/TransactionTypeDecorator";
 import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";

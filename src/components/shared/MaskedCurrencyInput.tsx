@@ -1,4 +1,4 @@
-import { Input } from "@nextui-org/input";
+import { Input } from "@heroui/input";
 import { NumericFormat, NumericFormatProps } from "react-number-format";
 
 export const MaskedCurrencyInput: React.FC<NumericFormatProps<any>> = (

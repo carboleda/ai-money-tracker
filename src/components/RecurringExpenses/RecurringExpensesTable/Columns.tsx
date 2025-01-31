@@ -1,6 +1,6 @@
 import { formatCurrency, formatFrequency } from "@/config/utils";
-import { Chip } from "@nextui-org/chip";
-import { TableCell, TableRow } from "@nextui-org/table";
+import { Chip } from "@heroui/chip";
+import { TableCell, TableRow } from "@heroui/table";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { TableColumn } from "@/interfaces/global";
 import { TransactionTypeDecorator } from "@/components/TransactionTypeDecorator";

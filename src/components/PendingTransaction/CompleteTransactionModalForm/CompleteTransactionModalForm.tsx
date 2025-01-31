@@ -5,9 +5,9 @@ import {
   ModalHeader,
   ModalBody,
   ModalFooter,
-} from "@nextui-org/modal";
-import { Button } from "@nextui-org/button";
-import { DatePicker } from "@nextui-org/date-picker";
+} from "@heroui/modal";
+import { Button } from "@heroui/button";
+import { DatePicker } from "@heroui/date-picker";
 import {
   getLocalTimeZone,
   now,
@@ -18,7 +18,7 @@ import { Transaction, TransactionStatus } from "@/interfaces/transaction";
 import { BankAccounDropdown } from "@/components/BankAccounsDropdown";
 import { useMutateTransaction } from "@/hooks/useMutateTransaction";
 import { MaskedCurrencyInput } from "@/components/shared/MaskedCurrencyInput";
-import { Chip } from "@nextui-org/chip";
+import { Chip } from "@heroui/chip";
 
 interface CompleteTransactionModalFormProps {
   item?: Transaction;

@@ -1,7 +1,7 @@
 "use client";
 
-import { Textarea } from "@nextui-org/input";
-import { Spinner } from "@nextui-org/spinner";
+import { Textarea } from "@heroui/input";
+import { Spinner } from "@heroui/spinner";
 import { IconBrain } from "@/components/shared/icons";
 import { FormEvent, useState } from "react";
 import { usePlaceholderAnimation } from "@/hooks/usePlaceholderAnimation";

@@ -1,5 +1,5 @@
 import React from "react";
-import { DatePicker } from "@nextui-org/date-picker";
+import { DatePicker } from "@heroui/date-picker";
 import { ZonedDateTime } from "@internationalized/date";
 import { TransactionInput } from "@/components/TransactionInput";
 import { useTranslation } from "react-i18next";

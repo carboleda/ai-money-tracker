@@ -12,11 +12,11 @@ import {
   TableColumn,
   TableHeader,
   TableRow,
-} from "@nextui-org/table";
+} from "@heroui/table";
 import { Transaction } from "@/interfaces/transaction";
 import { formatCurrency, formatTimeDate } from "@/config/utils";
 import { TransactionTypeDecorator } from "../TransactionTypeDecorator";
-import { Chip } from "@nextui-org/chip";
+import { Chip } from "@heroui/chip";
 
 export interface CategoriesChartProps {
   data?: CategorySummary[];

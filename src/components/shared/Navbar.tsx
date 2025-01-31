@@ -1,5 +1,5 @@
-import { Link } from "@nextui-org/link";
-import { Image } from "@nextui-org/image";
+import { Link } from "@heroui/link";
+import { Image } from "@heroui/image";
 
 import { siteConfig } from "@/config/site";
 import NextLink from "next/link";

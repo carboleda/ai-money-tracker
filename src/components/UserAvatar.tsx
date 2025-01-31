@@ -4,13 +4,13 @@ import { Env } from "@/config/env";
 import { auth } from "@/firebase/client/auth";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { LocaleNamespace } from "@/i18n/namespace";
-import { Avatar } from "@nextui-org/avatar";
+import { Avatar } from "@heroui/avatar";
 import {
   Dropdown,
   DropdownItem,
   DropdownMenu,
   DropdownTrigger,
-} from "@nextui-org/dropdown";
+} from "@heroui/dropdown";
 import { signOut } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import React, { Key, useTransition } from "react";

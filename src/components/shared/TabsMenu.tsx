@@ -1,7 +1,7 @@
 import { siteConfig } from "@/config/site";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { useTranslation } from "react-i18next";
-import { Tabs, Tab } from "@nextui-org/tabs";
+import { Tabs, Tab } from "@heroui/tabs";
 import { usePathname } from "next/navigation";
 
 const keyLabel = new Map(

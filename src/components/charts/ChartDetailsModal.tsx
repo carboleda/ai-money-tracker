@@ -4,7 +4,7 @@ import {
   ModalHeader,
   ModalBody,
   ModalFooter,
-} from "@nextui-org/modal";
+} from "@heroui/modal";
 import { PropsWithChildren } from "react";
 
 interface ChartDetailsModalProps extends PropsWithChildren {

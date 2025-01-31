@@ -1,7 +1,7 @@
 import { formatCurrency } from "@/config/utils";
 import { Summary } from "@/interfaces/transaction";
-import { Chip, ChipProps } from "@nextui-org/chip";
-import { Skeleton } from "@nextui-org/skeleton";
+import { Chip, ChipProps } from "@heroui/chip";
+import { Skeleton } from "@heroui/skeleton";
 
 import { HiMiniPlusCircle } from "react-icons/hi2";
 import { HiMinusCircle } from "react-icons/hi2";
