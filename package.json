@@ -7,7 +7,8 @@
     "dev:s": "node -r dotenv/config src/config/swEnvBuild.js dotenv_config_path=.env.local && next dev --experimental-https",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "firebase:start": "firebase emulators:start --project ai-money-tracker"
   },
   "dependencies": {
     "@google/generative-ai": "0.21.0",

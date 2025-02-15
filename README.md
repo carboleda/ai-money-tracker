@@ -36,14 +36,22 @@ Showcase the power of Gen AI by generating transactions entries from text inputs
 
 ## How to Use
 
+### Configure Firebase emulator
 
-### Use the template with create-next-app
+1. If you don't have Java installed, install it using [SDKMAN](https://sdkman.io/usage#installing-an-sdk)
+1. Install the Firebase CLI
+    > NOTE: Emulators initialization is already done, configuration is stored in the firebase.json file
+1. Login to the Firebase account
+    ```shell
+    firebase login
+    ```
+1. Start Firebase emulators using the following command
+    ```shell
+    npm run firebase:start
+    ```
 
-To create a new project based on this template using `create-next-app`, run the following command:
+[Offcial documentation](https://firebase.google.com/docs/emulator-suite/connect_and_prototype)
 
-```bash
-npx create-next-app -e https://github.com/nextui-org/next-app-template
-```
 
 ### Install dependencies
 
