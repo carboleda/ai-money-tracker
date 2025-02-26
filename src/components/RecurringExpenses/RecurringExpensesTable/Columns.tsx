@@ -62,6 +62,7 @@ const renderCellDesktop = (key: any, item: RecurringExpense): JSX.Element => {
             color={
               item.frequency === Frequency.Monthly ? "primary" : "secondary"
             }
+            disabled={item.disabled}
           >
             {formatCurrency(item.amount)}
           </TransactionTypeDecorator>

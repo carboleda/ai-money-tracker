@@ -26,6 +26,7 @@ export interface RecurringExpenseEntity {
   category: TransactionCategory;
   frequency: Frequency;
   dueDate: Timestamp;
+  disabled: boolean;
   amount: number;
   paymentLink?: string;
   notes?: string;
