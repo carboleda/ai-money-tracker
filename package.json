@@ -3,12 +3,13 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "dev": "node -r dotenv/config src/config/swEnvBuild.js dotenv_config_path=.env.local && next dev",
-    "dev:s": "node -r dotenv/config src/config/swEnvBuild.js dotenv_config_path=.env.local && next dev --experimental-https",
+    "firebase:start": "firebase emulators:start --project ai-money-tracker",
+    "app:http": "node -r dotenv/config src/config/swEnvBuild.js dotenv_config_path=.env.local && next dev",
+    "app:https": "node -r dotenv/config src/config/swEnvBuild.js dotenv_config_path=.env.local && next dev --experimental-https",
+    "dev": "concurrently --kill-others \"npm run firebase:start\" \"npm run app:http\"",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "firebase:start": "firebase emulators:start --project ai-money-tracker"
+    "lint": "next lint"
   },
   "dependencies": {
     "@google/generative-ai": "0.21.0",
@@ -74,6 +75,7 @@
   "devDependencies": {
     "@types/lodash": "^4.17.13",
     "@types/pubsub-js": "^1.8.6",
+    "concurrently": "^9.1.2",
     "typescript": "5.5.4"
   },
   "overrides": {
