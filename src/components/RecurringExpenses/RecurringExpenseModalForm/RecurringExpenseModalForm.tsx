@@ -31,6 +31,8 @@ import { MaskedCurrencyInput } from "@/components/shared/MaskedCurrencyInput";
 import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
 import { Switch } from "@heroui/switch";
+import { HiMinusSm } from "react-icons/hi";
+import { HiPlusSm } from "react-icons/hi";
 
 const fixedMonth = parseAbsoluteToLocal(
   new Date(Env.NEXT_PUBLIC_FIXED_MONTH).toISOString()
@@ -166,8 +168,10 @@ export const RecurringExpenseModalForm: React.FC<
                 <Switch
                   aria-label={t("disabled")}
                   size="sm"
-                  isSelected={disabledInput}
-                  onValueChange={setDisabledInput}
+                  endContent={<HiMinusSm />}
+                  startContent={<HiPlusSm />}
+                  isSelected={!disabledInput}
+                  onValueChange={(v) => setDisabledInput(!v)}
                 />
               </ModalHeader>
               <ModalBody>
