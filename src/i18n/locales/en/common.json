@@ -28,5 +28,6 @@
   "expense": "Expense",
   "incomes": "Incomes",
   "expenses": "Expenses",
-  "transfers": "Transfers"
+  "transfers": "Transfers",
+  "disabled": "Disabled"
 }

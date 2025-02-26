@@ -19,11 +19,16 @@ export async function GET(req: NextRequest) {
     return {
       ...docData,
       dueDate: docData.dueDate.toDate().toISOString(),
+      disabled: docData.disabled ?? false,
     };
   });
 
   const groupTotal = recurringExpensesConfig.reduce(
     (acc, curr) => {
+      if (curr.disabled) {
+        return acc;
+      }
+
       const group =
         curr.frequency === Frequency.Monthly
           ? FrequencyGroup.Monthly
@@ -59,6 +64,7 @@ export async function PUT(req: NextRequest) {
     .update({
       ...recurringExpense,
       dueDate: Timestamp.fromDate(new Date(recurringExpense.dueDate)),
+      disabled: recurringExpense.disabled ?? false,
     });
 
   return NextResponse.json({ id });

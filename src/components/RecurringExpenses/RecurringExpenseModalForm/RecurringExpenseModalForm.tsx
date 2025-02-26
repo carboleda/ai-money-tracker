@@ -30,6 +30,7 @@ import { Env } from "@/config/env";
 import { MaskedCurrencyInput } from "@/components/shared/MaskedCurrencyInput";
 import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
+import { Switch } from "@heroui/switch";
 
 const fixedMonth = parseAbsoluteToLocal(
   new Date(Env.NEXT_PUBLIC_FIXED_MONTH).toISOString()
@@ -58,6 +59,7 @@ export const RecurringExpenseModalForm: React.FC<
   );
   const [amountInput, setAmountInput] = useState<number>();
   const [dueDateInput, setDueDateInput] = useState<ZonedDateTime>();
+  const [disabledInput, setDisabledInput] = useState<boolean>(false);
   const [dueDateMinMax, setDueDateMinMax] = useState<{
     min: ZonedDateTime;
     max: ZonedDateTime;
@@ -73,6 +75,7 @@ export const RecurringExpenseModalForm: React.FC<
       setDueDateInput(
         item.dueDate ? parseAbsoluteToLocal(item.dueDate) : undefined
       );
+      setDisabledInput(item.disabled);
       setAmountInput(item.amount);
       setPaymentLinkInput(item.paymentLink);
       setNotesInput(item.notes);
@@ -104,6 +107,7 @@ export const RecurringExpenseModalForm: React.FC<
     setDescriptionInput("");
     setTransactonCategoryInput(undefined);
     setFrequencyInput(Frequency.Monthly);
+    setDisabledInput(false);
     setDueDateInput(undefined);
     setAmountInput(0);
     setPaymentLinkInput("");
@@ -128,6 +132,7 @@ export const RecurringExpenseModalForm: React.FC<
       description: descriptionInput,
       frequency: frequencyInput,
       dueDate: dueDateInput.toDate().toISOString(),
+      disabled: disabledInput,
       amount: amountInput!,
       category: transactonCategoryInput,
       paymentLink: paymentLinkInput,
@@ -156,8 +161,14 @@ export const RecurringExpenseModalForm: React.FC<
         <ModalContent>
           {(onClose) => (
             <>
-              <ModalHeader className="flex flex-col gap-1">
-                {t("recurrentExpenses")}
+              <ModalHeader className="flex flex-row justify-between pr-6 mt-4">
+                <span>{t("recurrentExpenses")}</span>
+                <Switch
+                  aria-label={t("disabled")}
+                  size="sm"
+                  isSelected={disabledInput}
+                  onValueChange={setDisabledInput}
+                />
               </ModalHeader>
               <ModalBody>
                 <Input

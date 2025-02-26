@@ -47,6 +47,13 @@ async function scheduleRecurringExpenses() {
   console.log(`Found ${recurringExpenses.length} recurring expenses`);
 
   for await (const recurringExpense of recurringExpenses) {
+    if (recurringExpense.disabled) {
+      console.log(
+        `Skipping transaction for ${recurringExpense.description} as it's disabled`
+      );
+      continue;
+    }
+
     const createdAt = getTransactionDate(recurringExpense);
 
     if (!createdAt) {
@@ -90,6 +97,7 @@ async function getRecurringExpenses(): Promise<RecurringExpense[]> {
       // paymentLink: docData.paymentLink,
       // notes: docData.notes,
       dueDate: docData.dueDate.toDate().toISOString(),
+      disabled: docData.disabled ?? false,
     } as RecurringExpense;
   });
 }
