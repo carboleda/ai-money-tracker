@@ -108,6 +108,7 @@ const renderCellMobile = (key: any, item: RecurringExpense): JSX.Element => {
                   item.frequency === Frequency.Monthly ? "primary" : "secondary"
                 }
                 size="sm"
+                disabled={item.disabled}
               >
                 {formatCurrency(item.amount)}
               </TransactionTypeDecorator>
