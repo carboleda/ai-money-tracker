@@ -143,6 +143,12 @@ export const dateDiffInDays = (date1: Date, date2: Date) => {
   return diffInDays;
 };
 
+export const getPreviousMonth = (date?: Date) => {
+  const previousMonth = new Date(date ?? new Date());
+  previousMonth.setMonth(previousMonth.getDate() - previousMonth.getDate());
+  return previousMonth;
+};
+
 export const getTransactionOverdueStatus = (
   date: string
 ): TransactionOverdueStatus => {

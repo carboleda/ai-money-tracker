@@ -6,6 +6,7 @@ import { UserEntity } from "@/interfaces/user";
 import { TransactionEntity, TransactionStatus } from "@/interfaces/transaction";
 import { NextRequest, NextResponse } from "next/server";
 import { dateDiffInDays, formatDate } from "@/config/utils";
+import { SummaryHistoryService } from "@/app/api/transaction/history/summaryHistoryService";
 
 export async function GET(req: NextRequest) {
   const authHeader = req.headers.get("authorization");
@@ -20,6 +21,15 @@ export async function GET(req: NextRequest) {
     });
   }
 
+  const [sendNotificationsResponse] = await Promise.all([
+    sendNotifications(),
+    SummaryHistoryService.saveEntryForLastMonth(),
+  ]);
+
+  return sendNotificationsResponse;
+}
+
+async function sendNotifications() {
   const now = new Date();
   const earlyReminderDate = new Date();
   earlyReminderDate.setDate(now.getDate() + Env.EARLY_REMINDER_DAYS_AHEAD);
@@ -66,7 +76,7 @@ export async function GET(req: NextRequest) {
   );
   console.log("Notifications sent", messageIds);
 
-  return NextResponse.json({ success: true, count: transactions.length });
+  return NextResponse.json({ success: true });
 }
 
 function createNotifier(fcmToken: string) {

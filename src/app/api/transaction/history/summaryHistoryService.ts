@@ -6,7 +6,7 @@ import {
   TransactionStatus,
   TransactionType,
 } from "@/interfaces/transaction";
-import { getMonthBounds } from "@/config/utils";
+import { getMonthBounds, getPreviousMonth } from "@/config/utils";
 import {
   TransactionsSummaryHistory,
   TransactionsSummaryHistoryEntity,
@@ -15,8 +15,15 @@ import { Timestamp } from "firebase-admin/firestore";
 
 export class SummaryHistoryService {
   static async saveEntryForLastMonth() {
-    const previousMonth = new Date();
-    previousMonth.setDate(previousMonth.getDate() - 1);
+    const now = new Date();
+
+    // Only run on the 2nd of the month
+    // TODO Define a constant for the day
+    if (now.getDate() !== 2) {
+      return;
+    }
+
+    const previousMonth = getPreviousMonth(now);
     const bounds = getMonthBounds(previousMonth);
 
     const transactions =
