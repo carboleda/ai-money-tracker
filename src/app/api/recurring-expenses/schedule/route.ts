@@ -19,7 +19,7 @@ export async function GET(req: NextRequest) {
   const authHeader = req.headers.get("authorization");
 
   if (
-    !Env.isDev &&
+    !Env.isLocal &&
     (!Env.CRON_SECRET || authHeader !== `Bearer ${Env.CRON_SECRET}`)
   ) {
     console.error("Unauthorized request");

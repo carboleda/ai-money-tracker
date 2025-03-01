@@ -68,7 +68,7 @@ export const UserAvatar: React.FC<UserAvatarProps> = ({ user }) => {
           <Avatar
             className="w-9 h-9"
             color="primary"
-            src={Env.isDev ? undefined : user?.picture}
+            src={Env.isLocal ? undefined : user?.picture}
             name={user?.name?.charAt(0)}
             showFallback
             isBordered

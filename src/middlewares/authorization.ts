@@ -10,9 +10,9 @@ export async function authorizatonMiddleware(
     return;
   }
 
-  // if (Env.isDev) {
-  //   return NextResponse.next();
-  // }
+  if (Env.isLocal) {
+    return NextResponse.next();
+  }
 
   const tokens = await getTokens(request.cookies, {
     apiKey: Env.FIREBASE_SERVICE_ACCOUNT.apiKey,

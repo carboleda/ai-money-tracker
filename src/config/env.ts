@@ -1,6 +1,6 @@
 export class Env {
   // General environment variables
-  static NODE_ENV = process.env.NODE_ENV;
+  static ENV_NAME = process.env.ENV_NAME;
   static VALID_ACCOUNTS = JSON.parse(
     process.env.NEXT_PUBLIC_VALID_ACCOUNTS || "{}"
   ) as Record<string, any>;
@@ -34,7 +34,7 @@ export class Env {
   static NEXT_PUBLIC_FIREBASE_VAPID_KEY =
     process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY || "";
 
-  static isDev = ["development", "local"].includes(Env.NODE_ENV);
+  static isLocal = Env.ENV_NAME === "local";
   static isServer = typeof window === "undefined";
 
   private constructor() {}

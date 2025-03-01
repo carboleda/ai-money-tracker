@@ -26,7 +26,7 @@ export async function authenticationMiddleware(
     cookieSerializeOptions: {
       path: "/",
       httpOnly: true,
-      secure: !Env.isDev, // Set this to true on HTTPS environments
+      secure: !Env.isLocal, // Set this to true on HTTPS environments
       sameSite: "lax" as const,
       maxAge: 12 * 60 * 60 * 24, // Twelve days
     },
