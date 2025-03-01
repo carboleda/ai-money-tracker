@@ -29,5 +29,6 @@
   "incomes": "Incomes",
   "expenses": "Expenses",
   "transfers": "Transfers",
+  "balances": "Balances",
   "disabled": "Disabled"
 }

@@ -15,6 +15,7 @@ const darkColor = "#18181B";
 const greenColor = "#17c964";
 const redColor = "#f54180";
 const yellowColor = "#f5a524";
+const blueColor = "#66aaf9";
 
 export interface UseTransactionsSummaryHistoryChartProps {
   data?: TransactionsSummaryHistory[];
@@ -99,6 +100,26 @@ export const useTransactionsSummaryHistoryChart = ({
           fontWeight: "normal",
         },
       },
+      {
+        type: "line",
+        xKey: "month",
+        yKey: "balance",
+        yName: t("balances"),
+        visible: false,
+        interpolation: { type: "smooth" },
+        stroke: blueColor,
+        marker: {
+          fill: blueColor,
+          stroke: blueColor,
+          strokeWidth: 3,
+          shape: "diamond",
+        },
+        label: {
+          formatter: ({ value }: { value: number }) => formatCurrency(value),
+          color: ligthColor,
+          fontWeight: "normal",
+        },
+      },
     ],
     axes: [
       {
@@ -127,6 +148,7 @@ export const useTransactionsSummaryHistoryChart = ({
         ...prev,
         data: data?.map((item) => ({
           ...item,
+          balance: item.incomes - item.expenses,
           month: formatMonthYear(new Date(item.createdAt)),
         })),
       };
