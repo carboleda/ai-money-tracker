@@ -25,6 +25,7 @@ export class SummaryHistoryService {
 
     const previousMonth = getPreviousMonth(now);
     const bounds = getMonthBounds(previousMonth);
+    // const bounds = getMonthBounds(new Date(2024, 11, 1));
 
     const transactions =
       await FilterTransactionsShareFunctions.searchTransactions({
@@ -38,6 +39,13 @@ export class SummaryHistoryService {
 
     const valueGetter =
       SummaryHistoryService.getValueForType(transactionsByType);
+
+    // console.log({
+    //   incomes: valueGetter(TransactionType.INCOME),
+    //   expenses: valueGetter(TransactionType.EXPENSE),
+    //   transfers: valueGetter(TransactionType.TRANSFER),
+    //   createdAt: bounds.end,
+    // });
 
     db.collection(Collections.TransactionsSummaryHistory).add({
       incomes: valueGetter(TransactionType.INCOME),

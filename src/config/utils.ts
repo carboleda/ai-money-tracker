@@ -145,7 +145,7 @@ export const dateDiffInDays = (date1: Date, date2: Date) => {
 
 export const getPreviousMonth = (date?: Date) => {
   const previousMonth = new Date(date ?? new Date());
-  previousMonth.setMonth(previousMonth.getDate() - previousMonth.getDate());
+  previousMonth.setDate(previousMonth.getDate() - previousMonth.getDate());
   return previousMonth;
 };
 
