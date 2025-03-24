@@ -8,17 +8,14 @@ import {
 } from "@heroui/modal";
 import { Button } from "@heroui/button";
 import { DatePicker } from "@heroui/date-picker";
-import {
-  getLocalTimeZone,
-  now,
-  parseAbsoluteToLocal,
-  ZonedDateTime,
-} from "@internationalized/date";
+import { getLocalTimeZone, now, ZonedDateTime } from "@internationalized/date";
 import { Transaction, TransactionStatus } from "@/interfaces/transaction";
 import { BankAccounDropdown } from "@/components/BankAccounsDropdown";
 import { useMutateTransaction } from "@/hooks/useMutateTransaction";
 import { MaskedCurrencyInput } from "@/components/shared/MaskedCurrencyInput";
 import { Chip } from "@heroui/chip";
+import { useTranslation } from "react-i18next";
+import { LocaleNamespace } from "@/i18n/namespace";
 
 interface CompleteTransactionModalFormProps {
   item?: Transaction;
@@ -29,6 +26,7 @@ interface CompleteTransactionModalFormProps {
 export const CompleteTransactionModalForm: React.FC<
   CompleteTransactionModalFormProps
 > = ({ item, onDismiss, isOpen }) => {
+  const { t } = useTranslation(LocaleNamespace.RecurrentExpenses);
   const { isMutating, updateTransaction } = useMutateTransaction();
   const [validationError, setValidationError] = useState<string>("");
   const [selectedAccount, setSelectedAccount] = useState<string>("");
@@ -57,9 +55,7 @@ export const CompleteTransactionModalForm: React.FC<
   const clearError = () => setValidationError("");
   const onSave = () => {
     if (selectedAccount === "" || !paymentDateInput || amountInput === 0) {
-      setValidationError(
-        "Filled all the required fields. Please fill them out."
-      );
+      setValidationError(t("allFieldAreRequired"));
       return;
     }
 
@@ -104,7 +100,7 @@ export const CompleteTransactionModalForm: React.FC<
           {(onClose) => (
             <>
               <ModalHeader className="flex flex-col gap-1">
-                <span>Complete transaction</span>
+                <span>{t("completeTransaction")}</span>
                 <span className="text-sm font-normal subtitle">
                   {item?.description}
                 </span>
@@ -112,14 +108,14 @@ export const CompleteTransactionModalForm: React.FC<
               <ModalBody>
                 <div className="self-start w-full">
                   <BankAccounDropdown
-                    label="Bank account"
+                    label={t("bankAccount")}
                     isRequired
                     skipDisabled
                     onChange={setSelectedAccount}
                   />
                 </div>
                 <MaskedCurrencyInput
-                  label="Amount"
+                  label={t("amount")}
                   variant="bordered"
                   type="text"
                   isRequired
@@ -127,7 +123,7 @@ export const CompleteTransactionModalForm: React.FC<
                   onValueChange={(v) => setAmountInput(v.floatValue)}
                 />
                 <DatePicker
-                  label="Paid on"
+                  label={t("paidOn")}
                   variant="bordered"
                   granularity="day"
                   isRequired
@@ -152,7 +148,7 @@ export const CompleteTransactionModalForm: React.FC<
                   disabled={areButtonsDisabled}
                   onPress={onClose}
                 >
-                  Cancel
+                  {t("cancel")}
                 </Button>
                 <Button
                   color="success"
@@ -160,7 +156,7 @@ export const CompleteTransactionModalForm: React.FC<
                   disabled={areButtonsDisabled}
                   onPress={onSave}
                 >
-                  Complete
+                  {t("completeTransationButton")}
                 </Button>
               </ModalFooter>
             </>

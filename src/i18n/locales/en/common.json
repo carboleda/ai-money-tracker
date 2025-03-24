@@ -14,6 +14,7 @@
   "amount": "Amount",
   "actions": "Actions",
   "edit": "Edit",
+  "confirm": "Confirm",
   "dateRangeFilter": "Date within",
   "accountFilter": "Filter by account",
   "this": "This month",
@@ -30,5 +31,6 @@
   "expenses": "Expenses",
   "transfers": "Transfers",
   "balances": "Balances",
-  "disabled": "Disabled"
+  "disabled": "Disabled",
+  "bankAccount": "Bank account"
 }

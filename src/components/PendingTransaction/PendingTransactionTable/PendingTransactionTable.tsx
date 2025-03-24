@@ -19,16 +19,18 @@ import { IconCheckCircle } from "@/components/shared/icons";
 import { useRenderCell } from "./Columns";
 import { Input } from "@heroui/input";
 import { HiOutlineSearch } from "react-icons/hi";
+import { useTranslation } from "react-i18next";
+import { LocaleNamespace } from "@/i18n/namespace";
 
 interface PendingTransactionTableProps {
   isLoading: boolean;
   pendingTransactions: Transaction[] | undefined;
 }
 
-export const PendingTransactionTable: React.FC<PendingTransactionTableProps> = ({
-  isLoading,
-  pendingTransactions,
-}) => {
+export const PendingTransactionTable: React.FC<
+  PendingTransactionTableProps
+> = ({ isLoading, pendingTransactions }) => {
+  const { t } = useTranslation(LocaleNamespace.RecurrentExpenses);
   const [selectedItem, setSelectedItem] = useState<Transaction>();
   const [isOpen, setOpen] = useState(false);
   const [filterValue, setFilterValue] = useState("");
@@ -81,7 +83,7 @@ export const PendingTransactionTable: React.FC<PendingTransactionTableProps> = (
           variant="faded"
           classNames={{ inputWrapper: "py-6" }}
           className="w-full sm:max-w-[44%]"
-          placeholder="Search by description..."
+          placeholder={t("searchByDescription")}
           startContent={<HiOutlineSearch />}
           value={filterValue}
           onClear={() => onClear()}
@@ -89,7 +91,9 @@ export const PendingTransactionTable: React.FC<PendingTransactionTableProps> = (
           isClearable
         />
         <span className="w-fit text-end subtitle text-sm">
-          Total {pendingTransactions?.length} pending transactions
+          {t("pendingTransactionCountMessage", {
+            count: transactions?.length || 0,
+          })}
         </span>
       </div>
     </div>
@@ -102,20 +106,20 @@ export const PendingTransactionTable: React.FC<PendingTransactionTableProps> = (
       <Table
         isStriped
         isCompact
-        aria-label="Pending Transactions"
+        aria-label={t("pendingTransactions")}
         topContentPlacement="outside"
         topContent={renderTopContent()}
       >
         <TableHeader columns={columns}>
           {(column) => (
             <TableColumn key={column.key} className={`${column.className}`}>
-              {column.label}
+              {t(column.key)}
             </TableColumn>
           )}
         </TableHeader>
         <TableBody
           items={transactions}
-          emptyContent={"You're up to date, well done 👏!."}
+          emptyContent={t("management.emptyContent")}
         >
           {(item) => (
             <TableRow key={item.id}>
@@ -129,7 +133,7 @@ export const PendingTransactionTable: React.FC<PendingTransactionTableProps> = (
                           color="success"
                           variant="light"
                           className="self-center"
-                          aria-label="Confirm"
+                          aria-label={t("confirm")}
                           onPress={() => onConfirm(item)}
                         >
                           <IconCheckCircle />

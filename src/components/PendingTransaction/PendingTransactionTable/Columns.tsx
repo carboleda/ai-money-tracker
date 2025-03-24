@@ -13,33 +13,29 @@ import { DueDateIndicator } from "@/components/shared/DueDateIndicator";
 const columnsDesktop: TableColumn[] = [
   {
     key: "date",
-    label: "DATE",
+    className: "uppercase",
   },
   {
     key: "description",
-    label: "DESCRIPTION",
-    className: "text-start",
+    className: "uppercase text-start",
   },
   {
     key: "amount",
-    label: "AMOUNT",
-    className: "text-end",
+    className: "uppercase text-end",
   },
   {
     key: "actions",
-    label: "ACTIONS",
-    className: "text-center",
+    className: "uppercase text-center",
   },
 ];
 
 const columnsMobile: TableColumn[] = [
   {
     key: "transaction",
-    label: "TRANSACTION",
+    className: "uppercase",
   },
   {
     key: "actions",
-    label: "ACTIONS",
     className: "text-center",
   },
 ];

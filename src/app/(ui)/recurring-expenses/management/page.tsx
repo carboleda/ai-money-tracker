@@ -9,8 +9,11 @@ import {
 import { PendingTransactionTable } from "@/components/PendingTransaction";
 import { SummaryPanel } from "@/components/SummaryPanel";
 import { withAuth } from "@/app/(ui)/withAuth";
+import { useTranslation } from "react-i18next";
+import { LocaleNamespace } from "@/i18n/namespace";
 
 function PendingTransactions() {
+  const { t } = useTranslation(LocaleNamespace.RecurrentExpenses);
   const { isLoading, data: reesponse } = useSWR<GetTransactionsResponse, Error>(
     `/api/transaction/${TransactionStatus.PENDING}`
   );
@@ -18,7 +21,7 @@ function PendingTransactions() {
   return (
     <section className="flex flex-col items-center justify-center gap-4">
       <div className="flex flex-col w-full justify-start items-start gap-2">
-        <h1 className="page-title">What you have to pay this month</h1>
+        <h1 className="page-title">{t("management.subtitle")}</h1>
         <SummaryPanel
           summary={reesponse?.summary}
           includedKeys={["totalPending"]}
