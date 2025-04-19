@@ -7,7 +7,7 @@
     "app:http": "node -r dotenv/config src/config/swEnvBuild.js dotenv_config_path=.env.local && next dev",
     "app:https": "node -r dotenv/config src/config/swEnvBuild.js dotenv_config_path=.env.local && next dev --experimental-https",
     "dev": "concurrently --kill-others \"npm run firebase:start\" \"npm run app:http\"",
-    "build": "next build",
+    "build": "node src/config/swEnvBuild.js && next build",
     "start": "next start",
     "lint": "next lint"
   },
