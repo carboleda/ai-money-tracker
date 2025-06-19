@@ -7,9 +7,13 @@
   "reccurentVsVariable": "Recurrent vs Variable transactions",
   "transactionsSummaryHistory": "Transactions summary history",
   "dateRangeFilter": "Filter the summary by date",
+  "transactionForCategory": "Transactions for category",
   "account": "ACCOUNT",
   "balance": "BALANCE",
   "globalBalance": "GLOBAL BALANCE",
   "type": "TYPE",
-  "amount": "AMOUNT"
+  "amount": "AMOUNT",
+  "total": "TOTAL",
+  "description": "DESCRIPTION",
+  "date": "DATE"
 }

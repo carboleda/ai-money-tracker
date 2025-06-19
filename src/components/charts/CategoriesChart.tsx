@@ -17,6 +17,8 @@ import { Transaction } from "@/interfaces/transaction";
 import { formatCurrency, formatTimeDate } from "@/config/utils";
 import { TransactionTypeDecorator } from "../TransactionTypeDecorator";
 import { Chip } from "@heroui/chip";
+import { Trans, useTranslation } from "react-i18next";
+import { LocaleNamespace } from "@/i18n/namespace";
 
 export interface CategoriesChartProps {
   data?: CategorySummary[];
@@ -27,6 +29,7 @@ export const CategoriesChart: React.FC<CategoriesChartProps> = ({
   data,
   detail,
 }) => {
+  const { t } = useTranslation(LocaleNamespace.Summary);
   const [isOpen, setIsOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<CategorySummary>();
 
@@ -48,7 +51,7 @@ export const CategoriesChart: React.FC<CategoriesChartProps> = ({
           onClose={() => setIsOpen(false)}
           title={
             <span>
-              Transactions for category
+              {t("transactionsForCategory")}&nbsp;
               <Chip radius="sm" variant="flat" className="ml-2">
                 <span className="font-bold">{selectedCategory.category}</span>
               </Chip>
@@ -63,9 +66,9 @@ export const CategoriesChart: React.FC<CategoriesChartProps> = ({
               aria-label="Category detail"
             >
               <TableHeader>
-                <TableColumn>DESCRIPTION</TableColumn>
-                <TableColumn>DATE</TableColumn>
-                <TableColumn className="text-end">AMOUNT</TableColumn>
+                <TableColumn>{t("description")}</TableColumn>
+                <TableColumn>{t("date")}</TableColumn>
+                <TableColumn className="text-end">{t("amount")}</TableColumn>
               </TableHeader>
               <TableBody>
                 {detail
@@ -88,7 +91,7 @@ export const CategoriesChart: React.FC<CategoriesChartProps> = ({
             <div className="text-end">
               <TransactionTypeDecorator color="primary">
                 <span className="font-bold">
-                  TOTAL:&nbsp;
+                  {t("total")}:&nbsp;
                   {formatCurrency(selectedCategory.total)}
                 </span>
               </TransactionTypeDecorator>

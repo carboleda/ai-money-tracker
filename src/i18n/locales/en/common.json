@@ -32,5 +32,13 @@
   "transfers": "Transfers",
   "balances": "Balances",
   "disabled": "Disabled",
-  "bankAccount": "Bank account"
+  "bankAccount": "Bank account",
+  "notificationsRequest": {
+    "title": "Money Tracker wants to keep you informed! 🔔",
+    "description": "To provide you with real-time alerts and reminders about your spending, income, and financial goals, we need your permission to send push notifications. This will help you:",
+    "reminderOverduePayments": "Receive reminders of overdue payments.",
+    "reminderBillsPayments": "Receive timely reminders for bills and payments.",
+    "neverMissPayment": "Never miss a payment or an opportunity to save again!",
+    "doNotAskAgain": "Don't ask again"
+  }
 }

@@ -9,6 +9,7 @@ import { FirebaseApp } from "firebase/app";
 import { useMutateUser } from "@/hooks/useMutateUser";
 import { Action, ConfirmationModal } from "./shared/ConfirmationModal";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
+import { useTranslation } from "react-i18next";
 
 interface NotificationRequestModalProps {
   firebaseApp?: FirebaseApp;
@@ -18,6 +19,7 @@ interface NotificationRequestModalProps {
 export const NotificationRequestModal: React.FC<
   NotificationRequestModalProps
 > = ({ firebaseApp, onPermissionGranted }) => {
+  const { t } = useTranslation();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { updateUser } = useMutateUser();
   const doNotAskAgainCheckox = useRef<HTMLInputElement>(null);
@@ -67,22 +69,20 @@ export const NotificationRequestModal: React.FC<
   return (
     <>
       <ConfirmationModal
-        title="Money Tracker wants to keep you informed! 🔔"
+        title={t("notificationsRequest.title")}
         isOpen={isOpen}
         onAction={onAction}
       >
-        <p>
-          To provide you with real-time alerts and reminders about your
-          spending, income, and financial goals, we need your permission to send
-          push notifications. This will help you:
-        </p>
+        <p>{t("notificationsRequest.description")}</p>
         <ul>
-          <li>◦ Receive reminders of overdue payments.</li>
-          <li>◦ Receive timely reminders for bills and payments.</li>
-          <li>◦ Never miss a payment or an opportunity to save again!.</li>
+          <li>◦ {t("notificationsRequest.reminderOverduePayments")}</li>
+          <li>◦ {t("notificationsRequest.reminderBillsPayments")}</li>
+          <li>◦ {t("notificationsRequest.neverMissPayment")}</li>
         </ul>
 
-        <Checkbox ref={doNotAskAgainCheckox}>Don&apos;t ask again</Checkbox>
+        <Checkbox ref={doNotAskAgainCheckox}>
+          {t("notificationsRequest.doNotAskAgain")}
+        </Checkbox>
       </ConfirmationModal>
     </>
   );

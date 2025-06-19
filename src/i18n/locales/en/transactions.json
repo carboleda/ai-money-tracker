@@ -8,5 +8,6 @@
   "freeTextMode": "Free text mode",
   "cameraMode": "Camera mode",
   "transactionDate": "Transaction date",
-  "sourceAccount": "Source account"
+  "sourceAccount": "Source account",
+  "notes": "Notes"
 }

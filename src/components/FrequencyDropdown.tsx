@@ -7,6 +7,8 @@ import {
 } from "@heroui/dropdown";
 import { Button } from "@heroui/button";
 import { Frequency, frequencyOptions } from "@/interfaces/recurringExpense";
+import { useTranslation } from "react-i18next";
+import { LocaleNamespace } from "@/i18n/namespace";
 
 interface FrequencyDropdownProps {
   selectedFrequency?: Frequency;
@@ -17,6 +19,7 @@ export const FrequencyDropdown: React.FC<FrequencyDropdownProps> = ({
   selectedFrequency,
   onChange,
 }) => {
+  const { t } = useTranslation(LocaleNamespace.Common);
   const [selectedKeys, setSelectedKeys] = useState(new Set<Frequency>([]));
 
   const selectedValue = useMemo(
@@ -47,7 +50,7 @@ export const FrequencyDropdown: React.FC<FrequencyDropdownProps> = ({
           style={{ justifyContent: "flex-start" }}
         >
           <div className="text-start mh-5">
-            <label className="text-xs text-default-600">Frequency</label>
+            <label className="text-xs text-default-600">{t("frequency")}</label>
             <div>{selectedValue}</div>
           </div>
         </Button>
