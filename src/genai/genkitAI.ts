@@ -6,6 +6,7 @@ import {
   CreateTransactionOutputSchema,
 } from "@/genai/schemas/createTransaction";
 import { GeneratedTransaction } from "@/interfaces/transaction";
+import path from "node:path";
 
 export class GenkitAI {
   private static instance: GenkitAI;
@@ -17,7 +18,12 @@ export class GenkitAI {
   >;
 
   private constructor() {
+    console.log(
+      "Initializing GenkitAI...",
+      path.join(process.cwd(), "prompts")
+    );
     this.ai = genkit({
+      promptDir: path.join(process.cwd(), "prompts"),
       plugins: [googleAI()],
       model: gemini20Flash,
     });

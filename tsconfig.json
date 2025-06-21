@@ -30,7 +30,8 @@
     "./src/**/*.ts",
     "./src/**/*.tsx",
     ".next/types/**/*.ts",
-    "./src/middleware.ts"
+    "./src/middleware.ts",
+    "./src/instrumentation.ts"
   ],
   "exclude": ["node_modules"]
 }
