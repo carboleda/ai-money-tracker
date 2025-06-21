@@ -1,17 +1,19 @@
 {
   "name": "ai-money-tracker",
   "version": "0.0.1",
+  "type": "module",
   "private": true,
   "scripts": {
     "firebase:start": "firebase emulators:start --project ai-money-tracker",
-    "app:http": "node -r dotenv/config src/config/swEnvBuild.js dotenv_config_path=.env.local && next dev",
-    "app:https": "node -r dotenv/config src/config/swEnvBuild.js dotenv_config_path=.env.local && next dev --experimental-https",
-    "dev": "concurrently --kill-others \"npm run firebase:start\" \"npm run app:http\"",
-    "build": "node src/config/swEnvBuild.js && next build",
+    "app:http": "node -r dotenv/config src/config/swEnvBuild.cjs dotenv_config_path=.env.local && next dev",
+    "app:https": "node -r dotenv/config src/config/swEnvBuild.cjs dotenv_config_path=.env.local && next dev --experimental-https",
+    "dev": "concurrently --kill-others \"npm run firebase:start\" \"GENKIT_ENV=dev FIRESTORE_EMULATOR_HOST=127.0.0.1:8080 npm run app:http\"",
+    "build": "node src/config/swEnvBuild.cjs && next build",
     "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
+    "@genkit-ai/googleai": "^1.12.0",
     "@google/generative-ai": "0.21.0",
     "@heroui/accordion": "2.2.8",
     "@heroui/autocomplete": "2.3.11",
@@ -51,6 +53,7 @@
     "firebase": "^10.13.1",
     "firebase-admin": "^12.4.0",
     "framer-motion": "^11.13.5",
+    "genkit": "^1.12.0",
     "i18next": "^24.2.0",
     "i18next-browser-languagedetector": "^8.0.2",
     "i18next-resources-to-backend": "^1.2.1",

@@ -10,7 +10,7 @@ import {
 import { Timestamp, UpdateData } from "firebase-admin/firestore";
 import { EventTypes, EventBus } from "../event-bus";
 import "@/app/api/accounts/events";
-import { extractData } from "@/genai";
+import { extractData } from "@/genai/genkitAI";
 
 export async function POST(req: NextRequest) {
   const formData = await req.formData();
