@@ -7,7 +7,8 @@
     "firebase:start": "firebase emulators:start --project ai-money-tracker",
     "app:http": "node -r dotenv/config src/config/swEnvBuild.cjs dotenv_config_path=.env.local && next dev",
     "app:https": "node -r dotenv/config src/config/swEnvBuild.cjs dotenv_config_path=.env.local && next dev --experimental-https",
-    "dev": "concurrently --kill-others \"npm run firebase:start\" \"GENKIT_ENV=dev FIRESTORE_EMULATOR_HOST=127.0.0.1:8080 npm run app:http\"",
+    "dev": "GENKIT_ENV=dev npm run app:http",
+    "dev:full": "concurrently --kill-others \"npm run firebase:start\" \"GENKIT_ENV=dev FIRESTORE_EMULATOR_HOST=127.0.0.1:8080 npm run app:http\"",
     "build": "node src/config/swEnvBuild.cjs && next build",
     "start": "next start",
     "lint": "next lint"
