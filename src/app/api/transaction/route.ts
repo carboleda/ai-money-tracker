@@ -10,7 +10,7 @@ import {
 import { Timestamp, UpdateData } from "firebase-admin/firestore";
 import { EventTypes, EventBus } from "../event-bus";
 import "@/app/api/accounts/events";
-import { extractData } from "@/genai/genkitAI";
+import { GenkitAI } from "@/genai/genkitAI";
 
 export async function POST(req: NextRequest) {
   const formData = await req.formData();
@@ -34,7 +34,8 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  const generatedResponse = await extractData(text, picture);
+  const genkitAI = GenkitAI.getInstance();
+  const generatedResponse = await genkitAI.extractData(text, picture);
 
   if (!generatedResponse || generatedResponse?.error) {
     return new NextResponse(null, {

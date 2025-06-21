@@ -1,43 +1,57 @@
-import { GenerateResponse, genkit, z } from "genkit";
+import { ExecutablePrompt, Genkit, genkit, z } from "genkit";
 import { googleAI, gemini20Flash } from "@genkit-ai/googleai";
 import {
   CreateTransactionInputType,
-  CreateTransactionOutputType,
-  InputSchema,
-  OutputSchema,
+  CreateTransactionInputSchema,
+  CreateTransactionOutputSchema,
 } from "@/genai/schemas/createTransaction";
 import { GeneratedTransaction } from "@/interfaces/transaction";
 
-const ai = genkit({
-  plugins: [googleAI()],
-  model: gemini20Flash,
-});
+export class GenkitAI {
+  private static instance: GenkitAI;
+  private readonly ai: Genkit;
+  private readonly extractDataPrompt: ExecutablePrompt<
+    CreateTransactionInputType,
+    typeof CreateTransactionOutputSchema,
+    z.ZodTypeAny
+  >;
 
-ai.defineSchema("CreateTransactionInputSchema", InputSchema);
+  private constructor() {
+    this.ai = genkit({
+      plugins: [googleAI()],
+      model: gemini20Flash,
+    });
+    this.ai.defineSchema(
+      "CreateTransactionInputSchema",
+      CreateTransactionInputSchema
+    );
+    this.ai.defineSchema(
+      "CreateTransactionOutputSchema",
+      CreateTransactionOutputSchema
+    );
+    this.extractDataPrompt = this.ai.prompt("extractTransactionData");
+  }
 
-ai.defineSchema("CreateTransactionOutputSchema", OutputSchema);
-
-const extractDataPrompt = ai.prompt<
-  typeof InputSchema,
-  typeof OutputSchema,
-  z.ZodTypeAny
->("extractTransactionData");
-
-export async function extractData(
-  text?: string,
-  picture?: string
-): Promise<GeneratedTransaction.GeneratedResponse> {
-  const input = { text: text, picture: picture } as CreateTransactionInputType;
-
-  return extractDataPrompt(input).then(
-    (
-      response: GenerateResponse<CreateTransactionOutputType>
-    ): GeneratedTransaction.GeneratedResponse => {
-      if (response.output?.type === "error") {
-        return response.output.error as GeneratedTransaction.GeneratedResponse;
-      }
-
-      return response.output?.data as GeneratedTransaction.GeneratedResponse;
+  public static getInstance(): GenkitAI {
+    if (!GenkitAI.instance) {
+      GenkitAI.instance = new GenkitAI();
     }
-  );
+    return GenkitAI.instance;
+  }
+
+  async extractData(
+    text?: string,
+    picture?: string
+  ): Promise<GeneratedTransaction.GeneratedResponse> {
+    const input = {
+      text: text,
+      picture: picture,
+    } as CreateTransactionInputType;
+
+    const { output } = await this.extractDataPrompt(input);
+
+    return (
+      output?.type === "error" ? output.error : output?.data
+    ) as GeneratedTransaction.GeneratedResponse;
+  }
 }

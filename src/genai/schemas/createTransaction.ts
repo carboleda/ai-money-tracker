@@ -33,11 +33,11 @@ export const TransactionDataSchema = z.object({
     .describe("Transaction date and time in ISO format yyyy-MM-dd'T'HH:mm"),
 });
 
-export const ErrorSchema = z.object({
+export const CreateTransactionErrorSchema = z.object({
   error: z.string().describe("Error message if the transaction is invalid"),
 });
 
-export const InputSchema = z.union([
+export const CreateTransactionInputSchema = z.union([
   z.object({
     text: z
       .string()
@@ -64,12 +64,16 @@ export const InputSchema = z.union([
   }),
 ]);
 
-export const OutputSchema = z.object({
+export const CreateTransactionOutputSchema = z.object({
   type: z.enum(["success", "error"]),
   data: TransactionDataSchema.optional(),
-  error: ErrorSchema.optional(),
+  error: CreateTransactionErrorSchema.optional(),
 });
 
 export type TransactionDataType = z.infer<typeof TransactionDataSchema>;
-export type CreateTransactionInputType = z.infer<typeof InputSchema>;
-export type CreateTransactionOutputType = z.infer<typeof OutputSchema>;
+export type CreateTransactionInputType = z.infer<
+  typeof CreateTransactionInputSchema
+>;
+export type CreateTransactionOutputType = z.infer<
+  typeof CreateTransactionOutputSchema
+>;
