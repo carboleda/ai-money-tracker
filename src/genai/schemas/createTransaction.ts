@@ -1,9 +1,7 @@
 import { z } from "genkit";
-import { TransactionCategory } from "@/interfaces/transaction";
+import { TransactionCategory, TransactionType } from "@/interfaces/transaction";
 
-const categories = Object.values(TransactionCategory);
-
-export const TransactionSchema = z.object({
+export const TransactionDataSchema = z.object({
   description: z
     .string()
     .describe(
@@ -14,12 +12,10 @@ export const TransactionSchema = z.object({
     .describe(
       "Transaction amount in COP. Remove the thousand separators. This value is usually next to a label Venta, Total, etc. e.g. 123000, 15000, 1000, 20000.34"
     ),
-  type: z.enum(["income", "expense", "transfer"]).describe("Transaction type"),
+  type: z.nativeEnum(TransactionType).describe("Transaction type"),
   category: z
-    .string()
-    .describe(
-      `Based on the description, it should be one of the following: ${categories}.`
-    ),
+    .nativeEnum(TransactionCategory)
+    .describe(`Based on the description`),
   sourceAccount: z
     .string()
     .describe(
@@ -70,10 +66,10 @@ export const InputSchema = z.union([
 
 export const OutputSchema = z.object({
   type: z.enum(["success", "error"]),
-  data: TransactionSchema.optional(),
+  data: TransactionDataSchema.optional(),
   error: ErrorSchema.optional(),
 });
 
-export type TransactionType = z.infer<typeof TransactionSchema>;
+export type TransactionDataType = z.infer<typeof TransactionDataSchema>;
 export type CreateTransactionInputType = z.infer<typeof InputSchema>;
 export type CreateTransactionOutputType = z.infer<typeof OutputSchema>;
