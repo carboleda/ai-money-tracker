@@ -1,0 +1,14 @@
+{
+  "title": "Iniciar sesión",
+  "subtitle": "Bienvenido a AI Money Track",
+  "signInWithButton": "Iniciar sesión con Google",
+  "signInErrorMessage": "No se pudo iniciar sesión con Google. Por favor, inténtalo de nuevo.",
+  "enablePushNotifications": "Habilitar notificaciones push",
+  "signOut": "Cerrar sesión",
+  "unauthorized": "No autorizado",
+  "unauthorizedMessage": {
+    "message": "No estás autorizado para ver esta página.",
+    "advice": "Por favor inicia sesión con una cuenta válida."
+  },
+  "takeMeOut": "Sácame de aquí"
+}

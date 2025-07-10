@@ -1,0 +1,20 @@
+{
+  "subtitle": "Un resumen de cómo fluye tu dinero 💸",
+  "emptyContent": "No hay filas para mostrar.",
+  "accountBalance": "Saldo de la cuenta",
+  "transactionsByType": "Transacciones por tipo",
+  "transactionsByCategory": "Transacciones por categoría",
+  "reccurentVsVariable": "Transacciones recurrentes vs variables",
+  "transactionsSummaryHistory": "Historial de resumen de transacciones",
+  "dateRangeFilter": "Filtra el resumen por fecha",
+  "transactionForCategory": "Transacciones por categoría",
+  "showLabels": "Mostrar etiquetas",
+  "account": "CUENTA",
+  "balance": "SALDO",
+  "globalBalance": "SALDO GLOBAL",
+  "type": "TIPO",
+  "amount": "MONTO",
+  "total": "TOTAL",
+  "description": "DESCRIPCIÓN",
+  "date": "FECHA"
+}

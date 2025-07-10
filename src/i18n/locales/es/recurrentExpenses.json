@@ -1,0 +1,19 @@
+{
+  "management.subtitle": "Lo que tienes que pagar este mes",
+  "management.emptyContent": "¡Estás al día, bien hecho 👏!.",
+  "subtitle": "Configura tus gastos recurrentes",
+  "emptyContent": "No hay gastos recurrentes para mostrar.",
+  "monthly": "Mensual",
+  "biannualAndYearly": "Bianual y Anual",
+  "separatorTitle": "GASTOS BIANUALES Y ANUALES",
+  "allFieldAreRequired": "Completa todos los campos requeridos. Por favor complétalos.",
+  "recurrentExpenses": "Gasto recurrente",
+  "paymentLink": "Enlace de pago",
+  "notes": "Notas",
+  "notesPlaceholder": "Ingresa tus notas aquí",
+  "pendingTransactionCountMessage": "Total {{count}} transacciones pendientes",
+  "pendingTransactions": "Transacciones pendientes",
+  "completeTransaction": "Completar transacción",
+  "paidOn": "Pagado el",
+  "completeTransationButton": "Completar"
+}

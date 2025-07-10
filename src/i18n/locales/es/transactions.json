@@ -1,0 +1,13 @@
+{
+  "subtitle": "Todas tus transacciones",
+  "emptyContent": "No hay transacciones para mostrar.",
+  "descriptionIsRequired": "La descripción es obligatoria. Por favor complétala.",
+  "descriptionIsInvalid": "¡Incluye los {{missinFields, list}} en tu mensaje!",
+  "bankAndAccountAreRquired": "La cuenta bancaria y la imagen son obligatorias. Por favor complétalas.",
+  "newTransaction": "Nueva Transacción",
+  "freeTextMode": "Modo texto libre",
+  "cameraMode": "Modo cámara",
+  "transactionDate": "Fecha de la transacción",
+  "sourceAccount": "Cuenta de origen",
+  "notes": "Notas"
+}
