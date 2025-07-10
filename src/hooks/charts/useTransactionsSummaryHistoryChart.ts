@@ -1,5 +1,6 @@
 import {
   AgBarSeriesThemeableOptions,
+  AgChartLegendClickEvent,
   AgChartOptions,
 } from "ag-charts-community";
 import { useTheme } from "next-themes";
@@ -37,6 +38,12 @@ export const useTransactionsSummaryHistoryChart = ({
 
   const [options, setOptions] = useState<AgChartOptions>({
     height: isMobile ? 200 : 350,
+    padding: {
+      top: 10,
+      right: 5,
+      // bottom: 20,
+      // left: 20,
+    },
     data: [],
     series: [
       {
