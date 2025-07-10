@@ -33,15 +33,10 @@ export const useTransactionsSummaryHistoryChart = ({
   const isMobile = useIsMobile();
 
   const isDark = theme === "dark";
+  const isLabelEnable = !isMobile;
 
   const [options, setOptions] = useState<AgChartOptions>({
     height: isMobile ? 200 : 350,
-    padding: {
-      top: 20,
-      right: 50,
-      bottom: 20,
-      left: 20,
-    },
     data: [],
     series: [
       {
@@ -61,6 +56,7 @@ export const useTransactionsSummaryHistoryChart = ({
           formatter: ({ value }: { value: number }) => formatCurrency(value),
           color: ligthColor,
           fontWeight: "normal",
+          enabled: isLabelEnable,
         },
       },
       {
@@ -78,6 +74,7 @@ export const useTransactionsSummaryHistoryChart = ({
           formatter: ({ value }: { value: number }) => formatCurrency(value),
           color: ligthColor,
           fontWeight: "normal",
+          enabled: isLabelEnable,
         },
       },
       {
@@ -98,6 +95,7 @@ export const useTransactionsSummaryHistoryChart = ({
           formatter: ({ value }: { value: number }) => formatCurrency(value),
           color: ligthColor,
           fontWeight: "normal",
+          enabled: isLabelEnable,
         },
       },
       {
@@ -118,6 +116,7 @@ export const useTransactionsSummaryHistoryChart = ({
           formatter: ({ value }: { value: number }) => formatCurrency(value),
           color: ligthColor,
           fontWeight: "normal",
+          enabled: isLabelEnable,
         },
       },
     ],
