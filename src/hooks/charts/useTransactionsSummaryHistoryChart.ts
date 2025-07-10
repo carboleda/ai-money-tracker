@@ -10,6 +10,8 @@ import { TransactionsSummaryHistory } from "@/interfaces/account";
 import { formatCurrency, formatMonthYear } from "@/config/utils";
 import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
+import { create } from "zustand";
+import { persist, createJSONStorage } from "zustand/middleware";
 
 const ligthColor = "#FFFFFF";
 const darkColor = "#18181B";
@@ -26,15 +28,52 @@ export interface UseTransactionsSummaryHistoryChartResult {
   options: AgChartOptions;
 }
 
+type LegendName = "incomes" | "expenses" | "transfers" | "balance";
+
+interface ChartConfigStore {
+  showLabels: boolean;
+  legend: {
+    incomes: boolean;
+    expenses: boolean;
+    transfers: boolean;
+    balance: boolean;
+  };
+  setLegend: (name: LegendName) => void;
+  setShowLabels: (showLabels: boolean) => void;
+}
+
+const useLegendStore = create<ChartConfigStore>()(
+  persist(
+    (set, get) => ({
+      showLabels: false,
+      legend: {
+        incomes: false,
+        expenses: true,
+        transfers: false,
+        balance: false,
+      },
+      setLegend: (name: LegendName) => {
+        const legend = get().legend;
+        set({ legend: { ...legend, [name]: !legend[name] } });
+      },
+      setShowLabels: (showLabels: boolean) => set({ showLabels }),
+    }),
+    {
+      name: "transactions-summary-history-config-storage", // name of the item in the storage (must be unique)
+      storage: createJSONStorage(() => sessionStorage), // (optional) by default, 'localStorage' is used
+    }
+  )
+);
+
 export const useTransactionsSummaryHistoryChart = ({
   data,
 }: UseTransactionsSummaryHistoryChartProps) => {
   const { t } = useTranslation(LocaleNamespace.Summary);
   const { theme } = useTheme();
   const isMobile = useIsMobile();
+  const { setLegend, setShowLabels, showLabels, legend } = useLegendStore();
 
   const isDark = theme === "dark";
-  const isLabelEnable = !isMobile;
 
   const [options, setOptions] = useState<AgChartOptions>({
     height: isMobile ? 200 : 350,
@@ -52,7 +91,7 @@ export const useTransactionsSummaryHistoryChart = ({
         xName: "Month",
         yKey: "incomes",
         yName: t("incomes"),
-        visible: false,
+        visible: legend.incomes,
         interpolation: { type: "smooth" },
         stroke: greenColor,
         marker: {
@@ -63,7 +102,7 @@ export const useTransactionsSummaryHistoryChart = ({
           formatter: ({ value }: { value: number }) => formatCurrency(value),
           color: ligthColor,
           fontWeight: "normal",
-          enabled: isLabelEnable,
+          enabled: showLabels,
         },
       },
       {
@@ -71,6 +110,7 @@ export const useTransactionsSummaryHistoryChart = ({
         xKey: "month",
         yKey: "expenses",
         yName: t("expenses"),
+        visible: legend.expenses,
         interpolation: { type: "smooth" },
         stroke: redColor,
         marker: {
@@ -81,7 +121,7 @@ export const useTransactionsSummaryHistoryChart = ({
           formatter: ({ value }: { value: number }) => formatCurrency(value),
           color: ligthColor,
           fontWeight: "normal",
-          enabled: isLabelEnable,
+          enabled: showLabels,
         },
       },
       {
@@ -89,7 +129,7 @@ export const useTransactionsSummaryHistoryChart = ({
         xKey: "month",
         yKey: "transfers",
         yName: t("transfers"),
-        visible: false,
+        visible: legend.transfers,
         interpolation: { type: "smooth" },
         stroke: yellowColor,
         marker: {
@@ -102,7 +142,7 @@ export const useTransactionsSummaryHistoryChart = ({
           formatter: ({ value }: { value: number }) => formatCurrency(value),
           color: ligthColor,
           fontWeight: "normal",
-          enabled: isLabelEnable,
+          enabled: showLabels,
         },
       },
       {
@@ -110,7 +150,7 @@ export const useTransactionsSummaryHistoryChart = ({
         xKey: "month",
         yKey: "balance",
         yName: t("balances"),
-        visible: false,
+        visible: legend.balance,
         interpolation: { type: "smooth" },
         stroke: blueColor,
         marker: {
@@ -123,7 +163,7 @@ export const useTransactionsSummaryHistoryChart = ({
           formatter: ({ value }: { value: number }) => formatCurrency(value),
           color: ligthColor,
           fontWeight: "normal",
-          enabled: isLabelEnable,
+          enabled: showLabels,
         },
       },
     ],
@@ -144,6 +184,14 @@ export const useTransactionsSummaryHistoryChart = ({
     overlays: {
       unsupportedBrowser: {
         enabled: false,
+      },
+    },
+    legend: {
+      listeners: {
+        legendItemClick: ({ seriesId, itemId }: AgChartLegendClickEvent) => {
+          console.log(`seriesId: ${seriesId}, itemId: ${itemId}`);
+          setLegend(itemId as LegendName);
+        },
       },
     },
   });
@@ -169,6 +217,7 @@ export const useTransactionsSummaryHistoryChart = ({
             ...serie,
             label: {
               ...serie.label,
+              enabled: showLabels,
               color: isDark ? ligthColor : darkColor,
             },
           };
@@ -184,7 +233,7 @@ export const useTransactionsSummaryHistoryChart = ({
         series,
       };
     });
-  }, [isDark]);
+  }, [isDark, showLabels]);
 
-  return { options };
+  return { options, showLabels, setShowLabels };
 };

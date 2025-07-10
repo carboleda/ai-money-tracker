@@ -8,6 +8,7 @@
   "transactionsSummaryHistory": "Transactions summary history",
   "dateRangeFilter": "Filter the summary by date",
   "transactionForCategory": "Transactions for category",
+  "showLabels": "Show labels",
   "account": "ACCOUNT",
   "balance": "BALANCE",
   "globalBalance": "GLOBAL BALANCE",

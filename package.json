@@ -74,7 +74,8 @@
     "string-to-color": "^2.2.2",
     "swr": "^2.2.5",
     "tailwind-variants": "^0.1.20",
-    "tailwindcss": "3.4.10"
+    "tailwindcss": "3.4.10",
+    "zustand": "5.0.6"
   },
   "devDependencies": {
     "@types/lodash": "^4.17.13",
