@@ -3,7 +3,6 @@ import { Metadata, Viewport } from "next";
 import { siteConfig } from "@/config/site";
 import { fontSans } from "@/config/fonts";
 import { Providers } from "./providers";
-import { Navbar } from "@/components/shared/Navbar";
 import clsx from "clsx";
 import { Footer } from "@/components/shared/Footer";
 
@@ -58,7 +57,6 @@ export default async function RootLayout({
         <Providers themeProps={{ attribute: "class", defaultTheme: "dark" }}>
           <div className="relative flex flex-col h-screen">
             <main className="container mx-auto px-0 md:px-2 flex-grow">
-              {/* <Navbar /> */}
               {children}
             </main>
             <Footer />
