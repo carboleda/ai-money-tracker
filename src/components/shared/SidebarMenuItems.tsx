@@ -71,8 +71,6 @@ export const SidebarMenuItems: React.FC<SidebarMenuItemsProps> = ({ user }) => {
     });
   };
 
-  console.log("SidebarMenuItems", keyLabel.get(pathname));
-
   return (
     <div className="flex w-full flex-col justify-start items-start">
       <Listbox
