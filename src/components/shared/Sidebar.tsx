@@ -7,7 +7,16 @@ import { siteConfig } from "@/config/site";
 import { SidebarMenuItems } from "./SidebarMenuItems";
 import { CiMenuBurger } from "react-icons/ci";
 
-export const Sidebar: React.FC<PropsWithChildren> = ({ children }) => {
+export type User = {
+  name?: string;
+  picture?: string;
+};
+
+interface SidebarProps extends PropsWithChildren {
+  user?: User;
+}
+
+export const Sidebar: React.FC<SidebarProps> = ({ user, children }) => {
   const isMobile = useIsMobile();
   const [isSidebarOpen, setSidebarOpen] = useState<boolean>(false);
 
@@ -57,7 +66,7 @@ export const Sidebar: React.FC<PropsWithChildren> = ({ children }) => {
               </p>
             </div>
             <ul className="space-y-2 font-medium mt-6">
-              <SidebarMenuItems />
+              <SidebarMenuItems user={user} />
             </ul>
           </div>
         </aside>

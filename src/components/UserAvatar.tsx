@@ -5,6 +5,7 @@ import { auth } from "@/firebase/client/auth";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { LocaleNamespace } from "@/i18n/namespace";
 import { Avatar } from "@heroui/avatar";
+import { User } from "@heroui/user";
 import {
   Dropdown,
   DropdownItem,
@@ -18,11 +19,14 @@ import { useTranslation } from "react-i18next";
 import { HiBell } from "react-icons/hi";
 import { HiArrowRightEndOnRectangle } from "react-icons/hi2";
 
+export type User = {
+  email?: string;
+  name?: string;
+  picture?: string;
+};
+
 interface UserAvatarProps {
-  user?: {
-    name?: string;
-    picture?: string;
-  };
+  user?: User;
 }
 
 export const UserAvatar: React.FC<UserAvatarProps> = ({ user }) => {
@@ -63,7 +67,22 @@ export const UserAvatar: React.FC<UserAvatarProps> = ({ user }) => {
 
   return (
     <>
-      <Dropdown showArrow={true}>
+      <User
+        avatarProps={{
+          src: Env.isLocal ? undefined : user?.picture,
+          fallback: user?.name?.charAt(0) || "U",
+          showFallback: true,
+          isBordered: true,
+          color: "primary",
+          className: "w-9 h-9",
+        }}
+        description={user?.email}
+        name={user?.name}
+        classNames={{
+          wrapper: "!px-0",
+        }}
+      />
+      {/* <Dropdown showArrow={true}>
         <DropdownTrigger>
           <Avatar
             className="w-9 h-9"
@@ -92,7 +111,7 @@ export const UserAvatar: React.FC<UserAvatarProps> = ({ user }) => {
             Sign Out
           </DropdownItem>
         </DropdownMenu>
-      </Dropdown>
+      </Dropdown> */}
     </>
   );
 };
