@@ -1,15 +1,16 @@
 import { IconType } from "react-icons";
 import { HiCollection } from "react-icons/hi";
 import { HiMiniArrowPathRoundedSquare } from "react-icons/hi2";
-import { HiBell } from "react-icons/hi";
+import { MdPending } from "react-icons/md";
 import { HiChartPie } from "react-icons/hi2";
 
 export type SiteConfig = typeof siteConfig;
 
 export interface Page {
   label: string;
-  href?: string;
   icon: IconType;
+  href?: string;
+  className?: string;
 }
 
 export const pages: Page[] = [
@@ -17,21 +18,25 @@ export const pages: Page[] = [
     label: "transactions",
     href: "/",
     icon: HiCollection,
+    className: "bg-secondary/10 text-secondary",
   },
   {
     label: "pending",
     href: "/recurring-expenses/management",
-    icon: HiBell,
+    icon: MdPending,
+    className: "bg-warning/10 text-warning",
   },
   {
     label: "recurrent",
     href: "/recurring-expenses",
     icon: HiMiniArrowPathRoundedSquare,
+    className: "bg-info/10 text-info",
   },
   {
     label: "summary",
     href: "/summary",
     icon: HiChartPie,
+    className: "bg-primary/10 text-primary",
   },
 ];
 
