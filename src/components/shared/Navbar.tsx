@@ -1,8 +1,6 @@
 import { Link } from "@heroui/link";
-import { Image } from "@heroui/image";
 
 import { siteConfig } from "@/config/site";
-import NextLink from "next/link";
 
 import { ThemeSwitch } from "@/components/shared/ThemeSwitch";
 import {
@@ -33,16 +31,7 @@ export const Navbar = async () => {
 
   return (
     <div className="flex flex-col w-full gap-4 justify-between items-center mt-3">
-      <div className="flex flex-row justify-between items-center w-full">
-        <div className="flex w-full">
-          <NextLink className="flex justify-start items-center gap-3" href="/">
-            <Image width={40} alt="App logo" src={siteConfig.icons.logo} />
-            <p className="font-bold text-inherit text-lg text-zinc-700 dark:text-zinc-200">
-              {siteConfig.name}
-            </p>
-          </NextLink>
-        </div>
-
+      <div className="flex flex-row justify-between items-end w-full">
         <div className="hidden sm:flex basis-1/5 sm:basis-full justify-end gap-2">
           <div className="hidden sm:flex gap-2">
             <Link
