@@ -111,21 +111,8 @@ export const SidebarMenuItems: React.FC<SidebarMenuItemsProps> = ({ user }) => {
           >
             {t("enablePushNotifications")}
           </ListboxItem>
-          <ListboxItem
-            key="signOut"
-            textValue={t("signOut")}
-            title={t("signOut")}
-            startContent={
-              <IconWrapper className="bg-danger/10 text-danger">
-                <HiArrowRightEndOnRectangle className=" text-lg md:text-medium" />
-              </IconWrapper>
-            }
-          >
-            {t("signOut")}
-          </ListboxItem>
         </ListboxSection>
-
-        <>
+        <ListboxSection showDivider>
           {siteConfig.pages.map((page) => (
             <ListboxItem
               key={page.label}
@@ -144,7 +131,19 @@ export const SidebarMenuItems: React.FC<SidebarMenuItemsProps> = ({ user }) => {
               {t(page.label)}
             </ListboxItem>
           ))}
-        </>
+        </ListboxSection>
+        <ListboxItem
+          key="signOut"
+          textValue={t("signOut")}
+          title={t("signOut")}
+          startContent={
+            <IconWrapper className="bg-danger/10 text-danger">
+              <HiArrowRightEndOnRectangle className=" text-lg md:text-medium" />
+            </IconWrapper>
+          }
+        >
+          {t("signOut")}
+        </ListboxItem>
       </Listbox>
     </div>
   );
