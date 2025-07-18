@@ -72,7 +72,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ user, children }) => {
         </div>
       </div>
 
-      <div className="p-4 sm:ml-64">{children}</div>
+      <div className="p-4 sm:ml-40 sm:-mr-24">{children}</div>
     </>
   );
 };

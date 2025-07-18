@@ -54,14 +54,14 @@ export default async function PrivateLayout({
           fontSans.variable
         )}
       >
-        <div className="relative flex flex-col h-screen">
-          <Providers>
-            <main className="container mx-auto px-0 md:px-2 flex-grow">
+        <Providers>
+          <div className="relative flex flex-col h-screen">
+            <main className="container mx-auto px-2 md:px-2 flex-grow">
               {children}
             </main>
             <Footer />
-          </Providers>
-        </div>
+          </div>
+        </Providers>
       </body>
     </html>
   );
