@@ -16,25 +16,25 @@ export interface Page {
 export const pages: Page[] = [
   {
     label: "transactions",
-    href: "/",
+    href: "/private",
     icon: HiCollection,
     className: "bg-secondary/10 text-secondary",
   },
   {
     label: "pending",
-    href: "/recurring-expenses/management",
+    href: "/private/recurring-expenses/management",
     icon: MdPending,
     className: "bg-warning/10 text-warning",
   },
   {
     label: "recurrent",
-    href: "/recurring-expenses",
+    href: "/private/recurring-expenses",
     icon: HiMiniArrowPathRoundedSquare,
     className: "bg-info/10 text-info",
   },
   {
     label: "summary",
-    href: "/summary",
+    href: "/private/summary",
     icon: HiChartPie,
     className: "bg-primary/10 text-primary",
   },

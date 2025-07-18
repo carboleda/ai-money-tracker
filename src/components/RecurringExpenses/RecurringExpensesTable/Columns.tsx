@@ -85,9 +85,6 @@ const renderSeparatorDesktop = (
           {title}
         </div>
       </TableCell>
-      <TableCell className="hidden">&nbsp;</TableCell>
-      <TableCell className="hidden">&nbsp;</TableCell>
-      <TableCell className="hidden">&nbsp;</TableCell>
     </TableRow>
   );
 };
@@ -138,7 +135,6 @@ const renderSeparatorMobile = (
           {title}
         </div>
       </TableCell>
-      <TableCell className="hidden">&nbsp;</TableCell>
     </TableRow>
   );
 };
