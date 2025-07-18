@@ -1,16 +1,17 @@
-import { ReactNode } from "react";
+"use client";
+
+import { Key, ReactNode, useEffect, useState } from "react";
 import { siteConfig } from "@/config/site";
 import { useTranslation } from "react-i18next";
 import { usePathname, useRouter } from "next/navigation";
 import { User, UserAvatar } from "../UserAvatar";
-import { Key, useTransition } from "react";
+import { useTransition } from "react";
 import clsx from "clsx";
 import { HiBell } from "react-icons/hi";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { LocaleNamespace } from "@/i18n/namespace";
 import { Listbox, ListboxSection, ListboxItem } from "@heroui/listbox";
 import { signOut } from "firebase/auth";
-import { auth } from "@/firebase/client/auth";
 import { HiArrowRightEndOnRectangle } from "react-icons/hi2";
 import { FaCircleArrowRight } from "react-icons/fa6";
 
@@ -47,6 +48,18 @@ export const SidebarMenuItems: React.FC<SidebarMenuItemsProps> = ({ user }) => {
     "doNotAskAgain",
     false
   );
+  const [disabledKeys, setDisabledKeys] = useState<Array<string>>([
+    "notifications",
+  ]);
+
+  useEffect(() => {
+    setDisabledKeys((prev) => {
+      if (doNotAskAgain) {
+        return [...prev, "notifications"];
+      }
+      return [...prev].filter((key) => key !== "notifications");
+    });
+  }, [doNotAskAgain]);
 
   const onAction = (key: Key) => {
     if (key === "signOut") {
@@ -58,6 +71,7 @@ export const SidebarMenuItems: React.FC<SidebarMenuItemsProps> = ({ user }) => {
   };
 
   const onSignOut = async () => {
+    const { auth } = await import("@/firebase/client/auth");
     await signOut(auth);
 
     await fetch("/api/logout");
@@ -79,25 +93,24 @@ export const SidebarMenuItems: React.FC<SidebarMenuItemsProps> = ({ user }) => {
         variant="flat"
         color="default"
         onAction={onAction}
+        disabledKeys={disabledKeys}
       >
         <ListboxSection showDivider>
           <ListboxItem key="avatar" textValue="User Avatar">
             <UserAvatar user={user} />
           </ListboxItem>
-          {doNotAskAgain && (
-            <ListboxItem
-              key="notifications"
-              textValue={t("enablePushNotifications")}
-              title={t("enablePushNotifications")}
-              startContent={
-                <IconWrapper className="bg-success/10 text-success">
-                  <HiBell className="text-lg md:text-medium" />
-                </IconWrapper>
-              }
-            >
-              {t("enablePushNotifications")}
-            </ListboxItem>
-          )}
+          <ListboxItem
+            key="notifications"
+            textValue={t("enablePushNotifications")}
+            title={t("enablePushNotifications")}
+            startContent={
+              <IconWrapper className="bg-success/10 text-success">
+                <HiBell className="text-lg md:text-medium" />
+              </IconWrapper>
+            }
+          >
+            {t("enablePushNotifications")}
+          </ListboxItem>
           <ListboxItem
             key="signOut"
             textValue={t("signOut")}

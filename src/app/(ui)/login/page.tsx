@@ -33,7 +33,7 @@ function LoginPage() {
         },
       });
 
-      router.push("/");
+      // router.push("/private"); TODO This seems to be not required anymore
       startTransition(() => {
         // Refresh the current route and fetch new data from the server without
         // losing client-side browser or React state.

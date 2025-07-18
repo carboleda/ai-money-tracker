@@ -57,7 +57,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ user, children }) => {
         aria-label="Sidebar"
         onClick={isMobile ? (e) => e.stopPropagation() : undefined}
       >
-        <aside id="default-sidebar" className="w-full h-full">
+        <div id="default-sidebar" className="w-full h-full">
           <div className="h-full px-3 py-4 overflow-y-auto shadow-xl border-r bg-content1 dark:bg-content2 border-gray-200 dark:border-zinc-700">
             <div className="flex w-full justify-start items-center gap-3">
               <Image width={40} alt="App logo" src={siteConfig.icons.logo} />
@@ -69,7 +69,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ user, children }) => {
               <SidebarMenuItems user={user} />
             </ul>
           </div>
-        </aside>
+        </div>
       </div>
 
       <div className="p-4 sm:ml-64">{children}</div>

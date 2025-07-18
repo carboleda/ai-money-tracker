@@ -19,7 +19,7 @@ export async function authenticationMiddleware(
   return authMiddleware(request, {
     loginPath: "/api/login",
     logoutPath: "/api/logout",
-    // debug: Env.isDev,
+    debug: Env.isLocal,
     apiKey: Env.NEXT_PUBLIC_FIREBASE_APP_CONFIG.apiKey,
     cookieName: "AuthToken",
     cookieSignatureKeys: Env.AUTH_COOKIE_SIGNATURE_KEYS,
@@ -38,7 +38,9 @@ export async function authenticationMiddleware(
     handleValidToken: async ({ token, decodedToken, customToken }, headers) => {
       // Authenticated user should not be able to access /login, /register and /reset-password routes
       if (PUBLIC_PATHS.includes(request.nextUrl.pathname)) {
-        return redirectToHome(request);
+        return redirectToHome(request, {
+          path: "/private",
+        });
       }
 
       return NextResponse.next({
