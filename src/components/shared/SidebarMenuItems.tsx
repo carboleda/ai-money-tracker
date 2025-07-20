@@ -28,6 +28,12 @@ interface IconWrapperProps {
   className?: string;
 }
 
+enum SidebarMenuItemKeys {
+  Avatar = "avatar",
+  Notifications = "notifications",
+  SignOut = "signOut",
+}
+
 export const IconWrapper = ({ children, className }: IconWrapperProps) => (
   <div
     className={clsx(
@@ -48,23 +54,23 @@ export const SidebarMenuItems: React.FC<SidebarMenuItemsProps> = ({ user }) => {
     "doNotAskAgain",
     false
   );
-  const [disabledKeys, setDisabledKeys] = useState<Array<string>>([
-    "notifications",
-  ]);
+  const [disabledKeys, setDisabledKeys] = useState<Array<string>>([]);
 
   useEffect(() => {
     setDisabledKeys((prev) => {
       if (doNotAskAgain) {
-        return [...prev, "notifications"];
+        return [...prev].filter(
+          (key) => key !== SidebarMenuItemKeys.Notifications
+        );
       }
-      return [...prev].filter((key) => key !== "notifications");
+      return [...prev, SidebarMenuItemKeys.Notifications];
     });
   }, [doNotAskAgain]);
 
   const onAction = (key: Key) => {
-    if (key === "signOut") {
+    if (key === SidebarMenuItemKeys.SignOut) {
       onSignOut();
-    } else if (key === "notifications") {
+    } else if (key === SidebarMenuItemKeys.Notifications) {
       setDoNotAskAgain(false);
       location.reload();
     }
@@ -96,11 +102,11 @@ export const SidebarMenuItems: React.FC<SidebarMenuItemsProps> = ({ user }) => {
         disabledKeys={disabledKeys}
       >
         <ListboxSection showDivider>
-          <ListboxItem key="avatar" textValue="User Avatar">
+          <ListboxItem key={SidebarMenuItemKeys.Avatar} textValue="User Avatar">
             <UserAvatar user={user} />
           </ListboxItem>
           <ListboxItem
-            key="notifications"
+            key={SidebarMenuItemKeys.Notifications}
             textValue={t("enablePushNotifications")}
             title={t("enablePushNotifications")}
             startContent={
@@ -133,7 +139,7 @@ export const SidebarMenuItems: React.FC<SidebarMenuItemsProps> = ({ user }) => {
           ))}
         </ListboxSection>
         <ListboxItem
-          key="signOut"
+          key={SidebarMenuItemKeys.SignOut}
           textValue={t("signOut")}
           title={t("signOut")}
           startContent={
