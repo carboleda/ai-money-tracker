@@ -21,6 +21,7 @@ const keyLabel = new Map(
 
 interface SidebarMenuItemsProps {
   user?: User;
+  onItemClick?: (key: Key) => void;
 }
 
 interface IconWrapperProps {
@@ -45,7 +46,10 @@ export const IconWrapper = ({ children, className }: IconWrapperProps) => (
   </div>
 );
 
-export const SidebarMenuItems: React.FC<SidebarMenuItemsProps> = ({ user }) => {
+export const SidebarMenuItems: React.FC<SidebarMenuItemsProps> = ({
+  user,
+  onItemClick,
+}) => {
   const pathname = usePathname();
   const { t } = useTranslation(LocaleNamespace.Login);
   const router = useRouter();
@@ -74,6 +78,8 @@ export const SidebarMenuItems: React.FC<SidebarMenuItemsProps> = ({ user }) => {
       setDoNotAskAgain(false);
       location.reload();
     }
+
+    onItemClick?.(key);
   };
 
   const onSignOut = async () => {

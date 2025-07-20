@@ -66,7 +66,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ user, children }) => {
               </p>
             </div>
             <ul className="space-y-2 font-medium mt-6">
-              <SidebarMenuItems user={user} />
+              <SidebarMenuItems
+                user={user}
+                onItemClick={() => setSidebarOpen(false)}
+              />
             </ul>
           </div>
         </div>
