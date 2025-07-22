@@ -13,13 +13,14 @@ export const Navbar = () => {
       <div className="flex flex-row justify-between items-center w-full gap-2 mb-4">
         <Button
           isIconOnly
-          aria-label="Like"
+          aria-label="Menu"
           color="default"
+          variant="light"
           radius="sm"
           className="sm:hidden"
           onPress={() => toggleSidebar()}
         >
-          <CiMenuBurger className="text-white size-6" />
+          <CiMenuBurger className="size-6" />
         </Button>
 
         <h1 className="flex w-full page-title">{pageTitle}</h1>

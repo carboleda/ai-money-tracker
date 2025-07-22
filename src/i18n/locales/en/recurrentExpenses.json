@@ -1,7 +1,7 @@
 {
   "management.subtitle": "What you have to pay this month",
   "management.emptyContent": "You're up to date, well done 👏!.",
-  "subtitle": "Configure your recurrent expenses",
+  "subtitle": "Your recurrent expenses",
   "emptyContent": "No recurrent expenses to display.",
   "monthly": "Monthly",
   "biannualAndYearly": "Biannual and Yearly",
