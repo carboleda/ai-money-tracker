@@ -66,7 +66,7 @@ export const BankAccounDropdown: React.FC<BankAccounDropdownProps> = ({
                   {label}{" "}
                   {isRequired && <span className="text-red-600">*</span>}
                 </label>
-                <div>{selectedValue}</div>
+                <div className="text-default-800">{selectedValue}</div>
               </>
             ) : (
               <div>{selectedValue || label}</div>

@@ -12,6 +12,7 @@ import {
 } from "@heroui/dropdown";
 import { HiArrowCircleLeft } from "react-icons/hi";
 import { useTranslation } from "react-i18next";
+import { cn } from "@heroui/theme";
 
 enum RangeList {
   this = "this",
@@ -107,7 +108,9 @@ export const CustomDateRangePicker: React.FC<CustomDateRangePickerProps> = ({
         <Button
           variant="bordered"
           size="md"
-          className="justify-start px-3 rounded-xl text-small"
+          className={cn("justify-start px-3 rounded-xl", {
+            "py-6": showLabel,
+          })}
         >
           {showLabel ? (
             <div className="text-start">
@@ -115,6 +118,7 @@ export const CustomDateRangePicker: React.FC<CustomDateRangePickerProps> = ({
                 {label}{" "}
                 {props.isRequired && <span className="text-red-600">*</span>}
               </label>
+              <div className="text-default-800">{selectedValue}</div>
             </div>
           ) : (
             selectedValue || label

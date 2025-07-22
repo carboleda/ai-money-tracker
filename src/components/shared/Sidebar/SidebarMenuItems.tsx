@@ -14,6 +14,7 @@ import { Listbox, ListboxSection, ListboxItem } from "@heroui/listbox";
 import { signOut } from "firebase/auth";
 import { HiArrowRightEndOnRectangle } from "react-icons/hi2";
 import { FaCircleArrowRight } from "react-icons/fa6";
+import { Chip } from "@heroui/chip";
 
 const keyLabel = new Map(
   siteConfig.pages.map((page) => [page.href, page.label])
@@ -137,7 +138,11 @@ export const SidebarMenuItems: React.FC<SidebarMenuItemsProps> = ({
                 </IconWrapper>
               }
               endContent={
-                page.label === keyLabel.get(pathname) && <FaCircleArrowRight />
+                page.label === keyLabel.get(pathname) && (
+                  <Chip variant="light" color="primary">
+                    <FaCircleArrowRight />
+                  </Chip>
+                )
               }
             >
               {t(page.label)}
