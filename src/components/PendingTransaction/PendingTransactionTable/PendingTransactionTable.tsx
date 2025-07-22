@@ -20,6 +20,7 @@ import { useRenderCell } from "./Columns";
 import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
 import { SearchToolbar } from "@/components/Transactions/SearchToolbar";
+import { useTableHeight } from "@/hooks/useTableHeight";
 
 interface PendingTransactionTableProps {
   isLoading: boolean;
@@ -34,7 +35,8 @@ export const PendingTransactionTable: React.FC<
   const [isOpen, setOpen] = useState(false);
   const [filterValue, setFilterValue] = useState("");
   const { isMutating, deleteTransaction } = useMutateTransaction();
-  const { columns, renderCell } = useRenderCell();
+  const { columns, renderCell, rowHeight } = useRenderCell();
+  const { maxTableHeight } = useTableHeight();
 
   const transactions = useMemo(() => {
     if (!pendingTransactions) return pendingTransactions;
@@ -89,6 +91,9 @@ export const PendingTransactionTable: React.FC<
       <Table
         isStriped
         isCompact
+        isVirtualized
+        maxTableHeight={maxTableHeight}
+        rowHeight={rowHeight}
         aria-label={t("pendingTransactions")}
         topContentPlacement="outside"
         topContent={renderTopContent()}
