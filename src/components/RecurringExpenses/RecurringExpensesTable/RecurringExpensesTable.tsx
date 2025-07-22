@@ -16,17 +16,16 @@ import {
 import { TableSkeleton } from "./TableSkeleton";
 import { Button } from "@heroui/button";
 import { IconEdit } from "@/components/shared/icons";
-import { HiOutlineSearch } from "react-icons/hi";
 import { RecurringExpenseModalForm } from "../RecurringExpenseModalForm/RecurringExpenseModalForm";
 import { useMemo, useState } from "react";
 import { DeleteTableItemButton } from "@/components/DeleteTableItemButton";
 import { useMutateRecurringExpenses } from "@/hooks/useMutateRecurrentExpense";
 import { useRenderCell } from "./Columns";
 import { HiOutlinePlusCircle } from "react-icons/hi";
-import { Input } from "@heroui/input";
 import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
 import { useTableHeight } from "@/hooks/useTableHeight";
+import { SearchToolbar } from "@/components/Transactions/SearchToolbar";
 
 interface RecurringExpensesTableProps {
   isLoading: boolean;
@@ -93,28 +92,12 @@ export const RecurringExpensesTable: React.FC<RecurringExpensesTableProps> = ({
     setOpen(true);
   };
 
-  const onSearchChange = (value?: string) => {
-    setFilterValue(value || "");
-  };
-
-  const onClear = () => {
-    setFilterValue("");
-  };
-
   const renderTopContent = () => (
     <div className="flex flex-col gap-4">
       <div className="flex justify-between gap-3 items-center w-full">
-        <Input
-          radius="md"
-          variant="faded"
-          classNames={{ inputWrapper: "py-6" }}
-          className="w-full sm:max-w-[44%]"
-          placeholder={t("searchByDescription")}
-          startContent={<HiOutlineSearch />}
-          value={filterValue}
-          onClear={() => onClear()}
-          onValueChange={onSearchChange}
-          isClearable
+        <SearchToolbar
+          filterValue={filterValue}
+          onSearchChange={setFilterValue}
         />
         <div className="flex w-fit justify-end">
           <Button
