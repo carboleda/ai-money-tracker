@@ -1,10 +1,11 @@
 import "@/styles/globals.css";
 import FcmProvider from "@/components/providers/FcmProvider";
-import { Sidebar } from "@/components/shared/Sidebar";
+import { Sidebar } from "@/components/shared/Sidebar/Sidebar";
 import { firebaseApp } from "@/firebase/client";
 import { getTokens } from "next-firebase-auth-edge";
 import { cookies } from "next/headers";
 import { Env } from "@/config/env";
+import { Navbar } from "@/components/shared/Navbar";
 
 export default async function PrivateLayout({
   children,
@@ -27,7 +28,10 @@ export default async function PrivateLayout({
   return (
     <section>
       <FcmProvider firebaseApp={firebaseApp}>
-        <Sidebar user={user}>{children}</Sidebar>
+        <Sidebar user={user}>
+          <Navbar />
+          {children}
+        </Sidebar>
       </FcmProvider>
     </section>
   );

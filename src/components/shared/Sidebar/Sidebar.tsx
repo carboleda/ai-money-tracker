@@ -1,11 +1,11 @@
 "use client";
 
 import { useIsMobile } from "@/hooks/useIsMobile";
-import { PropsWithChildren, useState } from "react";
+import { PropsWithChildren } from "react";
 import { Image } from "@heroui/image";
 import { siteConfig } from "@/config/site";
 import { SidebarMenuItems } from "./SidebarMenuItems";
-import { CiMenuBurger } from "react-icons/ci";
+import { useAppStore } from "@/stores/useAppStore";
 
 export type User = {
   name?: string;
@@ -18,23 +18,14 @@ interface SidebarProps extends PropsWithChildren {
 
 export const Sidebar: React.FC<SidebarProps> = ({ user, children }) => {
   const isMobile = useIsMobile();
-  const [isSidebarOpen, setSidebarOpen] = useState<boolean>(false);
+  const { isSidebarOpen, setIsSidebarOpen } = useAppStore();
 
   const toggleSidebar = () => {
-    setSidebarOpen(!isSidebarOpen);
+    setIsSidebarOpen(!isSidebarOpen);
   };
 
   return (
     <>
-      <button
-        onClick={() => toggleSidebar()}
-        type="button"
-        className="inline-flex items-center p-2 mt-2 ms-3 text-sm text-gray-500 rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
-      >
-        <span className="sr-only">Open sidebar</span>
-        <CiMenuBurger className="text-white size-6" />
-      </button>
-
       {/* Backdrop for mobile sidebar */}
       {isMobile && isSidebarOpen && (
         <div
@@ -68,7 +59,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ user, children }) => {
             <ul className="space-y-2 font-medium mt-6">
               <SidebarMenuItems
                 user={user}
-                onItemClick={() => setSidebarOpen(false)}
+                onItemClick={() => setIsSidebarOpen(false)}
               />
             </ul>
           </div>

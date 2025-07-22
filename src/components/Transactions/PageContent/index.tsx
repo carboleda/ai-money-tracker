@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import useSWR from "swr";
 import {
   GetTransactionsResponse,
@@ -23,9 +23,11 @@ import { CustomDateRangePicker } from "@/components/shared/CustomDateRangePicker
 import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
 import { SearchToolbar } from "@/components/Transactions/SearchToolbar";
+import { useAppStore } from "@/stores/useAppStore";
 
 function PageContent() {
   const { t } = useTranslation(LocaleNamespace.Transactions);
+  const { setPageTitle } = useAppStore();
   const isMobile = useIsMobile();
   const [isOpen, setOpen] = useState(false);
   const [filterValue, setFilterValue] = useState("");
@@ -40,6 +42,10 @@ function PageContent() {
   const { isLoading, data: reesponse } = useSWR<GetTransactionsResponse, Error>(
     `/api/transaction/${TransactionStatus.COMPLETE}/?acc=${selectedAccount}&start=${dateWithinStart}&end=${dateWithinEnd}`
   );
+
+  useEffect(() => {
+    setPageTitle(t("subtitle"));
+  }, [t, setPageTitle]);
 
   const onDialogDismissed = () => {
     setOpen(false);
@@ -67,8 +73,8 @@ function PageContent() {
 
   const renderTopContent = () => (
     <div className="flex flex-col gap-4 w-full">
-      <div className="flex flex-wrap justify-between gap-3 items-end">
-        <div className="flex flex-row justify-items-stretch items-center gap-2 w-full md:w-fit">
+      <div className="flex flex-wrap justify-between gap-3 items-center">
+        <div className="flex flex-row justify-items-stretch gap-2 w-fit md:w-full">
           <SearchToolbar
             filterValue={filterValue}
             onSearchChange={setFilterValue}
@@ -89,16 +95,8 @@ function PageContent() {
             </div>
           </SearchToolbar>
         </div>
-      </div>
-    </div>
-  );
-
-  return (
-    <>
-      <section className="flex flex-col items-center justify-center gap-4">
-        <div className="flex flex-col w-full justify-start items-start gap-2">
-          <div className="flex justify-between items-center w-full">
-            <h1 className="page-title">{t("subtitle")}</h1>
+        <div className="flex w-fit justify-end">
+          <div className="flex justify-between w-full">
             <Button
               color="primary"
               radius="sm"
@@ -109,6 +107,15 @@ function PageContent() {
               <HiOutlinePlusCircle className="text-xl" />
             </Button>
           </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  return (
+    <>
+      <section className="flex flex-col items-center justify-center gap-4">
+        <div className="flex flex-col w-full justify-start items-start gap-2">
           <SummaryPanel
             summary={reesponse?.summary}
             includedKeys={[
