@@ -109,6 +109,8 @@ export const CompleteTransactionModalForm: React.FC<
                 <div className="self-start w-full">
                   <BankAccounDropdown
                     label={t("bankAccount")}
+                    className="w-full"
+                    showLabel
                     isRequired
                     skipDisabled
                     onChange={setSelectedAccount}

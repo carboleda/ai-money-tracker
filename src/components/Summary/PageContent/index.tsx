@@ -84,6 +84,7 @@ function PageContent() {
           variant="bordered"
           granularity="day"
           isRequired
+          showLabel
           value={dateWithin}
           onChange={setDateWithin}
         />

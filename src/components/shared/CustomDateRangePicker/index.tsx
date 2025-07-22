@@ -24,12 +24,15 @@ enum RangeList {
 export interface CustomDateRangePickerProps
   extends Omit<DateRangePickerProps<ZonedDateTime>, "value" | "onChange"> {
   value: RangeValue<ZonedDateTime>;
+  showLabel?: boolean;
   onChange: (value: RangeValue<ZonedDateTime>) => void;
 }
 
 const currentMonthBounds = getMonthBounds(new Date());
 
 export const CustomDateRangePicker: React.FC<CustomDateRangePickerProps> = ({
+  label,
+  showLabel = false,
   ...props
 }) => {
   const { t } = useTranslation();
@@ -77,6 +80,7 @@ export const CustomDateRangePicker: React.FC<CustomDateRangePickerProps> = ({
     return (
       <DateRangePicker
         {...props}
+        label={showLabel ? label : undefined}
         onChange={onDateChange}
         startContent={
           <Button
@@ -103,15 +107,18 @@ export const CustomDateRangePicker: React.FC<CustomDateRangePickerProps> = ({
         <Button
           variant="bordered"
           size="md"
-          className="h-14 w-full md:w-fit justify-start py-6 px-3 rounded-xl"
+          className="justify-start px-3 rounded-xl text-small"
         >
-          <div className="text-start mh-5">
-            <label className="text-xs text-default-600">
-              {props.label}{" "}
-              {props.isRequired && <span className="text-red-600">*</span>}
-            </label>
-            <div>{selectedValue}</div>
-          </div>
+          {showLabel ? (
+            <div className="text-start">
+              <label className="text-xs text-default-600">
+                {label}{" "}
+                {props.isRequired && <span className="text-red-600">*</span>}
+              </label>
+            </div>
+          ) : (
+            selectedValue || label
+          )}
         </Button>
       </DropdownTrigger>
       <DropdownMenu

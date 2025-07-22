@@ -71,46 +71,42 @@ function PageContent() {
     return filteredTransations;
   }, [reesponse?.transactions, filterValue]);
 
-  const renderTopContent = () => (
-    <div className="flex flex-col gap-4 w-full">
-      <div className="flex flex-wrap justify-between gap-3 items-center">
-        <div className="flex flex-row justify-items-stretch gap-2 w-fit md:w-full">
+  const renderTopContent = () => {
+    return (
+      <div className="flex w-full flex-col gap-4">
+        <div className="flex justify-between gap-2 items-center">
           <SearchToolbar
             filterValue={filterValue}
             onSearchChange={setFilterValue}
           >
-            <CustomDateRangePicker
-              label={t("dateRangeFilter")}
-              variant="bordered"
-              granularity="day"
-              isRequired
-              value={dateWithin}
-              onChange={setDateWithin}
-            />
-            <div className="justify-self-end">
+            <div className="flex flex-row gap-2">
+              <CustomDateRangePicker
+                label={t("dateRangeFilter")}
+                variant="bordered"
+                granularity="day"
+                isRequired
+                value={dateWithin}
+                onChange={setDateWithin}
+              />
               <BankAccounDropdown
                 label={t("accountFilter")}
                 onChange={setSelectedAccount}
               />
+              <Button
+                color="primary"
+                radius="sm"
+                variant="solid"
+                isIconOnly
+                onPress={() => setOpen(true)}
+              >
+                <HiOutlinePlusCircle className="text-xl" />
+              </Button>
             </div>
           </SearchToolbar>
         </div>
-        <div className="flex w-fit justify-end">
-          <div className="flex justify-between w-full">
-            <Button
-              color="primary"
-              radius="sm"
-              variant="solid"
-              isIconOnly
-              onPress={() => setOpen(true)}
-            >
-              <HiOutlinePlusCircle className="text-xl" />
-            </Button>
-          </div>
-        </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   return (
     <>
