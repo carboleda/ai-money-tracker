@@ -147,6 +147,7 @@ export const useRenderCell = () => {
   const renderSeparator = isMobile
     ? renderSeparatorMobile
     : renderSeparatorDesktop;
+  const rowHeight = isMobile ? 110 : 50;
 
-  return { columns, renderCell, renderSeparator };
+  return { columns, renderCell, rowHeight, renderSeparator };
 };

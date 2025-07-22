@@ -113,6 +113,7 @@ export const useRenderCell = () => {
 
   const columns = isMobile ? columnsMobile : columnsDesktop;
   const renderCell = isMobile ? renderCellMobile : renderCellDesktop;
+  const rowHeight = isMobile ? 135 : 90;
 
-  return { columns, renderCell };
+  return { columns, renderCell, rowHeight };
 };

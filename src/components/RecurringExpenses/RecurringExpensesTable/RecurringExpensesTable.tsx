@@ -26,6 +26,7 @@ import { HiOutlinePlusCircle } from "react-icons/hi";
 import { Input } from "@heroui/input";
 import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
+import { useTableHeight } from "@/hooks/useTableHeight";
 
 interface RecurringExpensesTableProps {
   isLoading: boolean;
@@ -61,7 +62,8 @@ export const RecurringExpensesTable: React.FC<RecurringExpensesTableProps> = ({
   const [isOpen, setOpen] = useState(false);
   const [filterValue, setFilterValue] = useState("");
   const { isMutating, deleteConfig } = useMutateRecurringExpenses();
-  const { columns, renderCell, renderSeparator } = useRenderCell();
+  const { columns, renderCell, rowHeight, renderSeparator } = useRenderCell();
+  const { maxTableHeight } = useTableHeight();
 
   const transactions = useMemo(() => {
     if (!recurringExpenses) return recurringExpenses;
@@ -136,6 +138,9 @@ export const RecurringExpensesTable: React.FC<RecurringExpensesTableProps> = ({
       <Table
         isStriped
         isCompact
+        isVirtualized
+        maxTableHeight={maxTableHeight}
+        rowHeight={rowHeight}
         aria-label={t("recurrentExpenses")}
         disabledKeys={[FrequencyGroup.Others]}
         topContentPlacement="outside"
