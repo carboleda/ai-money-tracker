@@ -189,7 +189,6 @@ export const useTransactionsSummaryHistoryChart = ({
     legend: {
       listeners: {
         legendItemClick: ({ seriesId, itemId }: AgChartLegendClickEvent) => {
-          console.log(`seriesId: ${seriesId}, itemId: ${itemId}`);
           setLegend(itemId as LegendName);
         },
       },

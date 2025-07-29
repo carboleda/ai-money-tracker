@@ -2,10 +2,9 @@ import "@/styles/globals.css";
 import { Metadata, Viewport } from "next";
 import { siteConfig } from "@/config/site";
 import { fontSans } from "@/config/fonts";
-import { Providers } from "./providers";
-import { Navbar } from "@/components/shared/Navbar";
 import clsx from "clsx";
 import { Footer } from "@/components/shared/Footer";
+import { Providers } from "./providers";
 
 export const metadata: Metadata = {
   title: {
@@ -25,7 +24,7 @@ export const viewport: Viewport = {
   ],
 };
 
-export default async function RootLayout({
+export default async function PrivateLayout({
   children,
 }: {
   children: React.ReactNode;
@@ -55,10 +54,9 @@ export default async function RootLayout({
           fontSans.variable
         )}
       >
-        <Providers themeProps={{ attribute: "class", defaultTheme: "dark" }}>
+        <Providers>
           <div className="relative flex flex-col h-screen">
-            <main className="container mx-auto max-w-7xl px-4 flex-grow">
-              <Navbar />
+            <main className="container mx-auto px-2 md:px-2 flex-grow">
               {children}
             </main>
             <Footer />

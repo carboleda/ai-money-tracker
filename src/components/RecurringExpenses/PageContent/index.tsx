@@ -1,10 +1,9 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import useSWR from "swr";
 import { RecurringExpensesTable } from "@/components/RecurringExpenses";
 import { GetRecurringExpensesResponse } from "@/interfaces/recurringExpense";
-import { withAuth } from "@/app/(ui)/withAuth";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { formatCurrency } from "@/config/utils";
 import { TransactionTypeDecorator } from "@/components/TransactionTypeDecorator";
@@ -12,10 +11,16 @@ import { HiFire } from "react-icons/hi";
 import { HiOutlineCalendar } from "react-icons/hi";
 import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
+import { useAppStore } from "@/stores/useAppStore";
 
-function RecurringExpenses() {
+function PageContent() {
   const isMobile = useIsMobile();
   const { t } = useTranslation(LocaleNamespace.RecurrentExpenses);
+  const { setPageTitle } = useAppStore();
+
+  useEffect(() => {
+    setPageTitle(t("subtitle"));
+  }, [t, setPageTitle]);
 
   const { isLoading, data: reesponse } = useSWR<
     GetRecurringExpensesResponse,
@@ -25,7 +30,6 @@ function RecurringExpenses() {
   return (
     <section className="flex flex-col items-center justify-center gap-4">
       <div className="flex flex-col w-full justify-start items-start gap-2">
-        <h1 className="page-title">{t("subtitle")}</h1>
         <div className="flex flex-wrap gap-2">
           <TransactionTypeDecorator
             color="primary"
@@ -66,4 +70,4 @@ function RecurringExpenses() {
   );
 }
 
-export default withAuth(RecurringExpenses);
+export default PageContent;

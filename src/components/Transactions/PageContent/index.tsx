@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import useSWR from "swr";
 import {
   GetTransactionsResponse,
@@ -16,7 +16,6 @@ import { parseAbsoluteToLocal, ZonedDateTime } from "@internationalized/date";
 import { RangeValue } from "@react-types/shared";
 import { getMonthBounds } from "@/config/utils";
 import { SummaryPanel } from "@/components/SummaryPanel";
-import { withAuth } from "@/app/(ui)/withAuth";
 import { HiOutlinePlusCircle } from "react-icons/hi";
 import { Button } from "@heroui/button";
 import { useIsMobile } from "@/hooks/useIsMobile";
@@ -24,9 +23,11 @@ import { CustomDateRangePicker } from "@/components/shared/CustomDateRangePicker
 import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
 import { SearchToolbar } from "@/components/Transactions/SearchToolbar";
+import { useAppStore } from "@/stores/useAppStore";
 
-function Transactions() {
+function PageContent() {
   const { t } = useTranslation(LocaleNamespace.Transactions);
+  const { setPageTitle } = useAppStore();
   const isMobile = useIsMobile();
   const [isOpen, setOpen] = useState(false);
   const [filterValue, setFilterValue] = useState("");
@@ -41,6 +42,10 @@ function Transactions() {
   const { isLoading, data: reesponse } = useSWR<GetTransactionsResponse, Error>(
     `/api/transaction/${TransactionStatus.COMPLETE}/?acc=${selectedAccount}&start=${dateWithinStart}&end=${dateWithinEnd}`
   );
+
+  useEffect(() => {
+    setPageTitle(t("subtitle"));
+  }, [t, setPageTitle]);
 
   const onDialogDismissed = () => {
     setOpen(false);
@@ -66,50 +71,47 @@ function Transactions() {
     return filteredTransations;
   }, [reesponse?.transactions, filterValue]);
 
-  const renderTopContent = () => (
-    <div className="flex flex-col gap-4 w-full">
-      <div className="flex flex-wrap justify-between gap-3 items-end">
-        <div className="flex flex-row justify-items-stretch items-center gap-2 w-full md:w-fit">
+  const renderTopContent = () => {
+    return (
+      <div className="flex w-full flex-col gap-4">
+        <div className="flex justify-between gap-2 items-center">
           <SearchToolbar
             filterValue={filterValue}
             onSearchChange={setFilterValue}
           >
-            <CustomDateRangePicker
-              label={t("dateRangeFilter")}
-              variant="bordered"
-              granularity="day"
-              isRequired
-              value={dateWithin}
-              onChange={setDateWithin}
-            />
-            <div className="justify-self-end">
+            <div className="flex flex-row gap-2">
+              <CustomDateRangePicker
+                label={t("dateRangeFilter")}
+                variant="bordered"
+                granularity="day"
+                isRequired
+                value={dateWithin}
+                onChange={setDateWithin}
+              />
               <BankAccounDropdown
                 label={t("accountFilter")}
                 onChange={setSelectedAccount}
               />
+              <Button
+                color="primary"
+                radius="sm"
+                variant="solid"
+                isIconOnly
+                onPress={() => setOpen(true)}
+              >
+                <HiOutlinePlusCircle className="text-xl" />
+              </Button>
             </div>
           </SearchToolbar>
         </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   return (
     <>
       <section className="flex flex-col items-center justify-center gap-4">
         <div className="flex flex-col w-full justify-start items-start gap-2">
-          <div className="flex justify-between items-center w-full">
-            <h1 className="page-title">{t("subtitle")}</h1>
-            <Button
-              color="primary"
-              radius="sm"
-              variant="solid"
-              isIconOnly
-              onPress={() => setOpen(true)}
-            >
-              <HiOutlinePlusCircle className="text-xl" />
-            </Button>
-          </div>
           <SummaryPanel
             summary={reesponse?.summary}
             includedKeys={[
@@ -131,4 +133,4 @@ function Transactions() {
   );
 }
 
-export default withAuth(Transactions);
+export default PageContent;

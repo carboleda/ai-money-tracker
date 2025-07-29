@@ -7,12 +7,15 @@ import {
 } from "@heroui/dropdown";
 import { Button } from "@heroui/button";
 import { getAccountList, getAccountName } from "@/config/utils";
+import { cn } from "@heroui/theme";
 
 interface BankAccounDropdownProps {
   label?: string;
   value?: string;
   isRequired?: boolean;
   skipDisabled?: boolean;
+  showLabel?: boolean;
+  className?: string;
   onChange: (accountKey: string) => void;
 }
 
@@ -21,6 +24,8 @@ export const BankAccounDropdown: React.FC<BankAccounDropdownProps> = ({
   value,
   isRequired = false,
   skipDisabled = false,
+  showLabel = false,
+  className,
   onChange,
 }) => {
   const [selectedKeys, setSelectedKeys] = useState(new Set<string>([]));
@@ -50,13 +55,22 @@ export const BankAccounDropdown: React.FC<BankAccounDropdownProps> = ({
         <Button
           variant="bordered"
           size="md"
-          className="h-14 w-full justify-start py-6 px-3 rounded-xl"
+          className={cn("justify-start px-3 rounded-xl", className, {
+            "py-6": showLabel,
+          })}
         >
           <div className="text-start mh-5">
-            <label className="text-xs text-default-600">
-              {label} {isRequired && <span className="text-red-600">*</span>}
-            </label>
-            <div>{selectedValue}</div>
+            {showLabel ? (
+              <>
+                <label className="text-xs text-default-600">
+                  {label}{" "}
+                  {isRequired && <span className="text-red-600">*</span>}
+                </label>
+                <div className="text-default-800">{selectedValue}</div>
+              </>
+            ) : (
+              <div>{selectedValue || label}</div>
+            )}
           </div>
         </Button>
       </DropdownTrigger>

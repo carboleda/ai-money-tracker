@@ -15,10 +15,11 @@ import { DeleteTableItemButton } from "@/components/DeleteTableItemButton";
 import { useRenderCell } from "./Columns";
 import { Button } from "@heroui/button";
 import { IconEdit } from "@/components/shared/icons";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { UpdateTransactionModalForm } from "@/components/Transactions/UpdateTransactionModalForm";
 import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
+import { useTableHeight } from "@/hooks/useTableHeight";
 
 interface TranactionTableProps {
   isLoading: boolean;
@@ -35,7 +36,8 @@ export const TransactionTable: React.FC<TranactionTableProps> = ({
   const [selectedItem, setSelectedItem] = useState<Transaction>();
   const [isOpen, setOpen] = useState(false);
   const { isMutating, deleteTransaction } = useMutateTransaction();
-  const { columns, renderCell } = useRenderCell();
+  const { columns, renderCell, rowHeight } = useRenderCell();
+  const { maxTableHeight } = useTableHeight();
 
   const onDialogDismissed = () => {
     setSelectedItem(undefined);
@@ -54,6 +56,9 @@ export const TransactionTable: React.FC<TranactionTableProps> = ({
       <Table
         isStriped
         isCompact
+        isVirtualized
+        maxTableHeight={maxTableHeight}
+        rowHeight={rowHeight}
         aria-label={t("subtitle")}
         topContentPlacement="outside"
         topContent={topContent}
@@ -72,7 +77,7 @@ export const TransactionTable: React.FC<TranactionTableProps> = ({
                 if (columnKey === "actions") {
                   return (
                     <TableCell>
-                      <div className="flex flex-row justify-center">
+                      <div className="flex flex-col items-center md:flex-row md:justify-center">
                         <Button
                           isIconOnly
                           color="warning"

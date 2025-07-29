@@ -1,8 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import useSWR from "swr";
-import { withAuth } from "@/app/(ui)/withAuth";
 import { GetSummaryResponse } from "@/interfaces/summary";
 import { getMonthBounds } from "@/config/utils";
 import { CustomDateRangePicker } from "@/components/shared/CustomDateRangePicker";
@@ -16,11 +15,13 @@ import { TransactionsByTypeTitle } from "@/components/Summary/TransactionsByType
 import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
 import { TransactionsSummaryHistoryChart } from "@/components/charts/TransactionsSummaryHistoryChart";
+import { useAppStore } from "@/stores/useAppStore";
 
 const currentMonthBounds = getMonthBounds(new Date());
 
-function Summary() {
+function PageContent() {
   const { t } = useTranslation(LocaleNamespace.Summary);
+  const { setPageTitle } = useAppStore();
   const [dateWithin, setDateWithin] = useState<RangeValue<ZonedDateTime>>({
     start: parseAbsoluteToLocal(currentMonthBounds.start.toISOString()),
     end: parseAbsoluteToLocal(currentMonthBounds.end.toISOString()),
@@ -30,6 +31,10 @@ function Summary() {
   const { data: response } = useSWR<GetSummaryResponse, Error>(
     `/api/summary?start=${dateWithinStart}&end=${dateWithinEnd}`
   );
+
+  useEffect(() => {
+    setPageTitle(t("subtitle"));
+  }, [t, setPageTitle]);
 
   const tiles = [
     {
@@ -73,15 +78,13 @@ function Summary() {
 
   return (
     <section className="flex flex-col gap-4">
-      <div className="flex flex-col w-full justify-start items-start gap-2">
-        <h1 className="page-title">{t("subtitle")}</h1>
-      </div>
       <div className="flex flex-row justify-items-stretch gap-2 w-full md:w-fit">
         <CustomDateRangePicker
           label={t("dateRangeFilter")}
           variant="bordered"
           granularity="day"
           isRequired
+          showLabel
           value={dateWithin}
           onChange={setDateWithin}
         />
@@ -92,4 +95,4 @@ function Summary() {
   );
 }
 
-export default withAuth(Summary);
+export default PageContent;

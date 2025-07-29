@@ -19,7 +19,6 @@ export const SearchToolbar: React.FC<SearchToolbarProps> = ({
   const { t } = useTranslation(LocaleNamespace.Common);
   const isMobile = useIsMobile();
   const [isInputFocused, setIsInputFocused] = useState(false);
-  const width = isInputFocused ? "w-full" : "w-fit";
 
   const onValueChange = (value: string = "") => {
     onSearchChange(value);
@@ -46,14 +45,14 @@ export const SearchToolbar: React.FC<SearchToolbarProps> = ({
   return (
     <>
       <div
-        className={`${width} h-full flex items-center gap-2`}
+        className="w-fit h-full flex items-center gap-2"
         onBlur={onClickOutside}
       >
         {isMobile && !isInputFocused && (
           <Button
             variant="flat"
             size="md"
-            className="h-14 w-fit md:w-fit justify-start py-6 px-3 rounded-xl"
+            className="w-fit md:w-fit justify-start px-3 rounded-xl"
             onPress={setFocus}
             isIconOnly
           >
@@ -64,7 +63,7 @@ export const SearchToolbar: React.FC<SearchToolbarProps> = ({
           <Input
             radius="md"
             variant="faded"
-            classNames={{ inputWrapper: "py-6" }}
+            classNames={{ inputWrapper: "py-0" }}
             className="w-fit"
             placeholder={t("searchByDescription")}
             startContent={<HiOutlineSearch />}

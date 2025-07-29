@@ -12,6 +12,7 @@ import {
 } from "@heroui/dropdown";
 import { HiArrowCircleLeft } from "react-icons/hi";
 import { useTranslation } from "react-i18next";
+import { cn } from "@heroui/theme";
 
 enum RangeList {
   this = "this",
@@ -24,12 +25,15 @@ enum RangeList {
 export interface CustomDateRangePickerProps
   extends Omit<DateRangePickerProps<ZonedDateTime>, "value" | "onChange"> {
   value: RangeValue<ZonedDateTime>;
+  showLabel?: boolean;
   onChange: (value: RangeValue<ZonedDateTime>) => void;
 }
 
 const currentMonthBounds = getMonthBounds(new Date());
 
 export const CustomDateRangePicker: React.FC<CustomDateRangePickerProps> = ({
+  label,
+  showLabel = false,
   ...props
 }) => {
   const { t } = useTranslation();
@@ -77,6 +81,7 @@ export const CustomDateRangePicker: React.FC<CustomDateRangePickerProps> = ({
     return (
       <DateRangePicker
         {...props}
+        label={showLabel ? label : undefined}
         onChange={onDateChange}
         startContent={
           <Button
@@ -103,15 +108,21 @@ export const CustomDateRangePicker: React.FC<CustomDateRangePickerProps> = ({
         <Button
           variant="bordered"
           size="md"
-          className="h-14 w-full md:w-fit justify-start py-6 px-3 rounded-xl"
+          className={cn("justify-start px-3 rounded-xl", {
+            "py-6": showLabel,
+          })}
         >
-          <div className="text-start mh-5">
-            <label className="text-xs text-default-600">
-              {props.label}{" "}
-              {props.isRequired && <span className="text-red-600">*</span>}
-            </label>
-            <div>{selectedValue}</div>
-          </div>
+          {showLabel ? (
+            <div className="text-start">
+              <label className="text-xs text-default-600">
+                {label}{" "}
+                {props.isRequired && <span className="text-red-600">*</span>}
+              </label>
+              <div className="text-default-800">{selectedValue}</div>
+            </div>
+          ) : (
+            selectedValue || label
+          )}
         </Button>
       </DropdownTrigger>
       <DropdownMenu

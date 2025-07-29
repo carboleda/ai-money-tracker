@@ -33,7 +33,8 @@ function LoginPage() {
         },
       });
 
-      router.push("/");
+      // This forces the navigation to be updated immediately since the actionl redirection happens in the server
+      router.push("/private");
       startTransition(() => {
         // Refresh the current route and fetch new data from the server without
         // losing client-side browser or React state.

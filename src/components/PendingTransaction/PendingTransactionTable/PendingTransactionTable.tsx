@@ -17,10 +17,10 @@ import { CompleteTransactionModalForm } from "../CompleteTransactionModalForm/Co
 import { useCallback, useMemo, useState } from "react";
 import { IconCheckCircle } from "@/components/shared/icons";
 import { useRenderCell } from "./Columns";
-import { Input } from "@heroui/input";
-import { HiOutlineSearch } from "react-icons/hi";
 import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
+import { SearchToolbar } from "@/components/Transactions/SearchToolbar";
+import { useTableHeight } from "@/hooks/useTableHeight";
 
 interface PendingTransactionTableProps {
   isLoading: boolean;
@@ -35,7 +35,8 @@ export const PendingTransactionTable: React.FC<
   const [isOpen, setOpen] = useState(false);
   const [filterValue, setFilterValue] = useState("");
   const { isMutating, deleteTransaction } = useMutateTransaction();
-  const { columns, renderCell } = useRenderCell();
+  const { columns, renderCell, rowHeight } = useRenderCell();
+  const { maxTableHeight } = useTableHeight();
 
   const transactions = useMemo(() => {
     if (!pendingTransactions) return pendingTransactions;
@@ -67,28 +68,12 @@ export const PendingTransactionTable: React.FC<
     setOpen(false);
   }, []);
 
-  const onSearchChange = useCallback((value?: string) => {
-    setFilterValue(value || "");
-  }, []);
-
-  const onClear = useCallback(() => {
-    setFilterValue("");
-  }, []);
-
   const renderTopContent = () => (
     <div className="flex flex-row gap-4">
       <div className="flex justify-between gap-3 items-center w-full">
-        <Input
-          radius="md"
-          variant="faded"
-          classNames={{ inputWrapper: "py-6" }}
-          className="w-full sm:max-w-[44%]"
-          placeholder={t("searchByDescription")}
-          startContent={<HiOutlineSearch />}
-          value={filterValue}
-          onClear={() => onClear()}
-          onValueChange={onSearchChange}
-          isClearable
+        <SearchToolbar
+          filterValue={filterValue}
+          onSearchChange={setFilterValue}
         />
         <span className="w-fit text-end subtitle text-sm">
           {t("pendingTransactionCountMessage", {
@@ -106,6 +91,9 @@ export const PendingTransactionTable: React.FC<
       <Table
         isStriped
         isCompact
+        isVirtualized
+        maxTableHeight={maxTableHeight}
+        rowHeight={rowHeight}
         aria-label={t("pendingTransactions")}
         topContentPlacement="outside"
         topContent={renderTopContent()}
