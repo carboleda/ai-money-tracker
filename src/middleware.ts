@@ -13,6 +13,11 @@ export const config = {
 };
 
 export default async function middleware(request: NextRequest) {
+  // TODO - This is a temporary fix to redirect to the login page when accessing the root path
+  if (request.nextUrl.pathname === "/") {
+    return NextResponse.redirect(new URL("/login", request.url));
+  }
+
   for await (const chain of middlewareChain) {
     const response = await chain(request);
 
