@@ -56,8 +56,10 @@ export const CameraMode: React.FC<CameraModeProps> = ({
       <div className="flex gap-2 self-start w-full">
         <BankAccounDropdown
           label={t("sourceAccount")}
+          className="w-full"
           isRequired
           skipDisabled
+          showLabel
           onChange={setSelectedAccount}
         />
         <Switch

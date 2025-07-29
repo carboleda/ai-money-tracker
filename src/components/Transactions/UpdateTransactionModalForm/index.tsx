@@ -140,18 +140,22 @@ export const UpdateTransactionModalForm: React.FC<UpdateTransactionModalFormProp
                 <div className="flex gap-2">
                   <BankAccounDropdown
                     label="Source account"
+                    className="w-full"
                     onChange={setSourceAccountInput}
                     value={sourceAccountInput}
                     isRequired
                     skipDisabled
+                    showLabel
                   />
                   {item?.type === TransactionType.TRANSFER && (
                     <BankAccounDropdown
                       label="Destination account"
+                      className="w-full"
                       onChange={setDestinationAccountInput}
                       value={destinationAccountInput}
                       isRequired
                       skipDisabled
+                      showLabel
                     />
                   )}
                 </div>

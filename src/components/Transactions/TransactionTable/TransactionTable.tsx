@@ -77,7 +77,7 @@ export const TransactionTable: React.FC<TranactionTableProps> = ({
                 if (columnKey === "actions") {
                   return (
                     <TableCell>
-                      <div className="flex flex-row justify-center">
+                      <div className="flex flex-col items-center md:flex-row md:justify-center">
                         <Button
                           isIconOnly
                           color="warning"
