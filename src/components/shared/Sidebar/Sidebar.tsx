@@ -1,7 +1,6 @@
 "use client";
 
-import { useIsMobile } from "@/hooks/useIsMobile";
-import { PropsWithChildren } from "react";
+import { PropsWithChildren, useEffect, useState } from "react";
 import { Image } from "@heroui/image";
 import { siteConfig } from "@/config/site";
 import { SidebarMenuItems } from "./SidebarMenuItems";
@@ -17,17 +16,21 @@ interface SidebarProps extends PropsWithChildren {
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({ user, children }) => {
-  const isMobile = useIsMobile();
+  const [showSidebar, setShowSidebar] = useState(false);
   const { isSidebarOpen, setIsSidebarOpen } = useAppStore();
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
+  useEffect(() => {
+    setShowSidebar(isSidebarOpen);
+  }, [isSidebarOpen]);
+
   return (
     <>
       {/* Backdrop for mobile sidebar */}
-      {isMobile && isSidebarOpen && (
+      {showSidebar && (
         <div
           className="fixed inset-0 z-30 bg-black bg-opacity-40"
           onClick={toggleSidebar}
@@ -37,16 +40,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ user, children }) => {
       {/* Sidebar with transition */}
       <div
         className={`fixed top-0 left-0 z-40 w-64 h-screen sm:translate-x-0 transition-transform duration-300 ease-in-out
-          ${
-            isMobile
-              ? isSidebarOpen
-                ? "translate-x-0"
-                : "-translate-x-full"
-              : "translate-x-0"
-          }`}
+          ${showSidebar ? "translate-x-0" : "-translate-x-full"}`}
         style={{ willChange: "transform" }}
         aria-label="Sidebar"
-        onClick={isMobile ? (e) => e.stopPropagation() : undefined}
+        onClick={(e) => showSidebar && e.stopPropagation()}
       >
         <div id="default-sidebar" className="w-full h-full">
           <div className="h-full px-3 py-4 overflow-y-auto shadow-xl border-r bg-content1 dark:bg-content2 border-gray-200 dark:border-zinc-700">
@@ -66,7 +63,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ user, children }) => {
         </div>
       </div>
 
-      <div className="p-4 sm:ml-40 sm:-mr-24">{children}</div>
+      {/* <div className="p-4 sm:ml-40 sm:-mr-24">{children}</div> */}
+      <div className="sm:p-4 sm:ml-48 sm:-mr-24 md:ml-60 md:-mr-2 7xl:ml-40 7xl:-mr-24">
+        {children}
+      </div>
     </>
   );
 };

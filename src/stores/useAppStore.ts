@@ -1,8 +1,8 @@
 import { create } from "zustand";
 
 interface AppState {
-  isSidebarOpen?: boolean;
-  pageTitle?: string;
+  isSidebarOpen: boolean;
+  pageTitle: string;
 
   toggleSidebar: () => void;
   setPageTitle: (title: string) => void;

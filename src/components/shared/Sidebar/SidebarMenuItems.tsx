@@ -54,7 +54,7 @@ export const SidebarMenuItems: React.FC<SidebarMenuItemsProps> = ({
   const pathname = usePathname();
   const { t } = useTranslation(LocaleNamespace.Login);
   const router = useRouter();
-  const [_, startTransition] = useTransition();
+  const [, startTransition] = useTransition();
   const [doNotAskAgain, setDoNotAskAgain] = useLocalStorage(
     "doNotAskAgain",
     false

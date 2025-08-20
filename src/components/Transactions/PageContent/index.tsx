@@ -114,6 +114,7 @@ function PageContent() {
         <div className="flex flex-col w-full justify-start items-start gap-2">
           <SummaryPanel
             summary={reesponse?.summary}
+            shortNumber={isMobile}
             includedKeys={[
               "totalBalance",
               ...(!isMobile ? ["totalIncomes" as keyof Summary] : []),

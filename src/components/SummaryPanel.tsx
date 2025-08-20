@@ -31,11 +31,19 @@ const keyValueMapping = {
 interface SummaryPanelProps {
   summary?: Summary;
   includedKeys?: (keyof Summary)[];
+  shortNumber?: boolean;
+}
+
+function renderNumber(value: number, short: boolean): string {
+  return short
+    ? `${formatCurrency(value / 1000, false)}k`
+    : formatCurrency(value);
 }
 
 export const SummaryPanel: React.FC<SummaryPanelProps> = ({
   summary,
   includedKeys,
+  shortNumber = false,
 }) => {
   const isMobile = useIsMobile();
   const keys = (
@@ -65,7 +73,7 @@ export const SummaryPanel: React.FC<SummaryPanelProps> = ({
             radius="sm"
             avatar={icon}
           >
-            {formatCurrency(summary[key])}
+            {renderNumber(summary[key], shortNumber)}
           </Chip>
         );
       })}

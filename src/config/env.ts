@@ -1,9 +1,11 @@
+import { ValidAccount } from "@/interfaces/account";
+
 export class Env {
   // General environment variables
   static ENV_NAME = process.env.ENV_NAME;
   static VALID_ACCOUNTS = JSON.parse(
     process.env.NEXT_PUBLIC_VALID_ACCOUNTS || "{}"
-  ) as Record<string, any>;
+  ) as Record<string, ValidAccount>;
   static RATE_LIMIT_ENABLED = process.env.RATE_LIMIT_ENABLED === "true";
   static CRON_SECRET = process.env.CRON_SECRET;
   static EARLY_REMINDER_DAYS_AHEAD = parseInt(
