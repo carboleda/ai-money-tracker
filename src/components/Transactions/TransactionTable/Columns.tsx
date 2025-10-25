@@ -6,6 +6,7 @@ import { TransactionTypeDecorator } from "@/components/TransactionTypeDecorator"
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { TableColumn } from "@/interfaces/global";
 import dayjs from "dayjs";
+import { JSX } from "react";
 
 const columnsDesktop: TableColumn[] = [
   {

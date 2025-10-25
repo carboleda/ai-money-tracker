@@ -9,6 +9,7 @@ import Link from "next/link";
 import { IconLink } from "@/components/shared/icons";
 import { NotePopover } from "@/components/NotePopover";
 import { DueDateIndicator } from "@/components/shared/DueDateIndicator";
+import { JSX } from "react";
 
 const columnsDesktop: TableColumn[] = [
   {

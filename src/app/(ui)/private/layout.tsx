@@ -12,11 +12,12 @@ export default async function PrivateLayout({
 }: {
   children: React.ReactNode;
 }) {
-  if (!cookies()) {
+  const cookieStore = await cookies();
+  if (!cookieStore.size) {
     return <span>No cookies found</span>;
   }
 
-  const tokens = await getTokens(cookies(), {
+  const tokens = await getTokens(cookieStore, {
     apiKey: Env.FIREBASE_SERVICE_ACCOUNT.apiKey,
     cookieName: "AuthToken",
     cookieSignatureKeys: Env.AUTH_COOKIE_SIGNATURE_KEYS,
