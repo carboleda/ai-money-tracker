@@ -28,7 +28,7 @@ export const CameraMode: React.FC<CameraModeProps> = ({
 }) => {
   const { t } = useTranslation(LocaleNamespace.Transactions);
   const webcamRef = useRef<Webcam>(null);
-  const trackRef = useRef<MediaStreamTrack>();
+  const trackRef = useRef<MediaStreamTrack>(null);
   const [imgSrc, setImgSrc] = useState<string>();
   const [isFlashEnabled, setIsFlashEnabled] = useState<boolean>(false);
 
@@ -107,7 +107,9 @@ export const CameraMode: React.FC<CameraModeProps> = ({
                 .then((photoCapabilities: PhotoCapabilities) => {
                   //todo: check if camera has a torch
                   console.log("photoCapabilities", { photoCapabilities });
-                  if (photoCapabilities?.fillLightMode?.length > 0) {
+                  const fillLightModeCount =
+                    photoCapabilities?.fillLightMode?.length ?? 0;
+                  if (fillLightModeCount > 0) {
                     trackRef.current = track;
                   }
                 });
