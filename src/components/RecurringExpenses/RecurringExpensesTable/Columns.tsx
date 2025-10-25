@@ -5,6 +5,7 @@ import { useIsMobile } from "@/hooks/useIsMobile";
 import { TableColumn } from "@/interfaces/global";
 import { TransactionTypeDecorator } from "@/components/TransactionTypeDecorator";
 import { Frequency, RecurringExpense } from "@/interfaces/recurringExpense";
+import { JSX } from "react";
 
 const columnsDesktop: TableColumn[] = [
   {

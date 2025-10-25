@@ -2,7 +2,11 @@
   "compilerOptions": {
     "target": "ES2020",
     "experimentalDecorators": true,
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -13,7 +17,7 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "jsx": "preserve",
+    "jsx": "react-jsx",
     "incremental": true,
     "plugins": [
       {
@@ -21,9 +25,13 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": [
+        "./src/*"
+      ]
     },
-    "types": ["w3c-image-capture"]
+    "types": [
+      "w3c-image-capture"
+    ]
   },
   "include": [
     "next-env.d.ts",
@@ -31,7 +39,10 @@
     "./src/**/*.tsx",
     ".next/types/**/*.ts",
     "./src/middleware.ts",
-    "./src/instrumentation.ts"
+    "./src/instrumentation.ts",
+    ".next/dev/types/**/*.ts"
   ],
-  "exclude": ["node_modules"]
+  "exclude": [
+    "node_modules"
+  ]
 }

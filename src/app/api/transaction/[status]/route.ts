@@ -7,11 +7,14 @@ import {
 import { FilterTransactionsShareFunctions } from "./functions";
 import { SummaryShareFunctions } from "../../summary/functions";
 
-type GetTransactionsParams = { params: { status: TransactionStatus } };
+type GetTransactionsParams = { status: TransactionStatus };
 
-export async function GET(req: NextRequest, { params }: GetTransactionsParams) {
+export async function GET(
+  req: NextRequest,
+  ctx: RouteContext<"/api/transaction/[status]">
+) {
   const searchParams = req.nextUrl.searchParams;
-  const status = params.status;
+  const { status } = (await ctx.params) as GetTransactionsParams;
   const account = searchParams.get("acc") ?? undefined;
   const startDate = searchParams.get("start");
   const endDate = searchParams.get("end");
@@ -31,7 +34,7 @@ export async function GET(req: NextRequest, { params }: GetTransactionsParams) {
 
   return NextResponse.json({
     transactions: transactions.filter(
-      (transaction) => transaction.status === params.status
+      (transaction) => transaction.status === status
     ),
     summary,
   } as GetTransactionsResponse);

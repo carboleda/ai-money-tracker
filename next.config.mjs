@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   experimental: {
-    instrumentationHook: true,
+    // instrumentationHook is no longer needed in Next.js 16, instrumentation.js is available by default
   },
 };
 

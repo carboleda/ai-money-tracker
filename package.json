@@ -12,7 +12,7 @@
     "dev:localdb": "GENKIT_ENV=dev FIRESTORE_EMULATOR_HOST=127.0.0.1:8080 npm run app:http",
     "build": "node src/config/swEnvBuild.cjs && next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "eslint src --ext .ts,.tsx,.js,.jsx"
   },
   "dependencies": {
     "@genkit-ai/googleai": "^1.12.0",
@@ -43,18 +43,18 @@
     "@react-aria/ssr": "^3.9.5",
     "@react-aria/visually-hidden": "^3.8.15",
     "@types/node": "20.5.7",
-    "@types/react": "18.3.5",
-    "@types/react-dom": "18.3.0",
+    "@types/react": "19.2.2",
+    "@types/react-dom": "19.2.2",
     "@types/w3c-image-capture": "^1.0.10",
     "@upstash/ratelimit": "^1.1.3",
     "@vercel/kv": "^1.0.1",
+    "ag-charts-community": "^12.3.0",
     "ag-charts-react": "^11.0.0",
     "autoprefixer": "10.4.20",
     "clsx": "^2.1.1",
     "dayjs": "^1.11.13",
     "dotenv": "^16.4.5",
-    "eslint": "8.48.0",
-    "eslint-config-next": "14.2.8",
+    "eslint-config-next": "^15.5.6",
     "firebase": "^10.13.1",
     "firebase-admin": "^12.4.0",
     "framer-motion": "12.23.3",
@@ -63,14 +63,14 @@
     "i18next-browser-languagedetector": "^8.0.2",
     "i18next-resources-to-backend": "^1.2.1",
     "lodash": "4.17.21",
-    "next": "^14.2.26",
-    "next-firebase-auth-edge": "1.7.1",
+    "next": "16.0.0",
+    "next-firebase-auth-edge": "^1.11.1",
     "next-themes": "^0.2.1",
     "postcss": "8.4.45",
     "pubsub-js": "^1.9.5",
-    "react": "18.3.1",
+    "react": "19.2.0",
     "react-cookie": "^7.2.2",
-    "react-dom": "18.3.1",
+    "react-dom": "19.2.0",
     "react-i18next": "^15.2.0",
     "react-icons": "^5.3.0",
     "react-number-format": "^5.4.2",
@@ -82,15 +82,20 @@
     "zustand": "5.0.6"
   },
   "devDependencies": {
+    "@eslint/eslintrc": "^3.3.1",
     "@types/lodash": "^4.17.13",
     "@types/pubsub-js": "^1.8.6",
     "concurrently": "^9.1.2",
+    "eslint": "^8.57.1",
     "typescript": "5.5.4"
   },
   "overrides": {
     "undici": "6.21.1",
     "next-firebase-auth-edge": {
-      "cookie": "0.7.0"
-    }
+      "cookie": "0.7.0",
+      "next": "16.0.0"
+    },
+    "@types/react": "19.2.2",
+    "@types/react-dom": "19.2.2"
   }
 }
