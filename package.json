@@ -1,7 +1,7 @@
 {
   "name": "ai-money-tracker",
   "version": "0.0.1",
-  "type_": "module",
+  "type": "module",
   "private": true,
   "scripts": {
     "firebase:start": "firebase emulators:start --project ai-money-tracker",
