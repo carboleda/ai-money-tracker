@@ -12,14 +12,14 @@ import {
   TransactionsSummaryHistoryEntity,
 } from "@/interfaces/account";
 import { Timestamp } from "firebase-admin/firestore";
+import { Env } from "@/config/env";
 
 export class SummaryHistoryService {
   static async saveEntryForLastMonth() {
     const now = new Date();
 
-    // Only run on the 2nd of the month
-    // TODO Define a constant for the day
-    if (now.getDate() !== 2) {
+    // Only run on the SUMMARY_HISTORY_ENTRY_DAY nd day of the month
+    if (now.getDate() !== Env.SUMMARY_HISTORY_ENTRY_DAY) {
       return;
     }
 
