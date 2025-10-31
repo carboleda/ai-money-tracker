@@ -1,5 +1,5 @@
 import { Transaction } from "@/interfaces/transaction";
-import { Button } from "@heroui/button";
+import { Button, ButtonProps } from "@heroui/button";
 import { IconCheckCircle, IconDelete } from "./shared/icons";
 import { useEffect, useState } from "react";
 import { Progress } from "@heroui/progress";
@@ -7,7 +7,7 @@ import { Progress } from "@heroui/progress";
 const CONFIRMATION_TIME = 4000;
 const CONFIRMATION_TICK = 10;
 
-interface DeleteTableItemButtonProps {
+interface DeleteTableItemButtonProps extends ButtonProps {
   itemId: string;
   isDisabled?: boolean;
   deleteTableItem: (id: string) => void;
@@ -17,6 +17,7 @@ export const DeleteTableItemButton: React.FC<DeleteTableItemButtonProps> = ({
   itemId,
   isDisabled = false,
   deleteTableItem,
+  ...props
 }) => {
   const [isWaitingConfirmation, setIsWaitingConfirmation] = useState(false);
 
@@ -42,10 +43,12 @@ export const DeleteTableItemButton: React.FC<DeleteTableItemButtonProps> = ({
         isIconOnly
         color="danger"
         variant="light"
-        className="self-center"
+        className="self-center m-0 p-0"
         aria-label="Remove"
+        size="sm"
         disabled={isDisabled}
         onPress={onClick}
+        {...props}
       >
         {isWaitingConfirmation ? <IconCheckCircle /> : <IconDelete />}
       </Button>

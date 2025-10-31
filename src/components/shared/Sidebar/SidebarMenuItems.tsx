@@ -139,7 +139,7 @@ export const SidebarMenuItems: React.FC<SidebarMenuItemsProps> = ({
               }
               endContent={
                 page.label === keyLabel.get(pathname) && (
-                  <Chip variant="light" color="primary">
+                  <Chip variant="light" color="success">
                     <FaCircleArrowRight />
                   </Chip>
                 )

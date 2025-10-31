@@ -15,7 +15,7 @@ import { DeleteTableItemButton } from "@/components/DeleteTableItemButton";
 import { useRenderCell } from "./Columns";
 import { Button } from "@heroui/button";
 import { IconEdit } from "@/components/shared/icons";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { UpdateTransactionModalForm } from "@/components/Transactions/UpdateTransactionModalForm";
 import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
@@ -97,7 +97,13 @@ export const TransactionTable: React.FC<TranactionTableProps> = ({
                     </TableCell>
                   );
                 }
-                return renderCell(columnKey, item);
+
+                return renderCell({
+                  key: columnKey,
+                  item,
+                  onEdit,
+                  onDelete: deleteTransaction,
+                });
               }}
             </TableRow>
           )}

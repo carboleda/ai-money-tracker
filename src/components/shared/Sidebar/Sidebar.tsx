@@ -32,7 +32,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ user, children }) => {
       {/* Backdrop for mobile sidebar */}
       {showSidebar && (
         <div
-          className="fixed inset-0 z-30 bg-black bg-opacity-40"
+          className="fixed inset-0 z-30 bg-black opacity-80"
           onClick={toggleSidebar}
         />
       )}

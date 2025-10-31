@@ -93,7 +93,7 @@ function PageContent() {
                 onChange={setSelectedAccount}
               />
               <Button
-                color="primary"
+                color="success"
                 radius="sm"
                 variant="solid"
                 isIconOnly

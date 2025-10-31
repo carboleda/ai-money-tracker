@@ -101,7 +101,7 @@ export const RecurringExpensesTable: React.FC<RecurringExpensesTableProps> = ({
         />
         <div className="flex w-fit justify-end">
           <Button
-            color="primary"
+            color="success"
             radius="sm"
             variant="solid"
             isIconOnly
