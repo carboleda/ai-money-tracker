@@ -34,7 +34,7 @@
   "disabled": "Deshabilitado",
   "bankAccount": "Cuenta bancaria",
   "notificationsRequest": {
-    "title": "¡Money Tracker quiere mantenerte informado! 🔔",
+    "title": "¡Zolvent quiere mantenerte informado! 🔔",
     "description": "Para proporcionarte alertas y recordatorios en tiempo real sobre tus gastos, ingresos y metas financieras, necesitamos tu permiso para enviar notificaciones push. Esto te ayudará a:",
     "reminderOverduePayments": "Recibir recordatorios de pagos vencidos.",
     "reminderBillsPayments": "Recibir recordatorios oportunos para facturas y pagos.",

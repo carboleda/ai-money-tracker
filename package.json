@@ -1,6 +1,6 @@
 {
-  "name": "ai-money-tracker",
-  "version": "0.0.1",
+  "name": "zolvent",
+  "version": "1.0.0",
   "type": "module",
   "private": true,
   "scripts": {

@@ -45,7 +45,7 @@ export default async function PrivateLayout({
           sizes="180x180"
           href="/favicon/apple-touch-icon.png"
         />
-        <meta name="apple-mobile-web-app-title" content="AI Money Tracker" />
+        <meta name="apple-mobile-web-app-title" content="Zolvent" />
         <link rel="manifest" href="/site.webmanifest" />
       </head>
       <body

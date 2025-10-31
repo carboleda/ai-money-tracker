@@ -1,6 +1,6 @@
 {
-  "name": "AI Money Tracker",
-  "short_name": "AI Money Tracker",
+  "name": "Zolvent",
+  "short_name": "Zolvent",
   "description": "Your personal finance tracker powered by AI",
   "start_url": "/",
   "display": "standalone",
