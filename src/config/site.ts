@@ -41,7 +41,7 @@ export const pages: Page[] = [
 ];
 
 export const siteConfig = {
-  name: "AI Money Tracker",
+  name: "Zolvent",
   description: "Make beautiful websites regardless of your design experience.",
   placeholders: [
     "Ingreso por salario de 2000, C1408",
@@ -58,7 +58,7 @@ export const siteConfig = {
   },
   icons: {
     icon: "/favicon/favicon.ico",
-    logo: "/favicon/favicon-48x48.png",
+    logo: "/zolvent.svg",
     shortcut: "/favicon/favicon-16x16.png",
     apple: "/favicon/apple-touch-icon.png",
   },

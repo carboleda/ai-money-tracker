@@ -34,7 +34,7 @@
   "disabled": "Disabled",
   "bankAccount": "Bank account",
   "notificationsRequest": {
-    "title": "Money Tracker wants to keep you informed! 🔔",
+    "title": "Zolvent wants to keep you informed! 🔔",
     "description": "To provide you with real-time alerts and reminders about your spending, income, and financial goals, we need your permission to send push notifications. This will help you:",
     "reminderOverduePayments": "Receive reminders of overdue payments.",
     "reminderBillsPayments": "Receive timely reminders for bills and payments.",
