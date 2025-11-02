@@ -173,7 +173,12 @@ export const RecurringExpensesTable: React.FC<RecurringExpensesTableProps> = ({
                     );
                   }
 
-                  return renderCell(columnKey, item);
+                  return renderCell({
+                    key: columnKey,
+                    item,
+                    onEdit,
+                    onDelete: deleteConfig,
+                  });
                 }}
               </TableRow>
             );

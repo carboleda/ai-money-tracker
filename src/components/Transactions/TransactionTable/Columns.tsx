@@ -5,19 +5,11 @@ import { Button } from "@heroui/button";
 import { TableCell } from "@heroui/table";
 import { TransactionTypeDecorator } from "@/components/TransactionTypeDecorator";
 import { useIsMobile } from "@/hooks/useIsMobile";
-import { TableColumn } from "@/interfaces/global";
+import { TableColumn, RenderCellProps } from "@/interfaces/global";
 import dayjs from "dayjs";
-import { JSX, Key } from "react";
+import { JSX } from "react";
 import { IconEdit } from "@/components/shared/icons";
 import { DeleteTableItemButton } from "@/components/DeleteTableItemButton";
-
-interface RenderCellProps {
-  key: Key;
-  item: Transaction;
-  onEdit?: (item: Transaction) => void;
-  onDelete?: (id: string) => void;
-  isDeleteDisabled?: boolean;
-}
 
 const columnsDesktop: TableColumn[] = [
   {
@@ -45,7 +37,10 @@ const columnsMobile: TableColumn[] = [
   },
 ];
 
-const renderCellDesktop = ({ key, item }: RenderCellProps): JSX.Element => {
+const renderCellDesktop = ({
+  key,
+  item,
+}: RenderCellProps<Transaction>): JSX.Element => {
   switch (key) {
     case "description":
       return (
@@ -92,13 +87,13 @@ const renderCellMobile = ({
   onEdit,
   onDelete,
   isDeleteDisabled,
-}: RenderCellProps): JSX.Element => {
+}: RenderCellProps<Transaction>): JSX.Element => {
   switch (key) {
     case "transaction":
       return (
         <TableCell>
           <div className="flex flex-col gap-1 py-1">
-            <p className="text-sm font-normal">{item.description}</p>
+            <p className="text-xs font-normal">{item.description}</p>
             <div className="flex flex-row w-full items-center justify-between">
               <div className="flex items-center gap-1 justify-start">
                 <TransactionTypeDecorator type={item.type} size="sm">
@@ -130,7 +125,7 @@ const renderCellMobile = ({
                   variant="light"
                   className="self-center"
                   size="sm"
-                  aria-label={"edit"}
+                  aria-label="Edit"
                   onPress={() => onEdit?.(item)}
                 >
                   <IconEdit />

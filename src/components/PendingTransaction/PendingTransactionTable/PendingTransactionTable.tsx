@@ -75,7 +75,7 @@ export const PendingTransactionTable: React.FC<
           filterValue={filterValue}
           onSearchChange={setFilterValue}
         />
-        <span className="w-fit text-end subtitle text-sm">
+        <span className="w-fit text-end text-sm text-default-500">
           {t("pendingTransactionCountMessage", {
             count: transactions?.length || 0,
           })}
@@ -135,7 +135,12 @@ export const PendingTransactionTable: React.FC<
                     </TableCell>
                   );
                 }
-                return renderCell(columnKey, item);
+                return renderCell({
+                  key: columnKey,
+                  item,
+                  onEdit: onConfirm,
+                  onDelete: deleteTransaction,
+                });
               }}
             </TableRow>
           )}

@@ -11,7 +11,7 @@
   "paymentLink": "Payment Link",
   "notes": "Notes",
   "notesPlaceholder": "Enter your notes here",
-  "pendingTransactionCountMessage": "Total {{count}} pending transactions",
+  "pendingTransactionCountMessage": "{{count}} pending",
   "pendingTransactions": "Pending Transactions",
   "completeTransaction": "Complete transaction",
   "paidOn": "Paid on",

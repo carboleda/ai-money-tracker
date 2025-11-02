@@ -11,7 +11,7 @@
   "paymentLink": "Enlace de pago",
   "notes": "Notas",
   "notesPlaceholder": "Ingresa tus notas aquí",
-  "pendingTransactionCountMessage": "Total {{count}} transacciones pendientes",
+  "pendingTransactionCountMessage": "{{count}} pendientes",
   "pendingTransactions": "Transacciones pendientes",
   "completeTransaction": "Completar transacción",
   "paidOn": "Pagado el",

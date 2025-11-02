@@ -1,8 +1,7 @@
-import { Transaction } from "@/interfaces/transaction";
 import { Button, ButtonProps } from "@heroui/button";
-import { IconCheckCircle, IconDelete } from "./shared/icons";
 import { useEffect, useState } from "react";
 import { Progress } from "@heroui/progress";
+import { FaRegCircleCheck, FaRegCircleXmark } from "react-icons/fa6";
 
 const CONFIRMATION_TIME = 4000;
 const CONFIRMATION_TICK = 10;
@@ -50,7 +49,11 @@ export const DeleteTableItemButton: React.FC<DeleteTableItemButtonProps> = ({
         onPress={onClick}
         {...props}
       >
-        {isWaitingConfirmation ? <IconCheckCircle /> : <IconDelete />}
+        {isWaitingConfirmation ? (
+          <FaRegCircleCheck className="text-xl" />
+        ) : (
+          <FaRegCircleXmark className="text-xl" />
+        )}
       </Button>
       {isWaitingConfirmation ? <ProgressBar /> : null}
     </div>

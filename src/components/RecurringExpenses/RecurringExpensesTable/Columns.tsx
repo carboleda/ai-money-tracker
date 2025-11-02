@@ -1,11 +1,14 @@
 import { formatCurrency, formatFrequency } from "@/config/utils";
 import { Chip } from "@heroui/chip";
+import { Button } from "@heroui/button";
 import { TableCell, TableRow } from "@heroui/table";
 import { useIsMobile } from "@/hooks/useIsMobile";
-import { TableColumn } from "@/interfaces/global";
+import { TableColumn, RenderCellProps } from "@/interfaces/global";
 import { TransactionTypeDecorator } from "@/components/TransactionTypeDecorator";
 import { Frequency, RecurringExpense } from "@/interfaces/recurringExpense";
 import { JSX } from "react";
+import { IconEdit } from "@/components/shared/icons";
+import { DeleteTableItemButton } from "@/components/DeleteTableItemButton";
 
 const columnsDesktop: TableColumn[] = [
   {
@@ -31,13 +34,16 @@ const columnsMobile: TableColumn[] = [
     key: "expense",
     className: "uppercase",
   },
-  {
-    key: "actions",
-    className: "uppercase text-center",
-  },
+  // {
+  //   key: "actions",
+  //   className: "uppercase text-center",
+  // },
 ];
 
-const renderCellDesktop = (key: any, item: RecurringExpense): JSX.Element => {
+const renderCellDesktop = ({
+  key,
+  item,
+}: RenderCellProps<RecurringExpense>): JSX.Element => {
   switch (key) {
     case "description":
       return (
@@ -90,32 +96,63 @@ const renderSeparatorDesktop = (
   );
 };
 
-const renderCellMobile = (key: any, item: RecurringExpense): JSX.Element => {
+const renderCellMobile = ({
+  key,
+  item,
+  onEdit,
+  onDelete,
+  isDeleteDisabled,
+}: RenderCellProps<RecurringExpense>): JSX.Element => {
   switch (key) {
     case "expense":
       return (
         <TableCell>
           <div className="flex flex-col items-start gap-2">
-            <span>{item.description}</span>
-            <span className="text-gray-400">
-              {formatFrequency(item.frequency, item.dueDate)}
-            </span>
-            <span>
-              <TransactionTypeDecorator
-                color={
-                  item.frequency === Frequency.Monthly ? "primary" : "secondary"
-                }
-                size="sm"
-                disabled={item.disabled}
-              >
-                {formatCurrency(item.amount)}
-              </TransactionTypeDecorator>
-              {item.category && (
-                <Chip radius="sm" variant="flat" size="sm" className="ml-2">
-                  {item.category}
-                </Chip>
-              )}
-            </span>
+            <p className="text-xs font-normal">{item.description}</p>
+            <div className="flex flex-row w-full items-center justify-between">
+              <span>
+                <TransactionTypeDecorator
+                  color={
+                    item.frequency === Frequency.Monthly
+                      ? "primary"
+                      : "secondary"
+                  }
+                  size="sm"
+                  disabled={item.disabled}
+                >
+                  {formatCurrency(item.amount)}
+                </TransactionTypeDecorator>
+                {item.category && (
+                  <Chip radius="sm" variant="flat" size="sm" className="ml-2">
+                    {item.category}
+                  </Chip>
+                )}
+              </span>
+            </div>
+            <div className="flex items-center justify-between w-full">
+              <span className="text-xs font-light">
+                {formatFrequency(item.frequency, item.dueDate)}
+              </span>
+              <div className="flex flex-row items-center">
+                <Button
+                  isIconOnly
+                  color="warning"
+                  variant="light"
+                  className="self-center"
+                  size="sm"
+                  aria-label="Edit"
+                  onPress={() => onEdit?.(item)}
+                >
+                  <IconEdit />
+                </Button>
+                <DeleteTableItemButton
+                  size="sm"
+                  itemId={item.id}
+                  isDisabled={isDeleteDisabled}
+                  deleteTableItem={onDelete!}
+                />
+              </div>
+            </div>
           </div>
         </TableCell>
       );
