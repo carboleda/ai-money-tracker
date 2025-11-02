@@ -7,13 +7,13 @@ import { useIsMobile } from "@/hooks/useIsMobile";
 import { TableColumn, RenderCellProps } from "@/interfaces/global";
 import { TransactionTypeDecorator } from "@/components/TransactionTypeDecorator";
 import Link from "next/link";
-import { IconCheckCircle } from "@/components/shared/icons";
 import { NotePopover } from "@/components/NotePopover";
 import { DueDateIndicator } from "@/components/shared/DueDateIndicator";
 import { JSX } from "react";
 import { DeleteTableItemButton } from "@/components/DeleteTableItemButton";
 import { GoLinkExternal } from "react-icons/go";
 import { RiExternalLinkLine } from "react-icons/ri";
+import { FaRegCircleCheck } from "react-icons/fa6";
 
 const columnsDesktop: TableColumn[] = [
   {
@@ -147,7 +147,7 @@ const renderCellMobile = ({
                   aria-label="Edit"
                   onPress={() => onConfirm?.(item)}
                 >
-                  <IconCheckCircle />
+                  <FaRegCircleCheck className="text-xl" />
                 </Button>
                 <DeleteTableItemButton
                   size="sm"

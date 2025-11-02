@@ -1,10 +1,8 @@
 import { Button, ButtonProps } from "@heroui/button";
 import { useEffect, useState } from "react";
-import { Progress } from "@heroui/progress";
-import { FaRegCircleCheck, FaRegCircleXmark } from "react-icons/fa6";
+import { FaCircleCheck, FaRegCircleXmark } from "react-icons/fa6";
 
 const CONFIRMATION_TIME = 4000;
-const CONFIRMATION_TICK = 10;
 
 interface DeleteTableItemButtonProps extends ButtonProps {
   itemId: string;
@@ -37,41 +35,25 @@ export const DeleteTableItemButton: React.FC<DeleteTableItemButtonProps> = ({
   };
 
   return (
-    <div className="w-fit my-0 content-center">
-      <Button
-        isIconOnly
-        color="danger"
-        variant="light"
-        className="self-center m-0 p-0"
-        aria-label="Remove"
-        size="sm"
-        disabled={isDisabled}
-        onPress={onClick}
-        {...props}
-      >
-        {isWaitingConfirmation ? (
-          <FaRegCircleCheck className="text-xl" />
-        ) : (
-          <FaRegCircleXmark className="text-xl" />
-        )}
-      </Button>
-      {isWaitingConfirmation ? <ProgressBar /> : null}
-    </div>
+    <Button
+      isIconOnly
+      color="danger"
+      variant="light"
+      className="self-center"
+      aria-label="Remove"
+      size="sm"
+      disabled={isDisabled}
+      onPress={onClick}
+      {...props}
+    >
+      {isWaitingConfirmation ? (
+        <span className="relative flex">
+          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-danger opacity-75"></span>
+          <FaCircleCheck className="text-xl" />
+        </span>
+      ) : (
+        <FaRegCircleXmark className="text-xl" />
+      )}
+    </Button>
   );
 };
-
-function ProgressBar() {
-  const [value, setValue] = useState(0);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setValue((value) => value + CONFIRMATION_TICK);
-    }, CONFIRMATION_TIME / CONFIRMATION_TICK);
-
-    return () => clearInterval(interval);
-  }, []);
-
-  return (
-    <Progress size="sm" color="danger" aria-label="Loading..." value={value} />
-  );
-}

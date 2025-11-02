@@ -15,12 +15,12 @@ import { DeleteTableItemButton } from "../../DeleteTableItemButton";
 import { Button } from "@heroui/button";
 import { CompleteTransactionModalForm } from "../CompleteTransactionModalForm/CompleteTransactionModalForm";
 import { useCallback, useMemo, useState } from "react";
-import { IconCheckCircle } from "@/components/shared/icons";
 import { useRenderCell } from "./Columns";
 import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
 import { SearchToolbar } from "@/components/Transactions/SearchToolbar";
 import { useTableHeight } from "@/hooks/useTableHeight";
+import { FaRegCircleCheck } from "react-icons/fa6";
 
 interface PendingTransactionTableProps {
   isLoading: boolean;
@@ -124,7 +124,7 @@ export const PendingTransactionTable: React.FC<
                           aria-label={t("confirm")}
                           onPress={() => onConfirm(item)}
                         >
-                          <IconCheckCircle />
+                          <FaRegCircleCheck className="text-xl" />
                         </Button>
                         <DeleteTableItemButton
                           itemId={item.id}
