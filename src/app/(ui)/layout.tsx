@@ -5,6 +5,7 @@ import { fontSans } from "@/config/fonts";
 import clsx from "clsx";
 import { Footer } from "@/components/shared/Footer";
 import { Providers } from "./providers";
+import { cookies } from "next/headers";
 
 export const metadata: Metadata = {
   title: {
@@ -24,11 +25,14 @@ export const viewport: Viewport = {
   ],
 };
 
-export default async function PrivateLayout({
+export default async function Layout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const cookieStore = await cookies();
+  const isLoggedIn = cookieStore.has("AuthToken");
+
   return (
     <html suppressHydrationWarning>
       <head>
@@ -56,10 +60,10 @@ export default async function PrivateLayout({
       >
         <Providers>
           <div className="relative flex flex-col h-screen">
-            <main className="container mx-auto px-2 md:px-2 flex-grow">
+            <main className="container mx-auto px-2 md:px-2 grow">
               {children}
             </main>
-            <Footer />
+            {!isLoggedIn && <Footer />}
           </div>
         </Providers>
       </body>

@@ -5,7 +5,8 @@ export const useTableHeight = () => {
 
   useEffect(() => {
     const updateTableHeight = () => {
-      const availableHeight = window.innerHeight - 220; // Adjust 220px as needed for margins, headers, etc.
+      // const availableHeight = window.innerHeight - 220; // Adjust 220px as needed for margins, headers, etc.
+      const availableHeight = window.innerHeight - 170; // Adjust 220px as needed for margins, headers, etc.
       setMaxTableHeight(availableHeight > 0 ? availableHeight : 300);
     };
 
