@@ -4,7 +4,7 @@
   "accountBalance": "Account balance",
   "transactionsByType": "Transactions by type",
   "transactionsByCategory": "Transactions by category",
-  "reccurentVsVariable": "Recurrent vs Variable transactions",
+  "reccurentVsVariable": "Recurring vs Variable transactions",
   "transactionsSummaryHistory": "Transactions summary history",
   "dateRangeFilter": "Filter the summary by date",
   "transactionForCategory": "Transactions for category",

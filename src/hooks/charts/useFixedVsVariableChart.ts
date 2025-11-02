@@ -93,11 +93,11 @@ export const useFixedVsVariableChart = ({
       const series = [...prev.series];
       series[0].data = data?.count?.map((entry) => ({
         ...entry,
-        typeLabel: entry.type === "recurrent" ? "Recurrent" : "Variable",
+        typeLabel: entry.type === "recurrent" ? "Recurring" : "Variable",
       }));
       series[1].data = data?.total?.map((entry) => ({
         ...entry,
-        typeLabel: entry.type === "recurrent" ? "Recurrent" : "Variable",
+        typeLabel: entry.type === "recurrent" ? "Recurring" : "Variable",
       }));
 
       return {
