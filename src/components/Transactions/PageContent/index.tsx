@@ -119,7 +119,7 @@ function PageContent() {
               "totalBalance",
               ...(!isMobile ? ["totalIncomes" as keyof Summary] : []),
               "totalExpenses",
-              "totalPending",
+              "totalTransfers",
             ]}
           />
         </div>
