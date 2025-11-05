@@ -1,6 +1,6 @@
 import "reflect-metadata";
 import { NextRequest, NextResponse } from "next/server";
-import { CalculateSummaryService } from "@/app/api/domain/summary/service/calculate-summary.service";
+import { CalculateSummaryDashboardService } from "@/app/api/domain/summary/service/calculate-summary-dashboard.service";
 import { api } from "@/app/api";
 
 export async function GET(req: NextRequest) {
@@ -8,7 +8,7 @@ export async function GET(req: NextRequest) {
   const startDate = searchParams.get("start");
   const endDate = searchParams.get("end");
 
-  const service = api.resolve(CalculateSummaryService);
+  const service = api.resolve(CalculateSummaryDashboardService);
 
   const summary = await service.execute(
     startDate ? new Date(startDate) : undefined,

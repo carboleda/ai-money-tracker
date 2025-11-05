@@ -1,6 +1,6 @@
 import "reflect-metadata";
 import { container } from "tsyringe";
-import { CalculateSummaryService } from "../calculate-summary.service";
+import { CalculateSummaryDashboardService } from "../calculate-summary-dashboard.service";
 import { FilterTransactionsService } from "../../../transaction/service/filter-transactions.service";
 import { GetAllAccountsService } from "../../../account/service/get-all.service";
 import { GetSummaryHistoryService } from "../get-summary-history.service";
@@ -11,10 +11,10 @@ import { CalculateBalanceService } from "../calculate-balance.service";
 import {
   TransactionStatus,
   TransactionType,
-} from "../../../transaction/model/transaction.model";
+} from "@/app/api/domain/transaction/model/transaction.model";
 
-describe("CalculateSummaryService", () => {
-  let service: CalculateSummaryService;
+describe("CalculateSummaryDashboardService", () => {
+  let service: CalculateSummaryDashboardService;
   let filterTransactionsService: jest.Mocked<FilterTransactionsService>;
   let getAllAccountsService: jest.Mocked<GetAllAccountsService>;
   let getSummaryHistoryService: jest.Mocked<GetSummaryHistoryService>;
@@ -70,7 +70,7 @@ describe("CalculateSummaryService", () => {
       useValue: mockCalculateBalanceService,
     });
 
-    service = testContainer.resolve(CalculateSummaryService);
+    service = testContainer.resolve(CalculateSummaryDashboardService);
     filterTransactionsService = mockFilterTransactionsService;
     getAllAccountsService = mockGetAllAccountsService;
     getSummaryHistoryService = mockGetSummaryHistoryService;

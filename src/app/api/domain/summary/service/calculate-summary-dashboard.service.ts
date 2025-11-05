@@ -10,7 +10,7 @@ import { CalculateBalanceService } from "./calculate-balance.service";
 import { GetSummaryResponseDto } from "../model/summary.dto";
 
 @Injectable()
-export class CalculateSummaryService {
+export class CalculateSummaryDashboardService {
   constructor(
     private readonly filterTransactionsService: FilterTransactionsService,
     private readonly getAllAccountsService: GetAllAccountsService,
