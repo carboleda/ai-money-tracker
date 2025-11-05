@@ -1,0 +1,477 @@
+import "reflect-metadata";
+import { container } from "tsyringe";
+import { PendingTransactionNotificationService } from "../pending-transaction-notification.service";
+import { FilterTransactionsService } from "@/app/api/domain/transaction/service/filter-transactions.service";
+import { GetUserService } from "@/app/api/domain/user/service/get-user.service";
+import { NotificationService } from "../notification.service";
+import {
+  TransactionStatus,
+  TransactionModel,
+  TransactionType,
+} from "@/app/api/domain/transaction/model/transaction.model";
+import { UserModel } from "@/app/api/domain/user/model/user.model";
+
+// Mock the Env module
+jest.mock("@/config/env", () => ({
+  Env: {
+    EARLY_REMINDER_DAYS_AHEAD: 3,
+  },
+}));
+
+describe("PendingTransactionNotificationService", () => {
+  let service: PendingTransactionNotificationService;
+  let filterTransactionsService: jest.Mocked<FilterTransactionsService>;
+  let getUserService: jest.Mocked<GetUserService>;
+  let notificationService: jest.Mocked<NotificationService>;
+
+  beforeEach(() => {
+    // Create a child container for each test
+    const testContainer = container.createChildContainer();
+
+    // Create mocks
+    const mockFilterTransactionsService = {
+      execute: jest.fn(),
+    } as unknown as jest.Mocked<FilterTransactionsService>;
+
+    const mockGetUserService = {
+      execute: jest.fn(),
+    } as unknown as jest.Mocked<GetUserService>;
+
+    const mockNotificationService = {
+      sendBulkNotifications: jest.fn(),
+    } as unknown as jest.Mocked<NotificationService>;
+
+    // Register mocks in the test container
+    testContainer.register(FilterTransactionsService, {
+      useValue: mockFilterTransactionsService,
+    });
+    testContainer.register(GetUserService, {
+      useValue: mockGetUserService,
+    });
+    testContainer.register(NotificationService, {
+      useValue: mockNotificationService,
+    });
+
+    // Resolve the service from the test container
+    service = testContainer.resolve(PendingTransactionNotificationService);
+    filterTransactionsService = mockFilterTransactionsService;
+    getUserService = mockGetUserService;
+    notificationService = mockNotificationService;
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
+    container.clearInstances();
+  });
+
+  describe("execute", () => {
+    it("should return success false when no user found", async () => {
+      // Arrange
+      getUserService.execute.mockResolvedValue(null);
+
+      // Act
+      const result = await service.execute();
+
+      // Assert
+      expect(result).toEqual({ success: false });
+      expect(filterTransactionsService.execute).not.toHaveBeenCalled();
+    });
+
+    it("should return success true when no pending transactions found", async () => {
+      // Arrange
+      const user = new UserModel({ id: "user1", fcmToken: "token1" });
+      getUserService.execute.mockResolvedValue(user);
+      filterTransactionsService.execute.mockResolvedValue([]);
+
+      // Act
+      const result = await service.execute();
+
+      // Assert
+      expect(result).toEqual({
+        success: true,
+        processedTransactions: 0,
+      });
+      expect(filterTransactionsService.execute).toHaveBeenCalledWith({
+        status: TransactionStatus.PENDING,
+      });
+    });
+
+    it("should return success true when no transactions meet notification criteria", async () => {
+      // Arrange
+      const user = new UserModel({ id: "user1", fcmToken: "token1" });
+      const futureDate = new Date();
+      futureDate.setDate(futureDate.getDate() + 10); // 10 days in the future
+
+      const transactions = [
+        new TransactionModel({
+          id: "tx1",
+          description: "Future payment",
+          createdAt: futureDate,
+          status: TransactionStatus.PENDING,
+          type: TransactionType.EXPENSE,
+          sourceAccount: "test-account",
+          amount: 100,
+        }),
+      ];
+
+      getUserService.execute.mockResolvedValue(user);
+      filterTransactionsService.execute.mockResolvedValue(transactions);
+
+      // Act
+      const result = await service.execute();
+
+      // Assert
+      expect(result).toEqual({
+        success: true,
+        processedTransactions: 1,
+      });
+      expect(result).toBeDefined();
+    });
+
+    it("should send notifications for overdue transactions", async () => {
+      // Arrange
+      const user = new UserModel({ id: "user1", fcmToken: "token1" });
+      const pastDate = new Date();
+      pastDate.setDate(pastDate.getDate() - 2); // 2 days ago
+      pastDate.setHours(0, 0, 0, 0);
+
+      const transactions = [
+        new TransactionModel({
+          id: "tx1",
+          description: "Overdue payment",
+          createdAt: pastDate,
+          status: TransactionStatus.PENDING,
+          type: TransactionType.EXPENSE,
+          sourceAccount: "test-account",
+          amount: 100,
+        }),
+      ];
+
+      getUserService.execute.mockResolvedValue(user);
+      filterTransactionsService.execute.mockResolvedValue(transactions);
+      notificationService.sendBulkNotifications.mockResolvedValue({
+        totalSent: 1,
+        successful: 1,
+        failed: 0,
+        results: [{ success: true, messageId: "msg1" }],
+      });
+
+      // Act
+      const result = await service.execute();
+
+      // Assert
+      expect(notificationService.sendBulkNotifications).toHaveBeenCalledWith([
+        {
+          userId: user.id,
+          fcmToken: user.fcmToken,
+          notification: expect.objectContaining({
+            title: "[ACTION REQUIRED]: Payment due",
+            body: "Payment for Overdue payment is due 3 days ago, pay it ASAP.",
+          }),
+        },
+      ]);
+      expect(result).toEqual({
+        processedTransactions: 1,
+        notificationsSent: 1,
+        notificationsFailed: 0,
+        success: true,
+      });
+    });
+
+    it("should send notifications for transactions due today", async () => {
+      // Arrange
+      const user = new UserModel({ id: "user1", fcmToken: "token1" });
+      const now = new Date();
+      // Create a transaction that's clearly due today (slightly in the past to ensure it's <= now)
+      const dueToday = new Date(now.getTime() - 1000); // 1 second ago
+
+      const transactions = [
+        new TransactionModel({
+          id: "tx1",
+          description: "Payment due today",
+          createdAt: dueToday,
+          status: TransactionStatus.PENDING,
+          type: TransactionType.EXPENSE,
+          sourceAccount: "test-account",
+          amount: 100,
+        }),
+      ];
+
+      getUserService.execute.mockResolvedValue(user);
+      filterTransactionsService.execute.mockResolvedValue(transactions);
+      notificationService.sendBulkNotifications.mockResolvedValue({
+        totalSent: 1,
+        successful: 1,
+        failed: 0,
+        results: [{ success: true, messageId: "msg1" }],
+      });
+
+      // Act
+      const result = await service.execute();
+
+      // Assert
+      expect(notificationService.sendBulkNotifications).toHaveBeenCalledWith([
+        {
+          userId: user.id,
+          fcmToken: user.fcmToken,
+          notification: expect.objectContaining({
+            title: "[ACTION REQUIRED]: Payment due",
+            body: expect.stringMatching(
+              /Payment for Payment due today is due (today|1 days ago), pay it ASAP\./
+            ),
+          }),
+        },
+      ]);
+      expect(result).toEqual({
+        processedTransactions: 1,
+        notificationsSent: 1,
+        notificationsFailed: 0,
+        success: true,
+      });
+    });
+
+    it("should send reminder notifications for upcoming transactions", async () => {
+      // Arrange
+      const user = new UserModel({ id: "user1", fcmToken: "token1" });
+      const upcomingDate = new Date();
+      upcomingDate.setDate(upcomingDate.getDate() + 2); // 2 days from now (within early reminder threshold)
+
+      const transactions = [
+        new TransactionModel({
+          id: "tx1",
+          description: "Upcoming payment",
+          createdAt: upcomingDate,
+          status: TransactionStatus.PENDING,
+          type: TransactionType.EXPENSE,
+          sourceAccount: "test-account",
+          amount: 100,
+        }),
+      ];
+
+      getUserService.execute.mockResolvedValue(user);
+      filterTransactionsService.execute.mockResolvedValue(transactions);
+      notificationService.sendBulkNotifications.mockResolvedValue({
+        totalSent: 1,
+        successful: 1,
+        failed: 0,
+        results: [{ success: true, messageId: "msg1" }],
+      });
+
+      // Act
+      const result = await service.execute();
+
+      // Assert
+      expect(notificationService.sendBulkNotifications).toHaveBeenCalledWith([
+        {
+          userId: user.id,
+          fcmToken: user.fcmToken,
+          notification: expect.objectContaining({
+            title: "[REMINDER]: Payment will be due soon",
+            body: expect.stringContaining(
+              "Payment for Upcoming payment is due on"
+            ),
+          }),
+        },
+      ]);
+      expect(result).toEqual({
+        processedTransactions: 1,
+        notificationsSent: 1,
+        notificationsFailed: 0,
+        success: true,
+      });
+    });
+
+    it("should handle notification service failures", async () => {
+      // Arrange
+      const user = new UserModel({ id: "user1", fcmToken: "token1" });
+      const pastDate = new Date();
+      pastDate.setDate(pastDate.getDate() - 1);
+
+      const transactions = [
+        new TransactionModel({
+          id: "tx1",
+          description: "Test payment",
+          createdAt: pastDate,
+          status: TransactionStatus.PENDING,
+          type: TransactionType.EXPENSE,
+          sourceAccount: "test-account",
+          amount: 100,
+        }),
+      ];
+
+      getUserService.execute.mockResolvedValue(user);
+      filterTransactionsService.execute.mockResolvedValue(transactions);
+      notificationService.sendBulkNotifications.mockResolvedValue({
+        totalSent: 1,
+        successful: 0,
+        failed: 1,
+        results: [{ success: false, messageId: "" }],
+      });
+
+      // Act
+      const result = await service.execute();
+
+      // Assert
+      expect(result).toEqual({
+        processedTransactions: 1,
+        notificationsSent: 0,
+        notificationsFailed: 1,
+        success: true,
+      });
+      expect(result).toBeDefined();
+    });
+
+    it("should handle service exceptions", async () => {
+      // Arrange
+      getUserService.execute.mockRejectedValue(new Error("Database error"));
+
+      // Act
+      const result = await service.execute();
+
+      // Assert
+      expect(result).toEqual({ success: false });
+    });
+
+    it("should create overdue notification for past due transaction", async () => {
+      // Arrange
+      const user = new UserModel({ id: "user1", fcmToken: "token1" });
+      const pastDate = new Date();
+      pastDate.setDate(pastDate.getDate() - 1);
+
+      const transactions = [
+        new TransactionModel({
+          id: "tx1",
+          description: "Overdue payment",
+          createdAt: pastDate,
+          status: TransactionStatus.PENDING,
+          type: TransactionType.EXPENSE,
+          sourceAccount: "test-account",
+          amount: 100,
+        }),
+      ];
+
+      getUserService.execute.mockResolvedValue(user);
+      filterTransactionsService.execute.mockResolvedValue(transactions);
+      notificationService.sendBulkNotifications.mockResolvedValue({
+        totalSent: 1,
+        successful: 0,
+        failed: 1,
+        results: [{ success: false, messageId: "" }],
+      });
+
+      // Act
+      await service.execute();
+
+      // Assert
+      expect(notificationService.sendBulkNotifications).toHaveBeenCalledWith([
+        {
+          userId: user.id,
+          fcmToken: user.fcmToken,
+          notification: expect.objectContaining({
+            title: "[ACTION REQUIRED]: Payment due",
+            body: expect.stringContaining(
+              "Payment for Overdue payment is due 1 days ago, pay it ASAP."
+            ),
+            extraData: expect.objectContaining({
+              transactionId: "tx1",
+            }),
+          }),
+        },
+      ]);
+    });
+
+    it("should create due today notification", async () => {
+      // Arrange
+      const user = new UserModel({ id: "user1", fcmToken: "token1" });
+      const now = new Date();
+      const transactions = [
+        new TransactionModel({
+          id: "tx1",
+          description: "Today's payment",
+          createdAt: now,
+          status: TransactionStatus.PENDING,
+          type: TransactionType.EXPENSE,
+          sourceAccount: "test-account",
+          amount: 100,
+        }),
+      ];
+
+      getUserService.execute.mockResolvedValue(user);
+      filterTransactionsService.execute.mockResolvedValue(transactions);
+      notificationService.sendBulkNotifications.mockResolvedValue({
+        totalSent: 1,
+        successful: 0,
+        failed: 1,
+        results: [{ success: false, messageId: "" }],
+      });
+
+      // Act
+      await service.execute();
+
+      // Assert
+      expect(notificationService.sendBulkNotifications).toHaveBeenCalledWith([
+        {
+          userId: user.id,
+          fcmToken: user.fcmToken,
+          notification: expect.objectContaining({
+            title: "[ACTION REQUIRED]: Payment due",
+            body: expect.stringContaining(
+              "Payment for Today's payment is due today, pay it ASAP."
+            ),
+            extraData: expect.objectContaining({
+              transactionId: "tx1",
+            }),
+          }),
+        },
+      ]);
+    });
+
+    it("should create reminder notification for upcoming transaction", async () => {
+      // Arrange
+      const user = new UserModel({ id: "user1", fcmToken: "token1" });
+      const futureDate = new Date();
+      futureDate.setDate(futureDate.getDate() + 2);
+
+      const transactions = [
+        new TransactionModel({
+          id: "tx1",
+          description: "Upcoming payment",
+          createdAt: futureDate,
+          status: TransactionStatus.PENDING,
+          type: TransactionType.EXPENSE,
+          sourceAccount: "test-account",
+          amount: 100,
+        }),
+      ];
+
+      getUserService.execute.mockResolvedValue(user);
+      filterTransactionsService.execute.mockResolvedValue(transactions);
+      notificationService.sendBulkNotifications.mockResolvedValue({
+        totalSent: 1,
+        successful: 0,
+        failed: 1,
+        results: [{ success: false, messageId: "" }],
+      });
+
+      // Act
+      await service.execute();
+
+      // Assert
+      expect(notificationService.sendBulkNotifications).toHaveBeenCalledWith([
+        {
+          userId: user.id,
+          fcmToken: user.fcmToken,
+          notification: expect.objectContaining({
+            title: "[REMINDER]: Payment will be due soon",
+            body: expect.stringContaining(
+              "Payment for Upcoming payment is due on"
+            ),
+            extraData: expect.objectContaining({
+              transactionId: "tx1",
+            }),
+          }),
+        },
+      ]);
+    });
+  });
+});
