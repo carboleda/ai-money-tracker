@@ -12,11 +12,10 @@ import {
   TransactionModel,
 } from "@/app/api/domain/transaction/model/transaction.model";
 import { getMonthBounds, getPreviousMonth } from "@/app/api/helpers/utils";
+import { Env } from "@/config/env";
 
 @Injectable()
 export class CreateMonthlySummaryService implements Service<void, void> {
-  private static readonly RUN_ON_DAY_OF_MONTH = 2;
-
   constructor(
     @InjectRepository(SummaryHistoryModel)
     private readonly summaryHistoryRepository: SummaryHistoryRepository,
@@ -27,7 +26,7 @@ export class CreateMonthlySummaryService implements Service<void, void> {
     const now = new Date();
 
     // Only run on the 2nd of the month
-    if (now.getDate() !== CreateMonthlySummaryService.RUN_ON_DAY_OF_MONTH) {
+    if (now.getDate() !== Env.RUN_ON_DAY_OF_MONTH) {
       return;
     }
 
