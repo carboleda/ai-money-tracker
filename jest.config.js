@@ -1,6 +1,11 @@
 import { createDefaultPreset } from "ts-jest";
 
-const tsJestTransformCfg = createDefaultPreset().transform;
+const tsJestTransformCfg = createDefaultPreset({
+  tsconfig: {
+    emitDecoratorMetadata: true,
+    experimentalDecorators: true,
+  },
+}).transform;
 
 /** @type {import("jest").Config} **/
 export const testEnvironment = "node";
