@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import "reflect-metadata";
 import { RecurrentExpenseFirestoreRepository } from "../recurrent-expense-firestore.repository";
 import {
