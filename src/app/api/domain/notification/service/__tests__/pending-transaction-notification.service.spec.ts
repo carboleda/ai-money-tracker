@@ -334,9 +334,10 @@ describe("PendingTransactionNotificationService", () => {
 
     it("should create overdue notification for past due transaction", async () => {
       // Arrange
+      jest.useFakeTimers().setSystemTime(new Date("2024-01-11T00:00:00Z"));
+
       const user = new UserModel({ id: "user1", fcmToken: "token1" });
-      const pastDate = new Date();
-      pastDate.setDate(pastDate.getDate() - 1);
+      const pastDate = new Date("2024-01-10T00:00:00Z");
 
       const transactions = [
         new TransactionModel({
@@ -378,6 +379,8 @@ describe("PendingTransactionNotificationService", () => {
           }),
         },
       ]);
+
+      jest.useRealTimers();
     });
 
     it("should create due today notification", async () => {
