@@ -1,26 +1,4 @@
-import { Env } from "@/config/env";
-
 export class Utilities {
-  static getAccountName(accountId: string) {
-    for (const [key, data] of Object.entries(Env.VALID_ACCOUNTS)) {
-      if (key === accountId) {
-        return data.label;
-      }
-    }
-
-    return "Unknown";
-  }
-
-  static getAccountId(accountName: string) {
-    for (const [key, data] of Object.entries(Env.VALID_ACCOUNTS)) {
-      if (data.label === accountName) {
-        return key;
-      }
-    }
-
-    return "Unknown";
-  }
-
   static getMissingFieldsInPrompt(inputText: string) {
     const requiredFields = ["amount", "account"];
     const validationRegex =

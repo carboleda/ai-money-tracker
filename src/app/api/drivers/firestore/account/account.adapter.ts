@@ -1,4 +1,3 @@
-import { Utilities } from "@/app/api/helpers/utils";
 import { AccountModel } from "@/app/api/domain/account/model/account.model";
 import { AccountEntity } from "./account.entity";
 
@@ -7,7 +6,6 @@ export class AccountAdapter {
     return {
       ...entity,
       id,
-      account: Utilities.getAccountName(entity.account),
     };
   }
 

@@ -17,14 +17,6 @@ import {
   largeNumbers,
 } from "@/app/api/domain/transaction/service/__tests__/fixtures/transaction.model.fixture";
 
-// Mock the getAccountId utility
-jest.mock("@/config/utils", () => ({
-  getAccountId: jest.fn((accountRef: string) => {
-    // Simple mock implementation - extract ID from a reference format
-    return accountRef.split("/").pop() || accountRef;
-  }),
-}));
-
 describe("CalculateSummaryMetricsService", () => {
   const mockAccounts: AccountModel[] = [];
   let service: CalculateSummaryMetricsService;
@@ -129,7 +121,7 @@ describe("CalculateSummaryMetricsService", () => {
 
       const result = await service.execute(
         [transferWithPrefixedDestination],
-        "account-2"
+        "accounts/account-2"
       );
 
       expect(result.totalTransfers).toBe(500);

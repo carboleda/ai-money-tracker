@@ -8,7 +8,6 @@ import { Service } from "@/app/api/domain/interfaces/service.interface";
 import { SummaryMetricsModel } from "../model/summary-metrics.model";
 import { TransactionType } from "@/interfaces/transaction";
 import { AccountModel } from "@/app/api/domain/account/model/account.model";
-import { getAccountId } from "@/config/utils";
 
 @Injectable()
 export class CalculateSummaryMetricsService
@@ -54,8 +53,7 @@ export class CalculateSummaryMetricsService
           return;
         }
 
-        const accountId = getAccountId(transaction.destinationAccount);
-        if (accountId === account) {
+        if (transaction.destinationAccount === account) {
           totalTransfers += transaction.amount;
           return;
         }

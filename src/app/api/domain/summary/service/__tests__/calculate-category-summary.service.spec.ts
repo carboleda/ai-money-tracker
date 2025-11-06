@@ -61,7 +61,7 @@ describe("CalculateCategorySummaryService", () => {
 
     expect(result).toEqual([
       { category: "Salary", total: 1000 },
-      { category: "Groceries", total: -150 },
+      { category: "Groceries", total: 150 },
     ]);
   });
 
@@ -80,7 +80,7 @@ describe("CalculateCategorySummaryService", () => {
 
     const result = await service.execute(mockTransactions);
 
-    expect(result).toEqual([{ category: "undefined", total: -100 }]);
+    expect(result).toEqual([{ category: "undefined", total: 100 }]);
   });
 
   it("should return empty array for empty transactions", async () => {

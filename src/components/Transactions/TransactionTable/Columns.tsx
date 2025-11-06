@@ -1,4 +1,4 @@
-import { formatCurrency, formatTimeDate } from "@/config/utils";
+import { formatCurrency, formatTimeDate, getAccountName } from "@/config/utils";
 import { Transaction } from "@/interfaces/transaction";
 import { Chip } from "@heroui/chip";
 import { Button } from "@heroui/button";
@@ -48,12 +48,12 @@ const renderCellDesktop = ({
           <div className="flex flex-col items-start gap-1">
             <span className="text-gray-400">{item.description}</span>
             <div>
-              {item.sourceAccount}
+              {getAccountName(item.sourceAccount)}
               <span>
                 {item.destinationAccount && (
                   <span className="mr-2 font-light">
                     {" "}
-                    &#10141; {item.destinationAccount}
+                    &#10141; {getAccountName(item.destinationAccount)}
                   </span>
                 )}
                 {item.category && (

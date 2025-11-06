@@ -21,7 +21,6 @@ import { MaskedCurrencyInput } from "@/components/shared/MaskedCurrencyInput";
 import { useMutateTransaction } from "@/hooks/useMutateTransaction";
 import { Chip } from "@heroui/chip";
 import { BankAccounDropdown } from "@/components/BankAccounsDropdown";
-import { getAccountId } from "@/config/utils";
 
 interface UpdateTransactionModalFormProps {
   item?: Transaction;
@@ -29,11 +28,9 @@ interface UpdateTransactionModalFormProps {
   onDismiss: () => void;
 }
 
-export const UpdateTransactionModalForm: React.FC<UpdateTransactionModalFormProps> = ({
-  item,
-  onDismiss,
-  isOpen,
-}) => {
+export const UpdateTransactionModalForm: React.FC<
+  UpdateTransactionModalFormProps
+> = ({ item, onDismiss, isOpen }) => {
   const { isMutating, updateTransaction } = useMutateTransaction();
   const [validationError, setValidationError] = useState<string>("");
   const [descriptionInput, setDescriptionInput] = useState<string>("");
@@ -50,9 +47,9 @@ export const UpdateTransactionModalForm: React.FC<UpdateTransactionModalFormProp
   useEffect(() => {
     if (item) {
       setDescriptionInput(item.description);
-      setSourceAccountInput(getAccountId(item.sourceAccount) || "");
+      setSourceAccountInput(item.sourceAccount || "");
       item.destinationAccount &&
-        setDestinationAccountInput(getAccountId(item.destinationAccount) || "");
+        setDestinationAccountInput(item.destinationAccount || "");
       setTransactonCategoryInput(item.category as TransactionCategory);
       setCreatedAtInput(
         item.createdAt ? parseAbsoluteToLocal(item.createdAt) : undefined

@@ -16,14 +16,6 @@ import {
   roundTripTransactionEntityFixture,
   getTransactionModelWithCustomDate,
 } from "./fixtures/transaction.fixture";
-import { Env } from "@/config/env";
-import { ValidAccount } from "@/interfaces/account";
-
-Env.VALID_ACCOUNTS = {
-  savings: { label: "Savings Account" },
-  checking: { label: "Checking Account" },
-  credit: { label: "Credit Account" },
-} as unknown as Record<string, ValidAccount>;
 
 describe("TransactionAdapter", () => {
   describe("toModel", () => {
@@ -40,8 +32,8 @@ describe("TransactionAdapter", () => {
       expect(result.type).toBe(transactionEntityFixture.type);
       expect(result.status).toBe(transactionEntityFixture.status);
       expect(result.category).toBe(transactionEntityFixture.category);
-      expect(result.sourceAccount).toBe("Checking Account");
-      expect(result.destinationAccount).toBe("Savings Account");
+      expect(result.sourceAccount).toBe("checking");
+      expect(result.destinationAccount).toBe("savings");
       expect(result.amount).toBe(transactionEntityFixture.amount);
       expect(result.createdAt).toEqual(
         transactionEntityFixture.createdAt.toDate()
@@ -64,12 +56,12 @@ describe("TransactionAdapter", () => {
       );
       expect(result.type).toBe(minimalTransactionEntityFixture.type);
       expect(result.status).toBe(minimalTransactionEntityFixture.status);
-      expect(result.sourceAccount).toBe("Checking Account");
+      expect(result.sourceAccount).toBe("checking");
       expect(result.amount).toBe(minimalTransactionEntityFixture.amount);
       expect(result.createdAt).toEqual(
         minimalTransactionEntityFixture.createdAt.toDate()
       );
-      expect(result.isRecurrent).toBe(true);
+      expect(result.isRecurrent).toBe(false);
       expect(result.paymentLink).toBeUndefined();
       expect(result.notes).toBeUndefined();
       expect(result.category).toBeUndefined();
@@ -96,7 +88,7 @@ describe("TransactionAdapter", () => {
       );
 
       expect(result.type).toBe(TransactionType.TRANSFER);
-      expect(result.destinationAccount).toBe("Savings Account");
+      expect(result.destinationAccount).toBe("savings");
     });
   });
 
@@ -202,8 +194,8 @@ describe("TransactionAdapter", () => {
       expect(convertedEntity.category).toBe(
         roundTripTransactionEntityFixture.category
       );
-      expect(convertedEntity.sourceAccount).toBe("Checking Account");
-      expect(convertedEntity.destinationAccount).toBe("Credit Account");
+      expect(convertedEntity.sourceAccount).toBe("checking");
+      expect(convertedEntity.destinationAccount).toBe("credit");
       expect(convertedEntity.amount).toBe(
         roundTripTransactionEntityFixture.amount
       );

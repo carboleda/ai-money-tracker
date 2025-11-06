@@ -14,8 +14,9 @@ export const transactionEntityFixture: TransactionEntity = {
   category: TransactionCategory.Alimentos,
   sourceAccount: "checking",
   destinationAccount: "savings",
-  amount: 100.50,
+  amount: 100.5,
   createdAt: mockTimestamp,
+  isRecurrent: true,
 };
 
 export const minimalTransactionEntityFixture: TransactionEntity = {
@@ -117,4 +118,4 @@ export const getTransactionModelWithCustomDate = (date: Date): TransactionModel 
     ...transactionModelFixture,
     createdAt: date,
   });
-}; 
+};
