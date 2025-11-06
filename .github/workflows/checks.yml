@@ -34,11 +34,6 @@ jobs:
       - name: Run tests
         run: npm test
 
-      - name: Show coverage summary
-        if: always()
-        run: |
-          cat coverage/lcov-report/index.html | grep -A 20 '<span class="strong">' || echo "Coverage summary not found"
-
   lint:
     runs-on: ubuntu-latest
 
