@@ -13,7 +13,7 @@ export class TransactionAdapter {
       destinationAccount:
         entity.destinationAccount &&
         Utilities.getAccountName(entity.destinationAccount),
-      isRecurrent: !!id,
+      isRecurrent: entity.isRecurrent ?? false,
     });
   }
 

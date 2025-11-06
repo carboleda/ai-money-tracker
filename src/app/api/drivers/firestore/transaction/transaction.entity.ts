@@ -14,6 +14,7 @@ export interface TransactionEntity extends FirebaseFirestore.DocumentData {
   category?: TransactionCategory | string;
   sourceAccount: string;
   destinationAccount?: string;
+  isRecurrent?: boolean;
   amount: number;
   createdAt: Timestamp;
 }

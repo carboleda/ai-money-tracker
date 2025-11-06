@@ -1,3 +1,4 @@
+import { getFirestore } from "firebase-admin/firestore";
 import { Env } from "./config/env";
 
 export async function register() {
@@ -11,6 +12,7 @@ export async function register() {
       initializeApp({
         credential: cert(Env.FIREBASE_SERVICE_ACCOUNT),
       });
+      getFirestore().settings({ ignoreUndefinedProperties: true });
       console.log("Firebase app initialized successfully.");
     }
 
