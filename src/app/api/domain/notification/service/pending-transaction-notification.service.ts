@@ -104,11 +104,12 @@ export class PendingTransactionNotificationService {
   ): NotificationModel {
     const createdAt = transaction.createdAt;
     const daysDifference = Math.abs(this.dateDiffInDays(now, createdAt));
+    const hoursDifference = Math.abs(this.dateDiffInHours(now, createdAt));
 
     if (createdAt <= now) {
       // Overdue payment
       const dueText =
-        daysDifference === 0 ? "today" : `${daysDifference} days ago`;
+        hoursDifference <= 24 ? "today" : `${daysDifference} days ago`;
       return new NotificationModel({
         title: "[ACTION REQUIRED]: Payment due",
         body: `Payment for ${transaction.description} is due ${dueText}, pay it ASAP.`,
@@ -132,7 +133,12 @@ export class PendingTransactionNotificationService {
 
   private dateDiffInDays(date1: Date, date2: Date): number {
     const timeDiff = Math.abs(date2.getTime() - date1.getTime());
-    return Math.ceil(timeDiff / (1000 * 3600 * 24));
+    return Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+  }
+
+  private dateDiffInHours(date1: Date, date2: Date): number {
+    const timeDiff = Math.abs(date2.getTime() - date1.getTime());
+    return Math.floor(timeDiff / (1000 * 60 * 60));
   }
 
   private formatDate(date: Date): string {

@@ -61,6 +61,7 @@ describe("PendingTransactionNotificationService", () => {
 
   afterEach(() => {
     jest.clearAllMocks();
+    jest.useRealTimers();
     container.clearInstances();
   });
 
@@ -98,9 +99,10 @@ describe("PendingTransactionNotificationService", () => {
 
     it("should return success true when no transactions meet notification criteria", async () => {
       // Arrange
+      jest.useFakeTimers().setSystemTime(new Date("2024-01-11T00:00:00Z"));
+
       const user = new UserModel({ id: "user1", fcmToken: "token1" });
-      const futureDate = new Date();
-      futureDate.setDate(futureDate.getDate() + 10); // 10 days in the future
+      const futureDate = new Date("2024-01-21T00:00:00Z"); // 10 days in the future
 
       const transactions = [
         new TransactionModel({
@@ -130,10 +132,10 @@ describe("PendingTransactionNotificationService", () => {
 
     it("should send notifications for overdue transactions", async () => {
       // Arrange
+      jest.useFakeTimers().setSystemTime(new Date("2024-01-13T00:00:00Z"));
+
       const user = new UserModel({ id: "user1", fcmToken: "token1" });
-      const pastDate = new Date();
-      pastDate.setDate(pastDate.getDate() - 2); // 2 days ago
-      pastDate.setHours(0, 0, 0, 0);
+      const pastDate = new Date("2024-01-11T00:00:00Z"); // 2 days ago
 
       const transactions = [
         new TransactionModel({
@@ -166,7 +168,7 @@ describe("PendingTransactionNotificationService", () => {
           fcmToken: user.fcmToken,
           notification: expect.objectContaining({
             title: "[ACTION REQUIRED]: Payment due",
-            body: "Payment for Overdue payment is due 3 days ago, pay it ASAP.",
+            body: "Payment for Overdue payment is due 2 days ago, pay it ASAP.",
           }),
         },
       ]);
@@ -180,10 +182,10 @@ describe("PendingTransactionNotificationService", () => {
 
     it("should send notifications for transactions due today", async () => {
       // Arrange
+      jest.useFakeTimers().setSystemTime(new Date("2024-01-11T12:00:00Z"));
+
       const user = new UserModel({ id: "user1", fcmToken: "token1" });
-      const now = new Date();
-      // Create a transaction that's clearly due today (slightly in the past to ensure it's <= now)
-      const dueToday = new Date(now.getTime() - 1000); // 1 second ago
+      const dueToday = new Date("2024-01-11T01:00:00Z");
 
       const transactions = [
         new TransactionModel({
@@ -217,7 +219,7 @@ describe("PendingTransactionNotificationService", () => {
           notification: expect.objectContaining({
             title: "[ACTION REQUIRED]: Payment due",
             body: expect.stringMatching(
-              /Payment for Payment due today is due (today|1 days ago), pay it ASAP\./
+              /Payment for Payment due today is due (today|0 days ago), pay it ASAP\./
             ),
           }),
         },
@@ -232,9 +234,10 @@ describe("PendingTransactionNotificationService", () => {
 
     it("should send reminder notifications for upcoming transactions", async () => {
       // Arrange
+      jest.useFakeTimers().setSystemTime(new Date("2024-01-11T00:00:00Z"));
+
       const user = new UserModel({ id: "user1", fcmToken: "token1" });
-      const upcomingDate = new Date();
-      upcomingDate.setDate(upcomingDate.getDate() + 2); // 2 days from now (within early reminder threshold)
+      const upcomingDate = new Date("2024-01-13T00:00:00Z"); // 2 days from now (within early reminder threshold)
 
       const transactions = [
         new TransactionModel({
@@ -283,9 +286,10 @@ describe("PendingTransactionNotificationService", () => {
 
     it("should handle notification service failures", async () => {
       // Arrange
+      jest.useFakeTimers().setSystemTime(new Date("2024-01-12T00:00:00Z"));
+
       const user = new UserModel({ id: "user1", fcmToken: "token1" });
-      const pastDate = new Date();
-      pastDate.setDate(pastDate.getDate() - 1);
+      const pastDate = new Date("2024-01-11T00:00:00Z");
 
       const transactions = [
         new TransactionModel({
@@ -334,7 +338,7 @@ describe("PendingTransactionNotificationService", () => {
 
     it("should create overdue notification for past due transaction", async () => {
       // Arrange
-      jest.useFakeTimers().setSystemTime(new Date("2024-01-11T00:00:00Z"));
+      jest.useFakeTimers().setSystemTime(new Date("2024-01-11T01:00:00Z"));
 
       const user = new UserModel({ id: "user1", fcmToken: "token1" });
       const pastDate = new Date("2024-01-10T00:00:00Z");
@@ -379,14 +383,14 @@ describe("PendingTransactionNotificationService", () => {
           }),
         },
       ]);
-
-      jest.useRealTimers();
     });
 
     it("should create due today notification", async () => {
       // Arrange
+      jest.useFakeTimers().setSystemTime(new Date("2024-01-11T00:00:00Z"));
+
       const user = new UserModel({ id: "user1", fcmToken: "token1" });
-      const now = new Date();
+      const now = new Date("2024-01-11T00:00:00Z");
       const transactions = [
         new TransactionModel({
           id: "tx1",
@@ -431,9 +435,10 @@ describe("PendingTransactionNotificationService", () => {
 
     it("should create reminder notification for upcoming transaction", async () => {
       // Arrange
+      jest.useFakeTimers().setSystemTime(new Date("2024-01-11T00:00:00Z"));
+
       const user = new UserModel({ id: "user1", fcmToken: "token1" });
-      const futureDate = new Date();
-      futureDate.setDate(futureDate.getDate() + 2);
+      const futureDate = new Date("2024-01-13T00:00:00Z");
 
       const transactions = [
         new TransactionModel({
