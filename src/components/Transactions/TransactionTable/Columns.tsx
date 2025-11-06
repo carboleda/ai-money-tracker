@@ -46,28 +46,34 @@ const renderCellDesktop = ({
       return (
         <TableCell>
           <div className="flex flex-col items-start gap-1">
-            <span className="text-gray-400">{item.description}</span>
-            <div>
-              {getAccountName(item.sourceAccount)}
-              <span>
+            <span className="font-normal">{item.description}</span>
+            <div className="flex flex-row gap-1 items-center text-md">
+              <span className="flex flex-row gap-1 items-center flex-wrap font-light text-default-600">
+                {getAccountName(item.sourceAccount)}
                 {item.destinationAccount && (
-                  <span className="mr-2 font-light">
-                    {" "}
-                    &#10141; {getAccountName(item.destinationAccount)}
+                  <span className="flex gap-1 font-light whitespace-nowrap">
+                    <span className="hidden lg:inline">&#10141;</span>
+                    {getAccountName(item.destinationAccount)}
                   </span>
                 )}
-                {item.category && (
-                  <Chip radius="sm" variant="flat">
-                    {item.category}
-                  </Chip>
-                )}
               </span>
+              {item.category && (
+                <Chip radius="sm" variant="flat">
+                  {item.category}
+                </Chip>
+              )}
             </div>
           </div>
         </TableCell>
       );
     case "date":
-      return <TableCell>{formatTimeDate(new Date(item.createdAt))}</TableCell>;
+      return (
+        <TableCell>
+          <span className="font-normal">
+            {dayjs(new Date(item.createdAt)).format("MMM D, YYYY hh:mm A")}
+          </span>
+        </TableCell>
+      );
     case "amount":
       return (
         <TableCell className="text-end">
@@ -108,9 +114,13 @@ const renderCellMobile = ({
                 )}
               </div>
               <div className="flex flex-col items-end text-xs">
-                <span className="font-semibold">{item.sourceAccount}</span>
+                <span className="font-semibold">
+                  {getAccountName(item.sourceAccount)}
+                </span>
                 {item.destinationAccount && (
-                  <span className="font-light">{item.destinationAccount}</span>
+                  <span className="font-light">
+                    {getAccountName(item.destinationAccount)}
+                  </span>
                 )}
               </div>
             </div>
