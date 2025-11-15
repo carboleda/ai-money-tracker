@@ -61,6 +61,18 @@ export const CreateTransactionModalForm: React.FC<
 
   const clearError = () => setValidationError("");
 
+  const createProxiedSetter = useCallback(
+    (setter: (...args: any[]) => void) => {
+      return (...args: any[]) => {
+        if (validationError) {
+          clearError();
+        }
+        setter(...args);
+      };
+    },
+    [validationError]
+  );
+
   const validateForm = () => {
     if (isFreeText && !textInput) {
       throw new Error(t("descriptionIsRequired"));
@@ -142,9 +154,9 @@ export const CreateTransactionModalForm: React.FC<
                     className="flex flex-col gap-2"
                   >
                     <FreeTextMode
-                      setText={setTextInput}
+                      setText={createProxiedSetter(setTextInput)}
                       createdAt={createdAtInput}
-                      setCreatedAt={setCreatedAtInput}
+                      setCreatedAt={createProxiedSetter(setCreatedAtInput)}
                     />
                   </Tab>
                   <Tab
@@ -158,8 +170,10 @@ export const CreateTransactionModalForm: React.FC<
                     className="flex flex-col gap-2"
                   >
                     <CameraMode
-                      setPicture={setPicture}
-                      setSelectedAccount={setSelectedAccount}
+                      setPicture={createProxiedSetter(setPicture)}
+                      setSelectedAccount={createProxiedSetter(
+                        setSelectedAccount
+                      )}
                     />
                   </Tab>
                 </Tabs>
@@ -179,7 +193,7 @@ export const CreateTransactionModalForm: React.FC<
                 <Button
                   color="danger"
                   variant="flat"
-                  disabled={areButtonsDisabled}
+                  isDisabled={isMutating}
                   onPress={onClose}
                 >
                   {t("cancel")}
@@ -187,7 +201,7 @@ export const CreateTransactionModalForm: React.FC<
                 <Button
                   color="primary"
                   isLoading={isMutating}
-                  disabled={areButtonsDisabled}
+                  isDisabled={areButtonsDisabled}
                   onPress={onSave}
                 >
                   {t("save")}
