@@ -1,10 +1,14 @@
+import { EventEmitter } from "events";
+
 type EventHandler<T = unknown> = (data: T) => void | Promise<void>;
 
 export class PubSub {
   private static instance: PubSub;
-  private subscribers: Map<string, Set<EventHandler<unknown>>> = new Map();
+  private emitter: EventEmitter;
 
-  private constructor() {}
+  private constructor() {
+    this.emitter = new EventEmitter();
+  }
 
   static getInstance(): PubSub {
     if (!PubSub.instance) {
@@ -14,32 +18,23 @@ export class PubSub {
   }
 
   subscribe<T = unknown>(event: string, handler: EventHandler<T>): () => void {
-    if (!this.subscribers.has(event)) {
-      this.subscribers.set(event, new Set());
-    }
-
-    this.subscribers.get(event)!.add(handler as EventHandler<unknown>);
+    const wrappedHandler = (data: T) => handler(data);
+    this.emitter.on(event, wrappedHandler);
 
     // Return unsubscribe function
     return () => {
-      const handlers = this.subscribers.get(event);
-      if (handlers) {
-        handlers.delete(handler as EventHandler<unknown>);
-        if (handlers.size === 0) {
-          this.subscribers.delete(event);
-        }
-      }
+      this.emitter.off(event, wrappedHandler);
     };
   }
 
   async emit<T = unknown>(event: string, data: T): Promise<void> {
-    const handlers = this.subscribers.get(event);
-    if (!handlers || handlers.size === 0) {
+    const listeners = this.emitter.listeners(event);
+    if (listeners.length === 0) {
       return;
     }
 
-    const promises = Array.from(handlers).map((handler) =>
-      Promise.resolve(handler(data))
+    const promises = listeners.map((listener) =>
+      Promise.resolve((listener as EventHandler<T>)(data))
     );
 
     await Promise.all(promises);
@@ -47,9 +42,9 @@ export class PubSub {
 
   unsubscribeAll(event?: string): void {
     if (event) {
-      this.subscribers.delete(event);
+      this.emitter.removeAllListeners(event);
     } else {
-      this.subscribers.clear();
+      this.emitter.removeAllListeners();
     }
   }
 }
