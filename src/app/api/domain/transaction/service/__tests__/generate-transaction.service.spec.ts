@@ -9,8 +9,17 @@ import {
   TransactionStatus,
 } from "@/app/api/domain/transaction/model/transaction.model";
 import { getRepositoryToken } from "@/app/api/decorators/tsyringe.decorator";
-import { Utilities } from "@/app/api/helpers/utils";
+import * as utils from "@/config/utils";
 import { CreateTransactionService } from "../create-transaction.service";
+
+jest.mock("@/config/utils", () => {
+  const originalModule = jest.requireActual("@/config/utils");
+  return {
+    __esModule: true,
+    ...originalModule,
+    getMissingFieldsInPrompt: jest.fn(originalModule.getMissingFieldsInPrompt),
+  };
+});
 
 // Mock pubsub
 jest.mock("@/app/api/helpers/pubsub", () => ({
@@ -86,7 +95,7 @@ describe("GenerateTransactionService", () => {
       error: "Missing required fields in the prompt: field1, field2",
     });
     jest
-      .spyOn(Utilities, "getMissingFieldsInPrompt")
+      .spyOn(utils, "getMissingFieldsInPrompt")
       .mockReturnValueOnce(["field1", "field2"]);
 
     const rejects = expect(

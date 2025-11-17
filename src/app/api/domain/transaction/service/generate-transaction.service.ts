@@ -3,7 +3,7 @@ import type {
   GenAIService,
   GeneratedTransaction,
 } from "@/app/api/domain/interfaces/generated-transaction.interface";
-import { Utilities } from "@/app/api/helpers/utils";
+import { getMissingFieldsInPrompt } from "@/config/utils";
 import {
   TransactionModel,
   TransactionStatus,
@@ -34,7 +34,7 @@ export class GenerateTransactionService {
     }
 
     if (text) {
-      const missingFields = Utilities.getMissingFieldsInPrompt(text);
+      const missingFields = getMissingFieldsInPrompt(text);
 
       if (missingFields.length > 0) {
         throw new DomainError(
