@@ -37,20 +37,20 @@ describe("CalculateCategorySummaryService", () => {
       }),
       new TransactionModel({
         id: "2",
-        description: "Groceries",
+        description: "Payment",
         type: TransactionType.EXPENSE,
         status: TransactionStatus.COMPLETE,
-        category: "Groceries",
+        category: "Investments",
         sourceAccount: "C1",
-        amount: 100,
+        amount: 200,
         createdAt: new Date(),
       }),
       new TransactionModel({
         id: "3",
-        description: "More groceries",
-        type: TransactionType.EXPENSE,
+        description: "Income",
+        type: TransactionType.INCOME,
         status: TransactionStatus.COMPLETE,
-        category: "Groceries",
+        category: "Investments",
         sourceAccount: "C1",
         amount: 50,
         createdAt: new Date(),
@@ -61,7 +61,7 @@ describe("CalculateCategorySummaryService", () => {
 
     expect(result).toEqual([
       { category: "Salary", total: 1000 },
-      { category: "Groceries", total: 150 },
+      { category: "Investments", total: -150 },
     ]);
   });
 
@@ -80,7 +80,7 @@ describe("CalculateCategorySummaryService", () => {
 
     const result = await service.execute(mockTransactions);
 
-    expect(result).toEqual([{ category: "undefined", total: 100 }]);
+    expect(result).toEqual([{ category: "undefined", total: -100 }]);
   });
 
   it("should return empty array for empty transactions", async () => {
