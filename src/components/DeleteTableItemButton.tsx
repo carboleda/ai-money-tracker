@@ -33,25 +33,6 @@ export const DeleteTableItemButton: React.FC<DeleteTableItemButtonProps> = ({
         });
       },
     });
-    // const toastKey = addToast({
-    //   title: t("deleteConfirmation.title"),
-    //   description: t("deleteConfirmation.description"),
-    //   color: "danger",
-    //   variant: "bordered",
-    //   radius: "lg",
-    //   timeout: CONFIRMATION_TIME,
-    //   shouldShowTimeoutProgress: true,
-    //   endContent: (
-    //     <Button
-    //       size="sm"
-    //       variant="solid"
-    //       color="danger"
-    //       onPress={() => onConfirmDelete(toastKey!)}
-    //     >
-    //       {t("delete")}
-    //     </Button>
-    //   ),
-    // });
   };
 
   return (

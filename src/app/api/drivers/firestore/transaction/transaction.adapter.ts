@@ -13,8 +13,9 @@ export class TransactionAdapter {
   }
 
   static toEntity(model: TransactionModel): TransactionEntity {
+    const { id: _, ...rest } = model;
     return {
-      ...model,
+      ...rest,
       createdAt: Timestamp.fromDate(model.createdAt),
     };
   }

@@ -110,7 +110,6 @@ describe("TransactionAdapter", () => {
       expect(result.createdAt).toEqual(
         Timestamp.fromDate(transactionModelFixture.createdAt)
       );
-      expect(result.id).toBe(transactionModelFixture.id);
       expect(result.isRecurrent).toBe(transactionModelFixture.isRecurrent);
     });
 
@@ -135,7 +134,6 @@ describe("TransactionAdapter", () => {
       expect(result.notes).toBeUndefined();
       expect(result.category).toBeUndefined();
       expect(result.destinationAccount).toBeUndefined();
-      expect(result.id).toBe(minimalTransactionModelFixture.id);
       expect(result.isRecurrent).toBe(
         minimalTransactionModelFixture.isRecurrent
       );
