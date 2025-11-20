@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
 import { useToast } from "@/hooks/useToast";
 
-const CONFIRMATION_TIME = 8000;
+const CONFIRMATION_TIME = 6000;
 
 interface DeleteTableItemButtonProps extends ButtonProps {
   itemId: string;

@@ -44,7 +44,8 @@
     "doNotAskAgain": "Don't ask again"
   },
   "deleteConfirmation": {
-    "title": "Are you sure you want to delete this item?",
-    "description": "This action cannot be undone."
+    "title": "Confirm deletion",
+    "description": "This action cannot be undone.",
+    "confirmButton": "Yes, delete it!"
   }
 }

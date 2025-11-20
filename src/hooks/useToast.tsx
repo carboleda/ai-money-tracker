@@ -35,9 +35,9 @@ export const useToast = (): UseToastReturn => {
   const showConfirmDeleteToast = useCallback(
     ({ onConfirm, ...config }: ToastConfirmConfig) => {
       const toastKey = addToast({
+        ...DEFAULT_TOAST_CONFIG,
         ...config,
         color: "danger",
-        variant: "bordered",
         radius: "lg",
         shouldShowTimeoutProgress: true,
         endContent: (
@@ -45,12 +45,13 @@ export const useToast = (): UseToastReturn => {
             size="sm"
             variant="solid"
             color="danger"
+            aria-label={t("deleteConfirmation.confirmButton")}
             onPress={() => {
               onConfirm();
               closeToast(toastKey!);
             }}
           >
-            {t("delete")}
+            {t("deleteConfirmation.confirmButton")}
           </Button>
         ),
       });

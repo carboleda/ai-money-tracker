@@ -44,7 +44,8 @@
     "doNotAskAgain": "No preguntar de nuevo"
   },
   "deleteConfirmation": {
-    "title": "¿Estás seguro de que deseas eliminar este elemento?",
-    "description": "Esta acción no se puede deshacer."
+    "title": "Confirmar eliminación",
+    "description": "Esta acción no se puede deshacer.",
+    "confirmButton": "Sí, eliminar!"
   }
 }
