@@ -44,6 +44,7 @@ export class ScheduleRecurrentExpenseService {
       await this.createTransactionService.execute({
         type: TransactionType.EXPENSE,
         status: TransactionStatus.PENDING,
+        isRecurrent: true,
         description: recurringExpense.description,
         category: recurringExpense.category,
         amount: recurringExpense.amount,
