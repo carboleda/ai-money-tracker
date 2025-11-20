@@ -1,10 +1,19 @@
 import { inject, injectable, InjectionToken } from "tsyringe";
 import { pubsub } from "@/app/api/helpers/pubsub";
 
+// Create a symbol-based registry to map models to unique tokens
+// This prevents minification issues since symbols are always unique
+const tokenRegistry = new Map<any, symbol>();
+
 export function getRepositoryToken<R>(
   model: new (...args: never[]) => R
-): string {
-  return `${model.name}Repository`;
+): InjectionToken {
+  // Check if we already created a token for this model
+  if (!tokenRegistry.has(model)) {
+    // Create a unique symbol for this model - symbols are never minified
+    tokenRegistry.set(model, Symbol(`${model.name}_Repository`));
+  }
+  return tokenRegistry.get(model)!;
 }
 
 export function InjectRepository<R>(
