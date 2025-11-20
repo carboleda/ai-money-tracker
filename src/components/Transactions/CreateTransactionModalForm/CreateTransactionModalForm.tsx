@@ -19,6 +19,7 @@ import { Tab, Tabs } from "@heroui/tabs";
 import { getMissingFieldsInPrompt } from "@/config/utils";
 import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
+import { useToast } from "@/hooks/useToast";
 
 interface CreateTransactionModalFormProps {
   isOpen: boolean;
@@ -29,6 +30,7 @@ export const CreateTransactionModalForm: React.FC<
   CreateTransactionModalFormProps
 > = ({ onDismiss, isOpen }) => {
   const { t } = useTranslation(LocaleNamespace.Transactions);
+  const { showSuccessToast } = useToast();
   const [validationError, setValidationError] = useState<string>("");
   const [isFreeText, setIsFreeText] = useState<boolean>(true);
   const [textInput, setTextInput] = useState<string>("");
@@ -111,6 +113,9 @@ export const CreateTransactionModalForm: React.FC<
       }
 
       onOpenChangeHandler();
+      showSuccessToast({
+        title: t("transactionCreated"),
+      });
     } catch (error) {
       setValidationError((error as Error).message);
     }

@@ -16,6 +16,7 @@ import { MaskedCurrencyInput } from "@/components/shared/MaskedCurrencyInput";
 import { Chip } from "@heroui/chip";
 import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
+import { useToast } from "@/hooks/useToast";
 
 interface CompleteTransactionModalFormProps {
   item?: Transaction;
@@ -27,6 +28,7 @@ export const CompleteTransactionModalForm: React.FC<
   CompleteTransactionModalFormProps
 > = ({ item, onDismiss, isOpen }) => {
   const { t } = useTranslation(LocaleNamespace.RecurrentExpenses);
+  const { showSuccessToast } = useToast();
   const { isMutating, updateTransaction } = useMutateTransaction();
   const [validationError, setValidationError] = useState<string>("");
   const [selectedAccount, setSelectedAccount] = useState<string>("");
@@ -53,6 +55,7 @@ export const CompleteTransactionModalForm: React.FC<
   };
 
   const clearError = () => setValidationError("");
+
   const onSave = () => {
     if (selectedAccount === "" || !paymentDateInput || amountInput === 0) {
       setValidationError(t("allFieldAreRequired"));
@@ -83,6 +86,9 @@ export const CompleteTransactionModalForm: React.FC<
       .then(() => {
         clearInputs();
         onDismiss();
+        showSuccessToast({
+          title: t("transactionCompleted"),
+        });
       })
       .catch((error) => setValidationError(error));
   };

@@ -1,8 +1,10 @@
 import { Button, ButtonProps } from "@heroui/button";
-import { useEffect, useState } from "react";
-import { FaCircleCheck, FaRegCircleXmark } from "react-icons/fa6";
+import { FaRegCircleXmark } from "react-icons/fa6";
+import { useTranslation } from "react-i18next";
+import { LocaleNamespace } from "@/i18n/namespace";
+import { useToast } from "@/hooks/useToast";
 
-const CONFIRMATION_TIME = 4000;
+const CONFIRMATION_TIME = 8000;
 
 interface DeleteTableItemButtonProps extends ButtonProps {
   itemId: string;
@@ -16,22 +18,40 @@ export const DeleteTableItemButton: React.FC<DeleteTableItemButtonProps> = ({
   deleteTableItem,
   ...props
 }) => {
-  const [isWaitingConfirmation, setIsWaitingConfirmation] = useState(false);
-
-  useEffect(() => {
-    const timeoutId = setTimeout(
-      () => setIsWaitingConfirmation(false),
-      CONFIRMATION_TIME
-    );
-    return () => clearTimeout(timeoutId);
-  }, [isWaitingConfirmation]);
+  const { t } = useTranslation(LocaleNamespace.Common);
+  const { showConfirmDeleteToast, showSuccessToast } = useToast();
 
   const onClick = () => {
-    if (isWaitingConfirmation) {
-      return deleteTableItem(itemId);
-    }
-
-    setIsWaitingConfirmation(true);
+    showConfirmDeleteToast({
+      title: t("deleteConfirmation.title"),
+      description: t("deleteConfirmation.description"),
+      timeout: CONFIRMATION_TIME,
+      onConfirm: () => {
+        deleteTableItem(itemId);
+        showSuccessToast({
+          title: t("itemDeleted"),
+        });
+      },
+    });
+    // const toastKey = addToast({
+    //   title: t("deleteConfirmation.title"),
+    //   description: t("deleteConfirmation.description"),
+    //   color: "danger",
+    //   variant: "bordered",
+    //   radius: "lg",
+    //   timeout: CONFIRMATION_TIME,
+    //   shouldShowTimeoutProgress: true,
+    //   endContent: (
+    //     <Button
+    //       size="sm"
+    //       variant="solid"
+    //       color="danger"
+    //       onPress={() => onConfirmDelete(toastKey!)}
+    //     >
+    //       {t("delete")}
+    //     </Button>
+    //   ),
+    // });
   };
 
   return (
@@ -40,20 +60,13 @@ export const DeleteTableItemButton: React.FC<DeleteTableItemButtonProps> = ({
       color="danger"
       variant="light"
       className="self-center"
-      aria-label="Remove"
+      aria-label={t("delete")}
       size="sm"
       disabled={isDisabled}
       onPress={onClick}
       {...props}
     >
-      {isWaitingConfirmation ? (
-        <span className="relative flex">
-          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-danger opacity-75"></span>
-          <FaCircleCheck className="text-xl" />
-        </span>
-      ) : (
-        <FaRegCircleXmark className="text-xl" />
-      )}
+      <FaRegCircleXmark className="text-xl" />
     </Button>
   );
 };

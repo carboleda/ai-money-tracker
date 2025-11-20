@@ -6,6 +6,7 @@ import { HeroUIProvider } from "@heroui/system";
 import { useRouter } from "next/navigation";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 import { SWRConfig } from "swr";
+import { ToastProvider } from "@heroui/toast";
 import TranslationsProvider from "@/components/providers/TranslationsProvider";
 
 export interface ProvidersProps {
@@ -17,6 +18,7 @@ export function Providers({ children }: ProvidersProps) {
 
   return (
     <HeroUIProvider navigate={router.push}>
+      <ToastProvider />
       <NextThemesProvider attribute="class" defaultTheme="dark">
         <SWRConfig
           value={{

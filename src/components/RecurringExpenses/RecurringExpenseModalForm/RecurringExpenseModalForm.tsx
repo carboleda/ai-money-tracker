@@ -33,6 +33,7 @@ import { LocaleNamespace } from "@/i18n/namespace";
 import { Switch } from "@heroui/switch";
 import { HiMinusSm } from "react-icons/hi";
 import { HiPlusSm } from "react-icons/hi";
+import { useToast } from "@/hooks/useToast";
 
 const fixedMonth = parseAbsoluteToLocal(
   new Date(Env.NEXT_PUBLIC_FIXED_MONTH).toISOString()
@@ -48,6 +49,7 @@ export const RecurringExpenseModalForm: React.FC<
   RecurringExpenseModalFormProps
 > = ({ item, onDismiss, isOpen }) => {
   const { t } = useTranslation(LocaleNamespace.RecurrentExpenses);
+  const { showSuccessToast } = useToast();
   const { isMutating, createConfig, updateConfig } =
     useMutateRecurringExpenses();
   const [validationError, setValidationError] = useState<string>("");
@@ -126,6 +128,8 @@ export const RecurringExpenseModalForm: React.FC<
     }
 
     clearError();
+
+    const isUpdate = !!item?.id;
     const payload: Omit<RecurringExpense, "id"> = {
       description: descriptionInput,
       frequency: frequencyInput,
@@ -136,13 +140,18 @@ export const RecurringExpenseModalForm: React.FC<
       paymentLink: paymentLinkInput,
       notes: notesInput,
     };
-    (item?.id
+    (isUpdate
       ? updateConfig({ id: item.id, ...payload })
       : createConfig(payload)
     )
       .then(() => {
         clearInputs();
         onDismiss();
+        showSuccessToast({
+          title: t(
+            isUpdate ? "recurrentExpenseUpdated" : "recurrentExpenseCreated"
+          ),
+        });
       })
       .catch((error) => setValidationError(error));
   };

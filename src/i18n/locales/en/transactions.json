@@ -4,10 +4,15 @@
   "descriptionIsRequired": "Description is requited. Please fill it out.",
   "descriptionIsInvalid": "Include the {{missinFields, list}} in your prompt!",
   "bankAndAccountAreRquired": "Back account and Picture are requited. Please fill them out.",
+  "requiredFieldsMissing": "There are missing required fields. Please fill them out.",
   "newTransaction": "New Transaction",
+  "updateTransaction": "Update transaction",
   "freeTextMode": "Free text mode",
   "cameraMode": "Camera mode",
   "transactionDate": "Transaction date",
   "sourceAccount": "Source account",
-  "notes": "Notes"
+  "destinationAccount": "Destination account",
+  "notes": "Notes",
+  "transactionCreated": "Transaction created!",
+  "transactionUpdated": "Transaction updated!"
 }
