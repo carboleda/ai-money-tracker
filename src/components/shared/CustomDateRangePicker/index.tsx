@@ -1,3 +1,5 @@
+"use client";
+
 import { DateRangePicker, DateRangePickerProps } from "@heroui/date-picker";
 import { Button } from "@heroui/button";
 import { RangeValue } from "@react-types/shared";

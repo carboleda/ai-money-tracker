@@ -21,7 +21,6 @@ const keyLabel = new Map(
 );
 
 interface SidebarMenuItemsProps {
-  user?: User;
   onItemClick?: (key: Key) => void;
 }
 
@@ -48,7 +47,6 @@ export const IconWrapper = ({ children, className }: IconWrapperProps) => (
 );
 
 export const SidebarMenuItems: React.FC<SidebarMenuItemsProps> = ({
-  user,
   onItemClick,
 }) => {
   const pathname = usePathname();
@@ -110,7 +108,7 @@ export const SidebarMenuItems: React.FC<SidebarMenuItemsProps> = ({
       >
         <ListboxSection showDivider>
           <ListboxItem key={SidebarMenuItemKeys.Avatar} textValue="User Avatar">
-            <UserAvatar user={user} />
+            <UserAvatar />
           </ListboxItem>
           <ListboxItem
             key={SidebarMenuItemKeys.Notifications}

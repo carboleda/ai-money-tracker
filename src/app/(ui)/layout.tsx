@@ -5,7 +5,6 @@ import { fontSans } from "@/config/fonts";
 import clsx from "clsx";
 import { Footer } from "@/components/shared/Footer";
 import { Providers } from "./providers";
-import { cookies } from "next/headers";
 
 export const metadata: Metadata = {
   title: {
@@ -25,14 +24,7 @@ export const viewport: Viewport = {
   ],
 };
 
-export default async function Layout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  const cookieStore = await cookies();
-  const isLoggedIn = cookieStore.has("AuthToken");
-
+export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <html suppressHydrationWarning>
       <head>
@@ -63,7 +55,7 @@ export default async function Layout({
             <main className="container mx-auto px-2 md:px-2 grow">
               {children}
             </main>
-            {!isLoggedIn && <Footer />}
+            <Footer />
           </div>
         </Providers>
       </body>

@@ -1,3 +1,5 @@
+"use client";
+
 import { formatCurrency } from "@/config/utils";
 import { Summary } from "@/interfaces/transaction";
 import { Chip, ChipProps } from "@heroui/chip";

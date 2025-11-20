@@ -1,8 +1,10 @@
 "use client";
 
+import React, { useEffect } from "react";
 import { Env } from "@/config/env";
 import { User } from "@heroui/user";
-import React from "react";
+import { auth } from "@/firebase/client/auth";
+import { a } from "framer-motion/dist/types.d-BJcRxCew";
 
 export type User = {
   email?: string;
@@ -10,11 +12,18 @@ export type User = {
   picture?: string;
 };
 
-interface UserAvatarProps {
-  user?: User;
-}
+export const UserAvatar: React.FC = () => {
+  const [user, setUser] = React.useState<User | null>(null);
+  const authUser = auth.currentUser;
 
-export const UserAvatar: React.FC<UserAvatarProps> = ({ user }) => {
+  useEffect(() => {
+    setUser({
+      name: authUser?.displayName || undefined,
+      picture: authUser?.photoURL || undefined,
+      email: authUser?.email || undefined,
+    });
+  }, [authUser]);
+
   return (
     <User
       avatarProps={{

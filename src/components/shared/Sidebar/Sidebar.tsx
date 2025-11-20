@@ -6,16 +6,9 @@ import { siteConfig } from "@/config/site";
 import { SidebarMenuItems } from "./SidebarMenuItems";
 import { useAppStore } from "@/stores/useAppStore";
 
-export type User = {
-  name?: string;
-  picture?: string;
-};
+interface SidebarProps extends PropsWithChildren {}
 
-interface SidebarProps extends PropsWithChildren {
-  user?: User;
-}
-
-export const Sidebar: React.FC<SidebarProps> = ({ user, children }) => {
+export const Sidebar: React.FC<SidebarProps> = ({ children }) => {
   const [showSidebar, setShowSidebar] = useState(false);
   const { isSidebarOpen, setIsSidebarOpen } = useAppStore();
 
@@ -59,10 +52,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ user, children }) => {
               </p>
             </div>
             <ul className="space-y-2 font-medium mt-6">
-              <SidebarMenuItems
-                user={user}
-                onItemClick={() => setIsSidebarOpen(false)}
-              />
+              <SidebarMenuItems onItemClick={() => setIsSidebarOpen(false)} />
             </ul>
           </div>
         </div>
