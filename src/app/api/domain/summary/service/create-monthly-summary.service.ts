@@ -11,7 +11,7 @@ import {
   TransactionType,
   TransactionModel,
 } from "@/app/api/domain/transaction/model/transaction.model";
-import { getMonthBounds, getPreviousMonth } from "@/app/api/helpers/utils";
+import { getMonthBounds, getPreviousMonth } from "@/config/utils";
 import { Env } from "@/config/env";
 
 @Injectable()

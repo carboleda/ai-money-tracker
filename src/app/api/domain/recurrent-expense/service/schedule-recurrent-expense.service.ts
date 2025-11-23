@@ -8,7 +8,7 @@ import {
   TransactionType,
   TransactionStatus,
 } from "@/app/api/domain/transaction/model/transaction.model";
-import { Utilities } from "@/app/api/helpers/utils";
+import { computeBiannualDates } from "@/config/utils";
 import { Injectable } from "@/app/api/decorators/tsyringe.decorator";
 
 type ScheduleResult = {
@@ -89,7 +89,7 @@ export class ScheduleRecurrentExpenseService {
     }
 
     if (recurringExpense.frequency === Frequency.BIANNUAL) {
-      const dates = Utilities.computeBiannualDates(dueDate);
+      const dates = computeBiannualDates(dueDate);
       const dateIndex = dates.findIndex(
         (date) => date.getMonth() === now.getMonth()
       );
