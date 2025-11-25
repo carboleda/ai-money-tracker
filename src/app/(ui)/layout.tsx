@@ -4,6 +4,7 @@ import { siteConfig } from "@/config/site";
 import { fontSans } from "@/config/fonts";
 import clsx from "clsx";
 import { Providers } from "./providers";
+import { PropsWithChildren } from "react";
 
 export const metadata: Metadata = {
   title: {
@@ -23,7 +24,7 @@ export const viewport: Viewport = {
   ],
 };
 
-export default function Layout({ children }: { children: React.ReactNode }) {
+export default function Layout({ children }: Readonly<PropsWithChildren>) {
   return (
     <html suppressHydrationWarning>
       <head>

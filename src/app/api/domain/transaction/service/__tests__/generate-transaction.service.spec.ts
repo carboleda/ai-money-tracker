@@ -1,8 +1,10 @@
 import "reflect-metadata";
 import { container } from "tsyringe";
-import { GeneratedTransaction } from "@/app/api/domain/interfaces/generated-transaction.interface";
+import {
+  GeneratedTransaction,
+  GenAIService,
+} from "@/app/api/domain/interfaces/generated-transaction.interface";
 import { GenerateTransactionService } from "../generate-transaction.service";
-import { GenAIService } from "@/app/api/domain/interfaces/generated-transaction.interface";
 import { DomainError } from "@/app/api/domain/errors/domain.error";
 import {
   TransactionModel,

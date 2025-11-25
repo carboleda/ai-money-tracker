@@ -1,4 +1,9 @@
-import { TransactionModel, TransactionType, TransactionStatus, TransactionCategory } from "@/app/api/domain/transaction/model/transaction.model";
+import {
+  TransactionModel,
+  TransactionType,
+  TransactionStatus,
+  TransactionCategory,
+} from "@/app/api/domain/transaction/model/transaction.model";
 import { TransactionEntity } from "../../transaction.entity";
 import { Timestamp } from "firebase-admin/firestore";
 
@@ -24,7 +29,7 @@ export const minimalTransactionEntityFixture: TransactionEntity = {
   type: TransactionType.INCOME,
   status: TransactionStatus.PENDING,
   sourceAccount: "checking",
-  amount: 50.00,
+  amount: 50,
   createdAt: mockTimestamp,
 };
 
@@ -34,7 +39,7 @@ export const transferTransactionEntityFixture: TransactionEntity = {
   status: TransactionStatus.COMPLETE,
   sourceAccount: "checking",
   destinationAccount: "savings",
-  amount: 200.00,
+  amount: 200,
   createdAt: mockTimestamp,
 };
 
@@ -58,7 +63,7 @@ export const transactionModelFixture = new TransactionModel({
   category: TransactionCategory.Alimentos,
   sourceAccount: "checking",
   destinationAccount: "savings",
-  amount: 100.50,
+  amount: 100.5,
   createdAt: mockDate,
   isRecurrent: true,
 });
@@ -69,7 +74,7 @@ export const minimalTransactionModelFixture = new TransactionModel({
   type: TransactionType.INCOME,
   status: TransactionStatus.PENDING,
   sourceAccount: "checking",
-  amount: 50.00,
+  amount: 50,
   createdAt: mockDate,
 });
 
@@ -80,7 +85,7 @@ export const transferTransactionModelFixture = new TransactionModel({
   status: TransactionStatus.COMPLETE,
   sourceAccount: "checking",
   destinationAccount: "savings",
-  amount: 200.00,
+  amount: 200,
   createdAt: mockDate,
 });
 
@@ -108,12 +113,16 @@ export const roundTripTransactionEntityFixture: TransactionEntity = {
   createdAt: mockTimestamp,
 };
 
-export const getTransactionEntityWithCustomDate = (date: Date): TransactionEntity => ({
+export const getTransactionEntityWithCustomDate = (
+  date: Date
+): TransactionEntity => ({
   ...transactionEntityFixture,
   createdAt: Timestamp.fromDate(date),
 });
 
-export const getTransactionModelWithCustomDate = (date: Date): TransactionModel => {
+export const getTransactionModelWithCustomDate = (
+  date: Date
+): TransactionModel => {
   return new TransactionModel({
     ...transactionModelFixture,
     createdAt: date,

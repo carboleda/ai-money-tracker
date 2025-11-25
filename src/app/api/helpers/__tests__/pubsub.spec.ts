@@ -316,7 +316,6 @@ describe('PubSub', () => {
 
     it('should support subscriber isolation (instance per test)', () => {
       const newInstance = PubSub.getInstance();
-      const handler = jest.fn();
 
       // Even though we cleared in beforeEach, verify the same instance behavior
       expect(newInstance).toBe(pubsub);

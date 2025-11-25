@@ -4,7 +4,7 @@ import { TransactionOverdueStatus } from "@/interfaces/transaction";
 
 const requiredFields = ["amount", "account"];
 const validationRegex =
-  /(?<amount>\b\d+\b)|\,\s*(?<account>\b(C\d{1,4}|[A-Z]{1,5})\b)/g;
+  /(?<amount>\b\d+\b)|,\s*(?<account>\b(C\d{1,4}|[A-Z]{1,5})\b)/g;
 const currencyFormater = new Intl.NumberFormat("en-US", {
   style: "currency",
   currency: "USD",
