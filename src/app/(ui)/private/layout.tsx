@@ -10,12 +10,11 @@ export default function PrivateLayout({
 }: Readonly<PropsWithChildren>) {
   return (
     <section>
-      <FcmProvider firebaseApp={firebaseApp}>
-        <Sidebar>
-          <Navbar />
-          {children}
-        </Sidebar>
-      </FcmProvider>
+      <FcmProvider firebaseApp={firebaseApp} />
+      <Sidebar>
+        <Navbar />
+        {children}
+      </Sidebar>
     </section>
   );
 }
