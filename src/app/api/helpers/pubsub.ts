@@ -1,10 +1,10 @@
-import { EventEmitter } from "events";
+import { EventEmitter } from "node:events";
 
 type EventHandler<T = unknown> = (data: T) => void | Promise<void>;
 
 export class PubSub {
   private static instance: PubSub;
-  private emitter: EventEmitter;
+  private readonly emitter: EventEmitter;
 
   private constructor() {
     this.emitter = new EventEmitter();

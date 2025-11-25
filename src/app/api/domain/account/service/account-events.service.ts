@@ -33,7 +33,7 @@ export class AccountEventsService {
     console.log("onTransactionCreated(UPDATING ACCOUNTS)", {
       accountEntities,
     });
-    for await (const account of accountEntities) {
+    for (const account of accountEntities) {
       await this.accountRepository.updateOrCreateAccount(
         account.account,
         account.balance
@@ -111,15 +111,16 @@ export class AccountEventsService {
 
     const accountEntities: AccountModelForUpdate[] = [];
     if (transaction.type === TransactionType.TRANSFER) {
-      accountEntities.push({
-        account: transaction.sourceAccount,
-        balance: transaction.amount * (isRollback ? 1 : -1),
-      });
-
-      accountEntities.push({
-        account: transaction.destinationAccount!,
-        balance: transaction.amount * (isRollback ? -1 : 1),
-      });
+      accountEntities.push(
+        {
+          account: transaction.sourceAccount,
+          balance: transaction.amount * (isRollback ? 1 : -1),
+        },
+        {
+          account: transaction.destinationAccount!,
+          balance: transaction.amount * (isRollback ? -1 : 1),
+        }
+      );
     } else {
       accountEntities.push({
         account: transaction.sourceAccount,

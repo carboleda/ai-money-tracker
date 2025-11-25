@@ -6,8 +6,7 @@ import { Chip, ChipProps } from "@heroui/chip";
 import { Skeleton } from "@heroui/skeleton";
 
 import { FaBalanceScaleLeft } from "react-icons/fa";
-import { HiMiniPlusCircle, HiMinusCircle } from "react-icons/hi2";
-import { HiBell } from "react-icons/hi2";
+import { HiMiniPlusCircle, HiMinusCircle, HiBell } from "react-icons/hi2";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { FaMoneyBillTransfer } from "react-icons/fa6";
 

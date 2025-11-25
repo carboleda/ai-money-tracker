@@ -3,13 +3,12 @@ import { container } from "tsyringe";
 import { TransactionFirestoreRepository } from "../transaction-firestore.repository";
 import { TransactionAdapter } from "../transaction.adapter";
 import { Collections } from "@/app/api/drivers/firestore/types";
-import { Firestore } from "firebase-admin/firestore";
+import { Firestore, Filter } from "firebase-admin/firestore";
 import { TransactionStatus } from "@/app/api/domain/transaction/model/transaction.model";
 import {
   transactionModelFixture,
   transactionEntityFixture,
 } from "./fixtures/transaction.fixture";
-import { Filter } from "firebase-admin/firestore";
 
 describe("TransactionFirestoreRepository", () => {
   let firestore: Firestore;

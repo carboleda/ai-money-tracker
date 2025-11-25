@@ -30,7 +30,7 @@ export class ScheduleRecurrentExpenseService {
     const { recurringExpenses } =
       await this.getAllRecurrentExpensesService.execute();
 
-    for await (const recurringExpense of recurringExpenses) {
+    for (const recurringExpense of recurringExpenses) {
       if (recurringExpense.disabled) {
         skipped++;
         continue;

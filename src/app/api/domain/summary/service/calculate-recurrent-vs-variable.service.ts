@@ -19,15 +19,13 @@ export class CalculateRecurrentVsVariableService {
       variableTotal: 0,
     };
 
-    const recurrentCategories = [TransactionCategory.Mercado];
+    const recurrentCategories = new Set([TransactionCategory.Mercado]);
 
     const isRecurrent = (transaction: TransactionModel): boolean =>
       transaction.status === TransactionStatus.COMPLETE &&
       transaction.type === TransactionType.EXPENSE &&
       (transaction.isRecurrent ||
-        recurrentCategories.includes(
-          transaction.category as TransactionCategory
-        ));
+        recurrentCategories.has(transaction.category as TransactionCategory));
 
     const summary = transactions.reduce((acc, transaction) => {
       if (

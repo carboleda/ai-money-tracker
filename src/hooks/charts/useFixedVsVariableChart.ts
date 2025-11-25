@@ -20,13 +20,10 @@ export const useFixedVsVariableChart = ({
   data,
 }: FixedVsVariableChartProps) => {
   const { theme } = useTheme();
-  const isMobile = useIsMobile();
 
   const isDark = theme === "dark";
 
   const [options, setOptions] = useState<AgChartOptions>({
-    // width: isMobile ? 350 : 500,
-    // height: isMobile ? 350 : 500,
     data: [],
     series: [
       {

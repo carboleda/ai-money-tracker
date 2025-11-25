@@ -4,7 +4,7 @@ import { Key, ReactNode, useEffect, useState } from "react";
 import { siteConfig } from "@/config/site";
 import { useTranslation } from "react-i18next";
 import { usePathname, useRouter } from "next/navigation";
-import { User, UserAvatar } from "../../UserAvatar";
+import { UserAvatar } from "../../UserAvatar";
 import { useTransition } from "react";
 import clsx from "clsx";
 import { HiBell } from "react-icons/hi";

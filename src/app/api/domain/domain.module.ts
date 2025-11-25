@@ -3,8 +3,7 @@ import { UserModule } from "./user/user.module";
 import { TransactionModule } from "./transaction/transaction.module";
 import { SummaryModule } from "./summary/summary.module";
 import { NotificationModule } from "./notification/notification.module";
-// Import other modules as they get migrated
-// import { RecurrentExpenseModule } from "./recurrent-expense/recurrent-expense.module";
+import { RecurrentExpenseModule } from "./recurrent-expense/recurrent-expense.module";
 
 export class DomainModule {
   static register(): void {
@@ -12,7 +11,7 @@ export class DomainModule {
     UserModule.register();
     TransactionModule.register();
     SummaryModule.register();
-    // RecurrentExpenseModule.register();
+    RecurrentExpenseModule.register();
     NotificationModule.register();
   }
 }

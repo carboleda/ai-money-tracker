@@ -59,8 +59,8 @@ export class TransactionFirestoreRepository implements TransactionRepository {
 
     if (startDate && endDate) {
       q = q
-        .where("createdAt", ">=", startDate!)
-        .where("createdAt", "<=", endDate!);
+        .where("createdAt", ">=", startDate)
+        .where("createdAt", "<=", endDate);
     }
 
     if (account) {
