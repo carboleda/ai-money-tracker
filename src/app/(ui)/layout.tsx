@@ -3,7 +3,6 @@ import { Metadata, Viewport } from "next";
 import { siteConfig } from "@/config/site";
 import { fontSans } from "@/config/fonts";
 import clsx from "clsx";
-import { Footer } from "@/components/shared/Footer";
 import { Providers } from "./providers";
 
 export const metadata: Metadata = {
@@ -55,7 +54,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             <main className="container mx-auto px-2 md:px-2 grow">
               {children}
             </main>
-            <Footer />
           </div>
         </Providers>
       </body>
