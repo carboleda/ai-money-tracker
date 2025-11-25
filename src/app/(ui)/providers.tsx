@@ -18,7 +18,7 @@ export function Providers({ children }: ProvidersProps) {
 
   return (
     <HeroUIProvider navigate={router.push}>
-      <ToastProvider />
+      <ToastProvider toastOffset={40} />
       <NextThemesProvider attribute="class" defaultTheme="dark">
         <SWRConfig
           value={{
