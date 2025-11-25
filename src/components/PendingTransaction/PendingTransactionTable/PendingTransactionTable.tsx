@@ -9,7 +9,7 @@ import {
   TableRow,
 } from "@heroui/table";
 import { Transaction } from "@/interfaces/transaction";
-import { TableSkeleton } from "./TableSkeleton";
+import { TableSkeleton } from "@/components/shared/TableSkeleton";
 import { useMutateTransaction } from "@/hooks/useMutateTransaction";
 import { DeleteTableItemButton } from "../../DeleteTableItemButton";
 import { Button } from "@heroui/button";

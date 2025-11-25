@@ -13,7 +13,7 @@ import {
   FrequencyGroup,
   RecurringExpense,
 } from "@/interfaces/recurringExpense";
-import { TableSkeleton } from "./TableSkeleton";
+import { TableSkeleton } from "@/components/shared/TableSkeleton";
 import { Button } from "@heroui/button";
 import { IconEdit } from "@/components/shared/icons";
 import { RecurringExpenseModalForm } from "../RecurringExpenseModalForm/RecurringExpenseModalForm";
