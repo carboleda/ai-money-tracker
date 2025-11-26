@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
       text,
       picture,
       sourceAccount,
-      createdAt: new Date(createdAtManual || Date.now()),
+      createdAtManual: createdAtManual ? new Date(createdAtManual) : null,
     };
 
     const id = await generateTransactionService.execute(generateTransacton);

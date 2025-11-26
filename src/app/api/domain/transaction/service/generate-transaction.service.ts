@@ -15,7 +15,7 @@ import { CreateTransactionService } from "./create-transaction.service";
 type GenerateTransaction = {
   text?: string;
   picture?: string;
-  createdAtManual?: string;
+  createdAtManual?: Date | null;
   sourceAccount?: string;
 };
 
@@ -76,11 +76,11 @@ export class GenerateTransactionService {
   }
 
   private getProperCreatedAtDate(
-    createdAtManual?: string,
+    createdAtManual?: Date | null,
     createdAtGenerated?: string
   ): Date {
     if (createdAtManual) {
-      return new Date(createdAtManual);
+      return createdAtManual;
     }
 
     if (createdAtGenerated) {

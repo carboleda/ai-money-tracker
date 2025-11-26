@@ -180,7 +180,7 @@ describe("GenerateTransactionService", () => {
 
     const result = await service.execute({
       text: "Payment of internet bill by 20000, C1234",
-      createdAtManual: "2025-07-25T00:00:00.000Z",
+      createdAtManual: new Date("2025-07-25T00:00:00.000Z"),
     });
 
     expect(genAIService.extractData).toHaveBeenCalledWith(
@@ -203,5 +203,73 @@ describe("GenerateTransactionService", () => {
     ).rejects;
     await rejects.toThrow(DomainError);
     await rejects.toThrow("Invalid transaction data received");
+  });
+
+  it("should use manual date when both manual and generated dates are provided", async () => {
+    const manualDate = new Date("2025-07-20T00:00:00.000Z");
+    const generatedDateStr = "2025-07-15T00:00:00.000Z";
+
+    const mockGeneratedTransaction: GeneratedTransaction.TransactionData = {
+      type: "expense",
+      sourceAccount: "account1",
+      createdAt: generatedDateStr,
+      description: "Test transaction",
+      amount: 100,
+      category: "Food",
+      destinationAccount: "account2",
+      error: undefined as never,
+    };
+
+    jest
+      .spyOn(genAIService, "extractData")
+      .mockResolvedValueOnce(mockGeneratedTransaction);
+
+    jest
+      .spyOn(createTransactionService, "execute")
+      .mockResolvedValueOnce("mock-transaction-id");
+
+    await service.execute({
+      text: "Payment of internet bill by 20000, C1234",
+      createdAtManual: manualDate,
+    });
+
+    expect(createTransactionService.execute).toHaveBeenCalledWith(
+      expect.objectContaining({
+        createdAt: manualDate,
+      })
+    );
+  });
+
+  it("should use generated date when only generated date is provided", async () => {
+    const generatedDateStr = "2025-07-15T00:00:00.000Z";
+
+    const mockGeneratedTransaction: GeneratedTransaction.TransactionData = {
+      type: "expense",
+      sourceAccount: "account1",
+      createdAt: generatedDateStr,
+      description: "Test transaction",
+      amount: 100,
+      category: "Food",
+      destinationAccount: "account2",
+      error: undefined as never,
+    };
+
+    jest
+      .spyOn(genAIService, "extractData")
+      .mockResolvedValueOnce(mockGeneratedTransaction);
+
+    jest
+      .spyOn(createTransactionService, "execute")
+      .mockResolvedValueOnce("mock-transaction-id");
+
+    await service.execute({
+      text: "Payment of internet bill by 20000, C1234",
+    });
+
+    expect(createTransactionService.execute).toHaveBeenCalledWith(
+      expect.objectContaining({
+        createdAt: new Date(generatedDateStr),
+      })
+    );
   });
 });
