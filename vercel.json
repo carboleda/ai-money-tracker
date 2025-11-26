@@ -5,7 +5,7 @@
       "schedule": "0 11 1 * *"
     },
     {
-      "path": "/api/recurring-expenses/cronjob",
+      "path": "/api/cronjob",
       "schedule": "0 15 * * *"
     }
   ]
