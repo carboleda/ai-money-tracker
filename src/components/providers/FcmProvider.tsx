@@ -1,6 +1,6 @@
 "use client";
 
-import { PropsWithChildren, ReactNode } from "react";
+import { PropsWithChildren } from "react";
 import { FirebaseApp } from "firebase/app";
 import { getMessaging, MessagePayload, onMessage } from "firebase/messaging";
 import { NotificationRequestModal } from "@/components/NotificationsRequestModal";
@@ -13,7 +13,7 @@ const FcmProviderFrontend: React.FC<FcmProviderProps> = ({
   firebaseApp,
   children,
 }) => {
-  if (typeof window === "undefined" || !("Notification" in window)) {
+  if (typeof globalThis === "undefined" || !("Notification" in globalThis)) {
     return <>{children}</>;
   }
 

@@ -3,20 +3,15 @@
 import { PropsWithChildren, useEffect, useState } from "react";
 import { Image } from "@heroui/image";
 import { siteConfig } from "@/config/site";
-import { IconWrapper, SidebarMenuItems } from "./SidebarMenuItems";
+import { SidebarMenuItems } from "./SidebarMenuItems";
 import { useAppStore } from "@/stores/useAppStore";
-import { HiArrowRightEndOnRectangle } from "react-icons/hi2";
-import { useTranslation } from "react-i18next";
-import { LocaleNamespace } from "@/i18n/namespace";
 import { Divider } from "@heroui/divider";
-import { Button } from "@heroui/button";
 import { LogOutButton } from "./LogOutButton";
 import { ThemeSwitch } from "../ThemeSwitch";
 
 interface SidebarProps extends PropsWithChildren {}
 
 export const Sidebar: React.FC<SidebarProps> = ({ children }) => {
-  const { t } = useTranslation(LocaleNamespace.Login);
   const [showSidebar, setShowSidebar] = useState(false);
   const { isSidebarOpen, setIsSidebarOpen } = useAppStore();
 
