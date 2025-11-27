@@ -44,7 +44,7 @@ function PageContent() {
   );
 
   useEffect(() => {
-    setPageTitle(t("subtitle"));
+    setPageTitle(t("transactions"), t("subtitle"));
   }, [t, setPageTitle]);
 
   const onDialogDismissed = () => {

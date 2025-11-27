@@ -20,7 +20,7 @@ function PageContent() {
   );
 
   useEffect(() => {
-    setPageTitle(t("management.subtitle"));
+    setPageTitle(t("pending"), t("management.subtitle"));
   }, [t, setPageTitle]);
 
   return (
