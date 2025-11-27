@@ -35,7 +35,7 @@ export const UserAvatar: React.FC = () => {
         fallback: user?.name?.charAt(0) || "U",
         showFallback: true,
         isBordered: true,
-        color: "primary",
+        color: "success",
         className: "w-9 h-9",
       }}
       description={user?.email}
