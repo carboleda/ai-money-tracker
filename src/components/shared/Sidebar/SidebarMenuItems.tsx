@@ -3,16 +3,13 @@
 import { Key, ReactNode, useEffect, useState } from "react";
 import { siteConfig } from "@/config/site";
 import { useTranslation } from "react-i18next";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { UserAvatar } from "../../UserAvatar";
-import { useTransition } from "react";
 import clsx from "clsx";
 import { HiBell } from "react-icons/hi";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { LocaleNamespace } from "@/i18n/namespace";
 import { Listbox, ListboxSection, ListboxItem } from "@heroui/listbox";
-import { signOut } from "firebase/auth";
-import { HiArrowRightEndOnRectangle } from "react-icons/hi2";
 import { FaCircleArrowRight } from "react-icons/fa6";
 import { Chip } from "@heroui/chip";
 
@@ -32,7 +29,6 @@ interface IconWrapperProps {
 enum SidebarMenuItemKeys {
   Avatar = "avatar",
   Notifications = "notifications",
-  SignOut = "signOut",
 }
 
 export const IconWrapper = ({ children, className }: IconWrapperProps) => (
@@ -51,8 +47,6 @@ export const SidebarMenuItems: React.FC<SidebarMenuItemsProps> = ({
 }) => {
   const pathname = usePathname();
   const { t } = useTranslation(LocaleNamespace.Login);
-  const router = useRouter();
-  const [, startTransition] = useTransition();
   const [doNotAskAgain, setDoNotAskAgain] = useLocalStorage(
     "doNotAskAgain",
     false
@@ -71,9 +65,7 @@ export const SidebarMenuItems: React.FC<SidebarMenuItemsProps> = ({
   }, [doNotAskAgain]);
 
   const onAction = (key: Key) => {
-    if (key === SidebarMenuItemKeys.SignOut) {
-      onSignOut();
-    } else if (key === SidebarMenuItemKeys.Notifications) {
+    if (key === SidebarMenuItemKeys.Notifications) {
       setDoNotAskAgain(false);
       location.reload();
     }
@@ -81,85 +73,57 @@ export const SidebarMenuItems: React.FC<SidebarMenuItemsProps> = ({
     onItemClick?.(key);
   };
 
-  const onSignOut = async () => {
-    const { auth } = await import("@/firebase/client/auth");
-    await signOut(auth);
-
-    await fetch("/api/logout");
-
-    router.push("/login");
-
-    startTransition(() => {
-      // Refresh the current route and fetch new data from the server without
-      // losing client-side browser or React state.
-      router.refresh();
-    });
-  };
-
   return (
-    <div className="flex w-full flex-col justify-start items-start">
-      <Listbox
-        aria-label="User Menu"
-        selectionMode="none"
-        variant="flat"
-        color="default"
-        onAction={onAction}
-        disabledKeys={disabledKeys}
-      >
-        <ListboxSection showDivider>
-          <ListboxItem key={SidebarMenuItemKeys.Avatar} textValue="User Avatar">
-            <UserAvatar />
-          </ListboxItem>
-          <ListboxItem
-            key={SidebarMenuItemKeys.Notifications}
-            textValue={t("enablePushNotifications")}
-            title={t("enablePushNotifications")}
-            startContent={
-              <IconWrapper className="bg-success/10 text-success">
-                <HiBell className="text-lg md:text-medium" />
-              </IconWrapper>
-            }
-          >
-            {t("enablePushNotifications")}
-          </ListboxItem>
-        </ListboxSection>
-        <ListboxSection showDivider>
-          {siteConfig.pages.map((page) => (
-            <ListboxItem
-              key={page.label}
-              href={page.href}
-              textValue={page.label}
-              title={t(page.label)}
-              startContent={
-                <IconWrapper className={page.className}>
-                  <page.icon className="text-lg md:text-medium" />
-                </IconWrapper>
-              }
-              endContent={
-                page.label === keyLabel.get(pathname) && (
-                  <Chip variant="light" color="success">
-                    <FaCircleArrowRight />
-                  </Chip>
-                )
-              }
-            >
-              {t(page.label)}
-            </ListboxItem>
-          ))}
-        </ListboxSection>
+    <Listbox
+      className="flex w-full flex-col justify-start items-start"
+      aria-label="User Menu"
+      selectionMode="none"
+      variant="flat"
+      color="default"
+      onAction={onAction}
+      disabledKeys={disabledKeys}
+    >
+      <ListboxSection showDivider>
+        <ListboxItem key={SidebarMenuItemKeys.Avatar} textValue="User Avatar">
+          <UserAvatar />
+        </ListboxItem>
         <ListboxItem
-          key={SidebarMenuItemKeys.SignOut}
-          textValue={t("signOut")}
-          title={t("signOut")}
+          key={SidebarMenuItemKeys.Notifications}
+          textValue={t("enablePushNotifications")}
+          title={t("enablePushNotifications")}
           startContent={
-            <IconWrapper className="bg-danger/10 text-danger">
-              <HiArrowRightEndOnRectangle className=" text-lg md:text-medium" />
+            <IconWrapper className="bg-success/10 text-success">
+              <HiBell className="text-lg md:text-medium" />
             </IconWrapper>
           }
         >
-          {t("signOut")}
+          {t("enablePushNotifications")}
         </ListboxItem>
-      </Listbox>
-    </div>
+      </ListboxSection>
+      <ListboxSection>
+        {siteConfig.pages.map((page) => (
+          <ListboxItem
+            key={page.label}
+            href={page.href}
+            textValue={page.label}
+            title={t(page.label)}
+            startContent={
+              <IconWrapper className={page.className}>
+                <page.icon className="text-lg md:text-medium" />
+              </IconWrapper>
+            }
+            endContent={
+              page.label === keyLabel.get(pathname) && (
+                <Chip variant="light" color="success">
+                  <FaCircleArrowRight />
+                </Chip>
+              )
+            }
+          >
+            {t(page.label)}
+          </ListboxItem>
+        ))}
+      </ListboxSection>
+    </Listbox>
   );
 };

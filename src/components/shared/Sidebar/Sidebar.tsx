@@ -3,12 +3,20 @@
 import { PropsWithChildren, useEffect, useState } from "react";
 import { Image } from "@heroui/image";
 import { siteConfig } from "@/config/site";
-import { SidebarMenuItems } from "./SidebarMenuItems";
+import { IconWrapper, SidebarMenuItems } from "./SidebarMenuItems";
 import { useAppStore } from "@/stores/useAppStore";
+import { HiArrowRightEndOnRectangle } from "react-icons/hi2";
+import { useTranslation } from "react-i18next";
+import { LocaleNamespace } from "@/i18n/namespace";
+import { Divider } from "@heroui/divider";
+import { Button } from "@heroui/button";
+import { LogOutButton } from "./LogOutButton";
+import { ThemeSwitch } from "../ThemeSwitch";
 
 interface SidebarProps extends PropsWithChildren {}
 
 export const Sidebar: React.FC<SidebarProps> = ({ children }) => {
+  const { t } = useTranslation(LocaleNamespace.Login);
   const [showSidebar, setShowSidebar] = useState(false);
   const { isSidebarOpen, setIsSidebarOpen } = useAppStore();
 
@@ -39,7 +47,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ children }) => {
         onClick={(e) => showSidebar && e.stopPropagation()}
       >
         <div id="default-sidebar" className="w-full h-full">
-          <div className="h-full px-3 py-4 overflow-y-auto shadow-xl border-r bg-content1 dark:bg-content2 border-gray-200 dark:border-zinc-700">
+          <div className="flex flex-col h-full px-3 py-4 overflow-y-auto shadow-xl border-r bg-content1 dark:bg-content1 border-gray-200 dark:border-zinc-700">
             <div className="flex w-full justify-start items-end gap-3">
               <Image
                 width={40}
@@ -51,9 +59,17 @@ export const Sidebar: React.FC<SidebarProps> = ({ children }) => {
                 {siteConfig.name}
               </p>
             </div>
-            <ul className="space-y-2 font-medium mt-6">
+            <div className="flex flex-col h-full space-y-2 font-medium mt-6">
               <SidebarMenuItems onItemClick={() => setIsSidebarOpen(false)} />
-            </ul>
+              <div className="gap-2 mt-auto">
+                <Divider className="my-2" />
+                <LogOutButton />
+                <div className="flex flex-row gap-2 justify-between m-4">
+                  <span className="text-small font-semibold">Theme</span>
+                  <ThemeSwitch />
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
