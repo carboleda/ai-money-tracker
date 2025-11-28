@@ -15,7 +15,6 @@ import { UserModel } from "@/app/api/domain/user/model/user.model";
 import { RecurrentExpenseModel } from "@/app/api/domain/recurrent-expense/model/recurrent-expense.model";
 import { SummaryHistoryModel } from "@/app/api/domain/summary/model/summary-history.model";
 import { getUserId } from "@/app/api/context/user-context";
-import { Env } from "@/config/env";
 
 export class FirestoreModule {
   static register(): void {

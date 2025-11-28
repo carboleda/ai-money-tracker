@@ -4,6 +4,7 @@ import { SummaryHistoryFirestoreRepository } from "../summary-history-firestore.
 import { Firestore } from "firebase-admin/firestore";
 import { SummaryHistoryModel } from "@/app/api/domain/summary/model/summary-history.model";
 import { Collections } from "@/app/api/drivers/firestore/types";
+import { getUserIdToken } from "@/app/api/decorators/tsyringe.decorator";
 
 describe("SummaryHistoryFirestoreRepository", () => {
   let repository: SummaryHistoryFirestoreRepository;
@@ -37,6 +38,11 @@ describe("SummaryHistoryFirestoreRepository", () => {
 
     testContainer.register(Firestore, {
       useValue: mockFirestore,
+    });
+
+    // Register USER_ID_TOKEN for testing
+    testContainer.register(getUserIdToken(), {
+      useValue: "test-user-id",
     });
 
     repository = testContainer.resolve(SummaryHistoryFirestoreRepository);

@@ -9,6 +9,7 @@ import {
   transactionModelFixture,
   transactionEntityFixture,
 } from "./fixtures/transaction.fixture";
+import { getUserIdToken } from "@/app/api/decorators/tsyringe.decorator";
 
 describe("TransactionFirestoreRepository", () => {
   let firestore: Firestore;
@@ -25,6 +26,11 @@ describe("TransactionFirestoreRepository", () => {
 
     testContainer.register(Firestore, {
       useValue: mockFirestore,
+    });
+
+    // Register USER_ID_TOKEN for testing
+    testContainer.register(getUserIdToken(), {
+      useValue: "test-user-id",
     });
 
     testContainer.register(TransactionFirestoreRepository, {

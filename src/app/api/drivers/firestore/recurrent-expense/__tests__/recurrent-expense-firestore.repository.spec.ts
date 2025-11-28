@@ -9,6 +9,7 @@ import { container } from "tsyringe";
 import { Firestore, Timestamp } from "firebase-admin/firestore";
 import { recurrentExpenseModelFixture } from "./fixtures/recurrent-expense.fixture";
 import { RecurrentExpenseAdapter } from "../recurrent-expense.adapter";
+import { getUserIdToken } from "@/app/api/decorators/tsyringe.decorator";
 
 describe("RecurrentExpenseFirestoreRepository", () => {
   let repository: RecurrentExpenseFirestoreRepository;
@@ -23,6 +24,12 @@ describe("RecurrentExpenseFirestoreRepository", () => {
     } as unknown as Firestore;
 
     testContainer.register(Firestore, { useValue: firestore });
+
+    // Register USER_ID_TOKEN for testing
+    testContainer.register(getUserIdToken(), {
+      useValue: "test-user-id",
+    });
+
     testContainer.register(RecurrentExpenseFirestoreRepository, {
       useClass: RecurrentExpenseFirestoreRepository,
     });

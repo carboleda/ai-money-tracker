@@ -4,6 +4,7 @@ import { AccountFirestoreRepository } from "@/app/api/drivers/firestore/account/
 import { AccountAdapter } from "@/app/api/drivers/firestore/account/account.adapter";
 import { Collections } from "@/app/api/drivers/firestore/types";
 import { Firestore } from "firebase-admin/firestore";
+import { getUserIdToken } from "@/app/api/decorators/tsyringe.decorator";
 
 describe("AccountFirestoreRepository", () => {
   let firestore: Firestore;
@@ -22,6 +23,11 @@ describe("AccountFirestoreRepository", () => {
 
     testContainer.register(Firestore, {
       useValue: mockFirestore,
+    });
+
+    // Register USER_ID_TOKEN for testing
+    testContainer.register(getUserIdToken(), {
+      useValue: "test-user-id",
     });
 
     testContainer.register(AccountFirestoreRepository, {
