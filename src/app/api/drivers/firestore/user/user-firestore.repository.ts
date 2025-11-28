@@ -1,4 +1,8 @@
-import { Injectable, Inject } from "@/app/api/decorators/tsyringe.decorator";
+import {
+  Injectable,
+  Inject,
+  InjectUserId,
+} from "@/app/api/decorators/tsyringe.decorator";
 import { Firestore } from "firebase-admin/firestore";
 import { UserRepository } from "@/app/api/domain/user/repository/user.repository";
 import { UserModel } from "@/app/api/domain/user/model/user.model";
@@ -8,37 +12,36 @@ import { UserEntity } from "./user.entity";
 
 @Injectable()
 export class UserFirestoreRepository implements UserRepository {
-  constructor(@Inject(Firestore) private readonly firestore: Firestore) {}
+  constructor(
+    @Inject(Firestore) private readonly firestore: Firestore,
+    @InjectUserId() private readonly userId: string
+  ) {}
 
   async getExistingUser(): Promise<UserModel | null> {
-    const snapshot = await this.firestore
+    const docRef = this.firestore
       .collection(Collections.Users)
-      .limit(1)
-      .get();
+      .doc(this.userId);
+    const doc = await docRef.get();
 
-    if (snapshot.empty) {
+    if (!doc.exists) {
       return null;
     }
 
-    const doc = snapshot.docs[0];
     return UserAdapter.toModel(doc.data() as UserEntity, doc.id);
   }
 
   async updateOrCreateUser(fcmToken: string): Promise<string> {
-    const snapshot = await this.firestore
+    const docRef = this.firestore
       .collection(Collections.Users)
-      .limit(1)
-      .get();
+      .doc(this.userId);
+    const doc = await docRef.get();
 
-    if (!snapshot.empty) {
-      const doc = snapshot.docs[0];
-      await doc.ref.update({ fcmToken });
-      return doc.id;
+    if (doc.exists) {
+      await docRef.update({ fcmToken });
+      return this.userId;
     }
 
-    const docRef = await this.firestore
-      .collection(Collections.Users)
-      .add({ fcmToken });
-    return docRef.id;
+    await docRef.set({ fcmToken });
+    return this.userId;
   }
 }

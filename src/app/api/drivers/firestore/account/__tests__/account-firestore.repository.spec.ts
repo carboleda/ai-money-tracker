@@ -15,9 +15,14 @@ describe("AccountFirestoreRepository", () => {
 
     const mockFirestore = {
       collection: jest.fn().mockReturnValue({
-        get: jest.fn(),
-        where: jest.fn().mockReturnThis(),
-        doc: jest.fn().mockReturnThis(),
+        doc: jest.fn().mockReturnValue({
+          collection: jest.fn().mockReturnValue({
+            get: jest.fn(),
+            where: jest.fn().mockReturnThis(),
+            doc: jest.fn().mockReturnThis(),
+            add: jest.fn(),
+          }),
+        }),
       }),
     } as unknown as Firestore;
 
@@ -50,7 +55,14 @@ describe("AccountFirestoreRepository", () => {
         { id: "2", data: () => ({ account: "B", balance: 200 }) },
       ];
       const getMock = jest.fn().mockResolvedValue({ docs: mockDocs });
-      (firestore.collection as jest.Mock).mockReturnValue({ get: getMock });
+      const mockSubcollection = { get: getMock };
+      const mockUserDoc = {
+        collection: jest.fn().mockReturnValue(mockSubcollection),
+      };
+      const mockUsersCollection = {
+        doc: jest.fn().mockReturnValue(mockUserDoc),
+      };
+      (firestore.collection as jest.Mock).mockReturnValue(mockUsersCollection);
       const toModelSpy = jest
         .spyOn(AccountAdapter, "toModel")
         .mockImplementation((entity, id) => ({ ...entity, id }));
@@ -59,7 +71,12 @@ describe("AccountFirestoreRepository", () => {
       const result = await repository.getAll();
 
       // Assert
-      expect(firestore.collection).toHaveBeenCalledWith(Collections.Accounts);
+      expect(firestore.collection).toHaveBeenCalledWith(Collections.Users);
+      const usersCollection = firestore.collection(Collections.Users);
+      expect(usersCollection.doc).toHaveBeenCalledWith("test-user-id");
+      expect(
+        usersCollection.doc("test-user-id").collection
+      ).toHaveBeenCalledWith(Collections.Accounts);
       expect(getMock).toHaveBeenCalled();
       expect(toModelSpy).toHaveBeenCalledTimes(2);
       expect(result).toEqual([
@@ -71,12 +88,25 @@ describe("AccountFirestoreRepository", () => {
     it("should return an empty array if no accounts exist", async () => {
       // Arrange
       const getMock = jest.fn().mockResolvedValue({ docs: [] });
-      (firestore.collection as jest.Mock).mockReturnValue({ get: getMock });
+      const mockSubcollection = { get: getMock };
+      const mockUserDoc = {
+        collection: jest.fn().mockReturnValue(mockSubcollection),
+      };
+      const mockUsersCollection = {
+        doc: jest.fn().mockReturnValue(mockUserDoc),
+      };
+      (firestore.collection as jest.Mock).mockReturnValue(mockUsersCollection);
 
       // Act
       const result = await repository.getAll();
 
       // Assert
+      expect(firestore.collection).toHaveBeenCalledWith(Collections.Users);
+      const usersCollection = firestore.collection(Collections.Users);
+      expect(usersCollection.doc).toHaveBeenCalledWith("test-user-id");
+      expect(
+        usersCollection.doc("test-user-id").collection
+      ).toHaveBeenCalledWith(Collections.Accounts);
       expect(result).toEqual([]);
     });
   });
@@ -89,9 +119,15 @@ describe("AccountFirestoreRepository", () => {
         data: jest.fn().mockReturnValue({ account: "C1234", balance: 100 }),
         ref: { update: updateMock },
       };
-      jest.spyOn(firestore, "collection").mockReturnValue({
+      const mockSubcollection = {
         where: jest.fn().mockReturnThis(),
         get: jest.fn().mockResolvedValue({ size: 1, docs: [mockAccountDoc] }),
+      };
+      const mockUserDoc = {
+        collection: jest.fn().mockReturnValue(mockSubcollection),
+      };
+      jest.spyOn(firestore, "collection").mockReturnValue({
+        doc: jest.fn().mockReturnValue(mockUserDoc),
       } as unknown as never);
 
       // Act
@@ -109,10 +145,16 @@ describe("AccountFirestoreRepository", () => {
     it("should create account if it does not exist", async () => {
       // Arrange
       const addMock = jest.fn();
-      jest.spyOn(firestore, "collection").mockReturnValue({
+      const mockSubcollection = {
         where: jest.fn().mockReturnThis(),
         get: jest.fn().mockResolvedValue({ size: 0, docs: [] }),
         add: addMock,
+      };
+      const mockUserDoc = {
+        collection: jest.fn().mockReturnValue(mockSubcollection),
+      };
+      jest.spyOn(firestore, "collection").mockReturnValue({
+        doc: jest.fn().mockReturnValue(mockUserDoc),
       } as unknown as never);
 
       // Act

@@ -21,6 +21,8 @@ export class SummaryHistoryFirestoreRepository
   async create(model: SummaryHistoryModel): Promise<string> {
     const entity = SummaryHistoryAdapter.toEntity(model);
     const docRef = await this.firestore
+      .collection(Collections.Users)
+      .doc(this.userId)
       .collection(Collections.TransactionsSummaryHistory)
       .add(entity);
 
@@ -29,6 +31,8 @@ export class SummaryHistoryFirestoreRepository
 
   async getHistorySince(date: Date): Promise<SummaryHistoryModel[]> {
     const query = this.firestore
+      .collection(Collections.Users)
+      .doc(this.userId)
       .collection(Collections.TransactionsSummaryHistory)
       .where("createdAt", ">=", Timestamp.fromDate(date))
       .orderBy("createdAt", "asc");

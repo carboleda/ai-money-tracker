@@ -20,7 +20,11 @@ describe("RecurrentExpenseFirestoreRepository", () => {
     const testContainer = container.createChildContainer();
 
     firestore = {
-      collection: jest.fn(),
+      collection: jest.fn().mockReturnValue({
+        doc: jest.fn().mockReturnValue({
+          collection: jest.fn(),
+        }),
+      }),
     } as unknown as Firestore;
 
     testContainer.register(Firestore, { useValue: firestore });
@@ -43,7 +47,7 @@ describe("RecurrentExpenseFirestoreRepository", () => {
 
   describe("getAll", () => {
     it("should return all recurring expenses ordered by due date", async () => {
-      const mockCollection = {
+      const mockSubcollection = {
         orderBy: jest.fn().mockReturnThis(),
         get: jest.fn(),
       };
@@ -62,18 +66,27 @@ describe("RecurrentExpenseFirestoreRepository", () => {
           },
         ],
       };
+      const mockUserDoc = {
+        collection: jest.fn().mockReturnValue(mockSubcollection),
+      };
+      const mockUsersCollection = {
+        doc: jest.fn().mockReturnValue(mockUserDoc),
+      };
 
       jest
         .spyOn(firestore, "collection")
-        .mockReturnValue(mockCollection as any);
-      mockCollection.get.mockResolvedValue(mockSnapshot);
+        .mockReturnValue(mockUsersCollection as any);
+      mockSubcollection.get.mockResolvedValue(mockSnapshot);
 
       const result = await repository.getAll();
 
-      expect(firestore.collection).toHaveBeenCalledWith(
-        Collections.RecurringExpenses
-      );
-      expect(mockCollection.orderBy).toHaveBeenCalledWith("dueDate", "asc");
+      expect(firestore.collection).toHaveBeenCalledWith(Collections.Users);
+      const usersCollection = firestore.collection(Collections.Users);
+      expect(usersCollection.doc).toHaveBeenCalledWith("test-user-id");
+      expect(
+        usersCollection.doc("test-user-id").collection
+      ).toHaveBeenCalledWith(Collections.RecurringExpenses);
+      expect(mockSubcollection.orderBy).toHaveBeenCalledWith("dueDate", "asc");
       expect(result).toHaveLength(1);
       expect(result[0]).toBeInstanceOf(RecurrentExpenseModel);
     });
@@ -85,18 +98,31 @@ describe("RecurrentExpenseFirestoreRepository", () => {
         exists: false,
         data: jest.fn(),
       };
-      const mockCollection = {
-        doc: jest.fn().mockReturnValue({
-          get: jest.fn().mockResolvedValue(mockDoc),
-        }),
+      const mockDocRef = {
+        get: jest.fn().mockResolvedValue(mockDoc),
+      };
+      const mockSubcollection = {
+        doc: jest.fn().mockReturnValue(mockDocRef),
+      };
+      const mockUserDoc = {
+        collection: jest.fn().mockReturnValue(mockSubcollection),
+      };
+      const mockUsersCollection = {
+        doc: jest.fn().mockReturnValue(mockUserDoc),
       };
 
       jest
         .spyOn(firestore, "collection")
-        .mockReturnValue(mockCollection as any);
+        .mockReturnValue(mockUsersCollection as any);
 
       const result = await repository.getById("non-existent-id");
 
+      expect(firestore.collection).toHaveBeenCalledWith(Collections.Users);
+      const usersCollection = firestore.collection(Collections.Users);
+      expect(usersCollection.doc).toHaveBeenCalledWith("test-user-id");
+      expect(
+        usersCollection.doc("test-user-id").collection
+      ).toHaveBeenCalledWith(Collections.RecurringExpenses);
       expect(result).toBeNull();
     });
   });
@@ -107,20 +133,29 @@ describe("RecurrentExpenseFirestoreRepository", () => {
         id: "new-recurrent-expense-id",
         data: jest.fn(),
       };
-      const mockCollection = {
+      const mockSubcollection = {
         add: jest.fn().mockResolvedValue(mockDoc),
+      };
+      const mockUserDoc = {
+        collection: jest.fn().mockReturnValue(mockSubcollection),
+      };
+      const mockUsersCollection = {
+        doc: jest.fn().mockReturnValue(mockUserDoc),
       };
 
       jest
         .spyOn(firestore, "collection")
-        .mockReturnValue(mockCollection as any);
+        .mockReturnValue(mockUsersCollection as any);
 
       const result = await repository.create(recurrentExpenseModelFixture);
 
-      expect(firestore.collection).toHaveBeenCalledWith(
-        Collections.RecurringExpenses
-      );
-      expect(mockCollection.add).toHaveBeenCalledWith(
+      expect(firestore.collection).toHaveBeenCalledWith(Collections.Users);
+      const usersCollection = firestore.collection(Collections.Users);
+      expect(usersCollection.doc).toHaveBeenCalledWith("test-user-id");
+      expect(
+        usersCollection.doc("test-user-id").collection
+      ).toHaveBeenCalledWith(Collections.RecurringExpenses);
+      expect(mockSubcollection.add).toHaveBeenCalledWith(
         RecurrentExpenseAdapter.toEntity(recurrentExpenseModelFixture)
       );
       expect(result).toBe(mockDoc.id);
@@ -129,25 +164,35 @@ describe("RecurrentExpenseFirestoreRepository", () => {
 
   describe("update", () => {
     it("should update a recurring expense", async () => {
-      const mockCollection = {
-        doc: jest.fn().mockReturnValue({
-          update: jest.fn(),
-        }),
+      const mockDocRef = {
+        update: jest.fn(),
+      };
+      const mockSubcollection = {
+        doc: jest.fn().mockReturnValue(mockDocRef),
+      };
+      const mockUserDoc = {
+        collection: jest.fn().mockReturnValue(mockSubcollection),
+      };
+      const mockUsersCollection = {
+        doc: jest.fn().mockReturnValue(mockUserDoc),
       };
 
       jest
         .spyOn(firestore, "collection")
-        .mockReturnValue(mockCollection as any);
+        .mockReturnValue(mockUsersCollection as any);
 
       await repository.update(recurrentExpenseModelFixture);
 
-      expect(firestore.collection).toHaveBeenCalledWith(
-        Collections.RecurringExpenses
-      );
-      expect(mockCollection.doc).toHaveBeenCalledWith(
+      expect(firestore.collection).toHaveBeenCalledWith(Collections.Users);
+      const usersCollection = firestore.collection(Collections.Users);
+      expect(usersCollection.doc).toHaveBeenCalledWith("test-user-id");
+      expect(
+        usersCollection.doc("test-user-id").collection
+      ).toHaveBeenCalledWith(Collections.RecurringExpenses);
+      expect(mockSubcollection.doc).toHaveBeenCalledWith(
         recurrentExpenseModelFixture.id
       );
-      expect(mockCollection.doc().update).toHaveBeenCalledWith(
+      expect(mockDocRef.update).toHaveBeenCalledWith(
         RecurrentExpenseAdapter.toEntity(recurrentExpenseModelFixture)
       );
     });
@@ -155,25 +200,35 @@ describe("RecurrentExpenseFirestoreRepository", () => {
 
   describe("delete", () => {
     it("should delete a recurring expense", async () => {
-      const mockCollection = {
-        doc: jest.fn().mockReturnValue({
-          delete: jest.fn(),
-        }),
+      const mockDocRef = {
+        delete: jest.fn(),
+      };
+      const mockSubcollection = {
+        doc: jest.fn().mockReturnValue(mockDocRef),
+      };
+      const mockUserDoc = {
+        collection: jest.fn().mockReturnValue(mockSubcollection),
+      };
+      const mockUsersCollection = {
+        doc: jest.fn().mockReturnValue(mockUserDoc),
       };
 
       jest
         .spyOn(firestore, "collection")
-        .mockReturnValue(mockCollection as any);
+        .mockReturnValue(mockUsersCollection as any);
 
       await repository.delete(recurrentExpenseModelFixture.id);
 
-      expect(firestore.collection).toHaveBeenCalledWith(
-        Collections.RecurringExpenses
-      );
-      expect(mockCollection.doc).toHaveBeenCalledWith(
+      expect(firestore.collection).toHaveBeenCalledWith(Collections.Users);
+      const usersCollection = firestore.collection(Collections.Users);
+      expect(usersCollection.doc).toHaveBeenCalledWith("test-user-id");
+      expect(
+        usersCollection.doc("test-user-id").collection
+      ).toHaveBeenCalledWith(Collections.RecurringExpenses);
+      expect(mockSubcollection.doc).toHaveBeenCalledWith(
         recurrentExpenseModelFixture.id
       );
-      expect(mockCollection.doc().delete).toHaveBeenCalled();
+      expect(mockDocRef.delete).toHaveBeenCalled();
     });
   });
 });

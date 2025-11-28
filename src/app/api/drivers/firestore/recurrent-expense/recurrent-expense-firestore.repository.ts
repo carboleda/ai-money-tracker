@@ -20,9 +20,10 @@ export class RecurrentExpenseFirestoreRepository
   ) {}
 
   async getAll(): Promise<RecurrentExpenseModel[]> {
-    const collectionRef = this.firestore.collection(
-      Collections.RecurringExpenses
-    );
+    const collectionRef = this.firestore
+      .collection(Collections.Users)
+      .doc(this.userId)
+      .collection(Collections.RecurringExpenses);
     const q = collectionRef.orderBy("dueDate", "asc");
     const snapshot = await q.get();
 
@@ -34,6 +35,8 @@ export class RecurrentExpenseFirestoreRepository
 
   async getById(id: string): Promise<RecurrentExpenseModel | null> {
     const doc = await this.firestore
+      .collection(Collections.Users)
+      .doc(this.userId)
       .collection(Collections.RecurringExpenses)
       .doc(id)
       .get();
@@ -49,6 +52,8 @@ export class RecurrentExpenseFirestoreRepository
   async create(recurrentExpense: RecurrentExpenseModel): Promise<string> {
     const entity = RecurrentExpenseAdapter.toEntity(recurrentExpense);
     const docRef = await this.firestore
+      .collection(Collections.Users)
+      .doc(this.userId)
       .collection(Collections.RecurringExpenses)
       .add(entity);
     return docRef.id;
@@ -59,6 +64,8 @@ export class RecurrentExpenseFirestoreRepository
       recurrentExpense
     ) as UpdateData<RecurrentExpenseEntity>;
     const docRef = this.firestore
+      .collection(Collections.Users)
+      .doc(this.userId)
       .collection(Collections.RecurringExpenses)
       .doc(recurrentExpense.id);
     await docRef.update(entity);
@@ -66,6 +73,8 @@ export class RecurrentExpenseFirestoreRepository
 
   async delete(id: string): Promise<void> {
     const docRef = this.firestore
+      .collection(Collections.Users)
+      .doc(this.userId)
       .collection(Collections.RecurringExpenses)
       .doc(id);
     await docRef.delete();

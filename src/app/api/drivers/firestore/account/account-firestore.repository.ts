@@ -19,6 +19,8 @@ export class AccountFirestoreRepository implements AccountRepository {
 
   async getAll(): Promise<AccountModel[]> {
     const snapshot = await this.firestore
+      .collection(Collections.Users)
+      .doc(this.userId)
       .collection(Collections.Accounts)
       .get();
 
@@ -44,7 +46,10 @@ export class AccountFirestoreRepository implements AccountRepository {
     // TODO: Query the Firestore database to get the account with the given ID
     console.log(
       "Firestore instance:",
-      this.firestore.collection(Collections.Accounts)
+      this.firestore
+        .collection(Collections.Users)
+        .doc(this.userId)
+        .collection(Collections.Accounts)
     );
     return Promise.resolve(
       AccountAdapter.toModel(
@@ -61,6 +66,8 @@ export class AccountFirestoreRepository implements AccountRepository {
     account: string
   ): Promise<QueryDocumentSnapshot | null> {
     const accounts = await this.firestore
+      .collection(Collections.Users)
+      .doc(this.userId)
       .collection(Collections.Accounts)
       .where("account", "==", account)
       .get();
@@ -83,9 +90,13 @@ export class AccountFirestoreRepository implements AccountRepository {
   }
 
   private async createInitialAccount(account: string, balance: number) {
-    await this.firestore.collection(Collections.Accounts).add({
-      account,
-      balance,
-    });
+    await this.firestore
+      .collection(Collections.Users)
+      .doc(this.userId)
+      .collection(Collections.Accounts)
+      .add({
+        account,
+        balance,
+      });
   }
 }
