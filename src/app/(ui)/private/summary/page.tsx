@@ -1,4 +1,3 @@
-import React from "react";
 import PageContent from "@/components/Summary/PageContent";
 
 function Summary() {

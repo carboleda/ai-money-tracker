@@ -1,19 +1,22 @@
 "use client";
 
-import { ReactNode } from "react";
+import { PropsWithChildren } from "react";
 import { FirebaseApp } from "firebase/app";
 import { getMessaging, MessagePayload, onMessage } from "firebase/messaging";
 import { NotificationRequestModal } from "@/components/NotificationsRequestModal";
 
-interface FcmProviderProps {
+interface FcmProviderProps extends PropsWithChildren {
   firebaseApp?: FirebaseApp;
-  children: ReactNode;
 }
 
 const FcmProviderFrontend: React.FC<FcmProviderProps> = ({
   firebaseApp,
   children,
 }) => {
+  if (typeof globalThis === "undefined" || !("Notification" in globalThis)) {
+    return <>{children}</>;
+  }
+
   const onPermissionGranted = () => {
     const messaging = getMessaging(firebaseApp);
     // console.log("Setting up onMessage handler...");

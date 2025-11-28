@@ -1,3 +1,5 @@
+"use client";
+
 import React, { Key, useCallback, useEffect, useState } from "react";
 import {
   Modal,
@@ -17,6 +19,7 @@ import { Tab, Tabs } from "@heroui/tabs";
 import { getMissingFieldsInPrompt } from "@/config/utils";
 import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
+import { useToast } from "@/hooks/useToast";
 
 interface CreateTransactionModalFormProps {
   isOpen: boolean;
@@ -27,6 +30,7 @@ export const CreateTransactionModalForm: React.FC<
   CreateTransactionModalFormProps
 > = ({ onDismiss, isOpen }) => {
   const { t } = useTranslation(LocaleNamespace.Transactions);
+  const { showSuccessToast } = useToast();
   const [validationError, setValidationError] = useState<string>("");
   const [isFreeText, setIsFreeText] = useState<boolean>(true);
   const [textInput, setTextInput] = useState<string>("");
@@ -60,6 +64,18 @@ export const CreateTransactionModalForm: React.FC<
   };
 
   const clearError = () => setValidationError("");
+
+  const createProxiedSetter = useCallback(
+    (setter: (...args: any[]) => void) => {
+      return (...args: any[]) => {
+        if (validationError) {
+          clearError();
+        }
+        setter(...args);
+      };
+    },
+    [validationError]
+  );
 
   const validateForm = () => {
     if (isFreeText && !textInput) {
@@ -97,6 +113,9 @@ export const CreateTransactionModalForm: React.FC<
       }
 
       onOpenChangeHandler();
+      showSuccessToast({
+        title: t("transactionCreated"),
+      });
     } catch (error) {
       setValidationError((error as Error).message);
     }
@@ -142,9 +161,9 @@ export const CreateTransactionModalForm: React.FC<
                     className="flex flex-col gap-2"
                   >
                     <FreeTextMode
-                      setText={setTextInput}
+                      setText={createProxiedSetter(setTextInput)}
                       createdAt={createdAtInput}
-                      setCreatedAt={setCreatedAtInput}
+                      setCreatedAt={createProxiedSetter(setCreatedAtInput)}
                     />
                   </Tab>
                   <Tab
@@ -158,8 +177,10 @@ export const CreateTransactionModalForm: React.FC<
                     className="flex flex-col gap-2"
                   >
                     <CameraMode
-                      setPicture={setPicture}
-                      setSelectedAccount={setSelectedAccount}
+                      setPicture={createProxiedSetter(setPicture)}
+                      setSelectedAccount={createProxiedSetter(
+                        setSelectedAccount
+                      )}
                     />
                   </Tab>
                 </Tabs>
@@ -179,7 +200,7 @@ export const CreateTransactionModalForm: React.FC<
                 <Button
                   color="danger"
                   variant="flat"
-                  disabled={areButtonsDisabled}
+                  isDisabled={isMutating}
                   onPress={onClose}
                 >
                   {t("cancel")}
@@ -187,7 +208,7 @@ export const CreateTransactionModalForm: React.FC<
                 <Button
                   color="primary"
                   isLoading={isMutating}
-                  disabled={areButtonsDisabled}
+                  isDisabled={areButtonsDisabled}
                   onPress={onSave}
                 >
                   {t("save")}

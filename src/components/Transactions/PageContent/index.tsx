@@ -44,7 +44,7 @@ function PageContent() {
   );
 
   useEffect(() => {
-    setPageTitle(t("subtitle"));
+    setPageTitle(t("transactions"), t("subtitle"));
   }, [t, setPageTitle]);
 
   const onDialogDismissed = () => {
@@ -119,7 +119,7 @@ function PageContent() {
               "totalBalance",
               ...(!isMobile ? ["totalIncomes" as keyof Summary] : []),
               "totalExpenses",
-              "totalPending",
+              "totalTransfers",
             ]}
           />
         </div>

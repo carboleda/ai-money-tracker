@@ -4,10 +4,15 @@
   "descriptionIsRequired": "La descripción es obligatoria. Por favor complétala.",
   "descriptionIsInvalid": "¡Incluye los {{missinFields, list}} en tu mensaje!",
   "bankAndAccountAreRquired": "La cuenta bancaria y la imagen son obligatorias. Por favor complétalas.",
+  "requiredFieldsMissing": "Faltan campos obligatorios. Por favor complétalos.",
   "newTransaction": "Nueva Transacción",
+  "updateTransaction": "Actualizar transacción",
   "freeTextMode": "Modo texto libre",
   "cameraMode": "Modo cámara",
   "transactionDate": "Fecha de la transacción",
   "sourceAccount": "Cuenta de origen",
-  "notes": "Notas"
+  "destinationAccount": "Cuenta de destino",
+  "notes": "Notas",
+  "transactionCreated": "¡Transacción creada!",
+  "transactionUpdated": "¡Transacción actualizada!"
 }

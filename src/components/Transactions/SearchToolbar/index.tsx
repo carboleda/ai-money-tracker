@@ -1,3 +1,5 @@
+"use client";
+
 import React, { PropsWithChildren, useEffect, useState } from "react";
 import { Input } from "@heroui/input";
 import { Button } from "@heroui/button";

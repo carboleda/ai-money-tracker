@@ -19,7 +19,7 @@ function PageContent() {
   const { setPageTitle } = useAppStore();
 
   useEffect(() => {
-    setPageTitle(t("subtitle"));
+    setPageTitle(t("recurrent"), t("subtitle"));
   }, [t, setPageTitle]);
 
   const { isLoading, data: reesponse } = useSWR<

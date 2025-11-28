@@ -1,13 +1,14 @@
+"use client";
+
 import { formatCurrency } from "@/config/utils";
 import { Summary } from "@/interfaces/transaction";
 import { Chip, ChipProps } from "@heroui/chip";
 import { Skeleton } from "@heroui/skeleton";
 
-import { HiMiniPlusCircle } from "react-icons/hi2";
-import { HiMinusCircle } from "react-icons/hi2";
-import { HiBell } from "react-icons/hi2";
-import { HiCash } from "react-icons/hi";
+import { FaBalanceScaleLeft } from "react-icons/fa";
+import { HiMiniPlusCircle, HiMinusCircle, HiBell } from "react-icons/hi2";
 import { useIsMobile } from "@/hooks/useIsMobile";
+import { FaMoneyBillTransfer } from "react-icons/fa6";
 
 const keyValueMapping = {
   totalIncomes: {
@@ -22,8 +23,12 @@ const keyValueMapping = {
     icon: <HiBell />,
     color: "warning",
   },
+  totalTransfers: {
+    icon: <FaMoneyBillTransfer />,
+    color: "warning",
+  },
   totalBalance: {
-    icon: <HiCash />,
+    icon: <FaBalanceScaleLeft />,
     color: "primary",
   },
 };
@@ -46,9 +51,9 @@ export const SummaryPanel: React.FC<SummaryPanelProps> = ({
   shortNumber = false,
 }) => {
   const isMobile = useIsMobile();
-  const keys = (
-    (includedKeys ?? Object.keys(keyValueMapping)) as (keyof Summary)[]
-  ).filter((k) => k !== "totalTransfers");
+  const keys = (includedKeys ??
+    Object.keys(keyValueMapping)) as (keyof Summary)[];
+  // .filter((k) => k !== "totalTransfers");
 
   if (!summary) {
     return (

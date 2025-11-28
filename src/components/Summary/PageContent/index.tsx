@@ -33,7 +33,7 @@ function PageContent() {
   );
 
   useEffect(() => {
-    setPageTitle(t("subtitle"));
+    setPageTitle(t("summary"), t("subtitle"));
   }, [t, setPageTitle]);
 
   const tiles = [

@@ -1,10 +1,6 @@
-import {
-  AgBarSeriesThemeableOptions,
-  AgChartOptions,
-} from "ag-charts-community";
+import { AgChartOptions } from "ag-charts-community";
 import { RecurrentVsVariable } from "@/interfaces/summary";
 import { useTheme } from "next-themes";
-import { useIsMobile } from "../useIsMobile";
 import { useEffect, useState } from "react";
 import { formatCurrency } from "@/config/utils";
 
@@ -23,13 +19,10 @@ export const useFixedVsVariableChart = ({
   data,
 }: FixedVsVariableChartProps) => {
   const { theme } = useTheme();
-  const isMobile = useIsMobile();
 
   const isDark = theme === "dark";
 
   const [options, setOptions] = useState<AgChartOptions>({
-    width: isMobile ? 350 : 500,
-    height: isMobile ? 350 : 500,
     data: [],
     series: [
       {

@@ -21,7 +21,9 @@ import { MaskedCurrencyInput } from "@/components/shared/MaskedCurrencyInput";
 import { useMutateTransaction } from "@/hooks/useMutateTransaction";
 import { Chip } from "@heroui/chip";
 import { BankAccounDropdown } from "@/components/BankAccounsDropdown";
-import { getAccountId } from "@/config/utils";
+import { useToast } from "@/hooks/useToast";
+import { useTranslation } from "react-i18next";
+import { LocaleNamespace } from "@/i18n/namespace";
 
 interface UpdateTransactionModalFormProps {
   item?: Transaction;
@@ -29,11 +31,11 @@ interface UpdateTransactionModalFormProps {
   onDismiss: () => void;
 }
 
-export const UpdateTransactionModalForm: React.FC<UpdateTransactionModalFormProps> = ({
-  item,
-  onDismiss,
-  isOpen,
-}) => {
+export const UpdateTransactionModalForm: React.FC<
+  UpdateTransactionModalFormProps
+> = ({ item, onDismiss, isOpen }) => {
+  const { t } = useTranslation(LocaleNamespace.Transactions);
+  const { showSuccessToast } = useToast();
   const { isMutating, updateTransaction } = useMutateTransaction();
   const [validationError, setValidationError] = useState<string>("");
   const [descriptionInput, setDescriptionInput] = useState<string>("");
@@ -50,9 +52,9 @@ export const UpdateTransactionModalForm: React.FC<UpdateTransactionModalFormProp
   useEffect(() => {
     if (item) {
       setDescriptionInput(item.description);
-      setSourceAccountInput(getAccountId(item.sourceAccount) || "");
+      setSourceAccountInput(item.sourceAccount || "");
       item.destinationAccount &&
-        setDestinationAccountInput(getAccountId(item.destinationAccount) || "");
+        setDestinationAccountInput(item.destinationAccount || "");
       setTransactonCategoryInput(item.category as TransactionCategory);
       setCreatedAtInput(
         item.createdAt ? parseAbsoluteToLocal(item.createdAt) : undefined
@@ -84,7 +86,7 @@ export const UpdateTransactionModalForm: React.FC<UpdateTransactionModalFormProp
       !createdAtInput ||
       amountInput === 0
     ) {
-      throw new Error("Filled all the required fields. Please fill them out.");
+      throw new Error(t("requiredFieldsMissing"));
     }
 
     clearError();
@@ -108,6 +110,9 @@ export const UpdateTransactionModalForm: React.FC<UpdateTransactionModalFormProp
 
       clearInputs();
       onDismiss();
+      showSuccessToast({
+        title: t("transactionUpdated"),
+      });
     } catch (error) {
       setValidationError((error as Error).message);
     }
@@ -126,12 +131,12 @@ export const UpdateTransactionModalForm: React.FC<UpdateTransactionModalFormProp
           {(onClose) => (
             <>
               <ModalHeader className="flex flex-col gap-1">
-                Update transaction
+                {t("updateTransaction")}
               </ModalHeader>
               <ModalBody>
                 <Input
                   autoFocus
-                  label="Deescription"
+                  label={t("description")}
                   variant="bordered"
                   isRequired
                   value={descriptionInput}
@@ -139,7 +144,7 @@ export const UpdateTransactionModalForm: React.FC<UpdateTransactionModalFormProp
                 />
                 <div className="flex gap-2">
                   <BankAccounDropdown
-                    label="Source account"
+                    label={t("sourceAccount")}
                     className="w-full"
                     onChange={setSourceAccountInput}
                     value={sourceAccountInput}
@@ -149,7 +154,7 @@ export const UpdateTransactionModalForm: React.FC<UpdateTransactionModalFormProp
                   />
                   {item?.type === TransactionType.TRANSFER && (
                     <BankAccounDropdown
-                      label="Destination account"
+                      label={t("destinationAccount")}
                       className="w-full"
                       onChange={setDestinationAccountInput}
                       value={destinationAccountInput}
@@ -162,7 +167,7 @@ export const UpdateTransactionModalForm: React.FC<UpdateTransactionModalFormProp
                 <div className="flex gap-2">
                   <Autocomplete
                     allowsCustomValue
-                    label="Category"
+                    label={t("category")}
                     variant="bordered"
                     defaultItems={transactionCategoryOptions}
                     selectedKey={transactonCategoryInput}
@@ -178,7 +183,7 @@ export const UpdateTransactionModalForm: React.FC<UpdateTransactionModalFormProp
                   </Autocomplete>
 
                   <MaskedCurrencyInput
-                    label="Amount"
+                    label={t("amount")}
                     variant="bordered"
                     type="text"
                     isRequired
@@ -187,7 +192,7 @@ export const UpdateTransactionModalForm: React.FC<UpdateTransactionModalFormProp
                   />
                 </div>
                 <DatePicker
-                  label="Created at"
+                  label={t("transactionDate")}
                   variant="bordered"
                   granularity="minute"
                   value={createdAtInput}
@@ -213,7 +218,7 @@ export const UpdateTransactionModalForm: React.FC<UpdateTransactionModalFormProp
                   disabled={areButtonsDisabled}
                   onPress={onClose}
                 >
-                  Cancel
+                  {t("cancel")}
                 </Button>
                 <Button
                   color="primary"
@@ -221,7 +226,7 @@ export const UpdateTransactionModalForm: React.FC<UpdateTransactionModalFormProp
                   disabled={areButtonsDisabled}
                   onPress={onSave}
                 >
-                  Save
+                  {t("save")}
                 </Button>
               </ModalFooter>
             </>

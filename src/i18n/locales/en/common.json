@@ -24,6 +24,7 @@
   "custom": "Custom range",
   "cancel": "Cancel",
   "save": "Save",
+  "delete": "Delete",
   "searchByDescription": "Search by description...",
   "month": "Month",
   "expense": "Expense",
@@ -33,6 +34,7 @@
   "balances": "Balances",
   "disabled": "Disabled",
   "bankAccount": "Bank account",
+  "itemDeleted": "Item deleted successfully",
   "notificationsRequest": {
     "title": "Zolvent wants to keep you informed! 🔔",
     "description": "To provide you with real-time alerts and reminders about your spending, income, and financial goals, we need your permission to send push notifications. This will help you:",
@@ -40,5 +42,10 @@
     "reminderBillsPayments": "Receive timely reminders for bills and payments.",
     "neverMissPayment": "Never miss a payment or an opportunity to save again!",
     "doNotAskAgain": "Don't ask again"
+  },
+  "deleteConfirmation": {
+    "title": "Confirm deletion",
+    "description": "This action cannot be undone.",
+    "confirmButton": "Yes, delete it!"
   }
 }

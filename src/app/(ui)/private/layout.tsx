@@ -2,38 +2,19 @@ import "@/styles/globals.css";
 import FcmProvider from "@/components/providers/FcmProvider";
 import { Sidebar } from "@/components/shared/Sidebar/Sidebar";
 import { firebaseApp } from "@/firebase/client";
-import { getTokens } from "next-firebase-auth-edge";
-import { cookies } from "next/headers";
-import { Env } from "@/config/env";
 import { Navbar } from "@/components/shared/Navbar";
+import { PropsWithChildren } from "react";
 
-export default async function PrivateLayout({
+export default function PrivateLayout({
   children,
-}: {
-  children: React.ReactNode;
-}) {
-  const cookieStore = await cookies();
-  if (!cookieStore.size) {
-    return <span>No cookies found</span>;
-  }
-
-  const tokens = await getTokens(cookieStore, {
-    apiKey: Env.FIREBASE_SERVICE_ACCOUNT.apiKey,
-    cookieName: "AuthToken",
-    cookieSignatureKeys: Env.AUTH_COOKIE_SIGNATURE_KEYS,
-    serviceAccount: Env.NEXT_PUBLIC_FIREBASE_APP_CONFIG as any,
-  });
-
-  const user = tokens?.decodedToken;
-
+}: Readonly<PropsWithChildren>) {
   return (
     <section>
-      <FcmProvider firebaseApp={firebaseApp}>
-        <Sidebar user={user}>
-          <Navbar />
-          {children}
-        </Sidebar>
-      </FcmProvider>
+      <FcmProvider firebaseApp={firebaseApp} />
+      <Sidebar>
+        <Navbar />
+        {children}
+      </Sidebar>
     </section>
   );
 }

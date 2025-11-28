@@ -5,17 +5,13 @@ import { Image } from "@heroui/image";
 import { siteConfig } from "@/config/site";
 import { SidebarMenuItems } from "./SidebarMenuItems";
 import { useAppStore } from "@/stores/useAppStore";
+import { Divider } from "@heroui/divider";
+import { LogOutButton } from "./LogOutButton";
+import { ThemeSwitch } from "../ThemeSwitch";
 
-export type User = {
-  name?: string;
-  picture?: string;
-};
+interface SidebarProps extends PropsWithChildren {}
 
-interface SidebarProps extends PropsWithChildren {
-  user?: User;
-}
-
-export const Sidebar: React.FC<SidebarProps> = ({ user, children }) => {
+export const Sidebar: React.FC<SidebarProps> = ({ children }) => {
   const [showSidebar, setShowSidebar] = useState(false);
   const { isSidebarOpen, setIsSidebarOpen } = useAppStore();
 
@@ -46,7 +42,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ user, children }) => {
         onClick={(e) => showSidebar && e.stopPropagation()}
       >
         <div id="default-sidebar" className="w-full h-full">
-          <div className="h-full px-3 py-4 overflow-y-auto shadow-xl border-r bg-content1 dark:bg-content2 border-gray-200 dark:border-zinc-700">
+          <div className="flex flex-col h-full px-3 py-4 overflow-y-auto shadow-xl border-r bg-content1 dark:bg-content1 border-gray-200 dark:border-zinc-700">
             <div className="flex w-full justify-start items-end gap-3">
               <Image
                 width={40}
@@ -58,12 +54,17 @@ export const Sidebar: React.FC<SidebarProps> = ({ user, children }) => {
                 {siteConfig.name}
               </p>
             </div>
-            <ul className="space-y-2 font-medium mt-6">
-              <SidebarMenuItems
-                user={user}
-                onItemClick={() => setIsSidebarOpen(false)}
-              />
-            </ul>
+            <div className="flex flex-col h-full space-y-2 font-medium mt-6">
+              <SidebarMenuItems onItemClick={() => setIsSidebarOpen(false)} />
+              <div className="gap-2 mt-auto">
+                <Divider className="my-2" />
+                <LogOutButton />
+                <div className="flex flex-row gap-2 justify-between m-4">
+                  <span className="text-small font-semibold">Theme</span>
+                  <ThemeSwitch />
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

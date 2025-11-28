@@ -4,7 +4,7 @@ import { TransactionOverdueStatus } from "@/interfaces/transaction";
 
 const requiredFields = ["amount", "account"];
 const validationRegex =
-  /(?<amount>\b\d+\b)|(?<account>\b(C\d{1,4}|[A-Z]{1,5})\b)/g;
+  /(?<amount>\b\d+\b)|,\s*(?<account>\b(C\d{1,4}|[A-Z]{1,5})\b)/g;
 const currencyFormater = new Intl.NumberFormat("en-US", {
   style: "currency",
   currency: "USD",
@@ -98,6 +98,12 @@ export const getAccountList = (skipDisabled = true) => {
     });
 };
 
+/**
+ * Computes the two biannual dates based on the provided date,
+ * adding 6 months (in milliseconds) to the original date.
+ * @param date The original date.
+ * @returns An array containing the two biannual dates sorted by month.
+ */
 export const computeBiannualDates = (date: Date): [Date, Date] => {
   return [date, new Date(date.getTime() + 15778800000)].sort(
     (a, b) => a.getMonth() - b.getMonth()
@@ -145,7 +151,7 @@ export const dateDiffInDays = (date1: Date, date2: Date) => {
 
 export const getPreviousMonth = (date?: Date) => {
   const previousMonth = new Date(date ?? new Date());
-  previousMonth.setDate(previousMonth.getDate() - previousMonth.getDate());
+  previousMonth.setDate(previousMonth.getDate() - 1);
   return previousMonth;
 };
 

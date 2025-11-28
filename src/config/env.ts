@@ -11,9 +11,7 @@ export class Env {
   static EARLY_REMINDER_DAYS_AHEAD = parseInt(
     process.env.EARLY_REMINDER_DAYS_AHEAD || "1"
   );
-  static SUMMARY_HISTORY_ENTRY_DAY = parseInt(
-    process.env.SUMMARY_HISTORY_ENTRY_DAY || "2"
-  );
+  static RUN_ON_DAY_OF_MONTH = parseInt(process.env.RUN_ON_DAY_OF_MONTH || "2");
   static FIREBASE_SERVICE_ACCOUNT = JSON.parse(
     process.env.FIREBASE_SERVICE_ACCOUNT || "{}"
   ) as Record<string, string>;

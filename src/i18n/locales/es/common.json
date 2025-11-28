@@ -15,6 +15,7 @@
   "actions": "Acciones",
   "edit": "Editar",
   "confirm": "Confirmar",
+  "delete": "Eliminar",
   "dateRangeFilter": "Fecha dentro de",
   "accountFilter": "Filtrar por cuenta",
   "this": "Este mes",
@@ -33,6 +34,7 @@
   "balances": "Saldos",
   "disabled": "Deshabilitado",
   "bankAccount": "Cuenta bancaria",
+  "itemDeleted": "Elemento eliminado con éxito",
   "notificationsRequest": {
     "title": "¡Zolvent quiere mantenerte informado! 🔔",
     "description": "Para proporcionarte alertas y recordatorios en tiempo real sobre tus gastos, ingresos y metas financieras, necesitamos tu permiso para enviar notificaciones push. Esto te ayudará a:",
@@ -40,5 +42,10 @@
     "reminderBillsPayments": "Recibir recordatorios oportunos para facturas y pagos.",
     "neverMissPayment": "¡Nunca más pierdas un pago o una oportunidad de ahorrar!",
     "doNotAskAgain": "No preguntar de nuevo"
+  },
+  "deleteConfirmation": {
+    "title": "Confirmar eliminación",
+    "description": "Esta acción no se puede deshacer.",
+    "confirmButton": "Sí, eliminar!"
   }
 }

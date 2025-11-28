@@ -5,14 +5,14 @@ import { middlewareChain } from "@/middlewares";
 export const config = {
   matcher: [
     "/",
-    "/((?!_next|api|.*\\.).*)",
+    "/((?!_next|.*\\.).*)",
     "/api/login",
     "/api/logout",
-    "/api/transaction",
+    "/api/:path*",
   ],
 };
 
-export default async function middleware(request: NextRequest) {
+export default async function proxy(request: NextRequest) {
   // TODO - This is a temporary fix to redirect to the login page when accessing the root path
   if (request.nextUrl.pathname === "/") {
     return NextResponse.redirect(new URL("/login", request.url));

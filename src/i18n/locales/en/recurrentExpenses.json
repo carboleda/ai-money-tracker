@@ -15,5 +15,8 @@
   "pendingTransactions": "Pending Transactions",
   "completeTransaction": "Complete transaction",
   "paidOn": "Paid on",
-  "completeTransationButton": "Complete"
+  "completeTransationButton": "Complete",
+  "transactionCompleted": "Transaction completed successfully!",
+  "recurrentExpenseCreated": "Recurring expense created!",
+  "recurrentExpenseUpdated": "Recurring expense updated!"
 }

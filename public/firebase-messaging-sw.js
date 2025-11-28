@@ -54,7 +54,7 @@ self.addEventListener("notificationclick", function (event) {
   console.log("Notification click received.");
 
   const urlToOpen = new URL(
-    "https://mt.carlosarboleda.co/recurring-expenses/management",
+    "https://zolvent.calabs.dev/private/recurring-expenses/management",
     self.location.origin
   ).href;
 
