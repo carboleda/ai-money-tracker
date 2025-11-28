@@ -1,4 +1,8 @@
-import { Injectable, Inject } from "@/app/api/decorators/tsyringe.decorator";
+import {
+  Injectable,
+  Inject,
+  InjectUserId,
+} from "@/app/api/decorators/tsyringe.decorator";
 import { AccountModel } from "@/app/api/domain/account/model/account.model";
 import { AccountRepository } from "@/app/api/domain/account/repository/account.repository";
 import { AccountAdapter } from "./account.adapter";
@@ -8,7 +12,10 @@ import { AccountEntity } from "./account.entity";
 
 @Injectable()
 export class AccountFirestoreRepository implements AccountRepository {
-  constructor(@Inject(Firestore) private readonly firestore: Firestore) {}
+  constructor(
+    @Inject(Firestore) private readonly firestore: Firestore,
+    @InjectUserId() private readonly userId: string
+  ) {}
 
   async getAll(): Promise<AccountModel[]> {
     const snapshot = await this.firestore

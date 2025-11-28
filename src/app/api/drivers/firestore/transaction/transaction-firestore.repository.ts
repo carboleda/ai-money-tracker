@@ -1,4 +1,8 @@
-import { Injectable, Inject } from "@/app/api/decorators/tsyringe.decorator";
+import {
+  Injectable,
+  Inject,
+  InjectUserId,
+} from "@/app/api/decorators/tsyringe.decorator";
 import { TransactionRepository } from "@/app/api/domain/transaction/repository/transaction.repository";
 import {
   TransactionModel,
@@ -8,11 +12,14 @@ import { Filter, Firestore, UpdateData } from "firebase-admin/firestore";
 import { TransactionAdapter } from "./transaction.adapter";
 import { Collections } from "../types";
 import { TransactionEntity } from "./transaction.entity";
-import { FilterParams } from "@/app/api/domain/interfaces/transaction-filter.interface";
+import type { FilterParams } from "@/app/api/domain/interfaces/transaction-filter.interface";
 
 @Injectable()
 export class TransactionFirestoreRepository implements TransactionRepository {
-  constructor(@Inject(Firestore) private readonly firestore: Firestore) {}
+  constructor(
+    @Inject(Firestore) private readonly firestore: Firestore,
+    @InjectUserId() private readonly userId: string
+  ) {}
 
   async getById(id: string): Promise<TransactionModel | null> {
     const docRef = this.firestore.collection(Collections.Transactions).doc(id);

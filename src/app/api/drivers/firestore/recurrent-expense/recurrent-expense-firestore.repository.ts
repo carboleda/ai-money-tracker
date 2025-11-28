@@ -1,5 +1,9 @@
 import { Firestore, UpdateData } from "firebase-admin/firestore";
-import { Injectable, Inject } from "@/app/api/decorators/tsyringe.decorator";
+import {
+  Injectable,
+  Inject,
+  InjectUserId,
+} from "@/app/api/decorators/tsyringe.decorator";
 import { RecurrentExpenseRepository } from "@/app/api/domain/recurrent-expense/repository/recurrent-expense.repository";
 import { RecurrentExpenseModel } from "@/app/api/domain/recurrent-expense/model/recurrent-expense.model";
 import { RecurrentExpenseAdapter } from "./recurrent-expense.adapter";
@@ -10,7 +14,10 @@ import { Collections } from "@/app/api/drivers/firestore/types";
 export class RecurrentExpenseFirestoreRepository
   implements RecurrentExpenseRepository
 {
-  constructor(@Inject(Firestore) private readonly firestore: Firestore) {}
+  constructor(
+    @Inject(Firestore) private readonly firestore: Firestore,
+    @InjectUserId() private readonly userId: string
+  ) {}
 
   async getAll(): Promise<RecurrentExpenseModel[]> {
     const collectionRef = this.firestore.collection(

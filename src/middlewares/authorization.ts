@@ -21,6 +21,8 @@ export async function authorizatonMiddleware(
     serviceAccount: Env.NEXT_PUBLIC_FIREBASE_APP_CONFIG as any,
   });
 
+  request.headers.set("X-User-Id", tokens?.decodedToken?.email || "");
+
   if (
     tokens?.decodedToken?.email &&
     tokens?.decodedToken?.email !== "arbofercho@gmail.com" // TODO: Improved this
