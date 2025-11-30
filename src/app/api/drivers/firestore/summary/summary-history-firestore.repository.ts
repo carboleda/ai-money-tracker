@@ -1,5 +1,6 @@
 import {
   Injectable,
+  Inject,
   InjectUserId,
 } from "@/app/api/decorators/tsyringe.decorator";
 import { SummaryHistoryRepository } from "@/app/api/domain/summary/repository/summary-history.repository";
@@ -8,32 +9,29 @@ import { Firestore, Timestamp } from "firebase-admin/firestore";
 import { SummaryHistoryAdapter } from "./summary-history.adapter";
 import { Collections } from "../types";
 import { SummaryHistoryEntity } from "./summary-history.entity";
+import { BaseFirestoreRepository } from "@/app/api/drivers/firestore/base/base.firestore.repository";
 
 @Injectable()
 export class SummaryHistoryFirestoreRepository
+  extends BaseFirestoreRepository
   implements SummaryHistoryRepository
 {
   constructor(
-    private readonly firestore: Firestore,
-    @InjectUserId() private readonly userId: string
-  ) {}
+    @Inject(Firestore) firestore: Firestore,
+    @InjectUserId() userId: string
+  ) {
+    super(Collections.TransactionsSummaryHistory, firestore, userId);
+  }
 
   async create(model: SummaryHistoryModel): Promise<string> {
     const entity = SummaryHistoryAdapter.toEntity(model);
-    const docRef = await this.firestore
-      .collection(Collections.Users)
-      .doc(this.userId)
-      .collection(Collections.TransactionsSummaryHistory)
-      .add(entity);
+    const docRef = await this.getUserCollectionReference().add(entity);
 
     return docRef.id;
   }
 
   async getHistorySince(date: Date): Promise<SummaryHistoryModel[]> {
-    const query = this.firestore
-      .collection(Collections.Users)
-      .doc(this.userId)
-      .collection(Collections.TransactionsSummaryHistory)
+    const query = this.getUserCollectionReference()
       .where("createdAt", ">=", Timestamp.fromDate(date))
       .orderBy("createdAt", "asc");
 

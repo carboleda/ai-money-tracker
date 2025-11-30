@@ -13,21 +13,22 @@ import { TransactionAdapter } from "./transaction.adapter";
 import { Collections } from "../types";
 import { TransactionEntity } from "./transaction.entity";
 import type { FilterParams } from "@/app/api/domain/interfaces/transaction-filter.interface";
+import { BaseFirestoreRepository } from "@/app/api/drivers/firestore/base/base.firestore.repository";
 
 @Injectable()
-export class TransactionFirestoreRepository implements TransactionRepository {
+export class TransactionFirestoreRepository
+  extends BaseFirestoreRepository
+  implements TransactionRepository
+{
   constructor(
-    @Inject(Firestore) private readonly firestore: Firestore,
-    @InjectUserId() private readonly userId: string
-  ) {}
+    @Inject(Firestore) firestore: Firestore,
+    @InjectUserId() userId: string
+  ) {
+    super(Collections.Transactions, firestore, userId);
+  }
 
   async getById(id: string): Promise<TransactionModel | null> {
-    const docRef = this.firestore
-      .collection(Collections.Users)
-      .doc(this.userId)
-      .collection(Collections.Transactions)
-      .doc(id);
-    const doc = await docRef.get();
+    const doc = await this.getUserCollectionReference().doc(id).get();
     if (!doc.exists) {
       return null;
     }
@@ -38,11 +39,7 @@ export class TransactionFirestoreRepository implements TransactionRepository {
 
   async create(transaction: TransactionModel): Promise<string> {
     const entity = TransactionAdapter.toEntity(transaction);
-    const docRef = await this.firestore
-      .collection(Collections.Users)
-      .doc(this.userId)
-      .collection(Collections.Transactions)
-      .add(entity);
+    const docRef = await this.getUserCollectionReference().add(entity);
     return docRef.id;
   }
 
@@ -50,30 +47,19 @@ export class TransactionFirestoreRepository implements TransactionRepository {
     const entity = TransactionAdapter.toEntity(
       transaction
     ) as UpdateData<TransactionEntity>;
-    const docRef = this.firestore
-      .collection(Collections.Users)
-      .doc(this.userId)
-      .collection(Collections.Transactions)
-      .doc(transaction.id);
+    const docRef = this.getUserCollectionReference().doc(transaction.id);
     await docRef.update(entity);
   }
 
   async delete(id: string): Promise<void> {
-    const docRef = this.firestore
-      .collection(Collections.Users)
-      .doc(this.userId)
-      .collection(Collections.Transactions)
-      .doc(id);
+    const docRef = this.getUserCollectionReference().doc(id);
     await docRef.delete();
   }
 
   async searchTransactions(params: FilterParams): Promise<TransactionModel[]> {
     const { status, account, startDate, endDate } = params;
 
-    const collectionRef = this.firestore
-      .collection(Collections.Users)
-      .doc(this.userId)
-      .collection(Collections.Transactions);
+    const collectionRef = this.getUserCollectionReference();
     let q = collectionRef.orderBy(
       "createdAt",
       status === TransactionStatus.PENDING ? "asc" : "desc"

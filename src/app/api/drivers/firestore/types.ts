@@ -9,3 +9,5 @@ export const Collections = {
   TransactionsSummaryHistory: `accounts-history${suffix}`,
   RecurringExpenses: `recurring-expenses${suffix}`,
 } as const;
+
+export type CollectionsType = (typeof Collections)[keyof typeof Collections];

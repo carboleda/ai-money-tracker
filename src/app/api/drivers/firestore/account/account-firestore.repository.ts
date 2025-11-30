@@ -9,20 +9,22 @@ import { AccountAdapter } from "./account.adapter";
 import { Firestore, QueryDocumentSnapshot } from "firebase-admin/firestore";
 import { Collections } from "../types";
 import { AccountEntity } from "./account.entity";
+import { BaseFirestoreRepository } from "@/app/api/drivers/firestore/base/base.firestore.repository";
 
 @Injectable()
-export class AccountFirestoreRepository implements AccountRepository {
+export class AccountFirestoreRepository
+  extends BaseFirestoreRepository
+  implements AccountRepository
+{
   constructor(
-    @Inject(Firestore) private readonly firestore: Firestore,
-    @InjectUserId() private readonly userId: string
-  ) {}
+    @Inject(Firestore) firestore: Firestore,
+    @InjectUserId() userId: string
+  ) {
+    super(Collections.Accounts, firestore, userId);
+  }
 
   async getAll(): Promise<AccountModel[]> {
-    const snapshot = await this.firestore
-      .collection(Collections.Users)
-      .doc(this.userId)
-      .collection(Collections.Accounts)
-      .get();
+    const snapshot = await this.getUserCollectionReference().get();
 
     const accounts = snapshot.docs.map((doc) => {
       const entity = { ...doc.data() } as AccountEntity;
@@ -44,13 +46,7 @@ export class AccountFirestoreRepository implements AccountRepository {
 
   getAccountById(id: string): Promise<AccountModel> {
     // TODO: Query the Firestore database to get the account with the given ID
-    console.log(
-      "Firestore instance:",
-      this.firestore
-        .collection(Collections.Users)
-        .doc(this.userId)
-        .collection(Collections.Accounts)
-    );
+    console.log("Firestore instance:", this.getUserCollectionReference());
     return Promise.resolve(
       AccountAdapter.toModel(
         {
@@ -65,10 +61,7 @@ export class AccountFirestoreRepository implements AccountRepository {
   private async getAccountDocument(
     account: string
   ): Promise<QueryDocumentSnapshot | null> {
-    const accounts = await this.firestore
-      .collection(Collections.Users)
-      .doc(this.userId)
-      .collection(Collections.Accounts)
+    const accounts = await this.getUserCollectionReference()
       .where("account", "==", account)
       .get();
 
@@ -90,13 +83,9 @@ export class AccountFirestoreRepository implements AccountRepository {
   }
 
   private async createInitialAccount(account: string, balance: number) {
-    await this.firestore
-      .collection(Collections.Users)
-      .doc(this.userId)
-      .collection(Collections.Accounts)
-      .add({
-        account,
-        balance,
-      });
+    await this.getUserCollectionReference().add({
+      account,
+      balance,
+    });
   }
 }
