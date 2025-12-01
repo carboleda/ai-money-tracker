@@ -62,16 +62,20 @@ export class PendingTransactionNotificationService {
         return { success: true, processedTransactions: transactions.length };
       }
 
-      const notifications = transactionsToNotify.map((transaction) => {
+      const notifications = transactionsToNotify.flatMap((transaction) => {
         const notification = this.createNotificationForTransaction(
           now,
           transaction
         );
-        return {
-          userId: user.id,
-          fcmToken: user.fcmToken,
-          notification,
-        };
+
+        user.devices = user.devices || [];
+        return user.devices
+          .filter((device) => device.fcmToken)
+          .map((device) => ({
+            userId: user.id,
+            fcmToken: device.fcmToken!,
+            notification,
+          }));
       });
 
       // Send bulk notifications

@@ -5,7 +5,22 @@ export class UserAdapter {
   static toModel(entity: UserEntity, id: string): UserModel {
     return {
       id,
-      fcmToken: entity.fcmToken,
+      email: id,
+      devices: entity.devices?.map((deviceEntity) => ({
+        deviceId: deviceEntity.deviceId,
+        deviceName: deviceEntity.deviceName,
+        fcmToken: deviceEntity.fcmToken,
+      })),
+    };
+  }
+
+  static toEntity(model: UserModel): UserEntity {
+    return {
+      devices: model.devices?.map((deviceModel) => ({
+        deviceId: deviceModel.deviceId,
+        deviceName: deviceModel.deviceName,
+        fcmToken: deviceModel.fcmToken,
+      })),
     };
   }
 }

@@ -63,7 +63,7 @@ describe("UserFirestoreRepository", () => {
       const mockDoc = {
         exists: true,
         id: "test-user-id",
-        data: () => ({ fcmToken: "token" }),
+        data: () => ({ devices: [] }),
       };
       const getMock = jest.fn().mockResolvedValue(mockDoc);
       const docMock = jest.fn().mockReturnValue({ get: getMock });
@@ -73,27 +73,38 @@ describe("UserFirestoreRepository", () => {
 
       expect(firestore.collection).toHaveBeenCalledWith(Collections.Users);
       expect(docMock).toHaveBeenCalledWith("test-user-id");
-      expect(result).toEqual({ id: "test-user-id", fcmToken: "token" });
+      expect(result).toMatchObject({ id: "test-user-id" });
     });
   });
 
   describe("updateOrCreateUser", () => {
     it("should update existing user and return id", async () => {
-      const updateMock = jest.fn().mockResolvedValue(undefined);
-      const mockDoc = { exists: true };
+      const setMock = jest.fn().mockResolvedValue(undefined);
+      const mockDoc = { exists: true, data: () => ({ devices: [] }) };
       const getMock = jest.fn().mockResolvedValue(mockDoc);
       const docMock = jest.fn().mockReturnValue({
         get: getMock,
-        update: updateMock,
+        set: setMock,
       });
       (firestore.collection as jest.Mock).mockReturnValue({ doc: docMock });
 
-      const result = await repository.updateOrCreateUser("newToken");
+      const user = new UserModel({
+        id: "test-user-id",
+        email: "test@example.com",
+        devices: [
+          {
+            deviceId: "device-123",
+            deviceName: "Chrome on macOS",
+          },
+        ],
+      });
+
+      const result = await repository.updateOrCreateUser(user);
 
       expect(firestore.collection).toHaveBeenCalledWith(Collections.Users);
       expect(docMock).toHaveBeenCalledWith("test-user-id");
       expect(getMock).toHaveBeenCalled();
-      expect(updateMock).toHaveBeenCalledWith({ fcmToken: "newToken" });
+      expect(setMock).toHaveBeenCalled();
       expect(result).toBe("test-user-id");
     });
 
@@ -107,13 +118,78 @@ describe("UserFirestoreRepository", () => {
       });
       (firestore.collection as jest.Mock).mockReturnValue({ doc: docMock });
 
-      const result = await repository.updateOrCreateUser("token123");
+      const user = new UserModel({
+        id: "test-user-id",
+        email: "newuser@example.com",
+        devices: [
+          {
+            deviceId: "device-456",
+            deviceName: "Safari on iPhone",
+          },
+        ],
+      });
+
+      const result = await repository.updateOrCreateUser(user);
 
       expect(firestore.collection).toHaveBeenCalledWith(Collections.Users);
       expect(docMock).toHaveBeenCalledWith("test-user-id");
       expect(getMock).toHaveBeenCalled();
-      expect(setMock).toHaveBeenCalledWith({ fcmToken: "token123" });
+      expect(setMock).toHaveBeenCalled();
       expect(result).toBe("test-user-id");
+    });
+  });
+
+  describe("getAllUsers", () => {
+    it("should retrieve all users from the collection", async () => {
+      const mockUsers = [
+        {
+          id: "user-1",
+          data: () => ({
+            id: "user-1",
+            email: "user1@example.com",
+            devices: [
+              {
+                deviceId: "device-1",
+                deviceName: "Chrome on macOS",
+              },
+            ],
+          }),
+        },
+        {
+          id: "user-2",
+          data: () => ({
+            id: "user-2",
+            email: "user2@example.com",
+            devices: [
+              {
+                deviceId: "device-2",
+                deviceName: "Safari on iPhone",
+              },
+            ],
+          }),
+        },
+      ];
+      const getMock = jest.fn().mockResolvedValue({ docs: mockUsers });
+      (firestore.collection as jest.Mock).mockReturnValue({ get: getMock });
+
+      const result = await repository.getAllUsers();
+
+      expect(firestore.collection).toHaveBeenCalledWith(Collections.Users);
+      expect(getMock).toHaveBeenCalled();
+      expect(result).toHaveLength(2);
+      expect(result[0].id).toBe("user-1");
+      expect(result[1].id).toBe("user-2");
+    });
+
+    it("should return empty array when no users exist", async () => {
+      const getMock = jest.fn().mockResolvedValue({ docs: [] });
+      (firestore.collection as jest.Mock).mockReturnValue({ get: getMock });
+
+      const result = await repository.getAllUsers();
+
+      expect(firestore.collection).toHaveBeenCalledWith(Collections.Users);
+      expect(getMock).toHaveBeenCalled();
+      expect(result).toHaveLength(0);
     });
   });
 });

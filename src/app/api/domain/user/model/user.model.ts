@@ -1,9 +1,21 @@
+export interface UserDeviceModel {
+  deviceId: string;
+  deviceName: string;
+  fcmToken?: string;
+}
+
 export class UserModel {
   public id: string;
-  public fcmToken: string;
+  public email: string;
+  public devices?: UserDeviceModel[];
 
-  constructor(params: { id: string; fcmToken: string }) {
+  constructor(params: {
+    id: string;
+    email: string;
+    devices: UserDeviceModel[];
+  }) {
     this.id = params.id;
-    this.fcmToken = params.fcmToken;
+    this.email = params.email;
+    this.devices = params.devices;
   }
 }
