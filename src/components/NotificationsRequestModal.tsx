@@ -10,6 +10,7 @@ import { useMutateUser } from "@/hooks/useMutateUser";
 import { Action, ConfirmationModal } from "./shared/ConfirmationModal";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { useTranslation } from "react-i18next";
+import { DeviceInfo } from "@/config/deviceInfo";
 
 interface NotificationRequestModalProps {
   firebaseApp?: FirebaseApp;
@@ -51,10 +52,15 @@ export const NotificationRequestModal: React.FC<
 
       if (permission === "granted") {
         const messaging = getMessaging(firebaseApp);
-        const fcmToken = await getToken(messaging, {
-          vapidKey: Env.NEXT_PUBLIC_FIREBASE_VAPID_KEY,
+        const [fcmToken, { deviceId, deviceName }] = await Promise.all([
+          getToken(messaging, {
+            vapidKey: Env.NEXT_PUBLIC_FIREBASE_VAPID_KEY,
+          }),
+          DeviceInfo.generate(),
+        ]);
+        await updateUser({
+          devices: [{ deviceId, deviceName, fcmToken }],
         });
-        await updateUser({ fcmToken });
 
         onPermissionGranted();
       } else {

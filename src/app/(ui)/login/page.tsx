@@ -13,12 +13,15 @@ import { Image } from "@heroui/image";
 import { siteConfig } from "@/config/site";
 import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
+import { DeviceInfo } from "@/config/deviceInfo";
+import { useMutateUser } from "@/hooks/useMutateUser";
 
 function LoginPage() {
   const [errorMessage, setErrorMessage] = React.useState("");
   const router = useRouter();
   const [_, startTransition] = useTransition();
   const { t } = useTranslation(LocaleNamespace.Login);
+  const { updateUser } = useMutateUser();
 
   const onGoogleLogin = async () => {
     try {
@@ -31,6 +34,11 @@ function LoginPage() {
         headers: {
           Authorization: `Bearer ${token}`,
         },
+      });
+
+      const { deviceId, deviceName } = await DeviceInfo.generate();
+      await updateUser({
+        devices: [{ deviceId, deviceName }],
       });
 
       // This forces the navigation to be updated immediately since the actionl redirection happens in the server
@@ -53,6 +61,8 @@ function LoginPage() {
           email,
           credential,
         });
+      } else {
+        console.error("Unexpected error", error);
       }
 
       setErrorMessage(t("signInErrorMessage"));
