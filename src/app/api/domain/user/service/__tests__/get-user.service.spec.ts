@@ -4,6 +4,7 @@ import { UserRepository } from "@/app/api/domain/user/repository/user.repository
 import { GetUserService } from "../get-user.service";
 import { UserModel } from "@/app/api/domain/user/model/user.model";
 import { container } from "tsyringe";
+import { createUserModelFixture } from "./fixtures/user.model.fixture";
 
 describe("GetUserService", () => {
   let repository: UserRepository;
@@ -17,6 +18,7 @@ describe("GetUserService", () => {
     const mockRepository: UserRepository = {
       getExistingUser: jest.fn(),
       updateOrCreateUser: jest.fn(),
+      getAllUsers: jest.fn(),
     };
 
     // Register mock repository
@@ -42,7 +44,7 @@ describe("GetUserService", () => {
 
   it("should call the repository", async () => {
     // Arrange
-    const user = { id: "test-id", fcmToken: "test-token" };
+    const user = createUserModelFixture();
     const getExistingUserSpy = jest
       .spyOn(repository, "getExistingUser")
       .mockResolvedValue(user);

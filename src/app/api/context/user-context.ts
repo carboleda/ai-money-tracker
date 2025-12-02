@@ -25,13 +25,6 @@ export function getUserId(): string | undefined {
   return userId;
 }
 
-export function setUserContext(userId: string): void {
-  const store = asyncLocalStorage.getStore();
-  if (store) {
-    store.userId = userId;
-  }
-}
-
 export function runWithUserContext<T>(userId: string, callback: () => T): T {
   return asyncLocalStorage.run({ userId }, callback);
 }

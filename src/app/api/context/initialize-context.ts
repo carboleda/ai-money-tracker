@@ -1,16 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { Env } from "@/config/env";
 import { runWithUserContext } from "./user-context";
 
 export async function withUserContext(
   req: NextRequest,
   handler: () => Promise<NextResponse>
 ): Promise<NextResponse> {
-  // In local environment, use a default test user ID
-  // if (Env.isLocal) {
-  //   return runWithUserContext("local-test-user", handler);
-  // }
-
   // Extract user ID from Firebase token
   const userId = req.headers.get("X-User-Id");
 
