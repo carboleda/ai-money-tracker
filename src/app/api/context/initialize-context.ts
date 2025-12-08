@@ -6,15 +6,15 @@ export async function withUserContext(
   handler: () => Promise<NextResponse>
 ): Promise<NextResponse> {
   // Extract user ID from Firebase token
-  const userId = req.headers.get("X-User-Id");
+  const email = req.headers.get("X-User-Email");
 
-  if (!userId) {
+  if (!email) {
     return NextResponse.json(
-      { error: "Unauthorized: No valid user token found" },
+      { error: "Unauthorized: No valid user email found" },
       { status: 401 }
     );
   }
 
   // Run the handler within the user context
-  return runWithUserContext(userId, handler);
+  return runWithUserContext(email, handler);
 }

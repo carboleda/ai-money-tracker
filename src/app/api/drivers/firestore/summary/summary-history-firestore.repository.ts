@@ -1,7 +1,7 @@
 import {
   Injectable,
   Inject,
-  InjectUserId,
+  InjectUserContext,
 } from "@/app/api/decorators/tsyringe.decorator";
 import { SummaryHistoryRepository } from "@/app/api/domain/summary/repository/summary-history.repository";
 import { SummaryHistoryModel } from "@/app/api/domain/summary/model/summary-history.model";
@@ -10,6 +10,7 @@ import { SummaryHistoryAdapter } from "./summary-history.adapter";
 import { Collections } from "../types";
 import { SummaryHistoryEntity } from "./summary-history.entity";
 import { BaseFirestoreRepository } from "@/app/api/drivers/firestore/base/base.firestore.repository";
+import type { UserContext } from "@/app/api/context/user-context";
 
 @Injectable()
 export class SummaryHistoryFirestoreRepository
@@ -18,9 +19,9 @@ export class SummaryHistoryFirestoreRepository
 {
   constructor(
     @Inject(Firestore) firestore: Firestore,
-    @InjectUserId() userId: string
+    @InjectUserContext() userContext: UserContext
   ) {
-    super(Collections.TransactionsSummaryHistory, firestore, userId);
+    super(Collections.TransactionsSummaryHistory, firestore, userContext);
   }
 
   async create(model: SummaryHistoryModel): Promise<string> {

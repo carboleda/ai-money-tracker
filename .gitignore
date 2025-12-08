@@ -33,6 +33,7 @@ yarn-error.log*
 
 # firebase
 .genkit
+.firestore-export
 
 # typescript
 *.tsbuildinfo

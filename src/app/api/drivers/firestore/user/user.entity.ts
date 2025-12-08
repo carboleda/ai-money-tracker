@@ -6,5 +6,6 @@ export interface UserDeviceEntity extends UserDeviceModel {
 }
 
 export interface UserEntity extends FirebaseFirestore.DocumentData {
+  email: string;
   devices?: UserDeviceEntity[];
 }

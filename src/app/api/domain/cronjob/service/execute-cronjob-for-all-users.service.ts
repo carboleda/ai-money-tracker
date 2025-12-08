@@ -18,7 +18,7 @@ export class ExecuteCronjobForAllUsersService {
     const results: CronjobResult[] = [];
 
     for (const user of users) {
-      await runWithUserContext(user.id, async () => {
+      await runWithUserContext(user.email, async () => {
         const [notificationResult, summaryResult] = await Promise.allSettled([
           this.notificationService.execute(),
           this.summaryHistoryService.execute(),

@@ -3,13 +3,14 @@ import { Firestore, UpdateData } from "firebase-admin/firestore";
 import {
   Injectable,
   Inject,
-  InjectUserId,
+  InjectUserContext,
 } from "@/app/api/decorators/tsyringe.decorator";
 import { RecurrentExpenseRepository } from "@/app/api/domain/recurrent-expense/repository/recurrent-expense.repository";
 import { RecurrentExpenseModel } from "@/app/api/domain/recurrent-expense/model/recurrent-expense.model";
 import { RecurrentExpenseAdapter } from "./recurrent-expense.adapter";
 import { RecurrentExpenseEntity } from "./recurrent-expense.entity";
 import { BaseFirestoreRepository } from "@/app/api/drivers/firestore/base/base.firestore.repository";
+import type { UserContext } from "@/app/api/context/user-context";
 
 @Injectable()
 export class RecurrentExpenseFirestoreRepository
@@ -18,9 +19,9 @@ export class RecurrentExpenseFirestoreRepository
 {
   constructor(
     @Inject(Firestore) firestore: Firestore,
-    @InjectUserId() userId: string
+    @InjectUserContext() userContext: UserContext
   ) {
-    super(Collections.RecurringExpenses, firestore, userId);
+    super(Collections.RecurringExpenses, firestore, userContext);
   }
 
   async getAll(): Promise<RecurrentExpenseModel[]> {

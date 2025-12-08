@@ -1,7 +1,7 @@
 import {
   Injectable,
   Inject,
-  InjectUserId,
+  InjectUserContext,
 } from "@/app/api/decorators/tsyringe.decorator";
 import { AccountModel } from "@/app/api/domain/account/model/account.model";
 import { AccountRepository } from "@/app/api/domain/account/repository/account.repository";
@@ -10,6 +10,7 @@ import { Firestore, QueryDocumentSnapshot } from "firebase-admin/firestore";
 import { Collections } from "../types";
 import { AccountEntity } from "./account.entity";
 import { BaseFirestoreRepository } from "@/app/api/drivers/firestore/base/base.firestore.repository";
+import type { UserContext } from "@/app/api/context/user-context";
 
 @Injectable()
 export class AccountFirestoreRepository
@@ -18,9 +19,9 @@ export class AccountFirestoreRepository
 {
   constructor(
     @Inject(Firestore) firestore: Firestore,
-    @InjectUserId() userId: string
+    @InjectUserContext() userContext: UserContext
   ) {
-    super(Collections.Accounts, firestore, userId);
+    super(Collections.Accounts, firestore, userContext);
   }
 
   async getAll(): Promise<AccountModel[]> {
@@ -44,7 +45,7 @@ export class AccountFirestoreRepository
     await this.createInitialAccount(account, balance);
   }
 
-  getAccountById(id: string): Promise<AccountModel> {
+  async getAccountById(id: string): Promise<AccountModel> {
     // TODO: Query the Firestore database to get the account with the given ID
     console.log("Firestore instance:", this.getUserCollectionReference());
     return Promise.resolve(

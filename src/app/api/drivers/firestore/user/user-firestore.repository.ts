@@ -1,7 +1,7 @@
 import {
   Injectable,
   Inject,
-  InjectUserId,
+  InjectUserContext,
 } from "@/app/api/decorators/tsyringe.decorator";
 import { Firestore, Timestamp } from "firebase-admin/firestore";
 import { UserRepository } from "@/app/api/domain/user/repository/user.repository";
@@ -13,6 +13,7 @@ import { Collections } from "@/app/api/drivers/firestore/types";
 import { UserAdapter } from "@/app/api/drivers/firestore/user/user.adapter";
 import { UserEntity, UserDeviceEntity } from "./user.entity";
 import { BaseFirestoreRepository } from "@/app/api/drivers/firestore/base/base.firestore.repository";
+import type { UserContext } from "@/app/api/context/user-context";
 
 @Injectable()
 export class UserFirestoreRepository
@@ -21,15 +22,14 @@ export class UserFirestoreRepository
 {
   constructor(
     @Inject(Firestore) firestore: Firestore,
-    @InjectUserId() userId: string
+    @InjectUserContext() userContext: UserContext
   ) {
-    super(Collections.Users, firestore, userId);
+    super(Collections.Users, firestore, userContext);
   }
 
   async getExistingUser(): Promise<UserModel | null> {
-    const docRef = this.firestore
-      .collection(Collections.Users)
-      .doc(this.getUserId());
+    const { id } = this.getUserContext();
+    const docRef = this.firestore.collection(Collections.Users).doc(id);
     const doc = await docRef.get();
 
     if (!doc.exists) {
@@ -40,11 +40,14 @@ export class UserFirestoreRepository
   }
 
   async updateOrCreateUser(user: UserModel): Promise<string> {
-    const userId = this.getUserId();
-    const docRef = this.firestore.collection(Collections.Users).doc(userId);
+    const { id, email } = this.getUserContext();
+    const docRef = this.firestore.collection(Collections.Users).doc(id);
     const doc = await docRef.get();
 
-    const entity = UserAdapter.toEntity(user);
+    const entity = UserAdapter.toEntity({
+      ...user,
+      email,
+    });
 
     if (doc.exists) {
       const existingEntity = { ...doc.data() } as UserEntity;
@@ -60,7 +63,7 @@ export class UserFirestoreRepository
       merge: true,
     });
 
-    return userId;
+    return id;
   }
 
   async getAllUsers(): Promise<UserModel[]> {

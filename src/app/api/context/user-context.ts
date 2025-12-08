@@ -1,32 +1,29 @@
-import { Env } from "@/config/env";
 import { AsyncLocalStorage } from "node:async_hooks";
+import * as XXH from "xxhashjs";
 
-interface UserContext {
-  userId: string;
+export interface UserContext {
+  id: string;
+  email: string;
 }
 
 const asyncLocalStorage = new AsyncLocalStorage<UserContext>();
 
-export function getUserId(): string | undefined {
-  const store = asyncLocalStorage.getStore();
-  const userId = store?.userId;
+export function getUserContext(): UserContext {
+  const context = asyncLocalStorage.getStore();
 
-  if (!userId) {
-    // In local environment, use a default test user ID
-    if (Env.isLocal) {
-      return "local-test-user";
-    }
-
+  if (!context?.email) {
     throw new Error(
       "User context not initialized. Ensure route handler is wrapped with withUserContext()."
     );
   }
 
-  return userId;
+  return context;
 }
 
-export function runWithUserContext<T>(userId: string, callback: () => T): T {
-  return asyncLocalStorage.run({ userId }, callback);
+export function runWithUserContext<T>(email: string, callback: () => T): T {
+  const id = XXH.h64(email, 0xcafebabe).toString(32);
+  const userContext: UserContext = { id, email };
+  return asyncLocalStorage.run(userContext, callback);
 }
 
 export { asyncLocalStorage };

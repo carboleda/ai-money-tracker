@@ -21,5 +21,5 @@ export async function authorizatonMiddleware(
     serviceAccount: Env.NEXT_PUBLIC_FIREBASE_APP_CONFIG as any,
   });
 
-  request.headers.set("X-User-Id", tokens?.decodedToken?.email || "");
+  request.headers.set("X-User-Email", tokens?.decodedToken?.email || "");
 }

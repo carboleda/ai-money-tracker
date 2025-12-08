@@ -1,4 +1,4 @@
-import { getUserId } from "@/app/api/context/user-context";
+import { getUserContext, UserContext } from "@/app/api/context/user-context";
 import { Firestore } from "firebase-admin/firestore";
 import {
   Collections,
@@ -9,19 +9,19 @@ export class BaseFirestoreRepository {
   constructor(
     protected readonly collection: CollectionsType,
     protected readonly firestore: Firestore,
-    private readonly globalContextUserId: string
+    private readonly globalUserContext: UserContext
   ) {}
 
-  protected getUserId(): string {
-    return this.globalContextUserId ?? getUserId();
+  protected getUserContext(): UserContext {
+    return this.globalUserContext ?? getUserContext();
   }
 
   protected getUserCollectionReference(): FirebaseFirestore.CollectionReference {
-    const userId = this.getUserId();
-    console.log("Getting collection reference for userId:", userId);
+    const userContext = this.getUserContext();
+    console.log("Getting collection reference for userContext:", userContext);
     return this.firestore
       .collection(Collections.Users)
-      .doc(userId)
+      .doc(userContext.id!)
       .collection(this.collection);
   }
 }

@@ -5,7 +5,7 @@ export class UserAdapter {
   static toModel(entity: UserEntity, id: string): UserModel {
     return {
       id,
-      email: id,
+      email: entity.email,
       devices: entity.devices?.map((deviceEntity) => ({
         deviceId: deviceEntity.deviceId,
         deviceName: deviceEntity.deviceName,
@@ -16,6 +16,7 @@ export class UserAdapter {
 
   static toEntity(model: UserModel): UserEntity {
     return {
+      email: model.email,
       devices: model.devices?.map((deviceModel) => ({
         deviceId: deviceModel.deviceId,
         deviceName: deviceModel.deviceName,

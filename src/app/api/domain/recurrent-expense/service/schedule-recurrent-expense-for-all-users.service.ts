@@ -20,7 +20,7 @@ export class ScheduleRecurrentExpenseForAllUsersService {
     const results: ScheduleResult[] = [];
 
     for (const user of users) {
-      await runWithUserContext(user.id, async () => {
+      await runWithUserContext(user.email, async () => {
         const { created, skipped } =
           await this.scheduleRecurrentExpenseService.execute();
         results.push({

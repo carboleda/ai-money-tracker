@@ -1,7 +1,7 @@
 import {
   Injectable,
   Inject,
-  InjectUserId,
+  InjectUserContext,
 } from "@/app/api/decorators/tsyringe.decorator";
 import { TransactionRepository } from "@/app/api/domain/transaction/repository/transaction.repository";
 import {
@@ -14,6 +14,7 @@ import { Collections } from "../types";
 import { TransactionEntity } from "./transaction.entity";
 import type { FilterParams } from "@/app/api/domain/interfaces/transaction-filter.interface";
 import { BaseFirestoreRepository } from "@/app/api/drivers/firestore/base/base.firestore.repository";
+import type { UserContext } from "@/app/api/context/user-context";
 
 @Injectable()
 export class TransactionFirestoreRepository
@@ -22,9 +23,9 @@ export class TransactionFirestoreRepository
 {
   constructor(
     @Inject(Firestore) firestore: Firestore,
-    @InjectUserId() userId: string
+    @InjectUserContext() userContext: UserContext
   ) {
-    super(Collections.Transactions, firestore, userId);
+    super(Collections.Transactions, firestore, userContext);
   }
 
   async getById(id: string): Promise<TransactionModel | null> {
