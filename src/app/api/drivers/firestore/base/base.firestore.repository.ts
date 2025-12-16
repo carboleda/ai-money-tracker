@@ -18,7 +18,6 @@ export class BaseFirestoreRepository {
 
   protected getUserCollectionReference(): FirebaseFirestore.CollectionReference {
     const userContext = this.getUserContext();
-    console.log("Getting collection reference for userContext:", userContext);
     return this.firestore
       .collection(Collections.Users)
       .doc(userContext.id!)

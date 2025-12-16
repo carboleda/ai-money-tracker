@@ -3,6 +3,7 @@ import { ValidAccount } from "@/interfaces/account";
 export class Env {
   // General environment variables
   static ENV_NAME = process.env.ENV_NAME;
+  static USER_ID_SEED = parseInt(process.env.USER_ID_SEED!);
   static VALID_ACCOUNTS = JSON.parse(
     process.env.NEXT_PUBLIC_VALID_ACCOUNTS || "{}"
   ) as Record<string, ValidAccount>;

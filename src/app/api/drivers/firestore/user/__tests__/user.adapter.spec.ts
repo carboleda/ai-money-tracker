@@ -5,7 +5,9 @@ describe("UserAdapter", () => {
   describe("toModel", () => {
     it("should convert Firestore entity data to UserModel", () => {
       const id = "user123";
+      const email = "user@example.com";
       const data: UserEntity = {
+        email,
         devices: [
           {
             deviceId: "device-123",
@@ -18,7 +20,7 @@ describe("UserAdapter", () => {
       const result = UserAdapter.toModel(data, id);
 
       expect(result.id).toBe(id);
-      expect(result.email).toBe(id);
+      expect(result.email).toBe(email);
       expect(result.devices).toHaveLength(1);
       expect(result.devices?.[0]).toEqual({
         deviceId: "device-123",
@@ -29,23 +31,25 @@ describe("UserAdapter", () => {
 
     it("should handle empty devices array", () => {
       const id = "user456";
-      const data: UserEntity = { devices: [] };
+      const email = "user456@example.com";
+      const data: UserEntity = { email, devices: [] };
 
       const result = UserAdapter.toModel(data, id);
 
       expect(result.id).toBe(id);
-      expect(result.email).toBe(id);
+      expect(result.email).toBe(email);
       expect(result.devices).toHaveLength(0);
     });
 
     it("should handle undefined devices", () => {
       const id = "user789";
-      const data: UserEntity = {};
+      const email = "user789@example.com";
+      const data: UserEntity = { email };
 
       const result = UserAdapter.toModel(data, id);
 
       expect(result.id).toBe(id);
-      expect(result.email).toBe(id);
+      expect(result.email).toBe(email);
       expect(result.devices).toBeUndefined();
     });
   });

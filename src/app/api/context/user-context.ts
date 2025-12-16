@@ -1,29 +1,52 @@
+import { Env } from "@/config/env";
 import { AsyncLocalStorage } from "node:async_hooks";
 import * as XXH from "xxhashjs";
+
+const asyncLocalStorage = new AsyncLocalStorage<UserContext>();
+
+function generateUserId(email: string): string {
+  return XXH.h64(email, Env.USER_ID_SEED).toString(32);
+}
 
 export interface UserContext {
   id: string;
   email: string;
 }
 
-const asyncLocalStorage = new AsyncLocalStorage<UserContext>();
+export class UserContextData implements UserContext {
+  constructor(private asyncLocalStorage: AsyncLocalStorage<UserContext>) {}
 
-export function getUserContext(): UserContext {
-  const context = asyncLocalStorage.getStore();
+  private get context() {
+    const context = this.asyncLocalStorage.getStore();
 
-  if (!context?.email) {
-    throw new Error(
-      "User context not initialized. Ensure route handler is wrapped with withUserContext()."
-    );
+    if (!context) {
+      throw new Error(
+        "User context not initialized. Ensure route handler is wrapped with withUserContext()."
+      );
+    }
+
+    return context;
   }
 
-  return context;
+  get id(): string {
+    return this.context.id;
+  }
+
+  get email(): string {
+    return this.context.email;
+  }
+}
+
+export function getUserContext(): UserContext {
+  return new UserContextData(asyncLocalStorage);
+}
+
+export function getUserId(): string {
+  return getUserContext().id;
 }
 
 export function runWithUserContext<T>(email: string, callback: () => T): T {
-  const id = XXH.h64(email, 0xcafebabe).toString(32);
-  const userContext: UserContext = { id, email };
-  return asyncLocalStorage.run(userContext, callback);
+  return asyncLocalStorage.run({ id: generateUserId(email), email }, callback);
 }
 
 export { asyncLocalStorage };

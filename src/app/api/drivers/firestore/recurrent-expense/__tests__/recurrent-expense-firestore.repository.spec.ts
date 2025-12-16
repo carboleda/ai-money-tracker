@@ -9,7 +9,8 @@ import { container } from "tsyringe";
 import { Firestore, Timestamp } from "firebase-admin/firestore";
 import { recurrentExpenseModelFixture } from "./fixtures/recurrent-expense.fixture";
 import { RecurrentExpenseAdapter } from "../recurrent-expense.adapter";
-import { getUserIdToken } from "@/app/api/decorators/tsyringe.decorator";
+import { getUserContextToken } from "@/app/api/decorators/tsyringe.decorator";
+import type { UserContext } from "@/app/api/context/user-context";
 
 describe("RecurrentExpenseFirestoreRepository", () => {
   let repository: RecurrentExpenseFirestoreRepository;
@@ -29,9 +30,13 @@ describe("RecurrentExpenseFirestoreRepository", () => {
 
     testContainer.register(Firestore, { useValue: firestore });
 
-    // Register USER_ID_TOKEN for testing
-    testContainer.register(getUserIdToken(), {
-      useValue: "test-user-id",
+    // Register USER_CONTEXT_TOKEN for testing with proper UserContext object
+    const testUserContext: UserContext = {
+      id: "test-user-id",
+      email: "test@example.com",
+    };
+    testContainer.register(getUserContextToken(), {
+      useValue: testUserContext,
     });
 
     testContainer.register(RecurrentExpenseFirestoreRepository, {

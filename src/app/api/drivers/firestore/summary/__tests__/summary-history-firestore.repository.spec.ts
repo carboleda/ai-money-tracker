@@ -4,7 +4,8 @@ import { SummaryHistoryFirestoreRepository } from "../summary-history-firestore.
 import { Firestore } from "firebase-admin/firestore";
 import { SummaryHistoryModel } from "@/app/api/domain/summary/model/summary-history.model";
 import { Collections } from "@/app/api/drivers/firestore/types";
-import { getUserIdToken } from "@/app/api/decorators/tsyringe.decorator";
+import { getUserContextToken } from "@/app/api/decorators/tsyringe.decorator";
+import type { UserContext } from "@/app/api/context/user-context";
 
 describe("SummaryHistoryFirestoreRepository", () => {
   let repository: SummaryHistoryFirestoreRepository;
@@ -44,9 +45,13 @@ describe("SummaryHistoryFirestoreRepository", () => {
       useValue: mockFirestore,
     });
 
-    // Register USER_ID_TOKEN for testing
-    testContainer.register(getUserIdToken(), {
-      useValue: "test-user-id",
+    // Register USER_CONTEXT_TOKEN for testing with proper UserContext object
+    const testUserContext: UserContext = {
+      id: "test-user-id",
+      email: "test@example.com",
+    };
+    testContainer.register(getUserContextToken(), {
+      useValue: testUserContext,
     });
 
     repository = testContainer.resolve(SummaryHistoryFirestoreRepository);

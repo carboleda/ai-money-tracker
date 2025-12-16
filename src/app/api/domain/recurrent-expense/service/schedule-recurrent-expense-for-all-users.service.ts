@@ -16,7 +16,6 @@ export class ScheduleRecurrentExpenseForAllUsersService {
 
   async execute(): Promise<ScheduleExecutionResult> {
     const users = await this.getAllUsersService.execute();
-    console.log("Users fetched for cronjob execution:", users);
     const results: ScheduleResult[] = [];
 
     for (const user of users) {

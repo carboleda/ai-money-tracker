@@ -4,7 +4,8 @@ import { Firestore } from "firebase-admin/firestore";
 import { UserFirestoreRepository } from "../user-firestore.repository";
 import { Collections } from "@/app/api/drivers/firestore/types";
 import { UserModel } from "@/app/api/domain/user/model/user.model";
-import { getUserIdToken } from "@/app/api/decorators/tsyringe.decorator";
+import { getUserContextToken } from "@/app/api/decorators/tsyringe.decorator";
+import type { UserContext } from "@/app/api/context/user-context";
 
 describe("UserFirestoreRepository", () => {
   let firestore: Firestore;
@@ -27,9 +28,13 @@ describe("UserFirestoreRepository", () => {
       useValue: mockFirestore,
     });
 
-    // Register USER_ID_TOKEN for testing
-    testContainer.register(getUserIdToken(), {
-      useValue: "test-user-id",
+    // Register USER_CONTEXT_TOKEN for testing with proper UserContext object
+    const testUserContext: UserContext = {
+      id: "test-user-id",
+      email: "test@example.com",
+    };
+    testContainer.register(getUserContextToken(), {
+      useValue: testUserContext,
     });
 
     testContainer.register(UserFirestoreRepository, {

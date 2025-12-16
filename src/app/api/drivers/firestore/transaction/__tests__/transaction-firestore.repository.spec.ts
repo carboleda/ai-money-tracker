@@ -9,7 +9,8 @@ import {
   transactionModelFixture,
   transactionEntityFixture,
 } from "./fixtures/transaction.fixture";
-import { getUserIdToken } from "@/app/api/decorators/tsyringe.decorator";
+import { getUserContextToken } from "@/app/api/decorators/tsyringe.decorator";
+import type { UserContext } from "@/app/api/context/user-context";
 
 describe("TransactionFirestoreRepository", () => {
   let firestore: Firestore;
@@ -32,9 +33,13 @@ describe("TransactionFirestoreRepository", () => {
       useValue: mockFirestore,
     });
 
-    // Register USER_ID_TOKEN for testing
-    testContainer.register(getUserIdToken(), {
-      useValue: "test-user-id",
+    // Register USER_CONTEXT_TOKEN for testing with proper UserContext object
+    const testUserContext: UserContext = {
+      id: "test-user-id",
+      email: "test@example.com",
+    };
+    testContainer.register(getUserContextToken(), {
+      useValue: testUserContext,
     });
 
     testContainer.register(TransactionFirestoreRepository, {
