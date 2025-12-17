@@ -29,7 +29,7 @@ export class Env {
   static readonly GEMINI_MODEL_NAME = process.env.GEMINI_MODEL_NAME || "";
   static readonly PROMPT_TEMPLATE = (
     process.env.PROMPT_TEMPLATE || ""
-  ).replaceAll('\\"', '"');
+  ).replaceAll('"', '"');
 
   // Public environment variables
   static readonly NEXT_PUBLIC_FIXED_MONTH =
@@ -41,7 +41,7 @@ export class Env {
     process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY || "";
 
   static readonly isLocal = Env.ENV_NAME === "local";
-  static readonly isServer = typeof globalThis.window === "undefined";
+  static readonly isServer = globalThis.window === undefined;
 
   private constructor() {}
 }
