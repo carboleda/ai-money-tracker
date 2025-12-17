@@ -19,8 +19,8 @@ export class DeviceInfo {
    * @returns Device identification object with deviceId, type, name, and browser info
    */
   static async generate(): Promise<DeviceData> {
-    if (typeof window === "undefined") {
-      throw new Error(
+    if (typeof globalThis.window === "undefined") {
+      throw new TypeError(
         "Device identification must be called on client-side only"
       );
     }
@@ -162,8 +162,8 @@ export class DeviceInfo {
    * Note: Screen resolution excluded to prevent device rotation from changing the hash
    */
   private static collectFingerprintData(): string {
-    if (typeof window === "undefined") {
-      throw new Error(
+    if (typeof globalThis.window === "undefined") {
+      throw new TypeError(
         "Device identification must be called on client-side only"
       );
     }

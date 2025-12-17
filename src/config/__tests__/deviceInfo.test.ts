@@ -2,25 +2,25 @@ import { DeviceInfo } from "../deviceInfo";
 
 describe("DeviceInfo", () => {
   // Mock navigator and screen objects
-  const originalNavigator = global.navigator;
-  const originalScreen = global.screen;
-  const originalWindow = global.window;
+  const originalNavigator = globalThis.navigator;
+  const originalScreen = globalThis.screen;
+  const originalWindow = globalThis.window;
 
   beforeEach(() => {
     // Ensure window is defined for tests
-    (global as any).window = {};
+    (globalThis as any).window = {};
   });
 
   afterEach(() => {
-    Object.defineProperty(global, "navigator", {
+    Object.defineProperty(globalThis, "navigator", {
       value: originalNavigator,
       writable: true,
     });
-    Object.defineProperty(global, "screen", {
+    Object.defineProperty(globalThis, "screen", {
       value: originalScreen,
       writable: true,
     });
-    (global as any).window = originalWindow;
+    (globalThis as any).window = originalWindow;
   });
 
   const mockNavigatorAndScreen = (
@@ -45,13 +45,13 @@ describe("DeviceInfo", () => {
       colorDepth,
     };
 
-    Object.defineProperty(global, "navigator", {
+    Object.defineProperty(globalThis, "navigator", {
       value: mockNavigator,
       writable: true,
       configurable: true,
     });
 
-    Object.defineProperty(global, "screen", {
+    Object.defineProperty(globalThis, "screen", {
       value: mockScreen,
       writable: true,
       configurable: true,

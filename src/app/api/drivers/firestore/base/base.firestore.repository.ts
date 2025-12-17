@@ -20,7 +20,7 @@ export class BaseFirestoreRepository {
     const userContext = this.getUserContext();
     return this.firestore
       .collection(Collections.Users)
-      .doc(userContext.id!)
+      .doc(userContext.id)
       .collection(this.collection);
   }
 }
