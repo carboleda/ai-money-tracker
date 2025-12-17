@@ -14,7 +14,9 @@ export interface UserContext {
 }
 
 export class UserContextData implements UserContext {
-  constructor(private asyncLocalStorage: AsyncLocalStorage<UserContext>) {}
+  constructor(
+    private readonly asyncLocalStorage: AsyncLocalStorage<UserContext>
+  ) {}
 
   private get context() {
     const context = this.asyncLocalStorage.getStore();

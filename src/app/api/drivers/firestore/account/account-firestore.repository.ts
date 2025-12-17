@@ -48,14 +48,12 @@ export class AccountFirestoreRepository
   async getAccountById(id: string): Promise<AccountModel> {
     // TODO: Query the Firestore database to get the account with the given ID
     console.log("Firestore instance:", this.getUserCollectionReference());
-    return Promise.resolve(
-      AccountAdapter.toModel(
-        {
-          account: "Account " + id,
-          balance: 1000,
-        },
-        "id"
-      )
+    return AccountAdapter.toModel(
+      {
+        account: "Account " + id,
+        balance: 1000,
+      },
+      "id"
     );
   }
 
