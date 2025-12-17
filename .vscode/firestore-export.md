@@ -140,6 +140,11 @@ mkdir -p firestore-export
 GOOGLE_APPLICATION_CREDENTIALS=~/secrets/my-service-account.json node scripts/firestore-export.js --out ./firestore-export --collections users,transactions --perDocFiles
 ```
 
+4. Run script with real arguments
+```bash
+node ./scripts/firestore-export.mjs --recursive  --key ../ai-money-tracker-firebase-adminsdk-mfiq0-1ce5415d45.json
+```
+
 ## Verification
 
 - After the script completes, confirm files exist under `./firestore-export`.

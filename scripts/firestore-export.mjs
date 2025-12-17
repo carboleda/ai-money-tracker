@@ -3,7 +3,6 @@
 import { initializeApp, getApp as _app, cert } from "firebase-admin/app";
 import { getFirestore } from "firebase-admin/firestore";
 
-// const { initializeApp, firestore, app: _app, cert } = admin;
 import { writeFileSync, readFileSync } from "node:fs";
 import path, { join } from "node:path";
 import minimist from "minimist";
@@ -196,20 +195,19 @@ async function main() {
   const collectionNames = args.collections.split(",").map((c) => c.trim());
 
   // Initialize Firebase Admin SDK
-  let app;
   try {
     if (args.key) {
       const serviceAccount = JSON.parse(
         readFileSync(path.resolve(args.key), "utf8")
       );
-      app = initializeApp({
+      initializeApp({
         credential: cert(serviceAccount),
       });
     } else if (process.env.GOOGLE_APPLICATION_CREDENTIALS) {
       const serviceAccount = JSON.parse(
         readFileSync(process.env.GOOGLE_APPLICATION_CREDENTIALS, "utf8")
       );
-      app = initializeApp({
+      initializeApp({
         credential: cert(serviceAccount),
       });
     } else {
