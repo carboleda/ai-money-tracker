@@ -7,6 +7,7 @@ import { CronjobExecutionResult, CronjobResult } from "../model/cronjob.dto";
 
 @Injectable()
 export class ExecuteCronjobForAllUsersService {
+  private readonly logPrefix = `[${ExecuteCronjobForAllUsersService.name}]`;
   constructor(
     private readonly getAllUsersService: GetAllUsersService,
     private readonly notificationService: PendingTransactionNotificationService,
@@ -18,6 +19,13 @@ export class ExecuteCronjobForAllUsersService {
     const results: CronjobResult[] = [];
 
     for (const user of users) {
+      if (!user.email) {
+        console.log(
+          `${this.logPrefix} Skipping user ${user.id} due to missing email`
+        );
+        continue;
+      }
+
       await runWithUserContext(user.email, async () => {
         const [notificationResult, summaryResult] = await Promise.allSettled([
           this.notificationService.execute(),

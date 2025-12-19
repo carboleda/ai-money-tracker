@@ -9,6 +9,7 @@ import {
 
 @Injectable()
 export class ScheduleRecurrentExpenseForAllUsersService {
+  private readonly logPrefix = `[${ScheduleRecurrentExpenseForAllUsersService.name}]`;
   constructor(
     private readonly getAllUsersService: GetAllUsersService,
     private readonly scheduleRecurrentExpenseService: ScheduleRecurrentExpenseService
@@ -19,6 +20,13 @@ export class ScheduleRecurrentExpenseForAllUsersService {
     const results: ScheduleResult[] = [];
 
     for (const user of users) {
+      if (!user.email) {
+        console.log(
+          `${this.logPrefix} Skipping user ${user.id} due to missing email`
+        );
+        continue;
+      }
+
       await runWithUserContext(user.email, async () => {
         const { created, skipped } =
           await this.scheduleRecurrentExpenseService.execute();

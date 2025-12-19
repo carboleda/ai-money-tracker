@@ -28,7 +28,6 @@ export class PendingTransactionNotificationService {
 
   async execute(): Promise<PendingTransactionNotificationResult> {
     try {
-      // FIXME Get the user (assuming single user system based on original implementation)
       const user = await this.getUserService.execute();
       if (!user) {
         console.log(`${this.logPrefix} No user found for notifications`);
@@ -77,6 +76,11 @@ export class PendingTransactionNotificationService {
             notification,
           }));
       });
+
+      console.log(
+        `${this.logPrefix} Prepared ${notifications.length} notifications`,
+        notifications
+      );
 
       // Send bulk notifications
       const bulkResult = await this.notificationService.sendBulkNotifications(
