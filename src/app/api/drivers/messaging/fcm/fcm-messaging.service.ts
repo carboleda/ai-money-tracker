@@ -38,6 +38,10 @@ export class FcmMessagingService implements MessagingService {
   async sendMultipleMessages(
     requests: SendMessageRequest[]
   ): Promise<SendMessageResponse[]> {
+    console.log(`${this.logPrefix} Sending multiple FCM messages:`, {
+      count: requests.length,
+      request: JSON.stringify(requests),
+    });
     const results = await Promise.allSettled(
       requests.map((request) => this.sendMessage(request))
     );
