@@ -67,7 +67,7 @@ export class CalculateSummaryMetricsService
     });
 
     const accounts = await this.getAllAccountsService.execute();
-    const totalBalance = this.computeBalance(accounts);
+    const totalBalance = this.computeBalance(accounts, account);
 
     return new SummaryMetricsModel({
       totalIncomes,
@@ -78,7 +78,15 @@ export class CalculateSummaryMetricsService
     });
   }
 
-  private computeBalance(accounts: AccountModel[]): number {
+  private computeBalance(
+    accounts: AccountModel[],
+    selectedAccount?: string
+  ): number {
+    if (selectedAccount) {
+      const account = accounts.find((acc) => acc.account === selectedAccount);
+      return account ? account.balance : 0;
+    }
+
     return accounts.reduce((acc, account) => acc + account.balance, 0);
   }
 }
