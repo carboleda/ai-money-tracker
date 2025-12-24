@@ -83,6 +83,7 @@
     "tailwindcss": "4.1.16",
     "tsyringe": "^4.10.0",
     "xxhashjs": "0.2.2",
+    "zod": "^4.2.1",
     "zustand": "5.0.8"
   },
   "devDependencies": {

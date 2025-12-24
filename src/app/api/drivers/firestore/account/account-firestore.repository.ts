@@ -3,7 +3,11 @@ import {
   Inject,
   InjectUserContext,
 } from "@/app/api/decorators/tsyringe.decorator";
-import { AccountModel } from "@/app/api/domain/account/model/account.model";
+import {
+  AccountModel,
+  CreateAccountInput,
+  UpdateAccountInput,
+} from "@/app/api/domain/account/model/account.model";
 import { AccountRepository } from "@/app/api/domain/account/repository/account.repository";
 import { AccountAdapter } from "./account.adapter";
 import { Firestore, QueryDocumentSnapshot } from "firebase-admin/firestore";
@@ -25,7 +29,9 @@ export class AccountFirestoreRepository
   }
 
   async getAll(): Promise<AccountModel[]> {
-    const snapshot = await this.getUserCollectionReference().get();
+    const snapshot = await this.getUserCollectionReference()
+      .where("isDeleted", "==", false)
+      .get();
 
     const accounts = snapshot.docs.map((doc) => {
       const entity = { ...doc.data() } as AccountEntity;
@@ -45,27 +51,100 @@ export class AccountFirestoreRepository
     await this.createInitialAccount(account, balance);
   }
 
-  async getAccountById(id: string): Promise<AccountModel> {
-    // TODO: Query the Firestore database to get the account with the given ID
-    console.log("Firestore instance:", this.getUserCollectionReference());
-    return AccountAdapter.toModel(
-      {
-        account: "Account " + id,
-        balance: 1000,
-      },
-      "id"
-    );
+  async getAccountById(id: string): Promise<AccountModel | null> {
+    const doc = await this.getUserCollectionReference().doc(id).get();
+
+    if (!doc.exists) {
+      return null;
+    }
+
+    const entity = { ...doc.data() } as AccountEntity;
+    return AccountAdapter.toModel(entity, doc.id);
+  }
+
+  async getAccountByRef(ref: string): Promise<AccountModel | null> {
+    const snapshot = await this.getUserCollectionReference()
+      .where("ref", "==", ref)
+      .where("isDeleted", "==", false)
+      .limit(1)
+      .get();
+
+    if (snapshot.size === 0) {
+      return null;
+    }
+
+    const doc = snapshot.docs[0];
+    const entity = { ...doc.data() } as AccountEntity;
+    return AccountAdapter.toModel(entity, doc.id);
+  }
+
+  async create(data: CreateAccountInput): Promise<AccountModel> {
+    // Check if ref already exists for this user
+    const existingAccount = await this.getAccountByRef(data.ref);
+    if (existingAccount) {
+      throw new Error(`Account reference '${data.ref}' already exists`);
+    }
+
+    const entity: AccountEntity = {
+      ref: data.ref,
+      name: data.name,
+      icon: data.icon,
+      type: data.type,
+      description: data.description,
+      balance: data.balance,
+      isDeleted: false,
+    };
+
+    const docRef = await this.getUserCollectionReference().add(entity);
+    const doc = await docRef.get();
+    return AccountAdapter.toModel(entity, doc.id);
+  }
+
+  async update(id: string, data: UpdateAccountInput): Promise<AccountModel> {
+    const account = await this.getAccountById(id);
+    if (!account) {
+      throw new Error(`Account with id '${id}' not found`);
+    }
+
+    const updates: Partial<AccountEntity> = {};
+    if (data.name !== undefined) updates.name = data.name;
+    if (data.icon !== undefined) updates.icon = data.icon;
+    if (data.type !== undefined) updates.type = data.type;
+    if (data.description !== undefined) updates.description = data.description;
+
+    await this.getUserCollectionReference().doc(id).update(updates);
+
+    const updatedAccount = await this.getAccountById(id);
+    return updatedAccount!;
+  }
+
+  async delete(id: string): Promise<void> {
+    const account = await this.getAccountById(id);
+    if (!account) {
+      throw new Error(`Account with id '${id}' not found`);
+    }
+
+    await this.getUserCollectionReference().doc(id).update({ isDeleted: true });
   }
 
   private async getAccountDocument(
     account: string
   ): Promise<QueryDocumentSnapshot | null> {
-    const accounts = await this.getUserCollectionReference()
-      .where("account", "==", account)
-      .get();
+    // Try to find by ref (new field) or account (legacy field)
+    let query = this.getUserCollectionReference().where("ref", "==", account);
 
-    if (accounts.size > 0) {
-      return accounts.docs.at(0) || null;
+    let snapshot = await query.get();
+
+    if (snapshot.size > 0) {
+      return snapshot.docs[0];
+    }
+
+    // Fallback to legacy account field for backward compatibility
+    query = this.getUserCollectionReference().where("account", "==", account);
+    snapshot = await query.get();
+
+    if (snapshot.size > 0) {
+      return snapshot.docs[0];
     }
 
     return null;
@@ -75,16 +154,22 @@ export class AccountFirestoreRepository
     accountDocument: QueryDocumentSnapshot,
     transactionAmount: number
   ) {
-    const accountEntity = accountDocument.data();
+    const accountEntity = accountDocument.data() as AccountEntity;
     accountEntity.balance += transactionAmount;
 
     accountDocument.ref.update(accountEntity);
   }
 
   private async createInitialAccount(account: string, balance: number) {
-    await this.getUserCollectionReference().add({
-      account,
+    const entity: AccountEntity = {
+      ref: account,
+      name: account,
+      icon: "💳",
+      type: "saving",
       balance,
-    });
+      isDeleted: false,
+    };
+
+    await this.getUserCollectionReference().add(entity);
   }
 }
