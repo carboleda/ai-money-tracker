@@ -28,7 +28,6 @@ export class PendingTransactionNotificationService {
 
   async execute(): Promise<PendingTransactionNotificationResult> {
     try {
-      // FIXME Get the user (assuming single user system based on original implementation)
       const user = await this.getUserService.execute();
       if (!user) {
         console.log(`${this.logPrefix} No user found for notifications`);
@@ -62,17 +61,26 @@ export class PendingTransactionNotificationService {
         return { success: true, processedTransactions: transactions.length };
       }
 
-      const notifications = transactionsToNotify.map((transaction) => {
+      const notifications = transactionsToNotify.flatMap((transaction) => {
         const notification = this.createNotificationForTransaction(
           now,
           transaction
         );
-        return {
-          userId: user.id,
-          fcmToken: user.fcmToken,
-          notification,
-        };
+
+        user.devices = user.devices || [];
+        return user.devices
+          .filter((device) => device.fcmToken)
+          .map((device) => ({
+            userId: user.id,
+            fcmToken: device.fcmToken!,
+            notification,
+          }));
       });
+
+      console.log(
+        `${this.logPrefix} Prepared ${notifications.length} notifications`,
+        notifications
+      );
 
       // Send bulk notifications
       const bulkResult = await this.notificationService.sendBulkNotifications(

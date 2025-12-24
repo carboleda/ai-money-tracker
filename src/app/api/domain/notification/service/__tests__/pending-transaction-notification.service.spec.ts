@@ -4,12 +4,12 @@ import { PendingTransactionNotificationService } from "../pending-transaction-no
 import { FilterTransactionsService } from "@/app/api/domain/transaction/service/filter-transactions.service";
 import { GetUserService } from "@/app/api/domain/user/service/get-user.service";
 import { NotificationService } from "../notification.service";
+import { createUserModelFixture } from "@/app/api/domain/user/service/__tests__/fixtures/user.model.fixture";
 import {
   TransactionStatus,
   TransactionModel,
   TransactionType,
 } from "@/app/api/domain/transaction/model/transaction.model";
-import { UserModel } from "@/app/api/domain/user/model/user.model";
 
 // Mock the Env module
 jest.mock("@/config/env", () => ({
@@ -80,7 +80,7 @@ describe("PendingTransactionNotificationService", () => {
 
     it("should return success true when no pending transactions found", async () => {
       // Arrange
-      const user = new UserModel({ id: "user1", fcmToken: "token1" });
+      const user = createUserModelFixture();
       getUserService.execute.mockResolvedValue(user);
       filterTransactionsService.execute.mockResolvedValue([]);
 
@@ -101,7 +101,7 @@ describe("PendingTransactionNotificationService", () => {
       // Arrange
       jest.useFakeTimers().setSystemTime(new Date("2024-01-11T00:00:00Z"));
 
-      const user = new UserModel({ id: "user1", fcmToken: "token1" });
+      const user = createUserModelFixture();
       const futureDate = new Date("2024-01-21T00:00:00Z"); // 10 days in the future
 
       const transactions = [
@@ -134,7 +134,7 @@ describe("PendingTransactionNotificationService", () => {
       // Arrange
       jest.useFakeTimers().setSystemTime(new Date("2024-01-13T00:00:00Z"));
 
-      const user = new UserModel({ id: "user1", fcmToken: "token1" });
+      const user = createUserModelFixture();
       const pastDate = new Date("2024-01-11T00:00:00Z"); // 2 days ago
 
       const transactions = [
@@ -165,7 +165,7 @@ describe("PendingTransactionNotificationService", () => {
       expect(notificationService.sendBulkNotifications).toHaveBeenCalledWith([
         {
           userId: user.id,
-          fcmToken: user.fcmToken,
+          fcmToken: user.devices?.[0]?.fcmToken,
           notification: expect.objectContaining({
             title: "[ACTION REQUIRED]: Payment due",
             body: "Payment for Overdue payment is due 2 days ago, pay it ASAP.",
@@ -184,7 +184,7 @@ describe("PendingTransactionNotificationService", () => {
       // Arrange
       jest.useFakeTimers().setSystemTime(new Date("2024-01-11T12:00:00Z"));
 
-      const user = new UserModel({ id: "user1", fcmToken: "token1" });
+      const user = createUserModelFixture();
       const dueToday = new Date("2024-01-11T01:00:00Z");
 
       const transactions = [
@@ -215,7 +215,7 @@ describe("PendingTransactionNotificationService", () => {
       expect(notificationService.sendBulkNotifications).toHaveBeenCalledWith([
         {
           userId: user.id,
-          fcmToken: user.fcmToken,
+          fcmToken: user.devices?.[0]?.fcmToken,
           notification: expect.objectContaining({
             title: "[ACTION REQUIRED]: Payment due",
             body: expect.stringMatching(
@@ -236,7 +236,7 @@ describe("PendingTransactionNotificationService", () => {
       // Arrange
       jest.useFakeTimers().setSystemTime(new Date("2024-01-11T00:00:00Z"));
 
-      const user = new UserModel({ id: "user1", fcmToken: "token1" });
+      const user = createUserModelFixture();
       const upcomingDate = new Date("2024-01-13T00:00:00Z"); // 2 days from now (within early reminder threshold)
 
       const transactions = [
@@ -267,7 +267,7 @@ describe("PendingTransactionNotificationService", () => {
       expect(notificationService.sendBulkNotifications).toHaveBeenCalledWith([
         {
           userId: user.id,
-          fcmToken: user.fcmToken,
+          fcmToken: user.devices?.[0]?.fcmToken,
           notification: expect.objectContaining({
             title: "[REMINDER]: Payment will be due soon",
             body: expect.stringContaining(
@@ -288,7 +288,7 @@ describe("PendingTransactionNotificationService", () => {
       // Arrange
       jest.useFakeTimers().setSystemTime(new Date("2024-01-12T00:00:00Z"));
 
-      const user = new UserModel({ id: "user1", fcmToken: "token1" });
+      const user = createUserModelFixture();
       const pastDate = new Date("2024-01-11T00:00:00Z");
 
       const transactions = [
@@ -340,7 +340,7 @@ describe("PendingTransactionNotificationService", () => {
       // Arrange
       jest.useFakeTimers().setSystemTime(new Date("2024-01-11T01:00:00Z"));
 
-      const user = new UserModel({ id: "user1", fcmToken: "token1" });
+      const user = createUserModelFixture();
       const pastDate = new Date("2024-01-10T00:00:00Z");
 
       const transactions = [
@@ -371,7 +371,7 @@ describe("PendingTransactionNotificationService", () => {
       expect(notificationService.sendBulkNotifications).toHaveBeenCalledWith([
         {
           userId: user.id,
-          fcmToken: user.fcmToken,
+          fcmToken: user.devices?.[0]?.fcmToken,
           notification: expect.objectContaining({
             title: "[ACTION REQUIRED]: Payment due",
             body: expect.stringContaining(
@@ -389,7 +389,7 @@ describe("PendingTransactionNotificationService", () => {
       // Arrange
       jest.useFakeTimers().setSystemTime(new Date("2024-01-11T00:00:00Z"));
 
-      const user = new UserModel({ id: "user1", fcmToken: "token1" });
+      const user = createUserModelFixture();
       const now = new Date("2024-01-11T00:00:00Z");
       const transactions = [
         new TransactionModel({
@@ -419,7 +419,7 @@ describe("PendingTransactionNotificationService", () => {
       expect(notificationService.sendBulkNotifications).toHaveBeenCalledWith([
         {
           userId: user.id,
-          fcmToken: user.fcmToken,
+          fcmToken: user.devices?.[0]?.fcmToken,
           notification: expect.objectContaining({
             title: "[ACTION REQUIRED]: Payment due",
             body: expect.stringContaining(
@@ -437,7 +437,7 @@ describe("PendingTransactionNotificationService", () => {
       // Arrange
       jest.useFakeTimers().setSystemTime(new Date("2024-01-11T00:00:00Z"));
 
-      const user = new UserModel({ id: "user1", fcmToken: "token1" });
+      const user = createUserModelFixture();
       const futureDate = new Date("2024-01-13T00:00:00Z");
 
       const transactions = [
@@ -468,7 +468,7 @@ describe("PendingTransactionNotificationService", () => {
       expect(notificationService.sendBulkNotifications).toHaveBeenCalledWith([
         {
           userId: user.id,
-          fcmToken: user.fcmToken,
+          fcmToken: user.devices?.[0]?.fcmToken,
           notification: expect.objectContaining({
             title: "[REMINDER]: Payment will be due soon",
             body: expect.stringContaining(

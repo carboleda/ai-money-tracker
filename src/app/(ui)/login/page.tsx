@@ -13,16 +13,21 @@ import { Image } from "@heroui/image";
 import { siteConfig } from "@/config/site";
 import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
+import { DeviceInfo } from "@/config/deviceInfo";
+import { useMutateUser } from "@/hooks/useMutateUser";
 
 function LoginPage() {
   const [errorMessage, setErrorMessage] = React.useState("");
+  const [isLoading, setIsLoading] = React.useState(false);
   const router = useRouter();
   const [_, startTransition] = useTransition();
   const { t } = useTranslation(LocaleNamespace.Login);
+  const { updateUser } = useMutateUser();
 
   const onGoogleLogin = async () => {
     try {
       setErrorMessage("");
+      setIsLoading(true);
       const result = await signInWithPopup(auth, provider);
       const token = await auth.currentUser?.getIdToken(true);
       // IdP data available using getAdditionalUserInfo(result)
@@ -33,30 +38,47 @@ function LoginPage() {
         },
       });
 
-      // This forces the navigation to be updated immediately since the actionl redirection happens in the server
-      router.push("/private");
-      startTransition(() => {
-        // Refresh the current route and fetch new data from the server without
-        // losing client-side browser or React state.
-        router.refresh();
-      });
+      await onLoginSucess();
     } catch (error) {
-      if (error instanceof FirebaseError) {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        const email = error.customData?.email;
-        const credential = GoogleAuthProvider.credentialFromError(error);
-
-        console.log("FirebaseError", {
-          errorCode,
-          errorMessage,
-          email,
-          credential,
-        });
-      }
-
-      setErrorMessage(t("signInErrorMessage"));
+      onLoginError(error as Error);
+    } finally {
+      setIsLoading(false);
     }
+  };
+
+  const onLoginSucess = async () => {
+    const { deviceId, deviceName } = await DeviceInfo.generate();
+    await updateUser({
+      devices: [{ deviceId, deviceName }],
+    });
+
+    // This forces the navigation to be updated immediately since the actionl redirection happens in the server
+    router.push("/private");
+    startTransition(() => {
+      // Refresh the current route and fetch new data from the server without
+      // losing client-side browser or React state.
+      router.refresh();
+    });
+  };
+
+  const onLoginError = (error: Error) => {
+    if (error instanceof FirebaseError) {
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      const email = error.customData?.email;
+      const credential = GoogleAuthProvider.credentialFromError(error);
+
+      console.log("FirebaseError", {
+        errorCode,
+        errorMessage,
+        email,
+        credential,
+      });
+    } else {
+      console.error("Unexpected error", error);
+    }
+
+    setErrorMessage(t("signInErrorMessage"));
   };
 
   return (
@@ -71,11 +93,13 @@ function LoginPage() {
         <div className="flex flex-col gap-5 justify-center items-center mt-20">
           <Button
             onPress={onGoogleLogin}
+            isLoading={isLoading}
+            disabled={isLoading}
             variant="flat"
             color="primary"
             className="w-fit"
           >
-            <FcGoogle size={20} />
+            {!isLoading && <FcGoogle size={20} />}
             {t("signInWithButton")}
           </Button>
 

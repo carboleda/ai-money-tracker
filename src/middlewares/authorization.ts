@@ -1,6 +1,6 @@
 import { Env } from "@/config/env";
 import { NextRequest, NextResponse } from "next/server";
-import { getTokens, redirectToPath } from "next-firebase-auth-edge";
+import { getTokens } from "next-firebase-auth-edge";
 import { PUBLIC_PATHS } from "./authentication";
 
 export async function authorizatonMiddleware(
@@ -21,14 +21,5 @@ export async function authorizatonMiddleware(
     serviceAccount: Env.NEXT_PUBLIC_FIREBASE_APP_CONFIG as any,
   });
 
-  if (
-    tokens?.decodedToken?.email &&
-    tokens?.decodedToken?.email !== "arbofercho@gmail.com" // TODO: Improved this
-  ) {
-    console.log("Unauthorized access", tokens?.decodedToken?.email);
-    const response = redirectToPath(request, "/unauthorized");
-    response.cookies.delete("AuthToken");
-
-    return response;
-  }
+  request.headers.set("X-User-Email", tokens?.decodedToken?.email || "");
 }

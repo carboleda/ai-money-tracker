@@ -9,6 +9,8 @@ import {
   transactionModelFixture,
   transactionEntityFixture,
 } from "./fixtures/transaction.fixture";
+import { getUserContextToken } from "@/app/api/decorators/tsyringe.decorator";
+import type { UserContext } from "@/app/api/context/user-context";
 
 describe("TransactionFirestoreRepository", () => {
   let firestore: Firestore;
@@ -20,11 +22,24 @@ describe("TransactionFirestoreRepository", () => {
     const testContainer = container.createChildContainer();
 
     const mockFirestore = {
-      collection: jest.fn(),
+      collection: jest.fn().mockReturnValue({
+        doc: jest.fn().mockReturnValue({
+          collection: jest.fn(),
+        }),
+      }),
     } as unknown as Firestore;
 
     testContainer.register(Firestore, {
       useValue: mockFirestore,
+    });
+
+    // Register USER_CONTEXT_TOKEN for testing with proper UserContext object
+    const testUserContext: UserContext = {
+      id: "test-user-id",
+      email: "test@example.com",
+    };
+    testContainer.register(getUserContextToken(), {
+      useValue: testUserContext,
     });
 
     testContainer.register(TransactionFirestoreRepository, {
@@ -50,10 +65,16 @@ describe("TransactionFirestoreRepository", () => {
       const mockDocRef = {
         get: jest.fn().mockResolvedValue(mockDoc),
       };
-      const mockCollection = {
+      const mockSubcollection = {
         doc: jest.fn().mockReturnValue(mockDocRef),
       };
-      (firestore.collection as jest.Mock).mockReturnValue(mockCollection);
+      const mockUserDoc = {
+        collection: jest.fn().mockReturnValue(mockSubcollection),
+      };
+      const mockUsersCollection = {
+        doc: jest.fn().mockReturnValue(mockUserDoc),
+      };
+      (firestore.collection as jest.Mock).mockReturnValue(mockUsersCollection);
 
       const toModelSpy = jest.spyOn(TransactionAdapter, "toModel");
 
@@ -61,10 +82,13 @@ describe("TransactionFirestoreRepository", () => {
       const result = await repository.getById("transaction-123");
 
       // Assert
-      expect(firestore.collection).toHaveBeenCalledWith(
-        Collections.Transactions
-      );
-      expect(mockCollection.doc).toHaveBeenCalledWith("transaction-123");
+      expect(firestore.collection).toHaveBeenCalledWith(Collections.Users);
+      const usersCollection = firestore.collection(Collections.Users);
+      expect(usersCollection.doc).toHaveBeenCalledWith("test-user-id");
+      expect(
+        usersCollection.doc("test-user-id").collection
+      ).toHaveBeenCalledWith(Collections.Transactions);
+      expect(mockSubcollection.doc).toHaveBeenCalledWith("transaction-123");
       expect(mockDocRef.get).toHaveBeenCalled();
       expect(toModelSpy).toHaveBeenCalledWith(
         transactionEntityFixture,
@@ -81,15 +105,27 @@ describe("TransactionFirestoreRepository", () => {
       const mockDocRef = {
         get: jest.fn().mockResolvedValue(mockDoc),
       };
-      const mockCollection = {
+      const mockSubcollection = {
         doc: jest.fn().mockReturnValue(mockDocRef),
       };
-      (firestore.collection as jest.Mock).mockReturnValue(mockCollection);
+      const mockUserDoc = {
+        collection: jest.fn().mockReturnValue(mockSubcollection),
+      };
+      const mockUsersCollection = {
+        doc: jest.fn().mockReturnValue(mockUserDoc),
+      };
+      (firestore.collection as jest.Mock).mockReturnValue(mockUsersCollection);
 
       // Act
       const result = await repository.getById("non-existent-id");
 
       // Assert
+      expect(firestore.collection).toHaveBeenCalledWith(Collections.Users);
+      const usersCollection = firestore.collection(Collections.Users);
+      expect(usersCollection.doc).toHaveBeenCalledWith("test-user-id");
+      expect(
+        usersCollection.doc("test-user-id").collection
+      ).toHaveBeenCalledWith(Collections.Transactions);
       expect(result).toBeNull();
     });
   });
@@ -100,10 +136,16 @@ describe("TransactionFirestoreRepository", () => {
       const mockDocRef = {
         id: "new-transaction-id",
       };
-      const mockCollection = {
+      const mockSubcollection = {
         add: jest.fn().mockResolvedValue(mockDocRef),
       };
-      (firestore.collection as jest.Mock).mockReturnValue(mockCollection);
+      const mockUserDoc = {
+        collection: jest.fn().mockReturnValue(mockSubcollection),
+      };
+      const mockUsersCollection = {
+        doc: jest.fn().mockReturnValue(mockUserDoc),
+      };
+      (firestore.collection as jest.Mock).mockReturnValue(mockUsersCollection);
 
       const toEntitySpy = jest.spyOn(TransactionAdapter, "toEntity");
 
@@ -111,11 +153,14 @@ describe("TransactionFirestoreRepository", () => {
       const result = await repository.create(transactionModelFixture);
 
       // Assert
-      expect(firestore.collection).toHaveBeenCalledWith(
-        Collections.Transactions
-      );
+      expect(firestore.collection).toHaveBeenCalledWith(Collections.Users);
+      const usersCollection = firestore.collection(Collections.Users);
+      expect(usersCollection.doc).toHaveBeenCalledWith("test-user-id");
+      expect(
+        usersCollection.doc("test-user-id").collection
+      ).toHaveBeenCalledWith(Collections.Transactions);
       expect(toEntitySpy).toHaveBeenCalledWith(transactionModelFixture);
-      expect(mockCollection.add).toHaveBeenCalledWith(
+      expect(mockSubcollection.add).toHaveBeenCalledWith(
         expect.objectContaining({
           description: transactionModelFixture.description,
           amount: transactionModelFixture.amount,
@@ -131,10 +176,16 @@ describe("TransactionFirestoreRepository", () => {
       const mockDocRef = {
         update: jest.fn().mockResolvedValue(undefined),
       };
-      const mockCollection = {
+      const mockSubcollection = {
         doc: jest.fn().mockReturnValue(mockDocRef),
       };
-      (firestore.collection as jest.Mock).mockReturnValue(mockCollection);
+      const mockUserDoc = {
+        collection: jest.fn().mockReturnValue(mockSubcollection),
+      };
+      const mockUsersCollection = {
+        doc: jest.fn().mockReturnValue(mockUserDoc),
+      };
+      (firestore.collection as jest.Mock).mockReturnValue(mockUsersCollection);
 
       const toEntitySpy = jest.spyOn(TransactionAdapter, "toEntity");
 
@@ -142,10 +193,13 @@ describe("TransactionFirestoreRepository", () => {
       await repository.update(transactionModelFixture);
 
       // Assert
-      expect(firestore.collection).toHaveBeenCalledWith(
-        Collections.Transactions
-      );
-      expect(mockCollection.doc).toHaveBeenCalledWith(
+      expect(firestore.collection).toHaveBeenCalledWith(Collections.Users);
+      const usersCollection = firestore.collection(Collections.Users);
+      expect(usersCollection.doc).toHaveBeenCalledWith("test-user-id");
+      expect(
+        usersCollection.doc("test-user-id").collection
+      ).toHaveBeenCalledWith(Collections.Transactions);
+      expect(mockSubcollection.doc).toHaveBeenCalledWith(
         transactionModelFixture.id
       );
       expect(toEntitySpy).toHaveBeenCalledWith(transactionModelFixture);
@@ -164,19 +218,28 @@ describe("TransactionFirestoreRepository", () => {
       const mockDocRef = {
         delete: jest.fn().mockResolvedValue(undefined),
       };
-      const mockCollection = {
+      const mockSubcollection = {
         doc: jest.fn().mockReturnValue(mockDocRef),
       };
-      (firestore.collection as jest.Mock).mockReturnValue(mockCollection);
+      const mockUserDoc = {
+        collection: jest.fn().mockReturnValue(mockSubcollection),
+      };
+      const mockUsersCollection = {
+        doc: jest.fn().mockReturnValue(mockUserDoc),
+      };
+      (firestore.collection as jest.Mock).mockReturnValue(mockUsersCollection);
 
       // Act
       await repository.delete("transaction-123");
 
       // Assert
-      expect(firestore.collection).toHaveBeenCalledWith(
-        Collections.Transactions
-      );
-      expect(mockCollection.doc).toHaveBeenCalledWith("transaction-123");
+      expect(firestore.collection).toHaveBeenCalledWith(Collections.Users);
+      const usersCollection = firestore.collection(Collections.Users);
+      expect(usersCollection.doc).toHaveBeenCalledWith("test-user-id");
+      expect(
+        usersCollection.doc("test-user-id").collection
+      ).toHaveBeenCalledWith(Collections.Transactions);
+      expect(mockSubcollection.doc).toHaveBeenCalledWith("transaction-123");
       expect(mockDocRef.delete).toHaveBeenCalled();
     });
   });
@@ -196,10 +259,16 @@ describe("TransactionFirestoreRepository", () => {
         where: jest.fn().mockReturnThis(),
         get: jest.fn().mockResolvedValue(mockSnapshot),
       };
-      const mockCollection = {
+      const mockSubcollection = {
         orderBy: jest.fn().mockReturnValue(mockQuery),
       };
-      (firestore.collection as jest.Mock).mockReturnValue(mockCollection);
+      const mockUserDoc = {
+        collection: jest.fn().mockReturnValue(mockSubcollection),
+      };
+      const mockUsersCollection = {
+        doc: jest.fn().mockReturnValue(mockUserDoc),
+      };
+      (firestore.collection as jest.Mock).mockReturnValue(mockUsersCollection);
 
       const toModelSpy = jest.spyOn(TransactionAdapter, "toModel");
       const filterParams = {
@@ -213,10 +282,16 @@ describe("TransactionFirestoreRepository", () => {
       const result = await repository.searchTransactions(filterParams);
 
       // Assert
-      expect(firestore.collection).toHaveBeenCalledWith(
-        Collections.Transactions
+      expect(firestore.collection).toHaveBeenCalledWith(Collections.Users);
+      const usersCollection = firestore.collection(Collections.Users);
+      expect(usersCollection.doc).toHaveBeenCalledWith("test-user-id");
+      expect(
+        usersCollection.doc("test-user-id").collection
+      ).toHaveBeenCalledWith(Collections.Transactions);
+      expect(mockSubcollection.orderBy).toHaveBeenCalledWith(
+        "createdAt",
+        "desc"
       );
-      expect(mockCollection.orderBy).toHaveBeenCalledWith("createdAt", "desc");
       expect(mockQuery.where).toHaveBeenCalledWith(
         "createdAt",
         ">=",
@@ -247,10 +322,16 @@ describe("TransactionFirestoreRepository", () => {
         orderBy: jest.fn().mockReturnThis(),
         get: jest.fn().mockResolvedValue(mockSnapshot),
       };
-      const mockCollection = {
+      const mockSubcollection = {
         orderBy: jest.fn().mockReturnValue(mockQuery),
       };
-      (firestore.collection as jest.Mock).mockReturnValue(mockCollection);
+      const mockUserDoc = {
+        collection: jest.fn().mockReturnValue(mockSubcollection),
+      };
+      const mockUsersCollection = {
+        doc: jest.fn().mockReturnValue(mockUserDoc),
+      };
+      (firestore.collection as jest.Mock).mockReturnValue(mockUsersCollection);
 
       const filterParams = {
         status: TransactionStatus.PENDING,
@@ -260,7 +341,16 @@ describe("TransactionFirestoreRepository", () => {
       await repository.searchTransactions(filterParams);
 
       // Assert
-      expect(mockCollection.orderBy).toHaveBeenCalledWith("createdAt", "asc");
+      expect(firestore.collection).toHaveBeenCalledWith(Collections.Users);
+      const usersCollection = firestore.collection(Collections.Users);
+      expect(usersCollection.doc).toHaveBeenCalledWith("test-user-id");
+      expect(
+        usersCollection.doc("test-user-id").collection
+      ).toHaveBeenCalledWith(Collections.Transactions);
+      expect(mockSubcollection.orderBy).toHaveBeenCalledWith(
+        "createdAt",
+        "asc"
+      );
     });
 
     it("should search transactions without date filters", async () => {
@@ -272,10 +362,16 @@ describe("TransactionFirestoreRepository", () => {
         get: jest.fn().mockResolvedValue(mockSnapshot),
         where: jest.fn().mockReturnThis(),
       };
-      const mockCollection = {
+      const mockSubcollection = {
         orderBy: jest.fn().mockReturnValue(mockQuery),
       };
-      (firestore.collection as jest.Mock).mockReturnValue(mockCollection);
+      const mockUserDoc = {
+        collection: jest.fn().mockReturnValue(mockSubcollection),
+      };
+      const mockUsersCollection = {
+        doc: jest.fn().mockReturnValue(mockUserDoc),
+      };
+      (firestore.collection as jest.Mock).mockReturnValue(mockUsersCollection);
 
       const filterParams = {
         status: TransactionStatus.COMPLETE,
@@ -286,6 +382,12 @@ describe("TransactionFirestoreRepository", () => {
       await repository.searchTransactions(filterParams);
 
       // Assert
+      expect(firestore.collection).toHaveBeenCalledWith(Collections.Users);
+      const usersCollection = firestore.collection(Collections.Users);
+      expect(usersCollection.doc).toHaveBeenCalledWith("test-user-id");
+      expect(
+        usersCollection.doc("test-user-id").collection
+      ).toHaveBeenCalledWith(Collections.Transactions);
       expect(mockQuery.where).toHaveBeenCalledWith(
         Filter.and(
           Filter.or(
@@ -305,10 +407,16 @@ describe("TransactionFirestoreRepository", () => {
         where: jest.fn().mockReturnThis(),
         get: jest.fn().mockResolvedValue(mockSnapshot),
       };
-      const mockCollection = {
+      const mockSubcollection = {
         orderBy: jest.fn().mockReturnValue(mockQuery),
       };
-      (firestore.collection as jest.Mock).mockReturnValue(mockCollection);
+      const mockUserDoc = {
+        collection: jest.fn().mockReturnValue(mockSubcollection),
+      };
+      const mockUsersCollection = {
+        doc: jest.fn().mockReturnValue(mockUserDoc),
+      };
+      (firestore.collection as jest.Mock).mockReturnValue(mockUsersCollection);
 
       const filterParams = {
         status: TransactionStatus.COMPLETE,
@@ -320,6 +428,12 @@ describe("TransactionFirestoreRepository", () => {
       await repository.searchTransactions(filterParams);
 
       // Assert
+      expect(firestore.collection).toHaveBeenCalledWith(Collections.Users);
+      const usersCollection = firestore.collection(Collections.Users);
+      expect(usersCollection.doc).toHaveBeenCalledWith("test-user-id");
+      expect(
+        usersCollection.doc("test-user-id").collection
+      ).toHaveBeenCalledWith(Collections.Transactions);
       expect(mockQuery.where).toHaveBeenCalledWith(
         "createdAt",
         ">=",
@@ -345,10 +459,16 @@ describe("TransactionFirestoreRepository", () => {
         orderBy: jest.fn().mockReturnThis(),
         get: jest.fn().mockResolvedValue(mockSnapshot),
       };
-      const mockCollection = {
+      const mockSubcollection = {
         orderBy: jest.fn().mockReturnValue(mockQuery),
       };
-      (firestore.collection as jest.Mock).mockReturnValue(mockCollection);
+      const mockUserDoc = {
+        collection: jest.fn().mockReturnValue(mockSubcollection),
+      };
+      const mockUsersCollection = {
+        doc: jest.fn().mockReturnValue(mockUserDoc),
+      };
+      (firestore.collection as jest.Mock).mockReturnValue(mockUsersCollection);
 
       const filterParams = {
         status: TransactionStatus.COMPLETE,
@@ -358,6 +478,12 @@ describe("TransactionFirestoreRepository", () => {
       const result = await repository.searchTransactions(filterParams);
 
       // Assert
+      expect(firestore.collection).toHaveBeenCalledWith(Collections.Users);
+      const usersCollection = firestore.collection(Collections.Users);
+      expect(usersCollection.doc).toHaveBeenCalledWith("test-user-id");
+      expect(
+        usersCollection.doc("test-user-id").collection
+      ).toHaveBeenCalledWith(Collections.Transactions);
       expect(result).toEqual([]);
     });
   });

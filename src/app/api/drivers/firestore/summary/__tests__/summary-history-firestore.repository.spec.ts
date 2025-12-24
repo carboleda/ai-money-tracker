@@ -4,6 +4,8 @@ import { SummaryHistoryFirestoreRepository } from "../summary-history-firestore.
 import { Firestore } from "firebase-admin/firestore";
 import { SummaryHistoryModel } from "@/app/api/domain/summary/model/summary-history.model";
 import { Collections } from "@/app/api/drivers/firestore/types";
+import { getUserContextToken } from "@/app/api/decorators/tsyringe.decorator";
+import type { UserContext } from "@/app/api/context/user-context";
 
 describe("SummaryHistoryFirestoreRepository", () => {
   let repository: SummaryHistoryFirestoreRepository;
@@ -14,29 +16,42 @@ describe("SummaryHistoryFirestoreRepository", () => {
 
     const mockFirestore = {
       collection: jest.fn().mockReturnValue({
-        add: jest.fn().mockResolvedValue({ id: "mockId" }),
-        where: jest.fn().mockReturnThis(),
-        orderBy: jest.fn().mockReturnThis(),
-        get: jest.fn().mockResolvedValue({
-          docs: [
-            {
-              id: "mockId",
-              data: jest.fn().mockReturnValue({
-                incomes: 1000,
-                expenses: 500,
-                transfers: 200,
-                createdAt: {
-                  toDate: jest.fn().mockReturnValue(new Date("2025-08-01")),
+        doc: jest.fn().mockReturnValue({
+          collection: jest.fn().mockReturnValue({
+            add: jest.fn().mockResolvedValue({ id: "mockId" }),
+            where: jest.fn().mockReturnThis(),
+            orderBy: jest.fn().mockReturnThis(),
+            get: jest.fn().mockResolvedValue({
+              docs: [
+                {
+                  id: "mockId",
+                  data: jest.fn().mockReturnValue({
+                    incomes: 1000,
+                    expenses: 500,
+                    transfers: 200,
+                    createdAt: {
+                      toDate: jest.fn().mockReturnValue(new Date("2025-08-01")),
+                    },
+                  }),
                 },
-              }),
-            },
-          ],
+              ],
+            }),
+          }),
         }),
       }),
     } as unknown as Firestore;
 
     testContainer.register(Firestore, {
       useValue: mockFirestore,
+    });
+
+    // Register USER_CONTEXT_TOKEN for testing with proper UserContext object
+    const testUserContext: UserContext = {
+      id: "test-user-id",
+      email: "test@example.com",
+    };
+    testContainer.register(getUserContextToken(), {
+      useValue: testUserContext,
     });
 
     repository = testContainer.resolve(SummaryHistoryFirestoreRepository);
@@ -58,14 +73,18 @@ describe("SummaryHistoryFirestoreRepository", () => {
     const id = await repository.create(summaryHistory);
 
     expect(id).toBe("mockId");
-    expect(firestore.collection).toHaveBeenCalledWith(
+    expect(firestore.collection).toHaveBeenCalledWith(Collections.Users);
+
+    const usersCollection = firestore.collection(Collections.Users);
+    expect(usersCollection.doc).toHaveBeenCalledWith("test-user-id");
+    expect(usersCollection.doc("test-user-id").collection).toHaveBeenCalledWith(
       Collections.TransactionsSummaryHistory
     );
 
-    const collectionRef = firestore.collection(
-      Collections.TransactionsSummaryHistory
-    );
-    expect(collectionRef.add).toHaveBeenCalled();
+    const subcollectionRef = usersCollection
+      .doc("test-user-id")
+      .collection(Collections.TransactionsSummaryHistory);
+    expect(subcollectionRef.add).toHaveBeenCalled();
   });
 
   it("should get history since a specific date", async () => {
@@ -82,18 +101,21 @@ describe("SummaryHistoryFirestoreRepository", () => {
         createdAt: new Date("2025-08-01"),
       })
     );
-    expect(firestore.collection).toHaveBeenCalledWith(
+    expect(firestore.collection).toHaveBeenCalledWith(Collections.Users);
+    const usersCollection = firestore.collection(Collections.Users);
+    expect(usersCollection.doc).toHaveBeenCalledWith("test-user-id");
+    expect(usersCollection.doc("test-user-id").collection).toHaveBeenCalledWith(
       Collections.TransactionsSummaryHistory
     );
-    const collectionRef = firestore.collection(
-      Collections.TransactionsSummaryHistory
-    );
-    expect(collectionRef.where).toHaveBeenCalledWith(
+    const subcollectionRef = usersCollection
+      .doc("test-user-id")
+      .collection(Collections.TransactionsSummaryHistory);
+    expect(subcollectionRef.where).toHaveBeenCalledWith(
       "createdAt",
       ">=",
       expect.anything()
     );
-    expect(collectionRef.orderBy).toHaveBeenCalledWith("createdAt", "asc");
-    expect(collectionRef.get).toHaveBeenCalled();
+    expect(subcollectionRef.orderBy).toHaveBeenCalledWith("createdAt", "asc");
+    expect(subcollectionRef.get).toHaveBeenCalled();
   });
 });

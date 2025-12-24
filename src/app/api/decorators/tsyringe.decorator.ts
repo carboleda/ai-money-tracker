@@ -1,6 +1,8 @@
 import { inject, injectable, InjectionToken } from "tsyringe";
 import { pubsub } from "@/app/api/helpers/pubsub";
 
+const EVENT_HANDLERS_METADATA = Symbol("eventHandlers");
+const USER_CONTEXT_TOKEN = Symbol("USER_CONTEXT");
 // Create a symbol-based registry to map models to unique tokens
 // This prevents minification issues since symbols are always unique
 const tokenRegistry = new Map<any, symbol>();
@@ -29,8 +31,6 @@ export function Injectable() {
 export function Inject(token: InjectionToken): ParameterDecorator {
   return inject(token);
 }
-
-const EVENT_HANDLERS_METADATA = Symbol("eventHandlers");
 
 interface EventHandlerMetadata {
   event: string;
@@ -64,4 +64,12 @@ export function registerEventHandlers(instance: object): void {
       pubsub.subscribe(event, method.bind(instance));
     }
   });
+}
+
+export function InjectUserContext(): ParameterDecorator {
+  return inject(USER_CONTEXT_TOKEN);
+}
+
+export function getUserContextToken() {
+  return USER_CONTEXT_TOKEN;
 }

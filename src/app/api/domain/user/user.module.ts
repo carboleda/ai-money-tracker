@@ -1,12 +1,12 @@
 import { container } from "tsyringe";
-import { UpsertFcmTokenService } from "./service/upsert-fcmtoken.service";
+import { UpsertUserService } from "./service/upsert-user.service";
 import { GetUserService } from "./service/get-user.service";
 
 export class UserModule {
   static register(): void {
     // Register services
-    container.register(UpsertFcmTokenService, {
-      useClass: UpsertFcmTokenService,
+    container.register(UpsertUserService, {
+      useClass: UpsertUserService,
     });
 
     container.register(GetUserService, {

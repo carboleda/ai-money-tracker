@@ -6,4 +6,4 @@ export interface RecurrentExpenseRepository {
   create(recurrentExpense: Omit<RecurrentExpenseModel, "id">): Promise<string>;
   update(recurrentExpense: RecurrentExpenseModel): Promise<void>;
   delete(id: string): Promise<void>;
-} 
+}

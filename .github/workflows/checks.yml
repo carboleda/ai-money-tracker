@@ -1,4 +1,4 @@
-name: Tests
+name: Checks
 
 on:
   pull_request:
@@ -14,10 +14,6 @@ jobs:
   test:
     runs-on: ubuntu-latest
     name: Run Tests
-
-    strategy:
-      matrix:
-        node-version: [20.x]
 
     steps:
       - name: Checkout code
@@ -38,10 +34,6 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     name: Run Lint
-
-    strategy:
-      matrix:
-        node-version: [20.x]
 
     steps:
       - name: Checkout code
