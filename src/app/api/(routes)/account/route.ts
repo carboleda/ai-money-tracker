@@ -65,7 +65,7 @@ export async function POST(req: NextRequest) {
       const service = api.resolve(CreateAccountService);
       const account = await service.execute(input);
 
-      return NextResponse.json({ account }, { status: 201 });
+      return NextResponse.json({ id: account.id }, { status: 201 });
     } catch (error) {
       if (error instanceof z.ZodError) {
         return NextResponse.json(
@@ -110,7 +110,7 @@ export async function PUT(req: NextRequest) {
         data: input,
       });
 
-      return NextResponse.json({ account });
+      return NextResponse.json({ id: account.id });
     } catch (error) {
       if (error instanceof z.ZodError) {
         return NextResponse.json(
@@ -144,7 +144,10 @@ export async function DELETE(req: NextRequest) {
       const service = api.resolve(DeleteAccountService);
       await service.execute(validatedData.id);
 
-      return NextResponse.json({ success: true });
+      return NextResponse.json(null, {
+        status: 204,
+        statusText: "Account deleted successfully",
+      });
     } catch (error) {
       if (error instanceof z.ZodError) {
         return NextResponse.json(
