@@ -7,13 +7,15 @@ import {
 } from "@/app/api/decorators/tsyringe.decorator";
 
 @Injectable()
-export class CreateAccountService implements Service<CreateAccountInput, AccountModel> {
+export class CreateAccountService
+  implements Service<CreateAccountInput, string>
+{
   constructor(
     @InjectRepository(AccountModel)
     private readonly accountRepository: AccountRepository
   ) {}
 
-  async execute(input: CreateAccountInput): Promise<AccountModel> {
-    return this.accountRepository.create(input);
+  async execute(account: CreateAccountInput): Promise<string> {
+    return this.accountRepository.create(account);
   }
 }

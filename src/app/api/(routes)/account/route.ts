@@ -63,9 +63,9 @@ export async function POST(req: NextRequest) {
       };
 
       const service = api.resolve(CreateAccountService);
-      const account = await service.execute(input);
+      const id = await service.execute(input);
 
-      return NextResponse.json({ id: account.id }, { status: 201 });
+      return NextResponse.json({ id }, { status: 201 });
     } catch (error) {
       if (error instanceof z.ZodError) {
         return NextResponse.json(
@@ -98,6 +98,7 @@ export async function PUT(req: NextRequest) {
       const validatedData = UpdateAccountSchema.parse(body);
 
       const input: UpdateAccountInput = {
+        id: validatedData.id,
         name: validatedData.name,
         icon: validatedData.icon,
         type: validatedData.type,
@@ -105,12 +106,9 @@ export async function PUT(req: NextRequest) {
       };
 
       const service = api.resolve(UpdateAccountService);
-      const account = await service.execute({
-        id: validatedData.id,
-        data: input,
-      });
+      await service.execute(input);
 
-      return NextResponse.json({ id: account.id });
+      return NextResponse.json({ id: input.id });
     } catch (error) {
       if (error instanceof z.ZodError) {
         return NextResponse.json(
@@ -136,10 +134,10 @@ export async function PUT(req: NextRequest) {
 export async function DELETE(req: NextRequest) {
   return withUserContext(req, async () => {
     try {
-      const body = await req.json();
+      const id = await req.text();
 
       // Validate request body
-      const validatedData = DeleteAccountSchema.parse(body);
+      const validatedData = DeleteAccountSchema.parse({ id });
 
       const service = api.resolve(DeleteAccountService);
       await service.execute(validatedData.id);

@@ -6,21 +6,14 @@ import {
   Injectable,
 } from "@/app/api/decorators/tsyringe.decorator";
 
-interface UpdateAccountServiceInput {
-  id: string;
-  data: UpdateAccountInput;
-}
-
 @Injectable()
-export class UpdateAccountService
-  implements Service<UpdateAccountServiceInput, AccountModel>
-{
+export class UpdateAccountService implements Service<UpdateAccountInput, void> {
   constructor(
     @InjectRepository(AccountModel)
     private readonly accountRepository: AccountRepository
   ) {}
 
-  async execute(input: UpdateAccountServiceInput): Promise<AccountModel> {
-    return this.accountRepository.update(input.id, input.data);
+  async execute(account: UpdateAccountInput): Promise<void> {
+    return this.accountRepository.update(account);
   }
 }

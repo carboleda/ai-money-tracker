@@ -4,7 +4,7 @@ export type CreateAccountInput = Omit<AccountModel, "id" | "isDeleted">;
 
 export type UpdateAccountInput = Partial<
   Omit<AccountModel, "id" | "ref" | "balance" | "isDeleted">
->;
+> & { id: string };
 
 export class AccountModel {
   public id: string;

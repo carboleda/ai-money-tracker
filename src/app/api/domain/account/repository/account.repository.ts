@@ -11,9 +11,9 @@ export interface AccountRepository {
 
   getAccountByRef(ref: string): Promise<AccountModel | null>;
 
-  create(data: CreateAccountInput): Promise<AccountModel>;
+  create(data: CreateAccountInput): Promise<string>;
 
-  update(id: string, data: UpdateAccountInput): Promise<AccountModel>;
+  update(data: UpdateAccountInput): Promise<void>;
 
   delete(id: string): Promise<void>;
 

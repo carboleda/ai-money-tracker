@@ -11,6 +11,7 @@ import {
 import { DomainError } from "@/app/api/domain/errors/domain.error";
 import { pubsub } from "@/app/api/helpers/pubsub";
 import { ValidateAccountService } from "@/app/api/domain/account/service/validate-account.service";
+import { TransactionDto } from "../model/transaction.dto";
 
 @Injectable()
 export class UpdateTransactionService {
@@ -20,7 +21,7 @@ export class UpdateTransactionService {
     private readonly validateAccountService: ValidateAccountService
   ) {}
 
-  async execute(transaction: TransactionModel): Promise<void> {
+  async execute(transaction: TransactionDto): Promise<void> {
     const oldTransaction = await this.transactionRepository.getById(
       transaction.id
     );
@@ -38,14 +39,31 @@ export class UpdateTransactionService {
 
     // Validate accounts exist and are not deleted
     await this.validateAccountService.execute(
-      transaction.sourceAccount.ref,
-      transaction.destinationAccount?.ref
+      transaction.sourceAccount,
+      transaction.destinationAccount
     );
 
-    await this.transactionRepository.update(transaction);
+    await this.transactionRepository.update({
+      ...transaction,
+      sourceAccount: {
+        ref: transaction.sourceAccount,
+      },
+      destinationAccount: transaction.destinationAccount
+        ? {
+            ref: transaction.destinationAccount,
+          }
+        : undefined,
+    });
     await pubsub.emit(
       EventTypes.TRANSACTION_UPDATED,
-      new TransactionUpdatedEvent(oldTransaction, transaction)
+      new TransactionUpdatedEvent(
+        {
+          ...oldTransaction,
+          sourceAccount: oldTransaction.sourceAccount.ref,
+          destinationAccount: oldTransaction.destinationAccount?.ref,
+        },
+        { ...transaction }
+      )
     );
   }
 }

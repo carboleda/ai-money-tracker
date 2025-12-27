@@ -3,10 +3,10 @@ import { NextRequest, NextResponse } from "next/server";
 import { GenerateTransactionService } from "@/app/api/domain/transaction/service/generate-transaction.service";
 import { UpdateTransactionService } from "@/app/api/domain/transaction/service/update-transaction.service";
 import { DeleteTransactionService } from "@/app/api/domain/transaction/service/delete-transaction.service";
-import { TransactionModel } from "@/app/api/domain/transaction/model/transaction.model";
 import { DomainError } from "@/app/api/domain/errors/domain.error";
 import { api } from "@/app/api";
 import { withUserContext } from "@/app/api/context/initialize-context";
+import { TransactionDto } from "../../domain/transaction/model/transaction.dto";
 
 export async function POST(req: NextRequest) {
   return withUserContext(req, async () => {
@@ -50,11 +50,11 @@ export async function PUT(req: NextRequest) {
   return withUserContext(req, async () => {
     const updateTransactionService = api.resolve(UpdateTransactionService);
 
-    const transactionModel = (await req.json()) as TransactionModel;
-    transactionModel.createdAt = new Date(transactionModel.createdAt);
-    await updateTransactionService.execute(transactionModel);
+    const transaction = (await req.json()) as TransactionDto;
+    transaction.createdAt = new Date(transaction.createdAt);
+    await updateTransactionService.execute(transaction);
 
-    return NextResponse.json({ id: transactionModel.id });
+    return NextResponse.json({ id: transaction.id });
   });
 }
 

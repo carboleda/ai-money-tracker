@@ -1,5 +1,4 @@
 import {
-  TransactionModel,
   TransactionStatus,
   TransactionType,
 } from "@/app/api/domain/transaction/model/transaction.model";
@@ -16,8 +15,9 @@ import {
   OnEvent,
 } from "@/app/api/decorators/tsyringe.decorator";
 import type { AccountRepository } from "../repository/account.repository";
+import { TransactionDto } from "../../transaction/model/transaction.dto";
 
-type AccountModelForUpdate = Omit<AccountModel, "id">;
+type AccountModelForUpdate = Pick<AccountModel, "ref" | "balance">;
 
 @Injectable()
 export class AccountEventsService {
@@ -35,7 +35,7 @@ export class AccountEventsService {
     });
     for (const account of accountEntities) {
       await this.accountRepository.updateOrCreateAccount(
-        account.account,
+        account.ref,
         account.balance
       );
     }
@@ -51,7 +51,7 @@ export class AccountEventsService {
     });
     for (const account of accountEntities) {
       await this.accountRepository.updateOrCreateAccount(
-        account.account,
+        account.ref,
         account.balance
       );
     }
@@ -87,10 +87,10 @@ export class AccountEventsService {
     }
 
     const updates = mergedAccountEntities.reduce((updates, update) => {
-      if (!updates[update.account]) {
-        updates[update.account] = 0;
+      if (!updates[update.ref]) {
+        updates[update.ref] = 0;
       }
-      updates[update.account] += update.balance;
+      updates[update.ref] += update.balance;
       return updates;
     }, {} as Record<string, number>);
 
@@ -101,7 +101,7 @@ export class AccountEventsService {
     );
   }
 
-  private handleEvent(transaction: TransactionModel, isRollback: boolean) {
+  private handleEvent(transaction: TransactionDto, isRollback: boolean) {
     if (
       transaction.status === TransactionStatus.PENDING ||
       (!transaction.sourceAccount && !transaction.destinationAccount)
@@ -113,17 +113,17 @@ export class AccountEventsService {
     if (transaction.type === TransactionType.TRANSFER) {
       accountEntities.push(
         {
-          account: transaction.sourceAccount,
+          ref: transaction.sourceAccount,
           balance: transaction.amount * (isRollback ? 1 : -1),
         },
         {
-          account: transaction.destinationAccount!,
+          ref: transaction.destinationAccount!,
           balance: transaction.amount * (isRollback ? -1 : 1),
         }
       );
     } else {
       accountEntities.push({
-        account: transaction.sourceAccount,
+        ref: transaction.sourceAccount,
         balance:
           transaction.amount *
           (transaction.type === TransactionType.EXPENSE ? -1 : 1) *

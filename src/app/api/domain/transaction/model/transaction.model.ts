@@ -31,8 +31,8 @@ export enum TransactionCategory {
 
 export type AccountSummary = {
   ref: string;
-  name: string | null;
-  icon: string | null;
+  name?: string | null;
+  icon?: string | null;
 };
 
 export class TransactionModel {

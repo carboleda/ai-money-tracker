@@ -78,7 +78,7 @@ export class AccountFirestoreRepository
     return AccountAdapter.toModel(entity, doc.id);
   }
 
-  async create(data: CreateAccountInput): Promise<AccountModel> {
+  async create(data: CreateAccountInput): Promise<string> {
     // Check if ref already exists for this user
     const existingAccount = await this.getAccountByRef(data.ref);
     if (existingAccount) {
@@ -97,13 +97,14 @@ export class AccountFirestoreRepository
 
     const docRef = await this.getUserCollectionReference().add(entity);
     const doc = await docRef.get();
-    return AccountAdapter.toModel(entity, doc.id);
+
+    return doc.id;
   }
 
-  async update(id: string, data: UpdateAccountInput): Promise<AccountModel> {
-    const account = await this.getAccountById(id);
+  async update(data: UpdateAccountInput): Promise<void> {
+    const account = await this.getAccountById(data.id);
     if (!account) {
-      throw new Error(`Account with id '${id}' not found`);
+      throw new Error(`Account with id '${data.id}' not found`);
     }
 
     const updates: Partial<AccountEntity> = {};
@@ -112,10 +113,7 @@ export class AccountFirestoreRepository
     if (data.type !== undefined) updates.type = data.type;
     if (data.description !== undefined) updates.description = data.description;
 
-    await this.getUserCollectionReference().doc(id).update(updates);
-
-    const updatedAccount = await this.getAccountById(id);
-    return updatedAccount!;
+    await this.getUserCollectionReference().doc(data.id).update(updates);
   }
 
   async delete(id: string): Promise<void> {
