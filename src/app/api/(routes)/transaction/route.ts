@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { GenerateTransactionService } from "@/app/api/domain/transaction/service/generate-transaction.service";
 import { UpdateTransactionService } from "@/app/api/domain/transaction/service/update-transaction.service";
 import { DeleteTransactionService } from "@/app/api/domain/transaction/service/delete-transaction.service";
-import { DomainError } from "@/app/api/domain/errors/domain.error";
+import { DomainError } from "@/app/api/domain/shared/errors/domain.error";
 import { api } from "@/app/api";
 import { withUserContext } from "@/app/api/context/initialize-context";
 import { TransactionDto } from "../../domain/transaction/model/transaction.dto";

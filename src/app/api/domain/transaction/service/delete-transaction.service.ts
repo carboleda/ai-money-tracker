@@ -8,7 +8,7 @@ import {
   EventTypes,
   TransactionDeletedEvent,
 } from "@/app/api/domain/interfaces/account-events.interface";
-import { DomainError } from "@/app/api/domain/errors/domain.error";
+import { DomainError } from "@/app/api/domain/shared/errors/domain.error";
 import { pubsub } from "@/app/api/helpers/pubsub";
 
 @Injectable()

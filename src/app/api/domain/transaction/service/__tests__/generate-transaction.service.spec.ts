@@ -5,7 +5,7 @@ import {
   GenAIService,
 } from "@/app/api/domain/shared/interfaces/generated-transaction.interface";
 import { GenerateTransactionService } from "../generate-transaction.service";
-import { DomainError } from "@/app/api/domain/errors/domain.error";
+import { DomainError } from "@/app/api/domain/shared/errors/domain.error";
 import {
   TransactionModel,
   TransactionStatus,

@@ -8,7 +8,7 @@ import {
   EventTypes,
   TransactionUpdatedEvent,
 } from "@/app/api/domain/shared/interfaces/account-events.interface";
-import { DomainError } from "@/app/api/domain/errors/domain.error";
+import { DomainError } from "@/app/api/domain/shared/errors/domain.error";
 import { pubsub } from "@/app/api/helpers/pubsub";
 import { ValidateAccountService } from "@/app/api/domain/account/service/validate-account.service";
 import { TransactionDto } from "../model/transaction.dto";
