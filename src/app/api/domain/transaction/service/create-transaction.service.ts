@@ -7,7 +7,7 @@ import {
 import {
   EventTypes,
   TransactionCreatedEvent,
-} from "@/app/api/domain/interfaces/account-events.interface";
+} from "@/app/api/domain/shared/interfaces/account-events.interface";
 import { pubsub } from "@/app/api/helpers/pubsub";
 import { ValidateAccountService } from "@/app/api/domain/account/service/validate-account.service";
 import { TransactionDto } from "../model/transaction.dto";

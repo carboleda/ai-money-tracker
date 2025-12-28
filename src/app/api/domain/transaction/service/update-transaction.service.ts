@@ -7,7 +7,7 @@ import {
 import {
   EventTypes,
   TransactionUpdatedEvent,
-} from "@/app/api/domain/interfaces/account-events.interface";
+} from "@/app/api/domain/shared/interfaces/account-events.interface";
 import { DomainError } from "@/app/api/domain/errors/domain.error";
 import { pubsub } from "@/app/api/helpers/pubsub";
 import { ValidateAccountService } from "@/app/api/domain/account/service/validate-account.service";

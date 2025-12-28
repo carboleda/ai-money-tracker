@@ -2,13 +2,13 @@ import { Injectable, Inject } from "@/app/api/decorators/tsyringe.decorator";
 import type {
   GenAIService,
   GeneratedTransaction,
-} from "@/app/api/domain/interfaces/generated-transaction.interface";
+} from "@/app/api/domain/shared/interfaces/generated-transaction.interface";
 import { getMissingFieldsInPrompt } from "@/config/utils";
 import { TransactionStatus } from "../model/transaction.model";
 import { DomainError } from "@/app/api/domain/errors/domain.error";
 import { CreateTransactionService } from "./create-transaction.service";
 import { TransactionDto } from "../model/transaction.dto";
-import { Service } from "../../interfaces/service.interface";
+import { Service } from "@/app/api/domain/shared/interfaces/service.interface";
 
 type GenerateTransaction = {
   text?: string;

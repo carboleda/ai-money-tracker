@@ -6,8 +6,8 @@ import type {
   TransactionCreatedEvent,
   TransactionDeletedEvent,
   TransactionUpdatedEvent,
-} from "@/app/api/domain/interfaces/account-events.interface";
-import { EventTypes } from "@/app/api/domain/interfaces/account-events.interface";
+} from "@/app/api/domain/shared/interfaces/account-events.interface";
+import { EventTypes } from "@/app/api/domain/shared/interfaces/account-events.interface";
 import { AccountModel } from "@/app/api/domain/account/model/account.model";
 import {
   InjectRepository,

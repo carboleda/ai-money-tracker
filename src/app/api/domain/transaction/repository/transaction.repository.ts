@@ -1,4 +1,4 @@
-import { FilterParams } from "@/app/api/domain/interfaces/transaction-filter.interface";
+import { FilterParams } from "@/app/api/domain/shared/interfaces/transaction-filter.interface";
 import { TransactionModel } from "../model/transaction.model";
 
 export interface TransactionRepository {

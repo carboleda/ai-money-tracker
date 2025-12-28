@@ -4,7 +4,7 @@ import {
   InjectRepository,
   Injectable,
 } from "@/app/api/decorators/tsyringe.decorator";
-import { Service } from "../../interfaces/service.interface";
+import { Service } from "@/app/api/domain/shared/interfaces/service.interface";
 
 type ValidateAccountInput = {
   sourceAccount: string;
