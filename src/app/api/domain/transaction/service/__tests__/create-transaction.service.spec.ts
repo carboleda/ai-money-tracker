@@ -7,7 +7,7 @@ import { getRepositoryToken } from "@/app/api/decorators/tsyringe.decorator";
 import {
   EventTypes,
   TransactionCreatedEvent,
-} from "@/app/api/domain/interfaces/account-events.interface";
+} from "@/app/api/domain/shared/interfaces/account-events.interface";
 import { transactionModelFixture } from "./fixtures/transaction.model.fixture";
 import { pubsub } from "@/app/api/helpers/pubsub";
 

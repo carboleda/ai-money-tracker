@@ -2,7 +2,7 @@ import { Injectable, Inject } from "@/app/api/decorators/tsyringe.decorator";
 import type {
   MessagingService,
   SendMessageRequest,
-} from "@/app/api/domain/interfaces/messaging.interface";
+} from "@/app/api/domain/shared/ports/messaging.interface";
 import { NotificationModel } from "../model/notification.model";
 
 interface NotificationResult {
@@ -25,7 +25,7 @@ export class NotificationService {
   constructor(
     @Inject("MessagingService")
     private readonly messagingService: MessagingService
-  ) {}
+  ) { }
 
   async sendNotification(
     userId: string,

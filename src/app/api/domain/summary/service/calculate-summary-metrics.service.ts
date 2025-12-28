@@ -4,16 +4,15 @@ import {
   TransactionStatus,
 } from "@/app/api/domain/transaction/model/transaction.model";
 import { GetAllAccountsService } from "@/app/api/domain/account/service/get-all.service";
-import { Service } from "@/app/api/domain/interfaces/service.interface";
+import { Service } from "@/app/api/domain/shared/ports/service.interface";
 import { SummaryMetricsModel } from "../model/summary-metrics.model";
 import { TransactionType } from "@/interfaces/transaction";
 import { AccountModel } from "@/app/api/domain/account/model/account.model";
 
 @Injectable()
 export class CalculateSummaryMetricsService
-  implements Service<TransactionModel[], SummaryMetricsModel>
-{
-  constructor(private readonly getAllAccountsService: GetAllAccountsService) {}
+  implements Service<TransactionModel[], SummaryMetricsModel> {
+  constructor(private readonly getAllAccountsService: GetAllAccountsService) { }
 
   /**
    * Calculates summary metrics for transactions, handling transfers based on source and destination accounts.
@@ -53,7 +52,7 @@ export class CalculateSummaryMetricsService
           return;
         }
 
-        if (transaction.destinationAccount === account) {
+        if (transaction.destinationAccount.ref === account) {
           totalTransfers += transaction.amount;
           return;
         }
@@ -83,7 +82,7 @@ export class CalculateSummaryMetricsService
     selectedAccount?: string
   ): number {
     if (selectedAccount) {
-      const account = accounts.find((acc) => acc.account === selectedAccount);
+      const account = accounts.find((acc) => acc.ref === selectedAccount);
       return account ? account.balance : 0;
     }
 

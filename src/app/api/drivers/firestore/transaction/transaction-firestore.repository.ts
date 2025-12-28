@@ -14,7 +14,7 @@ import { Filter, Firestore, UpdateData } from "firebase-admin/firestore";
 import { TransactionAdapter } from "./transaction.adapter";
 import { Collections } from "../types";
 import { TransactionEntity } from "./transaction.entity";
-import type { FilterParams } from "@/app/api/domain/interfaces/transaction-filter.interface";
+import type { FilterParams } from "@/app/api/domain/shared/interfaces/transaction-filter.interface";
 import { BaseFirestoreRepository } from "@/app/api/drivers/firestore/base/base.firestore.repository";
 import type { UserContext } from "@/app/api/context/user-context";
 import type { AccountRepository } from "@/app/api/domain/account/repository/account.repository";
@@ -23,8 +23,7 @@ import { AccountModel } from "@/app/api/domain/account/model/account.model";
 @Injectable()
 export class TransactionFirestoreRepository
   extends BaseFirestoreRepository
-  implements TransactionRepository
-{
+  implements TransactionRepository {
   constructor(
     @Inject(Firestore) firestore: Firestore,
     @InjectUserContext() userContext: UserContext,
@@ -61,7 +60,7 @@ export class TransactionFirestoreRepository
 
       const destinationAccountSummary = transaction.destinationAccount
         ? accountMap.get(transaction.destinationAccount) ??
-          transaction.destinationAccount
+        transaction.destinationAccount
         : undefined;
 
       // Store the enriched data separately for adapter to use

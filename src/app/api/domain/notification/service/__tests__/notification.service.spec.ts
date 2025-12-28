@@ -1,7 +1,7 @@
 import "reflect-metadata";
 import { container } from "tsyringe";
 import { NotificationService } from "../notification.service";
-import { MessagingService } from "@/app/api/domain/interfaces/messaging.interface";
+import { MessagingService } from "@/app/api/domain/shared/ports/messaging.interface";
 import { NotificationModel } from "../../model/notification.model";
 
 describe("NotificationService", () => {

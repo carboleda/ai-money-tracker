@@ -1,5 +1,5 @@
 import type { AccountRepository } from "../repository/account.repository";
-import { Service } from "@/app/api/domain/shared/interfaces/service.interface";
+import { Service } from "@/app/api/domain/shared/ports/service.interface";
 import {
   InjectRepository,
   Injectable,
