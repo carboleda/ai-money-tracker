@@ -8,6 +8,7 @@ import { TransactionStatus } from "../model/transaction.model";
 import { DomainError } from "@/app/api/domain/errors/domain.error";
 import { CreateTransactionService } from "./create-transaction.service";
 import { TransactionDto } from "../model/transaction.dto";
+import { Service } from "../../interfaces/service.interface";
 
 type GenerateTransaction = {
   text?: string;
@@ -17,7 +18,9 @@ type GenerateTransaction = {
 };
 
 @Injectable()
-export class GenerateTransactionService {
+export class GenerateTransactionService
+  implements Service<GenerateTransaction, string>
+{
   constructor(
     private readonly createTransactionService: CreateTransactionService,
     @Inject("GenAIService")

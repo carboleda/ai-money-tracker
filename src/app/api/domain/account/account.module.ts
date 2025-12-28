@@ -1,5 +1,4 @@
 import { container } from "tsyringe";
-import { UpdateAccountBalanceService } from "./service/update-account-balance.service";
 import { GetAllAccountsService } from "./service/get-all.service";
 import { CreateAccountService } from "./service/create-account.service";
 import { UpdateAccountService } from "./service/update-account.service";
@@ -11,10 +10,6 @@ import { registerEventHandlers } from "@/app/api/decorators/tsyringe.decorator";
 export class AccountModule {
   static register(): void {
     // Register services
-    container.register(UpdateAccountBalanceService, {
-      useClass: UpdateAccountBalanceService,
-    });
-
     container.register(GetAllAccountsService, {
       useClass: GetAllAccountsService,
     });

@@ -4,18 +4,24 @@ import {
   InjectRepository,
   Injectable,
 } from "@/app/api/decorators/tsyringe.decorator";
+import { Service } from "../../interfaces/service.interface";
+
+type ValidateAccountInput = {
+  sourceAccount: string;
+  destinationAccount?: string;
+};
 
 @Injectable()
-export class ValidateAccountService {
+export class ValidateAccountService
+  implements Service<ValidateAccountInput, void>
+{
   constructor(
     @InjectRepository(AccountModel)
     private readonly accountRepository: AccountRepository
   ) {}
 
-  async execute(
-    sourceAccount: string,
-    destinationAccount?: string
-  ): Promise<void> {
+  async execute(input: ValidateAccountInput): Promise<void> {
+    const { sourceAccount, destinationAccount } = input;
     // Check sourceAccount
     const sourceAccountModel = await this.accountRepository.getAccountByRef(
       sourceAccount

@@ -30,10 +30,10 @@ export class CreateTransactionService {
     }
 
     // Validate accounts exist and are not deleted
-    await this.validateAccountService.execute(
-      transaction.sourceAccount,
-      transaction.destinationAccount
-    );
+    await this.validateAccountService.execute({
+      sourceAccount: transaction.sourceAccount,
+      destinationAccount: transaction.destinationAccount,
+    });
 
     const id = await this.transactionRepository.create({
       ...transaction,
