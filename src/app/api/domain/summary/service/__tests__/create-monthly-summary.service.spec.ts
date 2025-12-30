@@ -5,7 +5,7 @@ import { SummaryHistoryRepository } from "../../repository/summary-history.repos
 import { FilterTransactionsService } from "../../../transaction/service/filter-transactions.service";
 import { getRepositoryToken } from "@/app/api/decorators/tsyringe.decorator";
 import { SummaryHistoryModel } from "../../model/summary-history.model";
-import { transactionModelFixture } from "@/app/api/drivers/firestore/transaction/__tests__/fixtures/transaction.fixture";
+import { transactionModelFixture } from "@/app/api/domain/transaction/service/__tests__/fixtures/transaction.model.fixture";
 
 describe("CreateMonthlySummaryService", () => {
   let service: CreateMonthlySummaryService;

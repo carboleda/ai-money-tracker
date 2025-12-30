@@ -22,7 +22,6 @@ jest.mock("@/app/api/helpers/pubsub", () => ({
 
 describe("UpdateTransactionService", () => {
   let service: UpdateTransactionService;
-  let validateAccountService: ValidateAccountService;
   let transactionRepository: TransactionRepository;
 
   beforeEach(() => {
@@ -55,7 +54,6 @@ describe("UpdateTransactionService", () => {
 
     // Resolve instances
     service = container.resolve(UpdateTransactionService);
-    validateAccountService = container.resolve(ValidateAccountService);
     transactionRepository = container.resolve(
       getRepositoryToken(TransactionModel)
     );

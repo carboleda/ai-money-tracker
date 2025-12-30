@@ -113,6 +113,7 @@ describe("GenerateTransactionService", () => {
   it("should call genAIService and createTransactionService with correct data", async () => {
     const mockGeneratedTransaction: GeneratedTransaction.TransactionData = {
       type: TransactionType.EXPENSE,
+      status: TransactionStatus.COMPLETE,
       sourceAccount: "account1",
       createdAt: "2025-07-25T00:00:00.000Z",
       description: "Test transaction",
@@ -133,7 +134,7 @@ describe("GenerateTransactionService", () => {
     const mockTransaction = {
       ...mockGeneratedTransaction,
       type: mockGeneratedTransaction.type,
-      createdAt: new Date(mockGeneratedTransaction.createdAt!),
+      createdAt: new Date(mockGeneratedTransaction.createdAt),
       sourceAccount: "account1",
       status: TransactionStatus.COMPLETE,
     };
@@ -155,11 +156,13 @@ describe("GenerateTransactionService", () => {
   it("should call genAIService and createTransactionService with correct data when manual date is provided", async () => {
     const mockGeneratedTransaction: GeneratedTransaction.TransactionData = {
       type: TransactionType.EXPENSE,
+      status: TransactionStatus.COMPLETE,
       sourceAccount: "account1",
       description: "Test transaction",
       amount: 100,
       category: "Food",
       destinationAccount: "account2",
+      createdAt: "2025-07-15T00:00:00.000Z",
       error: undefined as never,
     };
 
@@ -212,6 +215,7 @@ describe("GenerateTransactionService", () => {
 
     const mockGeneratedTransaction: GeneratedTransaction.TransactionData = {
       type: TransactionType.EXPENSE,
+      status: TransactionStatus.COMPLETE,
       sourceAccount: "account1",
       createdAt: generatedDateStr,
       description: "Test transaction",
@@ -246,6 +250,7 @@ describe("GenerateTransactionService", () => {
 
     const mockGeneratedTransaction: GeneratedTransaction.TransactionData = {
       type: TransactionType.EXPENSE,
+      status: TransactionStatus.COMPLETE,
       sourceAccount: "account1",
       createdAt: generatedDateStr,
       description: "Test transaction",
