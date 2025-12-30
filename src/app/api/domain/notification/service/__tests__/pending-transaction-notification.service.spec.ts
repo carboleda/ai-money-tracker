@@ -104,12 +104,14 @@ describe("PendingTransactionNotificationService", () => {
       const user = createUserModelFixture();
       const futureDate = new Date("2024-01-21T00:00:00Z"); // 10 days in the future
 
-      const transactions = getSeveralTransactionModels(1, {
-        createdAt: futureDate,
-        description: "Future payment",
-        status: TransactionStatus.PENDING,
-        type: TransactionType.EXPENSE,
-      });
+      const transactions = getSeveralTransactionModels(1, [
+        {
+          createdAt: futureDate,
+          description: "Future payment",
+          status: TransactionStatus.PENDING,
+          type: TransactionType.EXPENSE,
+        },
+      ]);
 
       getUserService.execute.mockResolvedValue(user);
       filterTransactionsService.execute.mockResolvedValue(transactions);
@@ -132,12 +134,14 @@ describe("PendingTransactionNotificationService", () => {
       const user = createUserModelFixture();
       const pastDate = new Date("2024-01-11T00:00:00Z"); // 2 days ago
 
-      const transactions = getSeveralTransactionModels(1, {
-        createdAt: pastDate,
-        description: "Overdue payment",
-        status: TransactionStatus.PENDING,
-        type: TransactionType.EXPENSE,
-      });
+      const transactions = getSeveralTransactionModels(1, [
+        {
+          createdAt: pastDate,
+          description: "Overdue payment",
+          status: TransactionStatus.PENDING,
+          type: TransactionType.EXPENSE,
+        },
+      ]);
 
       getUserService.execute.mockResolvedValue(user);
       filterTransactionsService.execute.mockResolvedValue(transactions);
@@ -177,12 +181,14 @@ describe("PendingTransactionNotificationService", () => {
       const user = createUserModelFixture();
       const dueToday = new Date("2024-01-11T01:00:00Z");
 
-      const transactions = getSeveralTransactionModels(1, {
-        createdAt: dueToday,
-        description: "Payment due today",
-        status: TransactionStatus.PENDING,
-        type: TransactionType.EXPENSE,
-      });
+      const transactions = getSeveralTransactionModels(1, [
+        {
+          createdAt: dueToday,
+          description: "Payment due today",
+          status: TransactionStatus.PENDING,
+          type: TransactionType.EXPENSE,
+        },
+      ]);
 
       getUserService.execute.mockResolvedValue(user);
       filterTransactionsService.execute.mockResolvedValue(transactions);
@@ -224,12 +230,14 @@ describe("PendingTransactionNotificationService", () => {
       const user = createUserModelFixture();
       const upcomingDate = new Date("2024-01-13T00:00:00Z"); // 2 days from now (within early reminder threshold)
 
-      const transactions = getSeveralTransactionModels(1, {
-        createdAt: upcomingDate,
-        description: "Upcoming payment",
-        status: TransactionStatus.PENDING,
-        type: TransactionType.EXPENSE,
-      });
+      const transactions = getSeveralTransactionModels(1, [
+        {
+          createdAt: upcomingDate,
+          description: "Upcoming payment",
+          status: TransactionStatus.PENDING,
+          type: TransactionType.EXPENSE,
+        },
+      ]);
 
       getUserService.execute.mockResolvedValue(user);
       filterTransactionsService.execute.mockResolvedValue(transactions);
@@ -271,12 +279,14 @@ describe("PendingTransactionNotificationService", () => {
       const user = createUserModelFixture();
       const pastDate = new Date("2024-01-11T00:00:00Z");
 
-      const transactions = getSeveralTransactionModels(1, {
-        createdAt: pastDate,
-        description: "Test payment",
-        status: TransactionStatus.PENDING,
-        type: TransactionType.EXPENSE,
-      });
+      const transactions = getSeveralTransactionModels(1, [
+        {
+          createdAt: pastDate,
+          description: "Test payment",
+          status: TransactionStatus.PENDING,
+          type: TransactionType.EXPENSE,
+        },
+      ]);
 
       getUserService.execute.mockResolvedValue(user);
       filterTransactionsService.execute.mockResolvedValue(transactions);
@@ -318,12 +328,14 @@ describe("PendingTransactionNotificationService", () => {
       const user = createUserModelFixture();
       const pastDate = new Date("2024-01-10T00:00:00Z");
 
-      const transactions = getSeveralTransactionModels(1, {
-        createdAt: pastDate,
-        description: "Overdue payment",
-        status: TransactionStatus.PENDING,
-        type: TransactionType.EXPENSE,
-      });
+      const transactions = getSeveralTransactionModels(1, [
+        {
+          createdAt: pastDate,
+          description: "Overdue payment",
+          status: TransactionStatus.PENDING,
+          type: TransactionType.EXPENSE,
+        },
+      ]);
 
       getUserService.execute.mockResolvedValue(user);
       filterTransactionsService.execute.mockResolvedValue(transactions);
@@ -361,12 +373,14 @@ describe("PendingTransactionNotificationService", () => {
 
       const user = createUserModelFixture();
       const now = new Date("2024-01-11T00:00:00Z");
-      const transactions = getSeveralTransactionModels(1, {
-        createdAt: now,
-        description: "Today's payment",
-        status: TransactionStatus.PENDING,
-        type: TransactionType.EXPENSE,
-      });
+      const transactions = getSeveralTransactionModels(1, [
+        {
+          createdAt: now,
+          description: "Today's payment",
+          status: TransactionStatus.PENDING,
+          type: TransactionType.EXPENSE,
+        },
+      ]);
 
       getUserService.execute.mockResolvedValue(user);
       filterTransactionsService.execute.mockResolvedValue(transactions);
@@ -405,12 +419,14 @@ describe("PendingTransactionNotificationService", () => {
       const user = createUserModelFixture();
       const futureDate = new Date("2024-01-13T00:00:00Z");
 
-      const transactions = getSeveralTransactionModels(1, {
-        createdAt: futureDate,
-        description: "Upcoming payment",
-        status: TransactionStatus.PENDING,
-        type: TransactionType.EXPENSE,
-      });
+      const transactions = getSeveralTransactionModels(1, [
+        {
+          createdAt: futureDate,
+          description: "Upcoming payment",
+          status: TransactionStatus.PENDING,
+          type: TransactionType.EXPENSE,
+        },
+      ]);
 
       getUserService.execute.mockResolvedValue(user);
       filterTransactionsService.execute.mockResolvedValue(transactions);

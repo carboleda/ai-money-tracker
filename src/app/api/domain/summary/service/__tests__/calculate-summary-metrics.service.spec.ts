@@ -16,7 +16,7 @@ import {
   mixedTransactions,
   largeNumbers,
 } from "@/app/api/domain/transaction/service/__tests__/fixtures/transaction.model.fixture";
-import { getSeveralAccountModels } from "@/app/api/domain/notification/service/__tests__/fixtures/account.model.fixture";
+import { getSeveralAccountModels } from "@/app/api/domain/account/service/__tests__/fixtures/account.model.fixture";
 
 describe("CalculateSummaryMetricsService", () => {
   const mockAccounts: AccountModel[] = [];

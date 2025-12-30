@@ -4,18 +4,43 @@ import {
   TransactionStatus,
   TransactionType,
 } from "@/app/api/domain/transaction/model/transaction.model";
+import { CreateTransactionInput } from "../../../ports/inbound/create-transaction.port";
+import { UpdateTransactionInput } from "../../../ports/inbound/update-transaction.port";
+
+type PartialTransaction = Partial<
+  Omit<TransactionModel, "sourceAccount" | "destinationAccount">
+> & {
+  sourceAccount?: string;
+  destinationAccount?: string;
+};
 
 const mockDate = new Date("2024-01-15T10:30:00Z");
 
 export const getSeveralTransactionModels = (
   count: number,
-  partialTransactionModel: Partial<TransactionModel> = {}
+  partialTransactionModel: Partial<PartialTransaction>[] = []
 ): TransactionModel[] => {
   return Array.from({ length: count }, (_, index) => ({
     ...transactionModelFixture,
     id: (index + 1).toString(),
     createdAt: new Date(Date.now() - index * 1000 * 60 * 60 * 24),
-    ...partialTransactionModel,
+    ...partialTransactionModel[index % partialTransactionModel.length],
+    sourceAccount: partialTransactionModel[
+      index % partialTransactionModel.length
+    ]?.sourceAccount
+      ? {
+          ref: partialTransactionModel[index % partialTransactionModel.length]
+            .sourceAccount!,
+        }
+      : transactionModelFixture.sourceAccount,
+    destinationAccount: partialTransactionModel[
+      index % partialTransactionModel.length
+    ]?.destinationAccount
+      ? {
+          ref: partialTransactionModel[index % partialTransactionModel.length]
+            .destinationAccount!,
+        }
+      : transactionModelFixture.destinationAccount,
   }));
 };
 
@@ -260,5 +285,18 @@ export const getTransactionModelWithCustomDate = (
   });
 };
 
-
 export const largeNumbers = [largeIncome, largeExpense];
+
+// Ports
+
+export const createTransactionInputFisture: CreateTransactionInput = {
+  ...transactionModelFixture,
+  sourceAccount: transactionModelFixture.sourceAccount.ref,
+  destinationAccount: transactionModelFixture.destinationAccount?.ref,
+};
+
+export const updateTransactionInputFixture: UpdateTransactionInput = {
+  ...transactionModelFixtureWithId,
+  sourceAccount: transactionModelFixture.sourceAccount.ref,
+  destinationAccount: transactionModelFixture.destinationAccount?.ref,
+};
