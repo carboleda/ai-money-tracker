@@ -6,7 +6,7 @@ import { DeleteTransactionService } from "@/app/api/domain/transaction/service/d
 import { DomainError } from "@/app/api/domain/shared/errors/domain.error";
 import { api } from "@/app/api";
 import { withUserContext } from "@/app/api/context/initialize-context";
-import { TransactionDto } from "../../domain/transaction/model/transaction.dto";
+import { UpdateTransactionInput } from "@/app/api/domain/transaction/ports/inbound/update-transaction.port";
 
 export async function POST(req: NextRequest) {
   return withUserContext(req, async () => {
@@ -50,7 +50,7 @@ export async function PUT(req: NextRequest) {
   return withUserContext(req, async () => {
     const updateTransactionService = api.resolve(UpdateTransactionService);
 
-    const transaction = (await req.json()) as TransactionDto;
+    const transaction = (await req.json()) as UpdateTransactionInput;
     transaction.createdAt = new Date(transaction.createdAt);
     await updateTransactionService.execute(transaction);
 

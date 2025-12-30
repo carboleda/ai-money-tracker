@@ -122,7 +122,7 @@ export class PendingTransactionNotificationService {
         title: "[ACTION REQUIRED]: Payment due",
         body: `Payment for ${transaction.description} is due ${dueText}, pay it ASAP.`,
         extraData: {
-          transactionId: transaction.id,
+          transactionId: transaction.id!,
         },
       });
     }
@@ -134,7 +134,7 @@ export class PendingTransactionNotificationService {
         createdAt
       )}.`,
       extraData: {
-        transactionId: transaction.id,
+        transactionId: transaction.id!,
       },
     });
   }

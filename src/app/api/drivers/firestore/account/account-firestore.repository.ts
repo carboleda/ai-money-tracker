@@ -48,7 +48,7 @@ export class AccountFirestoreRepository
       return this.updateAccountBalance(accountDocument, balance);
     }
 
-    await this.createInitialAccount(account, balance);
+    throw new Error(`Account with ref '${account}' not found`);
   }
 
   async getAccountById(id: string): Promise<AccountModel | null> {
@@ -156,18 +156,5 @@ export class AccountFirestoreRepository
     accountEntity.balance += transactionAmount;
 
     accountDocument.ref.update(accountEntity);
-  }
-
-  private async createInitialAccount(account: string, balance: number) {
-    const entity: AccountEntity = {
-      ref: account,
-      name: account,
-      icon: "💳",
-      type: "saving",
-      balance,
-      isDeleted: false,
-    };
-
-    await this.getUserCollectionReference().add(entity);
   }
 }

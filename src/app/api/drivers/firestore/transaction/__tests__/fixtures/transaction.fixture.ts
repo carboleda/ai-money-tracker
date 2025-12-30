@@ -1,5 +1,4 @@
 import {
-  TransactionModel,
   TransactionType,
   TransactionStatus,
   TransactionCategory,
@@ -53,53 +52,6 @@ export const customCategoryTransactionEntityFixture: TransactionEntity = {
   createdAt: mockTimestamp,
 };
 
-export const transactionModelFixture = new TransactionModel({
-  id: "transaction-123",
-  description: "Test transaction",
-  paymentLink: "https://example.com/payment",
-  notes: "Test notes",
-  type: TransactionType.EXPENSE,
-  status: TransactionStatus.COMPLETE,
-  category: TransactionCategory.Alimentos,
-  sourceAccount: "checking",
-  destinationAccount: "savings",
-  amount: 100.5,
-  createdAt: mockDate,
-  isRecurrent: true,
-});
-
-export const minimalTransactionModelFixture = new TransactionModel({
-  id: "minimal-transaction-456",
-  description: "Minimal transaction",
-  type: TransactionType.INCOME,
-  status: TransactionStatus.PENDING,
-  sourceAccount: "checking",
-  amount: 50,
-  createdAt: mockDate,
-});
-
-export const transferTransactionModelFixture = new TransactionModel({
-  id: "transfer-101",
-  description: "Transfer between accounts",
-  type: TransactionType.TRANSFER,
-  status: TransactionStatus.COMPLETE,
-  sourceAccount: "checking",
-  destinationAccount: "savings",
-  amount: 200,
-  createdAt: mockDate,
-});
-
-export const customCategoryTransactionModelFixture = new TransactionModel({
-  id: "custom-category-789",
-  description: "Custom category transaction",
-  type: TransactionType.EXPENSE,
-  status: TransactionStatus.COMPLETE,
-  category: "Custom Category",
-  sourceAccount: "checking",
-  amount: 75.25,
-  createdAt: mockDate,
-});
-
 export const roundTripTransactionEntityFixture: TransactionEntity = {
   description: "Round trip test",
   paymentLink: "https://test.com/pay",
@@ -119,12 +71,3 @@ export const getTransactionEntityWithCustomDate = (
   ...transactionEntityFixture,
   createdAt: Timestamp.fromDate(date),
 });
-
-export const getTransactionModelWithCustomDate = (
-  date: Date
-): TransactionModel => {
-  return new TransactionModel({
-    ...transactionModelFixture,
-    createdAt: date,
-  });
-};
