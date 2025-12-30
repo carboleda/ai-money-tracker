@@ -5,12 +5,10 @@ import { TransactionAdapter } from "../transaction.adapter";
 import { Collections } from "@/app/api/drivers/firestore/types";
 import { Firestore, Filter } from "firebase-admin/firestore";
 import { TransactionStatus } from "@/app/api/domain/transaction/model/transaction.model";
-import {
-  transactionModelFixture,
-  transactionEntityFixture,
-} from "./fixtures/transaction.fixture";
+import { transactionEntityFixture } from "./fixtures/transaction.fixture";
 import { getUserContextToken } from "@/app/api/decorators/tsyringe.decorator";
 import type { UserContext } from "@/app/api/context/user-context";
+import { transactionModelFixture } from "@/app/api/domain/transaction/service/__tests__/fixtures/transaction.model.fixture";
 
 describe("TransactionFirestoreRepository", () => {
   let firestore: Firestore;

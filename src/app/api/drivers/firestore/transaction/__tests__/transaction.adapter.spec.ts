@@ -9,13 +9,15 @@ import {
   minimalTransactionEntityFixture,
   transferTransactionEntityFixture,
   customCategoryTransactionEntityFixture,
+  roundTripTransactionEntityFixture,
+} from "./fixtures/transaction.fixture";
+import {
   transactionModelFixture,
   minimalTransactionModelFixture,
   transferTransactionModelFixture,
   customCategoryTransactionModelFixture,
-  roundTripTransactionEntityFixture,
   getTransactionModelWithCustomDate,
-} from "./fixtures/transaction.fixture";
+} from "@/app/api/domain/transaction/service/__tests__/fixtures/transaction.model.fixture";
 
 describe("TransactionAdapter", () => {
   describe("toModel", () => {
@@ -32,8 +34,8 @@ describe("TransactionAdapter", () => {
       expect(result.type).toBe(transactionEntityFixture.type);
       expect(result.status).toBe(transactionEntityFixture.status);
       expect(result.category).toBe(transactionEntityFixture.category);
-      expect(result.sourceAccount).toBe("checking");
-      expect(result.destinationAccount).toBe("savings");
+      expect(result.sourceAccount.ref).toBe("checking");
+      expect(result.destinationAccount?.ref).toBe("savings");
       expect(result.amount).toBe(transactionEntityFixture.amount);
       expect(result.createdAt).toEqual(
         transactionEntityFixture.createdAt.toDate()
@@ -56,7 +58,9 @@ describe("TransactionAdapter", () => {
       );
       expect(result.type).toBe(minimalTransactionEntityFixture.type);
       expect(result.status).toBe(minimalTransactionEntityFixture.status);
-      expect(result.sourceAccount).toBe("checking");
+      expect(result.sourceAccount).toMatchObject({
+        ref: "checking",
+      });
       expect(result.amount).toBe(minimalTransactionEntityFixture.amount);
       expect(result.createdAt).toEqual(
         minimalTransactionEntityFixture.createdAt.toDate()
@@ -88,7 +92,9 @@ describe("TransactionAdapter", () => {
       );
 
       expect(result.type).toBe(TransactionType.TRANSFER);
-      expect(result.destinationAccount).toBe("savings");
+      expect(result.destinationAccount).toMatchObject({
+        ref: "savings",
+      });
     });
   });
 
@@ -102,9 +108,11 @@ describe("TransactionAdapter", () => {
       expect(result.type).toBe(transactionModelFixture.type);
       expect(result.status).toBe(transactionModelFixture.status);
       expect(result.category).toBe(transactionModelFixture.category);
-      expect(result.sourceAccount).toBe(transactionModelFixture.sourceAccount);
+      expect(result.sourceAccount).toBe(
+        transactionModelFixture.sourceAccount.ref
+      );
       expect(result.destinationAccount).toBe(
-        transactionModelFixture.destinationAccount
+        transactionModelFixture.destinationAccount?.ref
       );
       expect(result.amount).toBe(transactionModelFixture.amount);
       expect(result.createdAt).toEqual(
@@ -124,7 +132,7 @@ describe("TransactionAdapter", () => {
       expect(result.type).toBe(minimalTransactionModelFixture.type);
       expect(result.status).toBe(minimalTransactionModelFixture.status);
       expect(result.sourceAccount).toBe(
-        minimalTransactionModelFixture.sourceAccount
+        minimalTransactionModelFixture.sourceAccount.ref
       );
       expect(result.amount).toBe(minimalTransactionModelFixture.amount);
       expect(result.createdAt).toEqual(

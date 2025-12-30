@@ -1,11 +1,12 @@
-import { CreateTransactionInput } from "../../transaction/ports/inbound/create-transaction.port";
+import { CreateTransactionInput } from "@/app/api/domain/transaction/ports/inbound/create-transaction.port";
 
 export namespace GeneratedTransaction {
   export interface InvalidTransactionError {
     error: string;
   }
 
-  export type TransactionData = CreateTransactionInput & {
+  export type TransactionData = Omit<CreateTransactionInput, "createdAt"> & {
+    createdAt: string;
     error: never;
   };
 

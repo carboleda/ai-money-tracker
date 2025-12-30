@@ -49,12 +49,10 @@ export class TransactionAdapter {
       return;
     }
 
-    return (
-      (account as unknown as AccountSummary) || {
-        ref: (account as string) || "",
-        name: null,
-        icon: null,
-      }
-    );
+    return {
+      ref: (account as string) || "",
+      name: null,
+      icon: null,
+    };
   }
 }
