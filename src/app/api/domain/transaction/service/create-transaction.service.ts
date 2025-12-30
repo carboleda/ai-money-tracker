@@ -10,17 +10,21 @@ import {
 } from "@/app/api/domain/shared/interfaces/account-events.interface";
 import { pubsub } from "@/app/api/helpers/pubsub";
 import { ValidateAccountService } from "@/app/api/domain/account/service/validate-account.service";
-import { TransactionDto } from "../model/transaction.dto";
+import { CreateTransactionInput } from "../ports/inbound/create-transaction.port";
+import { Service } from "@/app/api/domain/shared/ports/service.interface";
+import { TransactionMapper } from "../mapper/transaction.mapper";
 
 @Injectable()
-export class CreateTransactionService {
+export class CreateTransactionService
+  implements Service<CreateTransactionInput, string>
+{
   constructor(
     @InjectRepository(TransactionModel)
     private readonly transactionRepository: TransactionRepository,
     private readonly validateAccountService: ValidateAccountService
   ) {}
 
-  async execute(transaction: TransactionDto): Promise<string> {
+  async execute(transaction: CreateTransactionInput): Promise<string> {
     // Validate that TRANSFER has destinationAccount
     if (
       transaction.type === TransactionType.TRANSFER &&
@@ -35,21 +39,12 @@ export class CreateTransactionService {
       destinationAccount: transaction.destinationAccount,
     });
 
-    const id = await this.transactionRepository.create({
-      ...transaction,
-      sourceAccount: {
-        ref: transaction.sourceAccount,
-      },
-      destinationAccount: transaction.destinationAccount
-        ? {
-            ref: transaction.destinationAccount,
-          }
-        : undefined,
-    });
+    const transactionModel = TransactionMapper.fromCreateToModel(transaction);
+    const id = await this.transactionRepository.create(transactionModel);
 
     await pubsub.emit(
       EventTypes.TRANSACTION_CREATED,
-      new TransactionCreatedEvent({ ...transaction, id })
+      new TransactionCreatedEvent({ ...transactionModel, id })
     );
 
     return id;

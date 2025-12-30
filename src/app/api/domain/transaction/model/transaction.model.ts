@@ -36,7 +36,7 @@ export type AccountSummary = {
 };
 
 export class TransactionModel {
-  id: string;
+  id: string | null;
   description: string;
   paymentLink?: string;
   notes?: string;
@@ -50,7 +50,7 @@ export class TransactionModel {
   isRecurrent?: boolean;
 
   constructor(params: {
-    id: string;
+    id: string | null;
     description: string;
     paymentLink?: string;
     notes?: string;

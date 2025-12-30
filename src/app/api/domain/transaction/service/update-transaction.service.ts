@@ -11,17 +11,21 @@ import {
 import { DomainError } from "@/app/api/domain/shared/errors/domain.error";
 import { pubsub } from "@/app/api/helpers/pubsub";
 import { ValidateAccountService } from "@/app/api/domain/account/service/validate-account.service";
-import { TransactionDto } from "../model/transaction.dto";
+import { UpdateTransactionInput } from "../ports/inbound/update-transaction.port";
+import { Service } from "@/app/api/domain/shared/ports/service.interface";
+import { TransactionMapper } from "../mapper/transaction.mapper";
 
 @Injectable()
-export class UpdateTransactionService {
+export class UpdateTransactionService
+  implements Service<UpdateTransactionInput, void>
+{
   constructor(
     @InjectRepository(TransactionModel)
     private readonly transactionRepository: TransactionRepository,
     private readonly validateAccountService: ValidateAccountService
   ) {}
 
-  async execute(transaction: TransactionDto): Promise<void> {
+  async execute(transaction: UpdateTransactionInput): Promise<void> {
     const oldTransaction = await this.transactionRepository.getById(
       transaction.id
     );
@@ -43,26 +47,16 @@ export class UpdateTransactionService {
       destinationAccount: transaction.destinationAccount,
     });
 
-    await this.transactionRepository.update({
-      ...transaction,
-      sourceAccount: {
-        ref: transaction.sourceAccount,
-      },
-      destinationAccount: transaction.destinationAccount
-        ? {
-            ref: transaction.destinationAccount,
-          }
-        : undefined,
-    });
+    const transactionModel = TransactionMapper.fromUpdateToModel(transaction);
+    await this.transactionRepository.update(transactionModel);
+
     await pubsub.emit(
       EventTypes.TRANSACTION_UPDATED,
       new TransactionUpdatedEvent(
         {
           ...oldTransaction,
-          sourceAccount: oldTransaction.sourceAccount.ref,
-          destinationAccount: oldTransaction.destinationAccount?.ref,
         },
-        { ...transaction }
+        { ...transactionModel }
       )
     );
   }

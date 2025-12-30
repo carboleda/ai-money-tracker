@@ -7,8 +7,8 @@ import { getMissingFieldsInPrompt } from "@/config/utils";
 import { TransactionStatus } from "../model/transaction.model";
 import { DomainError } from "@/app/api/domain/shared/errors/domain.error";
 import { CreateTransactionService } from "./create-transaction.service";
-import { TransactionDto } from "../model/transaction.dto";
 import { Service } from "@/app/api/domain/shared/ports/service.interface";
+import { CreateTransactionInput } from "../ports/inbound/create-transaction.port";
 
 type GenerateTransaction = {
   text?: string;
@@ -59,7 +59,7 @@ export class GenerateTransactionService
     const generatedTransaction =
       generatedResponse as GeneratedTransaction.TransactionData;
 
-    const transaction: TransactionDto = {
+    const transaction: CreateTransactionInput = {
       ...generatedTransaction,
       type: generatedTransaction.type,
       sourceAccount: sourceAccount ?? generatedTransaction.sourceAccount,

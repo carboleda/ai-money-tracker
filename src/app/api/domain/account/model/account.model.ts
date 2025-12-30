@@ -1,4 +1,8 @@
-export type AccountType = "saving" | "credit" | "investment";
+export enum AccountType {
+  SAVING = "saving",
+  CREDIT = "credit",
+  INVESTMENT = "investment",
+}
 
 export type CreateAccountInput = Omit<AccountModel, "id" | "isDeleted">;
 

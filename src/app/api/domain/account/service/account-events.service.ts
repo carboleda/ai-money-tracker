@@ -1,6 +1,7 @@
 import {
   TransactionStatus,
   TransactionType,
+  TransactionModel,
 } from "@/app/api/domain/transaction/model/transaction.model";
 import type {
   TransactionCreatedEvent,
@@ -15,7 +16,6 @@ import {
   OnEvent,
 } from "@/app/api/decorators/tsyringe.decorator";
 import type { AccountRepository } from "../repository/account.repository";
-import { TransactionDto } from "../../transaction/model/transaction.dto";
 
 type AccountModelForUpdate = Pick<AccountModel, "ref" | "balance">;
 
@@ -101,7 +101,7 @@ export class AccountEventsService {
     );
   }
 
-  private handleEvent(transaction: TransactionDto, isRollback: boolean) {
+  private handleEvent(transaction: TransactionModel, isRollback: boolean) {
     if (
       transaction.status === TransactionStatus.PENDING ||
       (!transaction.sourceAccount && !transaction.destinationAccount)
@@ -113,17 +113,17 @@ export class AccountEventsService {
     if (transaction.type === TransactionType.TRANSFER) {
       accountEntities.push(
         {
-          ref: transaction.sourceAccount,
+          ref: transaction.sourceAccount.ref,
           balance: transaction.amount * (isRollback ? 1 : -1),
         },
         {
-          ref: transaction.destinationAccount!,
+          ref: transaction.destinationAccount!.ref,
           balance: transaction.amount * (isRollback ? -1 : 1),
         }
       );
     } else {
       accountEntities.push({
-        ref: transaction.sourceAccount,
+        ref: transaction.sourceAccount.ref,
         balance:
           transaction.amount *
           (transaction.type === TransactionType.EXPENSE ? -1 : 1) *

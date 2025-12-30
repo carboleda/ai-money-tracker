@@ -1,4 +1,4 @@
-import { TransactionDto } from "../transaction/model/transaction.dto";
+import { TransactionModel } from "@/app/api/domain/transaction/model/transaction.model";
 
 export enum EventTypes {
   TRANSACTION_CREATED = "transaction.created",
@@ -7,16 +7,16 @@ export enum EventTypes {
 }
 
 export class TransactionCreatedEvent {
-  constructor(public readonly transaction: TransactionDto) {}
+  constructor(public readonly transaction: TransactionModel) {}
 }
 
 export class TransactionDeletedEvent {
-  constructor(public readonly transaction: TransactionDto) {}
+  constructor(public readonly transaction: TransactionModel) {}
 }
 
 export class TransactionUpdatedEvent {
   constructor(
-    public readonly oldData: TransactionDto,
-    public readonly newData: TransactionDto
+    public readonly oldData: TransactionModel,
+    public readonly newData: TransactionModel
   ) {}
 }

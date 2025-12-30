@@ -8,12 +8,13 @@ import { NextRequest, NextResponse } from "next/server";
 import { api } from "@/app/api/index";
 import { withUserContext } from "@/app/api/context/initialize-context";
 import {
+  AccountType,
   CreateAccountInput,
   UpdateAccountInput,
 } from "@/app/api/domain/account/model/account.model";
 
 // Validation schemas
-const AccountTypeSchema = z.enum(["saving", "credit", "investment"]);
+const AccountTypeSchema = z.enum(Object.values(AccountType));
 
 const CreateAccountSchema = z.object({
   ref: z.string().min(1, "Reference is required"),

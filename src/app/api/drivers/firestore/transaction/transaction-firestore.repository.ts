@@ -95,7 +95,7 @@ export class TransactionFirestoreRepository
     const entity = TransactionAdapter.toEntity(
       transaction
     ) as UpdateData<TransactionEntity>;
-    const docRef = this.getUserCollectionReference().doc(transaction.id);
+    const docRef = this.getUserCollectionReference().doc(transaction.id!);
     await docRef.update(entity);
   }
 
