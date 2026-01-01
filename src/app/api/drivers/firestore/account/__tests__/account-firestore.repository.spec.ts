@@ -60,7 +60,8 @@ describe("AccountFirestoreRepository", () => {
         { id: "2", data: () => ({ account: "B", balance: 200 }) },
       ];
       const getMock = jest.fn().mockResolvedValue({ docs: mockDocs });
-      const mockSubcollection = { get: getMock };
+      const whereMock = jest.fn().mockReturnValue({ get: getMock });
+      const mockSubcollection = { where: whereMock };
       const mockUserDoc = {
         collection: jest.fn().mockReturnValue(mockSubcollection),
       };
@@ -82,6 +83,7 @@ describe("AccountFirestoreRepository", () => {
       expect(
         usersCollection.doc("test-user-id").collection
       ).toHaveBeenCalledWith(Collections.Accounts);
+      expect(whereMock).toHaveBeenCalledWith("isDeleted", "==", false);
       expect(getMock).toHaveBeenCalled();
       expect(toModelSpy).toHaveBeenCalledTimes(2);
       expect(result).toEqual([
@@ -93,7 +95,8 @@ describe("AccountFirestoreRepository", () => {
     it("should return an empty array if no accounts exist", async () => {
       // Arrange
       const getMock = jest.fn().mockResolvedValue({ docs: [] });
-      const mockSubcollection = { get: getMock };
+      const whereMock = jest.fn().mockReturnValue({ get: getMock });
+      const mockSubcollection = { where: whereMock };
       const mockUserDoc = {
         collection: jest.fn().mockReturnValue(mockSubcollection),
       };
@@ -112,6 +115,7 @@ describe("AccountFirestoreRepository", () => {
       expect(
         usersCollection.doc("test-user-id").collection
       ).toHaveBeenCalledWith(Collections.Accounts);
+      expect(whereMock).toHaveBeenCalledWith("isDeleted", "==", false);
       expect(result).toEqual([]);
     });
   });
@@ -147,7 +151,7 @@ describe("AccountFirestoreRepository", () => {
       );
     });
 
-    it("should create account if it does not exist", async () => {
+    it("should throw if account does not exist", async () => {
       // Arrange
       const addMock = jest.fn();
       const mockSubcollection = {
@@ -163,15 +167,9 @@ describe("AccountFirestoreRepository", () => {
       } as unknown as never);
 
       // Act
-      await repository.updateOrCreateAccount("C1234", 200);
-
-      // Assert
-      expect(addMock).toHaveBeenCalledWith(
-        expect.objectContaining({
-          account: "C1234",
-          balance: 200,
-        })
-      );
+      await expect(
+        repository.updateOrCreateAccount("C1234", 200)
+      ).rejects.toThrow(Error);
     });
   });
 });
