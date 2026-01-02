@@ -119,120 +119,118 @@ export const UpdateTransactionModalForm: React.FC<
   };
 
   return (
-    <>
-      <Modal
-        placement="top-center"
-        backdrop="blur"
-        isOpen={isOpen}
-        onOpenChange={onOpenChangeHandler}
-        isDismissable={false}
-      >
-        <ModalContent>
-          {(onClose) => (
-            <>
-              <ModalHeader className="flex flex-col gap-1">
-                {t("updateTransaction")}
-              </ModalHeader>
-              <ModalBody>
-                <Input
-                  autoFocus
-                  label={t("description")}
-                  variant="bordered"
+    <Modal
+      placement="top-center"
+      backdrop="blur"
+      isOpen={isOpen}
+      onOpenChange={onOpenChangeHandler}
+      isDismissable={false}
+    >
+      <ModalContent>
+        {(onClose) => (
+          <>
+            <ModalHeader className="flex flex-col gap-1">
+              {t("updateTransaction")}
+            </ModalHeader>
+            <ModalBody>
+              <Input
+                autoFocus
+                label={t("description")}
+                variant="bordered"
+                isRequired
+                value={descriptionInput}
+                onValueChange={setDescriptionInput}
+              />
+              <div className="flex gap-2">
+                <BankAccounDropdown
+                  label={t("sourceAccount")}
+                  className="w-full"
+                  onChange={setSourceAccountInput}
+                  value={sourceAccountInput}
                   isRequired
-                  value={descriptionInput}
-                  onValueChange={setDescriptionInput}
+                  skipDisabled
+                  showLabel
                 />
-                <div className="flex gap-2">
+                {item?.type === TransactionType.TRANSFER && (
                   <BankAccounDropdown
-                    label={t("sourceAccount")}
+                    label={t("destinationAccount")}
                     className="w-full"
-                    onChange={setSourceAccountInput}
-                    value={sourceAccountInput}
+                    onChange={setDestinationAccountInput}
+                    value={destinationAccountInput}
                     isRequired
                     skipDisabled
                     showLabel
                   />
-                  {item?.type === TransactionType.TRANSFER && (
-                    <BankAccounDropdown
-                      label={t("destinationAccount")}
-                      className="w-full"
-                      onChange={setDestinationAccountInput}
-                      value={destinationAccountInput}
-                      isRequired
-                      skipDisabled
-                      showLabel
-                    />
-                  )}
-                </div>
-                <div className="flex gap-2">
-                  <Autocomplete
-                    allowsCustomValue
-                    label={t("category")}
-                    variant="bordered"
-                    defaultItems={transactionCategoryOptions}
-                    selectedKey={transactonCategoryInput}
-                    onSelectionChange={(v) =>
-                      setTransactonCategoryInput(v as TransactionCategory)
-                    }
-                  >
-                    {(item) => (
-                      <AutocompleteItem key={item.value}>
-                        {item.label}
-                      </AutocompleteItem>
-                    )}
-                  </Autocomplete>
-
-                  <MaskedCurrencyInput
-                    label={t("amount")}
-                    variant="bordered"
-                    type="text"
-                    isRequired
-                    value={amountInput?.toString()}
-                    onValueChange={(v) => setAmountInput(v.floatValue)}
-                  />
-                </div>
-                <DatePicker
-                  label={t("transactionDate")}
-                  variant="bordered"
-                  granularity="minute"
-                  value={createdAtInput}
-                  onChange={(v) => setCreatedAtInput(v!)}
-                  isRequired
-                  hideTimeZone
-                />
-                {validationError && (
-                  <Chip
-                    variant="flat"
-                    color="danger"
-                    radius="sm"
-                    className="text-wrap max-w-full w-full h-fit p-2"
-                  >
-                    {validationError}
-                  </Chip>
                 )}
-              </ModalBody>
-              <ModalFooter>
-                <Button
-                  color="danger"
+              </div>
+              <div className="flex gap-2">
+                <Autocomplete
+                  allowsCustomValue
+                  label={t("category")}
+                  variant="bordered"
+                  defaultItems={transactionCategoryOptions}
+                  selectedKey={transactonCategoryInput}
+                  onSelectionChange={(v) =>
+                    setTransactonCategoryInput(v as TransactionCategory)
+                  }
+                >
+                  {(item) => (
+                    <AutocompleteItem key={item.value}>
+                      {item.label}
+                    </AutocompleteItem>
+                  )}
+                </Autocomplete>
+
+                <MaskedCurrencyInput
+                  label={t("amount")}
+                  variant="bordered"
+                  type="text"
+                  isRequired
+                  value={amountInput?.toString()}
+                  onValueChange={(v) => setAmountInput(v.floatValue)}
+                />
+              </div>
+              <DatePicker
+                label={t("transactionDate")}
+                variant="bordered"
+                granularity="minute"
+                value={createdAtInput}
+                onChange={(v) => setCreatedAtInput(v!)}
+                isRequired
+                hideTimeZone
+              />
+              {validationError && (
+                <Chip
                   variant="flat"
-                  disabled={areButtonsDisabled}
-                  onPress={onClose}
+                  color="danger"
+                  radius="sm"
+                  className="text-wrap max-w-full w-full h-fit p-2"
                 >
-                  {t("cancel")}
-                </Button>
-                <Button
-                  color="primary"
-                  isLoading={isMutating}
-                  disabled={areButtonsDisabled}
-                  onPress={onSave}
-                >
-                  {t("save")}
-                </Button>
-              </ModalFooter>
-            </>
-          )}
-        </ModalContent>
-      </Modal>
-    </>
+                  {validationError}
+                </Chip>
+              )}
+            </ModalBody>
+            <ModalFooter>
+              <Button
+                color="danger"
+                variant="flat"
+                disabled={areButtonsDisabled}
+                onPress={onClose}
+              >
+                {t("cancel")}
+              </Button>
+              <Button
+                color="primary"
+                isLoading={isMutating}
+                disabled={areButtonsDisabled}
+                onPress={onSave}
+              >
+                {t("save")}
+              </Button>
+            </ModalFooter>
+          </>
+        )}
+      </ModalContent>
+    </Modal>
   );
 };

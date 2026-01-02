@@ -55,6 +55,7 @@
     "clsx": "^2.1.1",
     "dayjs": "^1.11.18",
     "dotenv": "^16.4.5",
+    "emoji-picker-react": "^4.16.1",
     "eslint-config-next": "^15.5.6",
     "firebase": "^10.13.1",
     "firebase-admin": "^12.4.0",

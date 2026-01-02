@@ -20,7 +20,7 @@ export const useMutateTransaction = () => {
       body: formData,
     }).then((res) => {
       if (res.status !== 200) {
-        return Promise.reject(new Error(res.statusText));
+        throw new Error(res.statusText);
       }
 
       return res.json();
@@ -31,7 +31,7 @@ export const useMutateTransaction = () => {
     return trigger({ method: "PUT", body: JSON.stringify(trasaction) }).then(
       (res) => {
         if (res.status !== 200) {
-          return Promise.reject(res.statusText);
+          throw new Error(res.statusText);
         }
 
         return res.json();

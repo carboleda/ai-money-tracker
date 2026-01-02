@@ -59,7 +59,7 @@ export const getMissingFieldsInPrompt = (inputText: string) => {
   const matches = [...inputText.matchAll(validationRegex)];
 
   return requiredFields.filter((field) => {
-    return !matches.some((match) => match.groups && match?.groups?.[field]);
+    return !matches.some((match) => match.groups?.[field]);
   });
 };
 

@@ -34,19 +34,19 @@ export const TransactionTable: React.FC<TranactionTableProps> = ({
 }) => {
   const { t } = useTranslation(LocaleNamespace.Transactions);
   const [selectedItem, setSelectedItem] = useState<Transaction>();
-  const [isOpen, setOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const { isMutating, deleteTransaction } = useMutateTransaction();
   const { columns, renderCell, rowHeight } = useRenderCell();
   const { maxTableHeight } = useTableHeight();
 
   const onDialogDismissed = () => {
     setSelectedItem(undefined);
-    setOpen(false);
+    setIsOpen(false);
   };
 
   const onEdit = (item: Transaction) => {
     setSelectedItem(item);
-    setOpen(true);
+    setIsOpen(true);
   };
 
   if (isLoading || !transactions) return <TableSkeleton />;

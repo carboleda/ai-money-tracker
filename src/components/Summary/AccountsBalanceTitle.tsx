@@ -8,7 +8,6 @@ import { Account } from "@/interfaces/account";
 import { Skeleton } from "@heroui/skeleton";
 import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
-import { getAccountName } from "@/config/utils";
 
 export interface AccountsBalanceTitleProps {
   accountsBalance?: Account[];
@@ -37,7 +36,7 @@ export const AccountsBalanceTitle: React.FC<AccountsBalanceTitleProps> = ({
       data={[
         ...accountsBalance.map((account) => ({
           id: account.id,
-          name: getAccountName(account.account),
+          name: account.name,
           amount: account.balance,
           color: (account.balance > 0 ? "success" : "danger") as Color,
         })),

@@ -66,7 +66,7 @@ export async function POST(req: NextRequest) {
       const service = api.resolve(CreateAccountService);
       const id = await service.execute(input);
 
-      return NextResponse.json({ id }, { status: 201 });
+      return NextResponse.json({ id });
     } catch (error) {
       if (error instanceof z.ZodError) {
         return NextResponse.json(

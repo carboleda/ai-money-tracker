@@ -1,8 +1,7 @@
 import { IconType } from "react-icons";
 import { HiCollection } from "react-icons/hi";
-import { HiMiniArrowPathRoundedSquare } from "react-icons/hi2";
-import { MdPending } from "react-icons/md";
-import { HiChartPie } from "react-icons/hi2";
+import { HiMiniArrowPathRoundedSquare, HiChartPie } from "react-icons/hi2";
+import { MdPending, MdAccountBalance } from "react-icons/md";
 
 export type SiteConfig = typeof siteConfig;
 
@@ -37,6 +36,12 @@ export const pages: Page[] = [
     href: "/private/summary",
     icon: HiChartPie,
     className: "bg-primary/10 text-primary",
+  },
+  {
+    label: "accounts",
+    href: "/private/accounts",
+    icon: MdAccountBalance,
+    className: "bg-success/10 text-success",
   },
 ];
 

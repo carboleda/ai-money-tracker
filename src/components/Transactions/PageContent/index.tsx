@@ -29,7 +29,7 @@ function PageContent() {
   const { t } = useTranslation(LocaleNamespace.Transactions);
   const { setPageTitle } = useAppStore();
   const isMobile = useIsMobile();
-  const [isOpen, setOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const [filterValue, setFilterValue] = useState("");
   const currentMonthBounds = getMonthBounds(new Date());
   const [selectedAccount, setSelectedAccount] = useState<string>("");
@@ -48,13 +48,13 @@ function PageContent() {
   }, [t, setPageTitle]);
 
   const onDialogDismissed = () => {
-    setOpen(false);
+    setIsOpen(false);
   };
 
   const transactions = useMemo(() => {
     if (!reesponse?.transactions) return reesponse?.transactions;
 
-    let filteredTransations = [...reesponse?.transactions];
+    let filteredTransations = [...(reesponse?.transactions ?? [])];
 
     if (filterValue) {
       filteredTransations = filteredTransations.filter(
@@ -97,7 +97,7 @@ function PageContent() {
                 radius="sm"
                 variant="solid"
                 isIconOnly
-                onPress={() => setOpen(true)}
+                onPress={() => setIsOpen(true)}
               >
                 <HiOutlinePlusCircle className="text-xl" />
               </Button>
@@ -117,7 +117,7 @@ function PageContent() {
             shortNumber={isMobile}
             includedKeys={[
               "totalBalance",
-              ...(!isMobile ? ["totalIncomes" as keyof Summary] : []),
+              ...(isMobile ? [] : ["totalIncomes" as keyof Summary]),
               "totalExpenses",
               "totalTransfers",
             ]}
