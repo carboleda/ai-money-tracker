@@ -30,6 +30,7 @@ const UpdateAccountSchema = z.object({
   name: z.string().min(1, "Name must not be empty").optional(),
   icon: z.string().min(1, "Icon must not be empty").optional(),
   type: AccountTypeSchema.optional(),
+  balance: z.number().min(0, "Balance must be non-negative"),
   description: z.string().optional(),
 });
 
@@ -103,6 +104,7 @@ export async function PUT(req: NextRequest) {
         name: validatedData.name,
         icon: validatedData.icon,
         type: validatedData.type,
+        balance: validatedData.balance,
         description: validatedData.description,
       };
 

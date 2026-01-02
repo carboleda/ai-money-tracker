@@ -111,6 +111,7 @@ export class AccountFirestoreRepository
     if (data.name !== undefined) updates.name = data.name;
     if (data.icon !== undefined) updates.icon = data.icon;
     if (data.type !== undefined) updates.type = data.type;
+    if (data.balance !== undefined) updates.balance = data.balance;
     if (data.description !== undefined) updates.description = data.description;
 
     await this.getUserCollectionReference().doc(data.id).update(updates);

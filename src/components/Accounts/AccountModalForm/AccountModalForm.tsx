@@ -193,7 +193,6 @@ export const AccountModalForm: React.FC<AccountModalFormProps> = ({
                     <div className="px-1 py-2">
                       <EmojiPicker
                         onEmojiClick={(emojiData) => {
-                          console.log("Selected emoji:", emojiData.emoji);
                           createProxiedSetter(setIconInput)(emojiData.emoji);
                           setIsEmojiPickerOpen(false);
                         }}

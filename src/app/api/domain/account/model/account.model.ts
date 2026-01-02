@@ -7,7 +7,7 @@ export enum AccountType {
 export type CreateAccountInput = Omit<AccountModel, "id" | "isDeleted">;
 
 export type UpdateAccountInput = Partial<
-  Omit<AccountModel, "id" | "ref" | "balance" | "isDeleted">
+  Omit<AccountModel, "id" | "ref" | "isDeleted">
 > & { id: string };
 
 export class AccountModel {
