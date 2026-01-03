@@ -38,9 +38,3 @@ export interface TransactionsSummaryHistory
   id: string;
   createdAt: string;
 }
-
-export type ValidAccount = {
-  label: string;
-  category: string;
-  enabled: boolean;
-};
