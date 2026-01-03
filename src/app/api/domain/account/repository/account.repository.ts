@@ -15,5 +15,5 @@ export interface AccountRepository {
 
   delete(id: string): Promise<void>;
 
-  updateOrCreateAccount(account: string, balance: number): Promise<void>;
+  updateOrCreateAccount(ref: string, balance: number): Promise<void>;
 }

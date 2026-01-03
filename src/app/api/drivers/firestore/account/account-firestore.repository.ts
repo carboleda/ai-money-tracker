@@ -39,14 +39,14 @@ export class AccountFirestoreRepository
     return accounts;
   }
 
-  async updateOrCreateAccount(account: string, balance: number) {
-    const accountDocument = await this.getAccountDocument(account);
+  async updateOrCreateAccount(ref: string, balance: number) {
+    const accountDocument = await this.getAccountDocumentByRef(ref);
 
     if (accountDocument) {
       return this.updateAccountBalance(accountDocument, balance);
     }
 
-    throw new Error(`Account with ref '${account}' not found`);
+    throw new Error(`Account with ref '${ref}' not found`);
   }
 
   async getAccountById(id: string): Promise<AccountModel | null> {
@@ -124,21 +124,14 @@ export class AccountFirestoreRepository
     await this.getUserCollectionReference().doc(id).update({ isDeleted: true });
   }
 
-  private async getAccountDocument(
-    account: string
+  private async getAccountDocumentByRef(
+    ref: string
   ): Promise<QueryDocumentSnapshot | null> {
-    // Try to find by ref (new field) or account (legacy field)
-    let query = this.getUserCollectionReference().where("ref", "==", account);
+    const query = this.getUserCollectionReference()
+      .where("ref", "==", ref)
+      .where("isDeleted", "==", false);
 
     let snapshot = await query.get();
-
-    if (snapshot.size > 0) {
-      return snapshot.docs[0];
-    }
-
-    // Fallback to legacy account field for backward compatibility
-    query = this.getUserCollectionReference().where("account", "==", account);
-    snapshot = await query.get();
 
     if (snapshot.size > 0) {
       return snapshot.docs[0];
