@@ -1,35 +1,6 @@
-import { Timestamp } from "firebase-admin/firestore";
-
-export enum TransactionType {
-  INCOME = "income",
-  EXPENSE = "expense",
-  TRANSFER = "transfer",
-}
-
-export enum TransactionCategory {
-  Salario = "Salario",
-  PagoTC = "Pago TC",
-  Alimentos = "Alimentos",
-  Mercado = "Mercado",
-  Educacion = "Educación",
-  Inversion = "Inversión",
-  Salud = "Salud",
-  Servicios = "Servicios",
-  Transporte = "Transporte",
-  Vivienda = "Vivienda",
-  Bebe = "Bebé",
-  Zeus = "Zeus",
-  Ocio = "Ocio",
-  Impuesto = "Impuesto",
-  Retiros = "Retiros",
-  Vestuario = "Vestuario",
-  Otros = "Otros",
-}
-
-export enum TransactionStatus {
-  PENDING = "pending",
-  COMPLETE = "complete",
-}
+import { TransactionCategory } from "@/app/api/domain/transaction/model/transaction.model";
+import { TransactionOutput } from "@/app/api/domain/transaction/ports/outbound/filter-transactions.port";
+import { TransactionEntity } from "@/app/api/drivers/firestore/transaction/transaction.entity";
 
 export enum TransactionOverdueStatus {
   OVERDUE = "overdue",
@@ -45,28 +16,8 @@ export interface Summary {
   totalBalance: number;
 }
 
-export interface TransactionEntity {
-  id: string;
-  description: string;
-  paymentLink?: string;
-  notes?: string;
-  type: TransactionType;
-  status: TransactionStatus;
-  category?: TransactionCategory | string;
-  sourceAccount: string;
-  destinationAccount?: string;
-  amount: number;
-  createdAt: Timestamp;
-}
-
 export interface PendingTransactionEntity
   extends Omit<TransactionEntity, "sourceAccount" | "destinationAccount"> {}
-
-export interface Transaction extends Omit<TransactionEntity, "createdAt"> {
-  id: string;
-  createdAt: string;
-  isReccurent?: boolean;
-}
 
 export interface CreateFreeTextTranaction {
   text: string;
@@ -87,8 +38,7 @@ export type CreateTranaction =
   | CreatePictureTranaction;
 
 export interface GetTransactionsResponse {
-  accounts: { [key: string]: string };
-  transactions: Transaction[];
+  transactions: TransactionOutput[];
   summary: Summary;
 }
 

@@ -5,6 +5,7 @@ import { FilterTransactionsService } from "@/app/api/domain/transaction/service/
 import { CalculateSummaryMetricsService } from "@/app/api/domain/summary/service/calculate-summary-metrics.service";
 import { api } from "@/app/api";
 import { withUserContext } from "@/app/api/context/initialize-context";
+import { TransactionMapper } from "@/app/api/domain/transaction/mapper/transaction.mapper";
 
 type GetTransactionsParams = { status: TransactionStatus };
 
@@ -32,7 +33,7 @@ export async function GET(
     const summary = await metricsService.execute(transactions, account);
 
     return NextResponse.json({
-      transactions,
+      transactions: transactions.map(TransactionMapper.toOutputPort),
       summary,
     });
   });

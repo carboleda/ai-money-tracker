@@ -11,7 +11,7 @@ export class FilterTransactionsService {
   constructor(
     @InjectRepository(TransactionModel)
     private readonly repository: TransactionRepository
-  ) { }
+  ) {}
 
   async execute(params: FilterParams): Promise<TransactionModel[]> {
     const transactions = await this.repository.searchTransactions(params);

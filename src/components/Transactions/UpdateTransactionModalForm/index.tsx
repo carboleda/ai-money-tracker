@@ -11,12 +11,7 @@ import { Button } from "@heroui/button";
 import { DatePicker } from "@heroui/date-picker";
 import { parseAbsoluteToLocal, ZonedDateTime } from "@internationalized/date";
 import { Autocomplete, AutocompleteItem } from "@heroui/autocomplete";
-import {
-  Transaction,
-  TransactionCategory,
-  transactionCategoryOptions,
-  TransactionType,
-} from "@/interfaces/transaction";
+import { transactionCategoryOptions } from "@/interfaces/transaction";
 import { MaskedCurrencyInput } from "@/components/shared/MaskedCurrencyInput";
 import { useMutateTransaction } from "@/hooks/useMutateTransaction";
 import { Chip } from "@heroui/chip";
@@ -24,9 +19,15 @@ import { BankAccounDropdown } from "@/components/BankAccounsDropdown";
 import { useToast } from "@/hooks/useToast";
 import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
+import { TransactionOutput } from "@/app/api/domain/transaction/ports/outbound/filter-transactions.port";
+import {
+  TransactionCategory,
+  TransactionType,
+} from "@/app/api/domain/transaction/model/transaction.model";
+import { UpdateTransactionInput } from "@/app/api/domain/transaction/ports/inbound/update-transaction.port";
 
 interface UpdateTransactionModalFormProps {
-  item?: Transaction;
+  item?: TransactionOutput;
   isOpen: boolean;
   onDismiss: () => void;
 }
@@ -52,9 +53,9 @@ export const UpdateTransactionModalForm: React.FC<
   useEffect(() => {
     if (item) {
       setDescriptionInput(item.description);
-      setSourceAccountInput(item.sourceAccount || "");
+      setSourceAccountInput(item.sourceAccount.ref);
       item.destinationAccount &&
-        setDestinationAccountInput(item.destinationAccount || "");
+        setDestinationAccountInput(item.destinationAccount.ref);
       setTransactonCategoryInput(item.category as TransactionCategory);
       setCreatedAtInput(
         item.createdAt ? parseAbsoluteToLocal(item.createdAt) : undefined
@@ -96,7 +97,7 @@ export const UpdateTransactionModalForm: React.FC<
     try {
       validateForm();
 
-      const payload: Transaction = {
+      const payload: UpdateTransactionInput = {
         ...item!,
         description: descriptionInput,
         sourceAccount: sourceAccountInput,

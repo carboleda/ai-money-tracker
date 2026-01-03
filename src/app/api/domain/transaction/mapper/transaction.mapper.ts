@@ -1,6 +1,7 @@
 import { AccountSummary, TransactionModel } from "../model/transaction.model";
 import { CreateTransactionInput } from "../ports/inbound/create-transaction.port";
 import { UpdateTransactionInput } from "../ports/inbound/update-transaction.port";
+import { TransactionOutput } from "../ports/outbound/filter-transactions.port";
 
 export class TransactionMapper {
   static fromCreateToModel(input: CreateTransactionInput): TransactionModel {
@@ -17,7 +18,18 @@ export class TransactionMapper {
       ...input,
       sourceAccount: this.minimalAccountSummary(input.sourceAccount)!,
       destinationAccount: this.minimalAccountSummary(input.destinationAccount),
+      createdAt: new Date(input.createdAt),
     });
+  }
+
+  static toOutputPort(model: TransactionModel): TransactionOutput {
+    return {
+      ...model,
+      id: model.id!,
+      sourceAccount: model.sourceAccount,
+      destinationAccount: model.destinationAccount,
+      createdAt: model.createdAt.toISOString(),
+    };
   }
 
   private static minimalAccountSummary(

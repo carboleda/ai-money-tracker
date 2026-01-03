@@ -29,17 +29,17 @@ export const getSeveralTransactionModels = (
       index % partialTransactionModel.length
     ]?.sourceAccount
       ? {
-          ref: partialTransactionModel[index % partialTransactionModel.length]
-            .sourceAccount!,
-        }
+        ref: partialTransactionModel[index % partialTransactionModel.length]
+          .sourceAccount!,
+      }
       : transactionModelFixture.sourceAccount,
     destinationAccount: partialTransactionModel[
       index % partialTransactionModel.length
     ]?.destinationAccount
       ? {
-          ref: partialTransactionModel[index % partialTransactionModel.length]
-            .destinationAccount!,
-        }
+        ref: partialTransactionModel[index % partialTransactionModel.length]
+          .destinationAccount!,
+      }
       : transactionModelFixture.destinationAccount,
   }));
 };
@@ -299,4 +299,5 @@ export const updateTransactionInputFixture: UpdateTransactionInput = {
   ...transactionModelFixtureWithId,
   sourceAccount: transactionModelFixture.sourceAccount.ref,
   destinationAccount: transactionModelFixture.destinationAccount?.ref,
+  createdAt: transactionModelFixture.createdAt.toISOString(),
 };

@@ -51,7 +51,7 @@ export async function PUT(req: NextRequest) {
     const updateTransactionService = api.resolve(UpdateTransactionService);
 
     const transaction = (await req.json()) as UpdateTransactionInput;
-    transaction.createdAt = new Date(transaction.createdAt);
+    transaction.createdAt = transaction.createdAt ?? new Date().toISOString();
     await updateTransactionService.execute(transaction);
 
     return NextResponse.json({ id: transaction.id });

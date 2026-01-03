@@ -1,5 +1,5 @@
+import { TransactionOutput } from "@/app/api/domain/transaction/ports/outbound/filter-transactions.port";
 import { Account, TransactionsSummaryHistory } from "./account";
-import { Transaction } from "./transaction";
 
 export interface CategorySummary {
   category: string;
@@ -32,5 +32,5 @@ export interface Summary {
 
 export interface GetSummaryResponse {
   summary: Summary;
-  transactions: Transaction[];
+  transactions: TransactionOutput[];
 }

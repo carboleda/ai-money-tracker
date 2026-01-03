@@ -21,10 +21,7 @@ import { Frequency, RecurringExpense } from "@/interfaces/recurringExpense";
 import { FrequencyDropdown } from "@/components/FrequencyDropdown";
 import { useMutateRecurringExpenses } from "@/hooks/useMutateRecurrentExpense";
 import { Autocomplete, AutocompleteItem } from "@heroui/autocomplete";
-import {
-  TransactionCategory,
-  transactionCategoryOptions,
-} from "@/interfaces/transaction";
+import { transactionCategoryOptions } from "@/interfaces/transaction";
 import { IconComment, IconLink } from "@/components/shared/icons";
 import { Env } from "@/config/env";
 import { MaskedCurrencyInput } from "@/components/shared/MaskedCurrencyInput";
@@ -33,6 +30,7 @@ import { LocaleNamespace } from "@/i18n/namespace";
 import { Switch } from "@heroui/switch";
 import { HiMinusSm, HiPlusSm } from "react-icons/hi";
 import { useToast } from "@/hooks/useToast";
+import { TransactionCategory } from "@/app/api/domain/transaction/model/transaction.model";
 
 const fixedMonth = parseAbsoluteToLocal(
   new Date(Env.NEXT_PUBLIC_FIXED_MONTH).toISOString()

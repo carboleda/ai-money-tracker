@@ -2,11 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import useSWR from "swr";
-import {
-  GetTransactionsResponse,
-  Summary,
-  TransactionStatus,
-} from "@/interfaces/transaction";
+import { GetTransactionsResponse, Summary } from "@/interfaces/transaction";
 import {
   CreateTransactionModalForm,
   TransactionTable,
@@ -24,6 +20,7 @@ import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
 import { SearchToolbar } from "@/components/Transactions/SearchToolbar";
 import { useAppStore } from "@/stores/useAppStore";
+import { TransactionStatus } from "@/app/api/domain/transaction/model/transaction.model";
 
 function PageContent() {
   const { t } = useTranslation(LocaleNamespace.Transactions);

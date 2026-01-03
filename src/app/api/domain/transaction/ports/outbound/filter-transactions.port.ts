@@ -16,6 +16,6 @@ export interface TransactionOutput {
   sourceAccount: AccountSummary;
   destinationAccount?: AccountSummary;
   amount: number;
-  createdAt: Date;
+  createdAt: string;
   isRecurrent?: boolean;
 }

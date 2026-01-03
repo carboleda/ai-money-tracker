@@ -1,16 +1,14 @@
 "use client";
 
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import useSWR from "swr";
-import {
-  GetTransactionsResponse,
-  TransactionStatus,
-} from "@/interfaces/transaction";
+import { GetTransactionsResponse } from "@/interfaces/transaction";
 import { PendingTransactionTable } from "@/components/PendingTransaction";
 import { SummaryPanel } from "@/components/SummaryPanel";
 import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
 import { useAppStore } from "@/stores/useAppStore";
+import { TransactionStatus } from "@/app/api/domain/transaction/model/transaction.model";
 
 function PageContent() {
   const { t } = useTranslation(LocaleNamespace.RecurrentExpenses);

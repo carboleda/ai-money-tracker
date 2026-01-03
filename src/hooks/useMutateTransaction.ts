@@ -1,6 +1,7 @@
 import useSWRMutation from "swr/mutation";
-import { CreateTranaction, Transaction } from "@/interfaces/transaction";
+import { CreateTranaction } from "@/interfaces/transaction";
 import { sendRequest } from "@/config/request";
+import { UpdateTransactionInput } from "@/app/api/domain/transaction/ports/inbound/update-transaction.port";
 
 const KEY = "/api/transaction";
 
@@ -27,7 +28,7 @@ export const useMutateTransaction = () => {
     });
   };
 
-  const updateTransaction = async (trasaction: Transaction) => {
+  const updateTransaction = async (trasaction: UpdateTransactionInput) => {
     return trigger({ method: "PUT", body: JSON.stringify(trasaction) }).then(
       (res) => {
         if (res.status !== 200) {

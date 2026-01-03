@@ -2,11 +2,11 @@ import { Injectable } from "@/app/api/decorators/tsyringe.decorator";
 import {
   TransactionModel,
   TransactionStatus,
+  TransactionType,
 } from "@/app/api/domain/transaction/model/transaction.model";
 import { GetAllAccountsService } from "@/app/api/domain/account/service/get-all.service";
 import { Service } from "@/app/api/domain/shared/ports/service.interface";
 import { SummaryMetricsModel } from "../model/summary-metrics.model";
-import { TransactionType } from "@/interfaces/transaction";
 import { AccountModel } from "@/app/api/domain/account/model/account.model";
 
 @Injectable()
