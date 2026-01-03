@@ -1,4 +1,5 @@
 {
+  "settings": "Settings",
   "transactions": "Transactions",
   "pending": "Pending",
   "recurrent": "Recurring",

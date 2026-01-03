@@ -12,7 +12,12 @@ export interface Page {
   className?: string;
 }
 
-export const pages: Page[] = [
+export type PageGroup = {
+  groupLabel: string;
+  pages: Page[];
+};
+
+export const pages: (Page | PageGroup)[] = [
   {
     label: "transactions",
     href: "/private",
@@ -26,22 +31,27 @@ export const pages: Page[] = [
     className: "bg-warning/10 text-warning",
   },
   {
-    label: "recurrent",
-    href: "/private/recurring-expenses",
-    icon: HiMiniArrowPathRoundedSquare,
-    className: "bg-info/10 text-info",
-  },
-  {
     label: "summary",
     href: "/private/summary",
     icon: HiChartPie,
     className: "bg-primary/10 text-primary",
   },
   {
-    label: "accounts",
-    href: "/private/accounts",
-    icon: MdAccountBalance,
-    className: "bg-success/10 text-success",
+    groupLabel: "settings",
+    pages: [
+      {
+        label: "recurrent",
+        href: "/private/recurring-expenses",
+        icon: HiMiniArrowPathRoundedSquare,
+        className: "bg-info/10 text-info",
+      },
+      {
+        label: "accounts",
+        href: "/private/accounts",
+        icon: MdAccountBalance,
+        className: "bg-success/10 text-success",
+      },
+    ],
   },
 ];
 
