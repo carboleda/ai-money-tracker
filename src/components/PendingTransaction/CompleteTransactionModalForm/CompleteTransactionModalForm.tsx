@@ -120,7 +120,6 @@ export const CompleteTransactionModalForm: React.FC<
                   className="w-full"
                   showLabel
                   isRequired
-                  skipDisabled
                   onChange={setSelectedAccount}
                 />
               </div>

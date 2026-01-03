@@ -58,7 +58,6 @@ export const CameraMode: React.FC<CameraModeProps> = ({
           label={t("sourceAccount")}
           className="w-full"
           isRequired
-          skipDisabled
           showLabel
           onChange={setSelectedAccount}
         />

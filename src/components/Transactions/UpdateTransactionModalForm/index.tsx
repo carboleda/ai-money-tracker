@@ -149,7 +149,6 @@ export const UpdateTransactionModalForm: React.FC<
                   onChange={setSourceAccountInput}
                   value={sourceAccountInput}
                   isRequired
-                  skipDisabled
                   showLabel
                 />
                 {item?.type === TransactionType.TRANSFER && (
@@ -159,7 +158,6 @@ export const UpdateTransactionModalForm: React.FC<
                     onChange={setDestinationAccountInput}
                     value={destinationAccountInput}
                     isRequired
-                    skipDisabled
                     showLabel
                   />
                 )}
