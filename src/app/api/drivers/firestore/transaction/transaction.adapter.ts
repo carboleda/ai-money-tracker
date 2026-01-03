@@ -49,8 +49,12 @@ export class TransactionAdapter {
       return;
     }
 
+    if (typeof account !== "string") {
+      return account;
+    }
+
     return {
-      ref: (account as string) || "",
+      ref: account || "",
       name: null,
       icon: null,
     };
