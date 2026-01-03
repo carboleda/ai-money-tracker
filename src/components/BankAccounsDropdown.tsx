@@ -20,7 +20,7 @@ export const BankAccounDropdown: React.FC<BankAccounDropdownProps> = ({
     <CustomDropdown
       values={accounts.map((account) => ({
         key: account.ref,
-        label: account.name,
+        label: `${account.icon} ${account.name}`,
       }))}
       label={label}
       value={value}
