@@ -4,7 +4,9 @@ import React from "react";
 import { CustomDropdown, CustomDropdownProps } from "./shared/CustomDropdown";
 import { useAccountStore } from "@/stores/useAccountStore";
 
-export const BankAccounDropdown: React.FC<CustomDropdownProps> = ({
+interface BankAccounDropdownProps extends Omit<CustomDropdownProps, "values"> {}
+
+export const BankAccounDropdown: React.FC<BankAccounDropdownProps> = ({
   label = "Bank Account",
   value,
   isRequired = false,

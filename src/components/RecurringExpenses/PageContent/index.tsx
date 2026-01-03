@@ -1,14 +1,13 @@
 "use client";
 
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import useSWR from "swr";
 import { RecurringExpensesTable } from "@/components/RecurringExpenses";
 import { GetRecurringExpensesResponse } from "@/interfaces/recurringExpense";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { formatCurrency } from "@/config/utils";
 import { TransactionTypeDecorator } from "@/components/TransactionTypeDecorator";
-import { HiFire } from "react-icons/hi";
-import { HiOutlineCalendar } from "react-icons/hi";
+import { HiFire, HiOutlineCalendar } from "react-icons/hi";
 import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
 import { useAppStore } from "@/stores/useAppStore";

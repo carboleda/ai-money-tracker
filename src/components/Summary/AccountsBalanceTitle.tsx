@@ -44,7 +44,7 @@ export const AccountsBalanceTitle: React.FC<AccountsBalanceTitleProps> = ({
           id: "balance",
           name: (
             <span className="flex gap-2 items-center font-bold">
-              {t("globalBalance")}{" "}
+              <span className="uppercase">{t("globalBalance")} </span>
               {totalBalance < BALANCE_ALERT_THRESHOLD && (
                 <HiFire className="text-lg text-red-500" />
               )}

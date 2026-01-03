@@ -58,7 +58,6 @@ export const AccountsTable: React.FC<AccountsTableProps> = ({
   }, [accounts, filterValue]);
 
   const onDialogDismissed = () => {
-    console.log("📋 onDialogDismissed called - closing modal");
     setSelectedItem(undefined);
     setIsOpen(false);
   };

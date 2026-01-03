@@ -94,8 +94,13 @@ const renderCellMobile = ({
             <span className="text-2xl">{item.icon}</span>
             <div className="flex flex-col">
               <span className="font-bold">{item.name}</span>
-              <span className="text-sm text-gray-500">
-                {formatCurrency(item.balance)}
+              <span className="text-sm">
+                <TransactionTypeDecorator
+                  size="sm"
+                  color={item.balance >= 0 ? "success" : "danger"}
+                >
+                  {formatCurrency(item.balance)}
+                </TransactionTypeDecorator>
               </span>
             </div>
           </div>

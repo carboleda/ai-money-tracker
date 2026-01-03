@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import useSWR from "swr";
 import { AccountsTable } from "../AccountsTable/AccountsTable";
 import { Account } from "@/interfaces/account";
@@ -9,8 +9,12 @@ import { LocaleNamespace } from "@/i18n/namespace";
 import { useAppStore } from "@/stores/useAppStore";
 import { formatCurrency } from "@/config/utils";
 import { useAccountStore } from "@/stores/useAccountStore";
+import { TransactionTypeDecorator } from "@/components/TransactionTypeDecorator";
+import { useIsMobile } from "@/hooks/useIsMobile";
+import { HiScale } from "react-icons/hi";
 
 export function PageContent() {
+  const isMobile = useIsMobile();
   const { t } = useTranslation(LocaleNamespace.Accounts);
   const { setPageTitle } = useAppStore();
   const { setAccounts } = useAccountStore();
@@ -39,16 +43,18 @@ export function PageContent() {
   return (
     <section className="flex flex-col items-center justify-center gap-4">
       <div className="flex flex-col w-full justify-start items-start gap-2">
-        <div className="w-full bg-linear-to-r from-blue-600 to-blue-500 p-6 rounded-lg">
-          <div className="flex flex-col gap-2">
-            <span className="text-white text-sm font-semibold">
-              Total Balance
+        <TransactionTypeDecorator
+          color="primary"
+          size={isMobile ? "sm" : "md"}
+          avatar={<HiScale />}
+        >
+          <>
+            <span className="font-bold hidden md:inline">
+              {t("globalBalance")}&nbsp;
             </span>
-            <span className="text-white text-3xl font-bold">
-              {formatCurrency(totalBalance)}
-            </span>
-          </div>
-        </div>
+            {formatCurrency(totalBalance)}
+          </>
+        </TransactionTypeDecorator>
       </div>
       <AccountsTable accounts={response?.accounts} isLoading={isLoading} />
     </section>
