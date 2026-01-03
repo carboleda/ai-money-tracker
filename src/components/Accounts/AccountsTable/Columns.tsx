@@ -5,6 +5,9 @@ import { useIsMobile } from "@/hooks/useIsMobile";
 import { TableColumn, RenderCellProps } from "@/interfaces/global";
 import { Account } from "@/interfaces/account";
 import { JSX } from "react";
+import { useTranslation } from "react-i18next";
+import { LocaleNamespace } from "@/i18n/namespace";
+import { TransactionTypeDecorator } from "@/components/TransactionTypeDecorator";
 
 const columnsDesktop: TableColumn[] = [
   {
@@ -43,6 +46,7 @@ const columnsMobile: TableColumn[] = [
 const renderCellDesktop = ({
   key,
   item,
+  t,
 }: RenderCellProps<Account>): JSX.Element => {
   switch (key) {
     case "icon":
@@ -62,17 +66,15 @@ const renderCellDesktop = ({
     case "name":
       return <TableCell>{item.name}</TableCell>;
     case "type":
-      return (
-        <TableCell>
-          <Chip radius="sm" variant="bordered">
-            {item.type}
-          </Chip>
-        </TableCell>
-      );
+      return <TableCell>{t?.(item.type)}</TableCell>;
     case "balance":
       return (
         <TableCell className="text-end font-bold">
-          {formatCurrency(item.balance)}
+          <TransactionTypeDecorator
+            color={item.balance >= 0 ? "success" : "danger"}
+          >
+            {formatCurrency(item.balance)}
+          </TransactionTypeDecorator>
         </TableCell>
       );
     default:
@@ -113,15 +115,16 @@ interface UseRenderCellReturn {
 
 export const useRenderCell = (): UseRenderCellReturn => {
   const isMobile = useIsMobile();
+  const { t } = useTranslation(LocaleNamespace.Accounts);
 
   const columns = isMobile ? columnsMobile : columnsDesktop;
 
   const renderCell = ({ key, item }: RenderCellProps<Account>): JSX.Element => {
     if (isMobile) {
-      return renderCellMobile({ key, item });
+      return renderCellMobile({ key, item, t });
     }
 
-    return renderCellDesktop({ key, item });
+    return renderCellDesktop({ key, item, t });
   };
 
   const renderSeparator = (

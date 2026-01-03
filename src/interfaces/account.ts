@@ -1,6 +1,14 @@
 import { Timestamp } from "firebase-admin/firestore";
 import { AccountType } from "@/app/api/domain/account/model/account.model";
 
+export const DEFAULT_ICON = "🏦";
+
+export const ACCOUNT_TYPES: { label: string; key: AccountType }[] = [
+  { key: AccountType.SAVING, label: "saving" },
+  { key: AccountType.CREDIT, label: "credit" },
+  { key: AccountType.INVESTMENT, label: "investment" },
+];
+
 export interface AccountEntity {
   ref: string; // User-defined reference (e.g., C1408, AFC)
   name: string; // Display name

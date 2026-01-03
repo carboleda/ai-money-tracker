@@ -15,7 +15,6 @@ interface AccountState {
   setIsLoading: (isLoading: boolean) => void;
   setError: (error: string | null) => void;
   reset: () => void;
-  fetchAccounts: () => Promise<void>;
 }
 
 export const useAccountStore = create<AccountState>()((set) => ({
@@ -52,22 +51,4 @@ export const useAccountStore = create<AccountState>()((set) => ({
       isLoading: false,
       error: null,
     }),
-
-  fetchAccounts: async () => {
-    set({ isLoading: true, error: null });
-    try {
-      const response = await fetch("/api/account");
-      if (!response.ok) {
-        throw new Error("Failed to fetch accounts");
-      }
-      const data = await response.json();
-      set({ accounts: data.data || data });
-    } catch (error) {
-      set({
-        error: error instanceof Error ? error.message : "Unknown error",
-      });
-    } finally {
-      set({ isLoading: false });
-    }
-  },
 }));

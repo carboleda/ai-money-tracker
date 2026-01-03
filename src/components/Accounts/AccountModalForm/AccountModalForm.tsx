@@ -9,35 +9,22 @@ import {
 import { Input } from "@heroui/input";
 import { Button } from "@heroui/button";
 import { Popover, PopoverTrigger, PopoverContent } from "@heroui/popover";
-import { Account } from "@/interfaces/account";
+import { Account, ACCOUNT_TYPES, DEFAULT_ICON } from "@/interfaces/account";
 import { useMutateAccount } from "@/hooks/useMutateAccount";
 import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
 import { useToast } from "@/hooks/useToast";
-import {
-  Dropdown,
-  DropdownTrigger,
-  DropdownMenu,
-  DropdownItem,
-} from "@heroui/dropdown";
 import { MaskedCurrencyInput } from "@/components/shared/MaskedCurrencyInput";
 import { AccountType } from "@/app/api/domain/account/model/account.model";
 import dynamic from "next/dynamic";
 import { Theme } from "emoji-picker-react";
+import { CustomDropdown } from "@/components/shared/CustomDropdown";
 
 // Dynamically import to avoid SSR issues
 const EmojiPicker = dynamic(
   () => import("emoji-picker-react").then((mod) => mod.default),
   { ssr: false, loading: () => <div>Loading emojis...</div> }
 );
-
-const DEFAULT_ICON = "🏦";
-
-const ACCOUNT_TYPES: { label: string; value: AccountType }[] = [
-  { label: "saving", value: AccountType.SAVING },
-  { label: "credit", value: AccountType.CREDIT },
-  { label: "investment", value: AccountType.INVESTMENT },
-];
 
 interface AccountModalFormProps {
   item?: Account;
@@ -217,29 +204,17 @@ export const AccountModalForm: React.FC<AccountModalFormProps> = ({
                 value={nameInput}
                 onValueChange={createProxiedSetter(setNameInput)}
               />
-              <Dropdown>
-                <DropdownTrigger>
-                  <Button variant="bordered" className="justify-start">
-                    {t(
-                      ACCOUNT_TYPES.find((t) => t.value === typeInput)?.label ||
-                        "saving"
-                    )}
-                  </Button>
-                </DropdownTrigger>
-                <DropdownMenu
-                  onSelectionChange={(keys: any) => {
-                    const selected = Array.from(keys)[0] as AccountType;
-                    setTypeInput(selected);
-                  }}
-                  selectedKeys={new Set([typeInput])}
-                >
-                  {ACCOUNT_TYPES.map((type) => (
-                    <DropdownItem key={type.value}>
-                      {t(type.label)}
-                    </DropdownItem>
-                  ))}
-                </DropdownMenu>
-              </Dropdown>
+              <CustomDropdown
+                values={ACCOUNT_TYPES.map((type) => ({
+                  key: type.key,
+                  label: t(type.label),
+                }))}
+                label={t("type")}
+                value={typeInput}
+                isRequired={true}
+                showLabel={true}
+                onChange={createProxiedSetter(setTypeInput) as any}
+              />
               <MaskedCurrencyInput
                 label={t("balance")}
                 variant="bordered"
