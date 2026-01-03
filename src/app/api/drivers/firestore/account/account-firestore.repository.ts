@@ -3,11 +3,7 @@ import {
   Inject,
   InjectUserContext,
 } from "@/app/api/decorators/tsyringe.decorator";
-import {
-  AccountModel,
-  CreateAccountInput,
-  UpdateAccountInput,
-} from "@/app/api/domain/account/model/account.model";
+import { AccountModel } from "@/app/api/domain/account/model/account.model";
 import { AccountRepository } from "@/app/api/domain/account/repository/account.repository";
 import { AccountAdapter } from "./account.adapter";
 import { Firestore, QueryDocumentSnapshot } from "firebase-admin/firestore";
@@ -15,6 +11,8 @@ import { Collections } from "../types";
 import { AccountEntity } from "./account.entity";
 import { BaseFirestoreRepository } from "@/app/api/drivers/firestore/base/base.firestore.repository";
 import type { UserContext } from "@/app/api/context/user-context";
+import { CreateAccountInput } from "@/app/api/domain/account/ports/inbound/create-account.port";
+import { UpdateAccountInput } from "@/app/api/domain/account/ports/inbound/update-account.port";
 
 @Injectable()
 export class AccountFirestoreRepository

@@ -42,28 +42,6 @@ export interface GetTransactionsResponse {
   summary: Summary;
 }
 
-export namespace GeneratedTransaction {
-  export interface InvalidTranactionError {
-    error: string;
-  }
-
-  export interface TransactionData {
-    description: string;
-    amount: number;
-    type: string;
-    sourceAccount: string;
-    category?: string;
-    createdAt?: string;
-    destinationAccount?: string;
-    error: never;
-  }
-
-  export type GeneratedResponse =
-    | TransactionData
-    | InvalidTranactionError
-    | null;
-}
-
 export const transactionCategoryOptions = Object.entries(TransactionCategory).reduce(
   (acc, [_key, value]) => {
     return [...acc, { value: value, label: value }];

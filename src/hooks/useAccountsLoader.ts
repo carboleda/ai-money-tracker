@@ -1,7 +1,7 @@
 import useSWR from "swr";
 import { useEffect } from "react";
 import { useAccountStore } from "@/stores/useAccountStore";
-import { AccountModel } from "@/app/api/domain/account/model/account.model";
+import { GetAccountsResponse } from "@/interfaces/account";
 
 /**
  * Hook that fetches accounts using SWR and syncs them to Zustand store
@@ -17,9 +17,8 @@ export function useAccountsLoader() {
   const setError = useAccountStore((state) => state.setError);
 
   // SWR handles the actual fetching with built-in caching and revalidation
-  const { data, error, isLoading } = useSWR<{
-    accounts: AccountModel[];
-  }>("/api/account");
+  const { data, error, isLoading } =
+    useSWR<GetAccountsResponse>("/api/account");
 
   // Sync SWR data to Zustand store whenever it changes
   useEffect(() => {

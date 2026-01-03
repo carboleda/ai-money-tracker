@@ -4,14 +4,8 @@ export enum AccountType {
   INVESTMENT = "investment",
 }
 
-export type CreateAccountInput = Omit<AccountModel, "id" | "isDeleted">;
-
-export type UpdateAccountInput = Partial<
-  Omit<AccountModel, "id" | "ref" | "isDeleted">
-> & { id: string };
-
 export class AccountModel {
-  public id: string;
+  public id: string | null;
   public ref: string;
   public name: string;
   public balance: number;
@@ -21,7 +15,7 @@ export class AccountModel {
   public isDeleted: boolean;
 
   constructor(params: {
-    id: string;
+    id: string | null;
     ref: string;
     name: string;
     balance: number;

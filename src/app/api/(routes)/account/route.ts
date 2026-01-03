@@ -7,11 +7,9 @@ import { DeleteAccountService } from "@/app/api/domain/account/service/delete-ac
 import { NextRequest, NextResponse } from "next/server";
 import { api } from "@/app/api/index";
 import { withUserContext } from "@/app/api/context/initialize-context";
-import {
-  AccountType,
-  CreateAccountInput,
-  UpdateAccountInput,
-} from "@/app/api/domain/account/model/account.model";
+import { AccountType } from "@/app/api/domain/account/model/account.model";
+import { CreateAccountInput } from "@/app/api/domain/account/ports/inbound/create-account.port";
+import { UpdateAccountInput } from "@/app/api/domain/account/ports/inbound/update-account.port";
 
 // Validation schemas
 const AccountTypeSchema = z.enum(Object.values(AccountType));

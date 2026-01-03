@@ -1,8 +1,6 @@
-import {
-  AccountModel,
-  CreateAccountInput,
-  UpdateAccountInput,
-} from "../model/account.model";
+import { AccountModel } from "../model/account.model";
+import { CreateAccountInput } from "../ports/inbound/create-account.port";
+import { UpdateAccountInput } from "../ports/inbound/update-account.port";
 
 export interface AccountRepository {
   getAll(): Promise<AccountModel[]>;
