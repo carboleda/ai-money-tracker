@@ -7,35 +7,14 @@ import { DeleteAccountService } from "@/app/api/domain/account/service/delete-ac
 import { NextRequest, NextResponse } from "next/server";
 import { api } from "@/app/api/index";
 import { withUserContext } from "@/app/api/context/initialize-context";
-import { AccountType } from "@/app/api/domain/account/model/account.model";
 import { CreateAccountInput } from "@/app/api/domain/account/ports/inbound/create-account.port";
 import { UpdateAccountInput } from "@/app/api/domain/account/ports/inbound/update-account.port";
 import { DomainError } from "@/app/api/domain/shared/errors/domain.error";
-
-// Validation schemas
-const AccountTypeSchema = z.enum(Object.values(AccountType));
-
-const CreateAccountSchema = z.object({
-  ref: z.string().min(1, "Reference is required"),
-  name: z.string().min(1, "Name is required"),
-  icon: z.string().min(1, "Icon is required"),
-  type: AccountTypeSchema,
-  balance: z.number(),
-  description: z.string().optional(),
-});
-
-const UpdateAccountSchema = z.object({
-  id: z.string().min(1, "ID is required"),
-  name: z.string().min(1, "Name must not be empty").optional(),
-  icon: z.string().min(1, "Icon must not be empty").optional(),
-  type: AccountTypeSchema.optional(),
-  balance: z.number(),
-  description: z.string().optional(),
-});
-
-const DeleteAccountSchema = z.object({
-  id: z.string().min(1, "ID is required"),
-});
+import {
+  CreateAccountSchema,
+  UpdateAccountSchema,
+  DeleteAccountSchema,
+} from "@/app/api/validators/account.validator";
 
 export async function GET(req: NextRequest) {
   return withUserContext(req, async () => {
