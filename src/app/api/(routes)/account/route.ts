@@ -10,6 +10,7 @@ import { withUserContext } from "@/app/api/context/initialize-context";
 import { AccountType } from "@/app/api/domain/account/model/account.model";
 import { CreateAccountInput } from "@/app/api/domain/account/ports/inbound/create-account.port";
 import { UpdateAccountInput } from "@/app/api/domain/account/ports/inbound/update-account.port";
+import { DomainError } from "@/app/api/domain/shared/errors/domain.error";
 
 // Validation schemas
 const AccountTypeSchema = z.enum(Object.values(AccountType));
@@ -77,14 +78,11 @@ export async function POST(req: NextRequest) {
         );
       }
 
-      const message = error instanceof Error ? error.message : "Unknown error";
-
-      // Check for duplicate ref error
-      if (message.includes("already exists")) {
-        return NextResponse.json({ error: message }, { status: 409 });
-      }
-
-      return NextResponse.json({ error: message }, { status: 500 });
+      const domainError = error as DomainError<unknown>;
+      return new NextResponse(null, {
+        status: domainError.statusCode,
+        statusText: domainError.message,
+      });
     }
   });
 }
@@ -121,13 +119,11 @@ export async function PUT(req: NextRequest) {
         );
       }
 
-      const message = error instanceof Error ? error.message : "Unknown error";
-
-      if (message.includes("not found")) {
-        return NextResponse.json({ error: message }, { status: 404 });
-      }
-
-      return NextResponse.json({ error: message }, { status: 500 });
+      const domainError = error as DomainError<unknown>;
+      return new NextResponse(null, {
+        status: domainError.statusCode,
+        statusText: domainError.message,
+      });
     }
   });
 }
@@ -158,13 +154,11 @@ export async function DELETE(req: NextRequest) {
         );
       }
 
-      const message = error instanceof Error ? error.message : "Unknown error";
-
-      if (message.includes("not found")) {
-        return NextResponse.json({ error: message }, { status: 404 });
-      }
-
-      return NextResponse.json({ error: message }, { status: 500 });
+      const domainError = error as DomainError<unknown>;
+      return new NextResponse(null, {
+        status: domainError.statusCode,
+        statusText: domainError.message,
+      });
     }
   });
 }
