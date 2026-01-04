@@ -21,7 +21,7 @@ import { HiOutlinePlusCircle } from "react-icons/hi";
 import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
 import { useTableHeight } from "@/hooks/useTableHeight";
-import { SearchToolbar } from "@/components/Transactions/SearchToolbar";
+import { SearchToolbar } from "@/components/features/Transactions/SearchToolbar";
 
 interface AccountsTableProps {
   isLoading: boolean;

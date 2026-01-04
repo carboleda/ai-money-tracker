@@ -2,7 +2,7 @@
 
 import React from "react";
 import { HiFire } from "react-icons/hi";
-import { Color, TileTable } from "@/components/Summary/TileTable";
+import { Color, TileTable } from "@/components/features/Summary/TileTable";
 
 import { Account } from "@/interfaces/account";
 import { Skeleton } from "@heroui/skeleton";

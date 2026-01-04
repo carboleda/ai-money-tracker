@@ -25,7 +25,7 @@ import { HiOutlinePlusCircle } from "react-icons/hi";
 import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
 import { useTableHeight } from "@/hooks/useTableHeight";
-import { SearchToolbar } from "@/components/Transactions/SearchToolbar";
+import { SearchToolbar } from "@/components/features/Transactions/SearchToolbar";
 
 interface RecurringExpensesTableProps {
   isLoading: boolean;
@@ -58,7 +58,7 @@ export const RecurringExpensesTable: React.FC<RecurringExpensesTableProps> = ({
 }) => {
   const { t } = useTranslation(LocaleNamespace.RecurrentExpenses);
   const [selectedItem, setSelectedItem] = useState<RecurringExpense>();
-  const [isOpen, setOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const [filterValue, setFilterValue] = useState("");
   const { isMutating, deleteConfig } = useMutateRecurringExpenses();
   const { columns, renderCell, rowHeight, renderSeparator } = useRenderCell();
@@ -84,12 +84,12 @@ export const RecurringExpensesTable: React.FC<RecurringExpensesTableProps> = ({
 
   const onDialogDismissed = () => {
     setSelectedItem(undefined);
-    setOpen(false);
+    setIsOpen(false);
   };
 
   const onEdit = (item: RecurringExpense) => {
     setSelectedItem(item);
-    setOpen(true);
+    setIsOpen(true);
   };
 
   const renderTopContent = () => (
@@ -105,7 +105,7 @@ export const RecurringExpensesTable: React.FC<RecurringExpensesTableProps> = ({
             radius="sm"
             variant="solid"
             isIconOnly
-            onPress={() => setOpen(true)}
+            onPress={() => setIsOpen(true)}
           >
             <HiOutlinePlusCircle className="text-lg" />
           </Button>

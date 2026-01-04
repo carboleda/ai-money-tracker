@@ -6,7 +6,7 @@ import { GetTransactionsResponse, Summary } from "@/interfaces/transaction";
 import {
   CreateTransactionModalForm,
   TransactionTable,
-} from "@/components/Transactions";
+} from "@/components/features/Transactions";
 import { BankAccounDropdown } from "@/components/BankAccounsDropdown";
 import { parseAbsoluteToLocal, ZonedDateTime } from "@internationalized/date";
 import { RangeValue } from "@react-types/shared";
@@ -18,7 +18,7 @@ import { useIsMobile } from "@/hooks/useIsMobile";
 import { CustomDateRangePicker } from "@/components/shared/CustomDateRangePicker";
 import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
-import { SearchToolbar } from "@/components/Transactions/SearchToolbar";
+import { SearchToolbar } from "@/components/features/Transactions/SearchToolbar";
 import { useAppStore } from "@/stores/useAppStore";
 import { TransactionStatus } from "@/app/api/domain/transaction/model/transaction.model";
 

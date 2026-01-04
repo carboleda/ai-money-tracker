@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import useSWR from "swr";
-import { RecurringExpensesTable } from "@/components/RecurringExpenses";
+import { RecurringExpensesTable } from "@/components/features/RecurringExpenses";
 import { GetRecurringExpensesResponse } from "@/interfaces/recurringExpense";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { formatCurrency } from "@/config/utils";

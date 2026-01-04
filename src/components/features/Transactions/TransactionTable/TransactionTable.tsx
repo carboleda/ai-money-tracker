@@ -15,7 +15,7 @@ import { useRenderCell } from "./Columns";
 import { Button } from "@heroui/button";
 import { IconEdit } from "@/components/shared/icons";
 import { useState } from "react";
-import { UpdateTransactionModalForm } from "@/components/Transactions/UpdateTransactionModalForm";
+import { UpdateTransactionModalForm } from "@/components/features/Transactions/UpdateTransactionModalForm";
 import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
 import { useTableHeight } from "@/hooks/useTableHeight";

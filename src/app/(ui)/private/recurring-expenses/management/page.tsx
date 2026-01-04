@@ -1,4 +1,4 @@
-import PageContent from "@/components/PendingTransaction/PageContent";
+import PageContent from "@/components/features/PendingTransaction/PageContent";
 
 function PendingTransactions() {
   return <PageContent />;
