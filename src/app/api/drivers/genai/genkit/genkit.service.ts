@@ -9,7 +9,7 @@ import {
 import {
   GenAIService,
   GeneratedTransaction,
-} from "@/app/api/domain/interfaces/generated-transaction.interface";
+} from "@/app/api/domain/shared/interfaces/generated-transaction.interface";
 import path from "node:path";
 
 @Injectable()

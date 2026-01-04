@@ -5,7 +5,8 @@ import {
   TransactionModel,
   TransactionStatus,
   TransactionType,
-} from "../../../transaction/model/transaction.model";
+} from "@/app/api/domain/transaction/model/transaction.model";
+import { getSeveralTransactionModels } from "@/app/api/domain/transaction/service/__tests__/fixtures/transaction.model.fixture";
 
 describe("CalculateCategorySummaryService", () => {
   let service: CalculateCategorySummaryService;
@@ -24,38 +25,35 @@ describe("CalculateCategorySummaryService", () => {
   });
 
   it("should calculate category summary correctly", async () => {
-    const mockTransactions: TransactionModel[] = [
-      new TransactionModel({
-        id: "1",
-        description: "Salary",
-        type: TransactionType.INCOME,
-        status: TransactionStatus.COMPLETE,
-        category: "Salary",
-        sourceAccount: "C1",
-        amount: 1000,
-        createdAt: new Date(),
-      }),
-      new TransactionModel({
-        id: "2",
-        description: "Payment",
-        type: TransactionType.EXPENSE,
-        status: TransactionStatus.COMPLETE,
-        category: "Investments",
-        sourceAccount: "C1",
-        amount: 200,
-        createdAt: new Date(),
-      }),
-      new TransactionModel({
-        id: "3",
-        description: "Income",
-        type: TransactionType.INCOME,
-        status: TransactionStatus.COMPLETE,
-        category: "Investments",
-        sourceAccount: "C1",
-        amount: 50,
-        createdAt: new Date(),
-      }),
-    ];
+    const mockTransactions: TransactionModel[] = getSeveralTransactionModels(
+      3,
+      [
+        {
+          id: "1",
+          type: TransactionType.INCOME,
+          status: TransactionStatus.COMPLETE,
+          category: "Salary",
+          sourceAccount: "C1",
+          amount: 1000,
+        },
+        {
+          id: "2",
+          type: TransactionType.EXPENSE,
+          status: TransactionStatus.COMPLETE,
+          category: "Investments",
+          sourceAccount: "C1",
+          amount: 200,
+        },
+        {
+          id: "3",
+          type: TransactionType.INCOME,
+          status: TransactionStatus.COMPLETE,
+          category: "Investments",
+          sourceAccount: "C1",
+          amount: 50,
+        },
+      ]
+    );
 
     const result = await service.execute(mockTransactions);
 
@@ -66,17 +64,20 @@ describe("CalculateCategorySummaryService", () => {
   });
 
   it("should handle transactions without category", async () => {
-    const mockTransactions: TransactionModel[] = [
-      new TransactionModel({
-        id: "1",
-        description: "Unknown transaction",
-        type: TransactionType.EXPENSE,
-        status: TransactionStatus.COMPLETE,
-        sourceAccount: "C1",
-        amount: 100,
-        createdAt: new Date(),
-      }),
-    ];
+    const mockTransactions: TransactionModel[] = getSeveralTransactionModels(
+      1,
+      [
+        {
+          id: "1",
+          description: "Unknown transaction",
+          type: TransactionType.EXPENSE,
+          status: TransactionStatus.COMPLETE,
+          sourceAccount: "C1",
+          category: undefined,
+          amount: 100,
+        },
+      ]
+    );
 
     const result = await service.execute(mockTransactions);
 

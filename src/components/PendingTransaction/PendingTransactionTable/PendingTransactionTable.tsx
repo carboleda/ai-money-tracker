@@ -8,7 +8,6 @@ import {
   TableHeader,
   TableRow,
 } from "@heroui/table";
-import { Transaction } from "@/interfaces/transaction";
 import { TableSkeleton } from "@/components/shared/TableSkeleton";
 import { useMutateTransaction } from "@/hooks/useMutateTransaction";
 import { DeleteTableItemButton } from "../../DeleteTableItemButton";
@@ -21,18 +20,19 @@ import { LocaleNamespace } from "@/i18n/namespace";
 import { SearchToolbar } from "@/components/Transactions/SearchToolbar";
 import { useTableHeight } from "@/hooks/useTableHeight";
 import { FaRegCircleCheck } from "react-icons/fa6";
+import { TransactionOutput } from "@/app/api/domain/transaction/ports/outbound/filter-transactions.port";
 
 interface PendingTransactionTableProps {
   isLoading: boolean;
-  pendingTransactions: Transaction[] | undefined;
+  pendingTransactions: TransactionOutput[] | undefined;
 }
 
 export const PendingTransactionTable: React.FC<
   PendingTransactionTableProps
 > = ({ isLoading, pendingTransactions }) => {
   const { t } = useTranslation(LocaleNamespace.RecurrentExpenses);
-  const [selectedItem, setSelectedItem] = useState<Transaction>();
-  const [isOpen, setOpen] = useState(false);
+  const [selectedItem, setSelectedItem] = useState<TransactionOutput>();
+  const [isOpen, setIsOpen] = useState(false);
   const [filterValue, setFilterValue] = useState("");
   const { isMutating, deleteTransaction } = useMutateTransaction();
   const { columns, renderCell, rowHeight } = useRenderCell();
@@ -58,14 +58,14 @@ export const PendingTransactionTable: React.FC<
     return filteredPendingTransations;
   }, [pendingTransactions, filterValue]);
 
-  const onConfirm = useCallback((item: Transaction) => {
+  const onConfirm = useCallback((item: TransactionOutput) => {
     setSelectedItem(item);
-    setOpen(true);
+    setIsOpen(true);
   }, []);
 
   const onDialogDismissed = useCallback(() => {
     setSelectedItem(undefined);
-    setOpen(false);
+    setIsOpen(false);
   }, []);
 
   const renderTopContent = () => (

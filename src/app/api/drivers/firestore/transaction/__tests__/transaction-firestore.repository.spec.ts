@@ -5,12 +5,14 @@ import { TransactionAdapter } from "../transaction.adapter";
 import { Collections } from "@/app/api/drivers/firestore/types";
 import { Firestore, Filter } from "firebase-admin/firestore";
 import { TransactionStatus } from "@/app/api/domain/transaction/model/transaction.model";
+import { transactionEntityFixture } from "./fixtures/transaction.fixture";
 import {
-  transactionModelFixture,
-  transactionEntityFixture,
-} from "./fixtures/transaction.fixture";
-import { getUserContextToken } from "@/app/api/decorators/tsyringe.decorator";
+  getRepositoryToken,
+  getUserContextToken,
+} from "@/app/api/decorators/tsyringe.decorator";
 import type { UserContext } from "@/app/api/context/user-context";
+import { transactionModelFixture } from "@/app/api/domain/transaction/service/__tests__/fixtures/transaction.model.fixture";
+import { AccountModel } from "@/app/api/domain/account/model/account.model";
 
 describe("TransactionFirestoreRepository", () => {
   let firestore: Firestore;
@@ -40,6 +42,12 @@ describe("TransactionFirestoreRepository", () => {
     };
     testContainer.register(getUserContextToken(), {
       useValue: testUserContext,
+    });
+
+    testContainer.register(getRepositoryToken(AccountModel), {
+      useValue: {
+        getAll: jest.fn().mockResolvedValue([]),
+      },
     });
 
     testContainer.register(TransactionFirestoreRepository, {
@@ -91,7 +99,10 @@ describe("TransactionFirestoreRepository", () => {
       expect(mockSubcollection.doc).toHaveBeenCalledWith("transaction-123");
       expect(mockDocRef.get).toHaveBeenCalled();
       expect(toModelSpy).toHaveBeenCalledWith(
-        transactionEntityFixture,
+        expect.objectContaining({
+          ...transactionEntityFixture,
+          id: "transaction-123",
+        }),
         "transaction-123"
       );
       expect(result).toBeDefined();

@@ -2,7 +2,7 @@ import {
   Injectable,
   InjectRepository,
 } from "@/app/api/decorators/tsyringe.decorator";
-import { Service } from "@/app/api/domain/interfaces/service.interface";
+import { Service } from "@/app/api/domain/shared/ports/service.interface";
 import type { SummaryHistoryRepository } from "../repository/summary-history.repository";
 import { SummaryHistoryModel } from "../model/summary-history.model";
 import { FilterTransactionsService } from "@/app/api/domain/transaction/service/filter-transactions.service";
@@ -20,7 +20,7 @@ export class CreateMonthlySummaryService implements Service<void, void> {
     @InjectRepository(SummaryHistoryModel)
     private readonly summaryHistoryRepository: SummaryHistoryRepository,
     private readonly filterTransactionsService: FilterTransactionsService
-  ) {}
+  ) { }
 
   async execute(): Promise<void> {
     const now = new Date();

@@ -1,93 +1,33 @@
 "use client";
 
-import React, { useEffect, useMemo, useState } from "react";
-import {
-  Dropdown,
-  DropdownTrigger,
-  DropdownMenu,
-  DropdownItem,
-} from "@heroui/dropdown";
-import { Button } from "@heroui/button";
-import { getAccountList, getAccountName } from "@/config/utils";
-import { cn } from "@heroui/theme";
+import React from "react";
+import { CustomDropdown, CustomDropdownProps } from "./shared/CustomDropdown";
+import { useAccountStore } from "@/stores/useAccountStore";
 
-interface BankAccounDropdownProps {
-  label?: string;
-  value?: string;
-  isRequired?: boolean;
-  skipDisabled?: boolean;
-  showLabel?: boolean;
-  className?: string;
-  onChange: (accountKey: string) => void;
-}
+interface BankAccounDropdownProps extends Omit<CustomDropdownProps, "values"> {}
 
 export const BankAccounDropdown: React.FC<BankAccounDropdownProps> = ({
   label = "Bank Account",
   value,
   isRequired = false,
-  skipDisabled = false,
   showLabel = false,
   className,
   onChange,
 }) => {
-  const [selectedKeys, setSelectedKeys] = useState(new Set<string>([]));
-
-  const selectedValue = useMemo(
-    () =>
-      Array.from(selectedKeys)
-        .map((key) => getAccountName(key) ?? "")
-        .join(", "),
-    [selectedKeys]
-  );
-
-  useEffect(() => {
-    if (value) {
-      setSelectedKeys(new Set([value]));
-    }
-  }, [value]);
-
-  const onSelectionChange = (keys: any) => {
-    setSelectedKeys(keys);
-    onChange([...keys.keys()][0] || "");
-  };
+  const { accounts } = useAccountStore();
 
   return (
-    <Dropdown placement="bottom-start">
-      <DropdownTrigger>
-        <Button
-          variant="bordered"
-          size="md"
-          className={cn("justify-start px-3 rounded-xl", className, {
-            "py-6": showLabel,
-          })}
-        >
-          <div className="text-start mh-5">
-            {showLabel ? (
-              <>
-                <label className="text-xs text-default-600">
-                  {label}{" "}
-                  {isRequired && <span className="text-red-600">*</span>}
-                </label>
-                <div className="text-default-800">{selectedValue}</div>
-              </>
-            ) : (
-              <div>{selectedValue || label}</div>
-            )}
-          </div>
-        </Button>
-      </DropdownTrigger>
-      <DropdownMenu
-        aria-label={label}
-        variant="flat"
-        closeOnSelect={true}
-        selectionMode="single"
-        selectedKeys={selectedKeys}
-        onSelectionChange={onSelectionChange}
-      >
-        {getAccountList(skipDisabled).map(({ key, label }) => (
-          <DropdownItem key={key}>{label}</DropdownItem>
-        ))}
-      </DropdownMenu>
-    </Dropdown>
+    <CustomDropdown
+      values={accounts.map((account) => ({
+        key: account.ref,
+        label: `${account.icon} ${account.name}`,
+      }))}
+      label={label}
+      value={value}
+      isRequired={isRequired}
+      showLabel={showLabel}
+      className={className}
+      onChange={onChange}
+    />
   );
 };

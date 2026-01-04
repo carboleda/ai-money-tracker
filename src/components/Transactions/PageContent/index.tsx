@@ -2,11 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import useSWR from "swr";
-import {
-  GetTransactionsResponse,
-  Summary,
-  TransactionStatus,
-} from "@/interfaces/transaction";
+import { GetTransactionsResponse, Summary } from "@/interfaces/transaction";
 import {
   CreateTransactionModalForm,
   TransactionTable,
@@ -24,12 +20,13 @@ import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
 import { SearchToolbar } from "@/components/Transactions/SearchToolbar";
 import { useAppStore } from "@/stores/useAppStore";
+import { TransactionStatus } from "@/app/api/domain/transaction/model/transaction.model";
 
 function PageContent() {
   const { t } = useTranslation(LocaleNamespace.Transactions);
   const { setPageTitle } = useAppStore();
   const isMobile = useIsMobile();
-  const [isOpen, setOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const [filterValue, setFilterValue] = useState("");
   const currentMonthBounds = getMonthBounds(new Date());
   const [selectedAccount, setSelectedAccount] = useState<string>("");
@@ -48,13 +45,13 @@ function PageContent() {
   }, [t, setPageTitle]);
 
   const onDialogDismissed = () => {
-    setOpen(false);
+    setIsOpen(false);
   };
 
   const transactions = useMemo(() => {
     if (!reesponse?.transactions) return reesponse?.transactions;
 
-    let filteredTransations = [...reesponse?.transactions];
+    let filteredTransations = [...(reesponse?.transactions ?? [])];
 
     if (filterValue) {
       filteredTransations = filteredTransations.filter(
@@ -97,7 +94,7 @@ function PageContent() {
                 radius="sm"
                 variant="solid"
                 isIconOnly
-                onPress={() => setOpen(true)}
+                onPress={() => setIsOpen(true)}
               >
                 <HiOutlinePlusCircle className="text-xl" />
               </Button>
@@ -117,7 +114,7 @@ function PageContent() {
             shortNumber={isMobile}
             includedKeys={[
               "totalBalance",
-              ...(!isMobile ? ["totalIncomes" as keyof Summary] : []),
+              ...(isMobile ? [] : ["totalIncomes" as keyof Summary]),
               "totalExpenses",
               "totalTransfers",
             ]}

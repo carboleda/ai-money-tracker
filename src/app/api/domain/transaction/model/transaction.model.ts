@@ -29,30 +29,36 @@ export enum TransactionCategory {
   Otros = "Otros",
 }
 
+export type AccountSummary = {
+  ref: string;
+  name?: string | null;
+  icon?: string | null;
+};
+
 export class TransactionModel {
-  id: string;
+  id: string | null;
   description: string;
   paymentLink?: string;
   notes?: string;
   type: TransactionType;
   status: TransactionStatus;
   category?: TransactionCategory | string;
-  sourceAccount: string;
-  destinationAccount?: string;
+  sourceAccount: AccountSummary;
+  destinationAccount?: AccountSummary;
   amount: number;
   createdAt: Date;
   isRecurrent?: boolean;
 
   constructor(params: {
-    id: string;
+    id: string | null;
     description: string;
     paymentLink?: string;
     notes?: string;
     type: TransactionType;
     status: TransactionStatus;
     category?: TransactionCategory | string;
-    sourceAccount: string;
-    destinationAccount?: string;
+    sourceAccount: AccountSummary;
+    destinationAccount?: AccountSummary;
     amount: number;
     createdAt: Date;
     isRecurrent?: boolean;

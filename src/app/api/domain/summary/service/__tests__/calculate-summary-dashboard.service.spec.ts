@@ -1,8 +1,8 @@
 import "reflect-metadata";
 import { container } from "tsyringe";
 import { CalculateSummaryDashboardService } from "../calculate-summary-dashboard.service";
-import { FilterTransactionsService } from "../../../transaction/service/filter-transactions.service";
-import { GetAllAccountsService } from "../../../account/service/get-all.service";
+import { FilterTransactionsService } from "@/app/api/domain/transaction/service/filter-transactions.service";
+import { GetAllAccountsService } from "@/app/api/domain/account/service/get-all.service";
 import { GetSummaryHistoryService } from "../get-summary-history.service";
 import { CalculateCategorySummaryService } from "../calculate-category-summary.service";
 import { CalculateTypeSummaryService } from "../calculate-type-summary.service";
@@ -12,6 +12,8 @@ import {
   TransactionStatus,
   TransactionType,
 } from "@/app/api/domain/transaction/model/transaction.model";
+import { getSeveralTransactionModels } from "@/app/api/domain/transaction/service/__tests__/fixtures/transaction.model.fixture";
+import { getSeveralAccountModels } from "../../../account/service/__tests__/fixtures/account.model.fixture";
 
 describe("CalculateSummaryDashboardService", () => {
   let service: CalculateSummaryDashboardService;
@@ -90,7 +92,7 @@ describe("CalculateSummaryDashboardService", () => {
   });
 
   it("should calculate summary successfully", async () => {
-    const mockTransactions = [
+    const mockTransactions = getSeveralTransactionModels(1, [
       {
         id: "1",
         description: "Test transaction",
@@ -101,14 +103,13 @@ describe("CalculateSummaryDashboardService", () => {
         amount: 100,
         createdAt: new Date(),
       },
-    ];
-    const mockAccounts = [
+    ]);
+    const mockAccounts = getSeveralAccountModels(1, [
       {
-        id: "C1",
-        account: "C1",
+        ref: "C1",
         balance: 1000,
       },
-    ];
+    ]);
     const mockHistory = [
       {
         id: "1",

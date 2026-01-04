@@ -1,7 +1,7 @@
-import { TransactionType } from "@/interfaces/transaction";
 import { PropsWithChildren } from "react";
 import { Chip, ChipProps } from "@heroui/chip";
 import { Skeleton } from "@heroui/skeleton";
+import { TransactionType } from "@/app/api/domain/transaction/model/transaction.model";
 
 type TransactionTypeDecoratorProps = (
   | {
@@ -25,14 +25,9 @@ const colorMapper: Record<TransactionType, ChipProps["color"]> = {
   [TransactionType.TRANSFER]: "warning",
 };
 
-export const TransactionTypeDecorator: React.FC<TransactionTypeDecoratorProps> = ({
-  type,
-  color,
-  size,
-  avatar,
-  disabled,
-  children,
-}) => {
+export const TransactionTypeDecorator: React.FC<
+  TransactionTypeDecoratorProps
+> = ({ type, color, size, avatar, disabled, children }) => {
   if (!children) {
     return <Skeleton className="w-20 h-5 rounded-md" />;
   }

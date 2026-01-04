@@ -1,3 +1,4 @@
+import { TFunction } from "i18next";
 import { Key } from "react";
 
 export interface TableColumn {
@@ -8,7 +9,8 @@ export interface TableColumn {
 export interface RenderCellProps<T> {
   key: Key;
   item: T;
+  t?: TFunction;
+  isDeleteDisabled?: boolean;
   onEdit?: (item: T) => void;
   onDelete?: (id: string) => void;
-  isDeleteDisabled?: boolean;
 }

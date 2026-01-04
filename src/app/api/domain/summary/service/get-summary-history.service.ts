@@ -2,24 +2,23 @@ import {
   Injectable,
   InjectRepository,
 } from "@/app/api/decorators/tsyringe.decorator";
-import { Service } from "@/app/api/domain/interfaces/service.interface";
+import { Service } from "@/app/api/domain/shared/ports/service.interface";
 import type { SummaryHistoryRepository } from "../repository/summary-history.repository";
 import { SummaryHistoryModel } from "../model/summary-history.model";
 import {
   GetSummaryHistoryInput,
   GetSummaryHistoryOutput,
-} from "@/app/api/domain/interfaces/summary-history.interface";
+} from "@/app/api/domain/shared/interfaces/summary-history.interface";
 import { CalculateCurrentMonthSummaryService } from "./calculate-current-month-summary.service";
 
 @Injectable()
 export class GetSummaryHistoryService
-  implements Service<GetSummaryHistoryInput, GetSummaryHistoryOutput>
-{
+  implements Service<GetSummaryHistoryInput, GetSummaryHistoryOutput> {
   constructor(
     @InjectRepository(SummaryHistoryModel)
     private readonly summaryHistoryRepository: SummaryHistoryRepository,
     private readonly calculateCurrentMonthSummaryService: CalculateCurrentMonthSummaryService
-  ) {}
+  ) { }
 
   async execute(
     input: GetSummaryHistoryInput

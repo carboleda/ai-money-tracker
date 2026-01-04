@@ -1,7 +1,7 @@
 "use client";
 
 import { Key, ReactNode, useEffect, useState } from "react";
-import { siteConfig } from "@/config/site";
+import { Page, siteConfig } from "@/config/site";
 import { useTranslation } from "react-i18next";
 import { usePathname } from "next/navigation";
 import { UserAvatar } from "../../UserAvatar";
@@ -12,9 +12,19 @@ import { LocaleNamespace } from "@/i18n/namespace";
 import { Listbox, ListboxSection, ListboxItem } from "@heroui/listbox";
 import { FaCircleArrowRight } from "react-icons/fa6";
 import { Chip } from "@heroui/chip";
+import { TFunction } from "i18next";
 
 const keyLabel = new Map(
-  siteConfig.pages.map((page) => [page.href, page.label])
+  siteConfig.pages.flatMap((page: any) => {
+    if ("groupLabel" in page) {
+      return page.pages.map((groupPage: Page) => [
+        groupPage.href,
+        groupPage.label,
+      ]);
+    }
+
+    return [[page.href, page.label]];
+  })
 );
 
 interface SidebarMenuItemsProps {
@@ -41,6 +51,31 @@ export const IconWrapper = ({ children, className }: IconWrapperProps) => (
     {children}
   </div>
 );
+
+const renderPageItem = (page: Page, t: TFunction, pathname: string) => {
+  return (
+    <ListboxItem
+      key={page.label}
+      href={page.href}
+      textValue={page.label}
+      title={t(page.label)}
+      startContent={
+        <IconWrapper className={page.className}>
+          <page.icon className="text-lg md:text-medium" />
+        </IconWrapper>
+      }
+      endContent={
+        page.label === keyLabel.get(pathname) && (
+          <Chip variant="light" color="success">
+            <FaCircleArrowRight />
+          </Chip>
+        )
+      }
+    >
+      {t(page.label)}
+    </ListboxItem>
+  );
+};
 
 export const SidebarMenuItems: React.FC<SidebarMenuItemsProps> = ({
   onItemClick,
@@ -100,30 +135,24 @@ export const SidebarMenuItems: React.FC<SidebarMenuItemsProps> = ({
           {t("enablePushNotifications")}
         </ListboxItem>
       </ListboxSection>
-      <ListboxSection>
-        {siteConfig.pages.map((page) => (
-          <ListboxItem
-            key={page.label}
-            href={page.href}
-            textValue={page.label}
-            title={t(page.label)}
-            startContent={
-              <IconWrapper className={page.className}>
-                <page.icon className="text-lg md:text-medium" />
-              </IconWrapper>
-            }
-            endContent={
-              page.label === keyLabel.get(pathname) && (
-                <Chip variant="light" color="success">
-                  <FaCircleArrowRight />
-                </Chip>
-              )
-            }
-          >
-            {t(page.label)}
-          </ListboxItem>
-        ))}
+      <ListboxSection showDivider>
+        {siteConfig.pages
+          .filter((page: any) => "href" in page)
+          .map((page) => renderPageItem(page as Page, t, pathname))}
       </ListboxSection>
+      <>
+        {siteConfig.pages
+          .filter((page: any) => "groupLabel" in page)
+          .map((page: any) => {
+            return (
+              <ListboxSection key={page.groupLabel} title={t(page.groupLabel)}>
+                {page.pages.map((groupPage: Page) =>
+                  renderPageItem(groupPage, t, pathname)
+                )}
+              </ListboxSection>
+            );
+          })}
+      </>
     </Listbox>
   );
 };

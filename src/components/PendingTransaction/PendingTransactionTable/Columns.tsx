@@ -1,5 +1,4 @@
 import { formatCurrency, formatDate } from "@/config/utils";
-import { Transaction, TransactionType } from "@/interfaces/transaction";
 import { Chip } from "@heroui/chip";
 import { Button } from "@heroui/button";
 import { TableCell } from "@heroui/table";
@@ -14,6 +13,8 @@ import { DeleteTableItemButton } from "@/components/DeleteTableItemButton";
 import { GoLinkExternal } from "react-icons/go";
 import { RiExternalLinkLine } from "react-icons/ri";
 import { FaRegCircleCheck } from "react-icons/fa6";
+import { TransactionOutput } from "@/app/api/domain/transaction/ports/outbound/filter-transactions.port";
+import { TransactionType } from "@/app/api/domain/transaction/model/transaction.model";
 
 const columnsDesktop: TableColumn[] = [
   {
@@ -44,7 +45,7 @@ const columnsMobile: TableColumn[] = [
 const renderCellDesktop = ({
   key,
   item,
-}: RenderCellProps<Transaction>): JSX.Element => {
+}: RenderCellProps<TransactionOutput>): JSX.Element => {
   switch (key) {
     case "description":
       return (
@@ -98,7 +99,7 @@ const renderCellMobile = ({
   onEdit: onConfirm,
   onDelete,
   isDeleteDisabled,
-}: RenderCellProps<Transaction>): JSX.Element => {
+}: RenderCellProps<TransactionOutput>): JSX.Element => {
   switch (key) {
     case "transaction":
       return (

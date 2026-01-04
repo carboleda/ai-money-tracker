@@ -128,96 +128,92 @@ export const CreateTransactionModalForm: React.FC<
   }, [isOpen, onOpenChangeHandler]);
 
   return (
-    <>
-      <Modal
-        placement="top-center"
-        backdrop="blur"
-        isOpen={isOpen}
-        onOpenChange={onOpenChangeHandler}
-        isDismissable={false}
-      >
-        <ModalContent>
-          {(onClose) => (
-            <>
-              <ModalHeader className="flex flex-col gap-1">
-                {t("newTransaction")}
-              </ModalHeader>
-              <ModalBody>
-                <Tabs
-                  aria-label="Modes"
-                  color="primary"
-                  radius="sm"
-                  selectedKey={isFreeText ? "freeText" : "camera"}
-                  onSelectionChange={onTabChange}
+    <Modal
+      placement="top-center"
+      backdrop="blur"
+      isOpen={isOpen}
+      onOpenChange={onOpenChangeHandler}
+      isDismissable={false}
+    >
+      <ModalContent>
+        {(onClose) => (
+          <>
+            <ModalHeader className="flex flex-col gap-1">
+              {t("newTransaction")}
+            </ModalHeader>
+            <ModalBody>
+              <Tabs
+                aria-label="Modes"
+                color="primary"
+                radius="sm"
+                selectedKey={isFreeText ? "freeText" : "camera"}
+                onSelectionChange={onTabChange}
+              >
+                <Tab
+                  key="freeText"
+                  title={
+                    <div className="flex items-center gap-1">
+                      <HiDocumentText className="text-lg" />
+                      <span>{t("freeTextMode")}</span>
+                    </div>
+                  }
+                  className="flex flex-col gap-2"
                 >
-                  <Tab
-                    key="freeText"
-                    title={
-                      <div className="flex items-center gap-1">
-                        <HiDocumentText className="text-lg" />
-                        <span>{t("freeTextMode")}</span>
-                      </div>
-                    }
-                    className="flex flex-col gap-2"
-                  >
-                    <FreeTextMode
-                      setText={createProxiedSetter(setTextInput)}
-                      createdAt={createdAtInput}
-                      setCreatedAt={createProxiedSetter(setCreatedAtInput)}
-                    />
-                  </Tab>
-                  <Tab
-                    key="camera"
-                    title={
-                      <div className="flex items-center gap-1">
-                        <HiCamera className="text-lg" />
-                        <span>{t("cameraMode")}</span>
-                      </div>
-                    }
-                    className="flex flex-col gap-2"
-                  >
-                    <CameraMode
-                      setPicture={createProxiedSetter(setPicture)}
-                      setSelectedAccount={createProxiedSetter(
-                        setSelectedAccount
-                      )}
-                    />
-                  </Tab>
-                </Tabs>
+                  <FreeTextMode
+                    setText={createProxiedSetter(setTextInput)}
+                    createdAt={createdAtInput}
+                    setCreatedAt={createProxiedSetter(setCreatedAtInput)}
+                  />
+                </Tab>
+                <Tab
+                  key="camera"
+                  title={
+                    <div className="flex items-center gap-1">
+                      <HiCamera className="text-lg" />
+                      <span>{t("cameraMode")}</span>
+                    </div>
+                  }
+                  className="flex flex-col gap-2"
+                >
+                  <CameraMode
+                    setPicture={createProxiedSetter(setPicture)}
+                    setSelectedAccount={createProxiedSetter(setSelectedAccount)}
+                  />
+                </Tab>
+              </Tabs>
 
-                {validationError && (
-                  <Chip
-                    variant="flat"
-                    color="danger"
-                    radius="sm"
-                    className="text-wrap max-w-full w-full h-fit p-2"
-                  >
-                    {validationError}
-                  </Chip>
-                )}
-              </ModalBody>
-              <ModalFooter>
-                <Button
-                  color="danger"
+              {validationError && (
+                <Chip
                   variant="flat"
-                  isDisabled={isMutating}
-                  onPress={onClose}
+                  color="danger"
+                  radius="sm"
+                  className="text-wrap max-w-full w-full h-fit p-2"
                 >
-                  {t("cancel")}
-                </Button>
-                <Button
-                  color="primary"
-                  isLoading={isMutating}
-                  isDisabled={areButtonsDisabled}
-                  onPress={onSave}
-                >
-                  {t("save")}
-                </Button>
-              </ModalFooter>
-            </>
-          )}
-        </ModalContent>
-      </Modal>
-    </>
+                  {validationError}
+                </Chip>
+              )}
+            </ModalBody>
+            <ModalFooter>
+              <Button
+                color="danger"
+                variant="flat"
+                isDisabled={isMutating}
+                onPress={onClose}
+              >
+                {t("cancel")}
+              </Button>
+              <Button
+                color="primary"
+                isLoading={isMutating}
+                isDisabled={areButtonsDisabled}
+                onPress={onSave}
+              >
+                {t("save")}
+              </Button>
+            </ModalFooter>
+          </>
+        )}
+      </ModalContent>
+    </Modal>
   );
 };

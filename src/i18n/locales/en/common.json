@@ -1,8 +1,10 @@
 {
+  "settings": "Settings",
   "transactions": "Transactions",
   "pending": "Pending",
   "recurrent": "Recurring",
   "summary": "Summary",
+  "accounts": "Accounts",
   "developedBy": "Developed by",
   "poweredBy": "Powered by",
   "description": "Description",
@@ -35,6 +37,7 @@
   "disabled": "Disabled",
   "bankAccount": "Bank account",
   "itemDeleted": "Item deleted successfully",
+  "globalBalance": "Global Balance",
   "notificationsRequest": {
     "title": "Zolvent wants to keep you informed! 🔔",
     "description": "To provide you with real-time alerts and reminders about your spending, income, and financial goals, we need your permission to send push notifications. This will help you:",

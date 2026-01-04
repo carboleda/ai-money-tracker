@@ -7,8 +7,8 @@ import {
 import {
   EventTypes,
   TransactionDeletedEvent,
-} from "@/app/api/domain/interfaces/account-events.interface";
-import { DomainError } from "@/app/api/domain/errors/domain.error";
+} from "@/app/api/domain/shared/interfaces/account-events.interface";
+import { DomainError } from "@/app/api/domain/shared/errors/domain.error";
 import { pubsub } from "@/app/api/helpers/pubsub";
 
 @Injectable()
@@ -16,7 +16,7 @@ export class DeleteTransactionService {
   constructor(
     @InjectRepository(TransactionModel)
     private readonly transactionRepository: TransactionRepository
-  ) {}
+  ) { }
 
   async execute(id: string): Promise<void> {
     const transaction = await this.transactionRepository.getById(id);

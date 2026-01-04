@@ -1,5 +1,5 @@
 import { Injectable } from "@/app/api/decorators/tsyringe.decorator";
-import { Service } from "@/app/api/domain/interfaces/service.interface";
+import { Service } from "@/app/api/domain/shared/ports/service.interface";
 import { SummaryHistoryModel } from "../model/summary-history.model";
 import {
   TransactionModel,
@@ -9,8 +9,7 @@ import {
 
 @Injectable()
 export class CalculateCurrentMonthSummaryService
-  implements Service<TransactionModel[], SummaryHistoryModel>
-{
+  implements Service<TransactionModel[], SummaryHistoryModel> {
   private static readonly CURRENT_MONTH_ID = "current";
 
   async execute(

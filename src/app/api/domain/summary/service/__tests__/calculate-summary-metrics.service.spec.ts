@@ -3,7 +3,7 @@ import { container } from "tsyringe";
 import { CalculateSummaryMetricsService } from "../calculate-summary-metrics.service";
 import { GetAllAccountsService } from "@/app/api/domain/account/service/get-all.service";
 import { TransactionModel } from "@/app/api/domain/transaction/model/transaction.model";
-import { SummaryMetricsModel } from "../../model/summary-metrics.model";
+import { SummaryMetricsModel } from "@/app/api/domain/summary/model/summary-metrics.model";
 import { AccountModel } from "@/app/api/domain/account/model/account.model";
 import {
   basicTransfer,
@@ -16,6 +16,7 @@ import {
   mixedTransactions,
   largeNumbers,
 } from "@/app/api/domain/transaction/service/__tests__/fixtures/transaction.model.fixture";
+import { getSeveralAccountModels } from "@/app/api/domain/account/service/__tests__/fixtures/account.model.fixture";
 
 describe("CalculateSummaryMetricsService", () => {
   const mockAccounts: AccountModel[] = [];
@@ -121,7 +122,7 @@ describe("CalculateSummaryMetricsService", () => {
 
       const result = await service.execute(
         [transferWithPrefixedDestination],
-        "accounts/account-2"
+        "account-2"
       );
 
       expect(result.totalTransfers).toBe(500);
@@ -142,18 +143,10 @@ describe("CalculateSummaryMetricsService", () => {
     });
 
     it("should calculate total balance from accounts", async () => {
-      const mockAccounts: AccountModel[] = [
-        new AccountModel({
-          id: "account-1",
-          account: "Checking",
-          balance: 1000,
-        }),
-        new AccountModel({
-          id: "account-2",
-          account: "Savings",
-          balance: 5000,
-        }),
-      ];
+      const mockAccounts: AccountModel[] = getSeveralAccountModels(2, [
+        { name: "Checking", balance: 1000 },
+        { name: "Savings", balance: 5000 },
+      ]);
 
       mockGetAllAccountsService.execute.mockResolvedValue(mockAccounts);
 
@@ -193,18 +186,10 @@ describe("CalculateSummaryMetricsService", () => {
     });
 
     it("should handle negative balances in accounts", async () => {
-      const mockAccounts: AccountModel[] = [
-        new AccountModel({
-          id: "account-1",
-          account: "Checking",
-          balance: -500,
-        }),
-        new AccountModel({
-          id: "account-2",
-          account: "Savings",
-          balance: 1000,
-        }),
-      ];
+      const mockAccounts: AccountModel[] = getSeveralAccountModels(2, [
+        { name: "Checking", balance: -500 },
+        { name: "Savings", balance: 1000 },
+      ]);
 
       mockGetAllAccountsService.execute.mockResolvedValue(mockAccounts);
 

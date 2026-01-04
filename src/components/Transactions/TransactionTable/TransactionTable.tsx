@@ -8,7 +8,6 @@ import {
   TableHeader,
   TableRow,
 } from "@heroui/table";
-import { Transaction } from "@/interfaces/transaction";
 import { TableSkeleton } from "@/components/shared/TableSkeleton";
 import { useMutateTransaction } from "@/hooks/useMutateTransaction";
 import { DeleteTableItemButton } from "@/components/DeleteTableItemButton";
@@ -20,11 +19,12 @@ import { UpdateTransactionModalForm } from "@/components/Transactions/UpdateTran
 import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
 import { useTableHeight } from "@/hooks/useTableHeight";
+import { TransactionOutput } from "@/app/api/domain/transaction/ports/outbound/filter-transactions.port";
 
 interface TranactionTableProps {
   isLoading: boolean;
   topContent?: React.ReactNode;
-  transactions?: Transaction[];
+  transactions?: TransactionOutput[];
 }
 
 export const TransactionTable: React.FC<TranactionTableProps> = ({
@@ -33,20 +33,20 @@ export const TransactionTable: React.FC<TranactionTableProps> = ({
   transactions,
 }) => {
   const { t } = useTranslation(LocaleNamespace.Transactions);
-  const [selectedItem, setSelectedItem] = useState<Transaction>();
-  const [isOpen, setOpen] = useState(false);
+  const [selectedItem, setSelectedItem] = useState<TransactionOutput>();
+  const [isOpen, setIsOpen] = useState(false);
   const { isMutating, deleteTransaction } = useMutateTransaction();
   const { columns, renderCell, rowHeight } = useRenderCell();
   const { maxTableHeight } = useTableHeight();
 
   const onDialogDismissed = () => {
     setSelectedItem(undefined);
-    setOpen(false);
+    setIsOpen(false);
   };
 
-  const onEdit = (item: Transaction) => {
+  const onEdit = (item: TransactionOutput) => {
     setSelectedItem(item);
-    setOpen(true);
+    setIsOpen(true);
   };
 
   if (isLoading || !transactions) return <TableSkeleton />;

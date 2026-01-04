@@ -1,4 +1,4 @@
-import { TransactionModel } from "../transaction/model/transaction.model";
+import { TransactionModel } from "@/app/api/domain/transaction/model/transaction.model";
 
 export enum EventTypes {
   TRANSACTION_CREATED = "transaction.created",

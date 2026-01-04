@@ -11,7 +11,7 @@ export const useMutateRecurringExpenses = () => {
     return trigger({ method: "POST", body: JSON.stringify(config) }).then(
       (res) => {
         if (res.status !== 200) {
-          return Promise.reject(res.statusText);
+          throw new Error(res.statusText);
         }
 
         return res.json();
@@ -23,7 +23,7 @@ export const useMutateRecurringExpenses = () => {
     return trigger({ method: "PUT", body: JSON.stringify(config) }).then(
       (res) => {
         if (res.status !== 200) {
-          return Promise.reject(res.statusText);
+          throw new Error(res.statusText);
         }
 
         return res.json();

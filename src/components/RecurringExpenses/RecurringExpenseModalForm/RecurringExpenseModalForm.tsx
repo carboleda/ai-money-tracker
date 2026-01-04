@@ -21,19 +21,16 @@ import { Frequency, RecurringExpense } from "@/interfaces/recurringExpense";
 import { FrequencyDropdown } from "@/components/FrequencyDropdown";
 import { useMutateRecurringExpenses } from "@/hooks/useMutateRecurrentExpense";
 import { Autocomplete, AutocompleteItem } from "@heroui/autocomplete";
-import {
-  TransactionCategory,
-  transactionCategoryOptions,
-} from "@/interfaces/transaction";
+import { transactionCategoryOptions } from "@/interfaces/transaction";
 import { IconComment, IconLink } from "@/components/shared/icons";
 import { Env } from "@/config/env";
 import { MaskedCurrencyInput } from "@/components/shared/MaskedCurrencyInput";
 import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
 import { Switch } from "@heroui/switch";
-import { HiMinusSm } from "react-icons/hi";
-import { HiPlusSm } from "react-icons/hi";
+import { HiMinusSm, HiPlusSm } from "react-icons/hi";
 import { useToast } from "@/hooks/useToast";
+import { TransactionCategory } from "@/app/api/domain/transaction/model/transaction.model";
 
 const fixedMonth = parseAbsoluteToLocal(
   new Date(Env.NEXT_PUBLIC_FIXED_MONTH).toISOString()
@@ -157,121 +154,119 @@ export const RecurringExpenseModalForm: React.FC<
   };
 
   return (
-    <>
-      <Modal
-        placement="top-center"
-        backdrop="blur"
-        isOpen={isOpen}
-        onOpenChange={onOpenChangeHandler}
-        isDismissable={false}
-      >
-        <ModalContent>
-          {(onClose) => (
-            <>
-              <ModalHeader className="flex flex-row justify-between pr-6 mt-4">
-                <span>{t("recurrentExpenses")}</span>
-                <Switch
-                  aria-label={t("disabled")}
-                  size="sm"
-                  endContent={<HiMinusSm />}
-                  startContent={<HiPlusSm />}
-                  isSelected={!disabledInput}
-                  onValueChange={(v) => setDisabledInput(!v)}
-                />
-              </ModalHeader>
-              <ModalBody>
-                <Input
-                  autoFocus
-                  label={t("description")}
+    <Modal
+      placement="top-center"
+      backdrop="blur"
+      isOpen={isOpen}
+      onOpenChange={onOpenChangeHandler}
+      isDismissable={false}
+    >
+      <ModalContent>
+        {(onClose) => (
+          <>
+            <ModalHeader className="flex flex-row justify-between pr-6 mt-4">
+              <span>{t("recurrentExpenses")}</span>
+              <Switch
+                aria-label={t("disabled")}
+                size="sm"
+                endContent={<HiMinusSm />}
+                startContent={<HiPlusSm />}
+                isSelected={!disabledInput}
+                onValueChange={(v) => setDisabledInput(!v)}
+              />
+            </ModalHeader>
+            <ModalBody>
+              <Input
+                autoFocus
+                label={t("description")}
+                variant="bordered"
+                isRequired
+                value={descriptionInput}
+                onValueChange={setDescriptionInput}
+              />
+              <div className="flex gap-2">
+                <Autocomplete
+                  allowsCustomValue
+                  label={t("category")}
                   variant="bordered"
                   isRequired
-                  value={descriptionInput}
-                  onValueChange={setDescriptionInput}
-                />
-                <div className="flex gap-2">
-                  <Autocomplete
-                    allowsCustomValue
-                    label={t("category")}
-                    variant="bordered"
-                    isRequired
-                    defaultItems={transactionCategoryOptions}
-                    selectedKey={transactonCategoryInput}
-                    onSelectionChange={(v) =>
-                      setTransactonCategoryInput(v as TransactionCategory)
-                    }
-                  >
-                    {(item) => (
-                      <AutocompleteItem key={item.value}>
-                        {item.label}
-                      </AutocompleteItem>
-                    )}
-                  </Autocomplete>
+                  defaultItems={transactionCategoryOptions}
+                  selectedKey={transactonCategoryInput}
+                  onSelectionChange={(v) =>
+                    setTransactonCategoryInput(v as TransactionCategory)
+                  }
+                >
+                  {(item) => (
+                    <AutocompleteItem key={item.value}>
+                      {item.label}
+                    </AutocompleteItem>
+                  )}
+                </Autocomplete>
 
-                  <MaskedCurrencyInput
-                    label={t("amount")}
-                    variant="bordered"
-                    type="text"
-                    isRequired
-                    value={amountInput?.toString()}
-                    onValueChange={(v) => setAmountInput(v.floatValue)}
+                <MaskedCurrencyInput
+                  label={t("amount")}
+                  variant="bordered"
+                  type="text"
+                  isRequired
+                  value={amountInput?.toString()}
+                  onValueChange={(v) => setAmountInput(v.floatValue)}
+                />
+              </div>
+              <div className="flex gap-2">
+                <div className="w-full">
+                  <FrequencyDropdown
+                    selectedFrequency={frequencyInput}
+                    onChange={setFrequencyInput}
                   />
                 </div>
-                <div className="flex gap-2">
-                  <div className="w-full">
-                    <FrequencyDropdown
-                      selectedFrequency={frequencyInput}
-                      onChange={setFrequencyInput}
-                    />
-                  </div>
-                  <DatePicker
-                    label={t("dueDate")}
-                    variant="bordered"
-                    granularity="day"
-                    minValue={dueDateMinMax?.min}
-                    maxValue={dueDateMinMax?.max}
-                    value={dueDateInput}
-                    onChange={(v) => setDueDateInput(v!)}
-                    isRequired
-                  />
-                </div>
-                <Input
-                  label={t("paymentLink")}
+                <DatePicker
+                  label={t("dueDate")}
                   variant="bordered"
-                  startContent={<IconLink />}
-                  value={paymentLinkInput}
-                  onValueChange={setPaymentLinkInput}
+                  granularity="day"
+                  minValue={dueDateMinMax?.min}
+                  maxValue={dueDateMinMax?.max}
+                  value={dueDateInput}
+                  onChange={(v) => setDueDateInput(v!)}
+                  isRequired
                 />
-                <Textarea
-                  label={t("notes")}
-                  placeholder={t("notesPlaceholder")}
-                  variant="bordered"
-                  startContent={<IconComment size={20} />}
-                  value={notesInput}
-                  onValueChange={setNotesInput}
-                />
-              </ModalBody>
-              <ModalFooter>
-                <Button
-                  color="danger"
-                  variant="flat"
-                  disabled={areButtonsDisabled}
-                  onPress={onClose}
-                >
-                  {t("cancel")}
-                </Button>
-                <Button
-                  color="primary"
-                  isLoading={isMutating}
-                  disabled={areButtonsDisabled}
-                  onPress={onSave}
-                >
-                  {t("save")}
-                </Button>
-              </ModalFooter>
-            </>
-          )}
-        </ModalContent>
-      </Modal>
-    </>
+              </div>
+              <Input
+                label={t("paymentLink")}
+                variant="bordered"
+                startContent={<IconLink />}
+                value={paymentLinkInput}
+                onValueChange={setPaymentLinkInput}
+              />
+              <Textarea
+                label={t("notes")}
+                placeholder={t("notesPlaceholder")}
+                variant="bordered"
+                startContent={<IconComment size={20} />}
+                value={notesInput}
+                onValueChange={setNotesInput}
+              />
+            </ModalBody>
+            <ModalFooter>
+              <Button
+                color="danger"
+                variant="flat"
+                disabled={areButtonsDisabled}
+                onPress={onClose}
+              >
+                {t("cancel")}
+              </Button>
+              <Button
+                color="primary"
+                isLoading={isMutating}
+                disabled={areButtonsDisabled}
+                onPress={onSave}
+              >
+                {t("save")}
+              </Button>
+            </ModalFooter>
+          </>
+        )}
+      </ModalContent>
+    </Modal>
   );
 };

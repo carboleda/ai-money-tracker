@@ -1,4 +1,4 @@
-import { TransactionStatus } from "../transaction/model/transaction.model";
+import { TransactionStatus } from "@/app/api/domain/transaction/model/transaction.model";
 
 export interface FilterParams {
   status: TransactionStatus;

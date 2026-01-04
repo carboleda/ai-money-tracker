@@ -2,15 +2,13 @@ import { Injectable, Inject } from "@/app/api/decorators/tsyringe.decorator";
 import type {
   GenAIService,
   GeneratedTransaction,
-} from "@/app/api/domain/interfaces/generated-transaction.interface";
+} from "@/app/api/domain/shared/interfaces/generated-transaction.interface";
 import { getMissingFieldsInPrompt } from "@/config/utils";
-import {
-  TransactionModel,
-  TransactionStatus,
-  TransactionType,
-} from "../model/transaction.model";
-import { DomainError } from "@/app/api/domain/errors/domain.error";
+import { TransactionStatus } from "../model/transaction.model";
+import { DomainError } from "@/app/api/domain/shared/errors/domain.error";
 import { CreateTransactionService } from "./create-transaction.service";
+import { Service } from "@/app/api/domain/shared/ports/service.interface";
+import { CreateTransactionInput } from "../ports/inbound/create-transaction.port";
 
 type GenerateTransaction = {
   text?: string;
@@ -20,7 +18,9 @@ type GenerateTransaction = {
 };
 
 @Injectable()
-export class GenerateTransactionService {
+export class GenerateTransactionService
+  implements Service<GenerateTransaction, string>
+{
   constructor(
     private readonly createTransactionService: CreateTransactionService,
     @Inject("GenAIService")
@@ -59,12 +59,10 @@ export class GenerateTransactionService {
     const generatedTransaction =
       generatedResponse as GeneratedTransaction.TransactionData;
 
-    const transaction: Omit<TransactionModel, "id"> = {
+    const transaction: CreateTransactionInput = {
       ...generatedTransaction,
-      type: generatedTransaction.type as TransactionType,
-      sourceAccount: sourceAccount
-        ? sourceAccount
-        : generatedTransaction.sourceAccount,
+      type: generatedTransaction.type,
+      sourceAccount: sourceAccount ?? generatedTransaction.sourceAccount,
       createdAt: this.getProperCreatedAtDate(
         createdAtManual,
         generatedTransaction.createdAt

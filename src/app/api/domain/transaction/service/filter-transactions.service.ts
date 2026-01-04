@@ -1,6 +1,6 @@
 import type { TransactionRepository } from "../repository/transaction.repository";
 import { TransactionModel } from "../model/transaction.model";
-import { FilterParams } from "@/app/api/domain/interfaces/transaction-filter.interface";
+import { FilterParams } from "@/app/api/domain/shared/interfaces/transaction-filter.interface";
 import {
   InjectRepository,
   Injectable,

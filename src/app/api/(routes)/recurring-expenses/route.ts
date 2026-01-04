@@ -5,7 +5,7 @@ import { CreateRecurrentExpenseService } from "@/app/api/domain/recurrent-expens
 import { UpdateRecurrentExpenseService } from "@/app/api/domain/recurrent-expense/service/update-recurrent-expense.service";
 import { DeleteRecurrentExpenseService } from "@/app/api/domain/recurrent-expense/service/delete-recurrent-expense.service";
 import { RecurrentExpenseModel } from "@/app/api/domain/recurrent-expense/model/recurrent-expense.model";
-import { DomainError } from "@/app/api/domain/errors/domain.error";
+import { DomainError } from "@/app/api/domain/shared/errors/domain.error";
 import { api } from "@/app/api";
 import { withUserContext } from "@/app/api/context/initialize-context";
 

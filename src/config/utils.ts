@@ -1,4 +1,3 @@
-import { Env } from "@/config/env";
 import { Frequency } from "@/interfaces/recurringExpense";
 import { TransactionOverdueStatus } from "@/interfaces/transaction";
 
@@ -59,43 +58,8 @@ export const getMissingFieldsInPrompt = (inputText: string) => {
   const matches = [...inputText.matchAll(validationRegex)];
 
   return requiredFields.filter((field) => {
-    return !matches.some((match) => match.groups && match?.groups?.[field]);
+    return !matches.some((match) => match.groups?.[field]);
   });
-};
-
-export const getAccountName = (accountId: string) => {
-  for (const [key, data] of Object.entries(Env.VALID_ACCOUNTS)) {
-    if (key === accountId) {
-      return data.label;
-    }
-  }
-
-  return "Unknown";
-};
-
-export const getAccountId = (accountName: string) => {
-  for (const [key, data] of Object.entries(Env.VALID_ACCOUNTS)) {
-    if (data.label === accountName) {
-      return key;
-    }
-  }
-
-  return "Unknown";
-};
-
-export const getAccountList = (skipDisabled = true) => {
-  return Object.keys(Env.VALID_ACCOUNTS)
-    .filter((key) => {
-      if (skipDisabled) {
-        return (Env.VALID_ACCOUNTS[key] as any).enabled;
-      }
-
-      return true;
-    })
-    .map((key) => {
-      const { label } = Env.VALID_ACCOUNTS[key] as any;
-      return { key, label };
-    });
 };
 
 /**

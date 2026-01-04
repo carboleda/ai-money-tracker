@@ -5,9 +5,9 @@ import { Color, TileTable } from "@/components/Summary/TileTable";
 
 import { Skeleton } from "@heroui/skeleton";
 import { TypeSummary } from "@/interfaces/summary";
-import { TransactionType } from "@/interfaces/transaction";
 import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
+import { TransactionType } from "@/app/api/domain/transaction/model/transaction.model";
 
 export interface TransactionsByTypeTitleProps {
   byType?: TypeSummary[];

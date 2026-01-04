@@ -7,9 +7,10 @@ import { getRepositoryToken } from "@/app/api/decorators/tsyringe.decorator";
 import {
   EventTypes,
   TransactionCreatedEvent,
-} from "@/app/api/domain/interfaces/account-events.interface";
-import { transactionModelFixture } from "./fixtures/transaction.model.fixture";
+} from "@/app/api/domain/shared/interfaces/account-events.interface";
+import { createTransactionInputFisture } from "./fixtures/transaction.model.fixture";
 import { pubsub } from "@/app/api/helpers/pubsub";
+import { ValidateAccountService } from "@/app/api/domain/account/service/validate-account.service";
 
 // Mock pubsub
 jest.mock("@/app/api/helpers/pubsub", () => ({
@@ -41,6 +42,11 @@ describe("CreateTransactionService", () => {
     container.register(getRepositoryToken(TransactionModel), {
       useValue: mockRepository,
     });
+    container.register(ValidateAccountService, {
+      useValue: {
+        execute: jest.fn().mockResolvedValue(true),
+      } as unknown as ValidateAccountService,
+    });
 
     // Register service
     container.register(CreateTransactionService, {
@@ -60,31 +66,44 @@ describe("CreateTransactionService", () => {
 
   it("should call the repository create method with correct input", async () => {
     const mockTransactionInput = {
-      ...transactionModelFixture,
-      id: undefined as never, // Remove id for input
+      ...createTransactionInputFisture,
+      id: null, // Remove id for input
     };
-    delete mockTransactionInput.id;
-
     const mockTransactionId = "mock-transaction-id";
+
+    const expected = {
+      ...mockTransactionInput,
+      sourceAccount: {
+        ref: mockTransactionInput.sourceAccount,
+      },
+      destinationAccount: {
+        ref: mockTransactionInput.destinationAccount,
+      },
+    };
     jest
       .spyOn(transactionRepository, "create")
       .mockResolvedValue(mockTransactionId);
 
     await service.execute(mockTransactionInput);
 
-    expect(transactionRepository.create).toHaveBeenCalledWith(
-      mockTransactionInput
-    );
+    expect(transactionRepository.create).toHaveBeenCalledWith(expected);
   });
 
   it("should emit the correct event with transaction data", async () => {
     const mockTransactionInput = {
-      ...transactionModelFixture,
-      id: undefined as never, // Remove id for input
+      ...createTransactionInputFisture,
+      id: null, // Remove id for input
     };
-    delete mockTransactionInput.id;
-
     const mockTransactionId = "mock-transaction-id";
+    const expected = {
+      ...mockTransactionInput,
+      sourceAccount: {
+        ref: mockTransactionInput.sourceAccount,
+      },
+      destinationAccount: {
+        ref: mockTransactionInput.destinationAccount,
+      },
+    };
     jest
       .spyOn(transactionRepository, "create")
       .mockResolvedValue(mockTransactionId);
@@ -100,14 +119,14 @@ describe("CreateTransactionService", () => {
     const emitCall = (pubsub.emit as jest.Mock).mock.calls[0];
     const emittedEvent = emitCall[1] as TransactionCreatedEvent;
     expect(emittedEvent.transaction).toEqual({
-      ...mockTransactionInput,
+      ...expected,
       id: mockTransactionId,
     });
   });
 
   it("should return the transaction ID from the repository", async () => {
     const mockTransactionInput = {
-      ...transactionModelFixture,
+      ...createTransactionInputFisture,
       id: undefined as never, // Remove id for input
     };
     delete mockTransactionInput.id;
@@ -124,12 +143,19 @@ describe("CreateTransactionService", () => {
 
   it("should handle the complete flow correctly", async () => {
     const mockTransactionInput = {
-      ...transactionModelFixture,
-      id: undefined as never, // Remove id for input
+      ...createTransactionInputFisture,
+      id: null,
     };
-    delete mockTransactionInput.id;
-
     const mockTransactionId = "mock-transaction-id";
+    const expected = {
+      ...mockTransactionInput,
+      sourceAccount: {
+        ref: mockTransactionInput.sourceAccount,
+      },
+      destinationAccount: {
+        ref: mockTransactionInput.destinationAccount,
+      },
+    };
     jest
       .spyOn(transactionRepository, "create")
       .mockResolvedValue(mockTransactionId);
@@ -138,9 +164,7 @@ describe("CreateTransactionService", () => {
 
     // Verify repository was called
     expect(transactionRepository.create).toHaveBeenCalledTimes(1);
-    expect(transactionRepository.create).toHaveBeenCalledWith(
-      mockTransactionInput
-    );
+    expect(transactionRepository.create).toHaveBeenCalledWith(expected);
 
     // Verify event was emitted
     expect(pubsub.emit).toHaveBeenCalledTimes(1);
@@ -155,15 +179,15 @@ describe("CreateTransactionService", () => {
     // Verify the event payload
     const emitCall = (pubsub.emit as jest.Mock).mock.calls[0];
     const emittedEvent = emitCall[1] as TransactionCreatedEvent;
-    expect(emittedEvent.transaction).toEqual({
-      ...mockTransactionInput,
+    expect(emittedEvent.transaction).toMatchObject({
+      ...expected,
       id: mockTransactionId,
     });
   });
 
   it("should propagate repository errors", async () => {
     const mockTransactionInput = {
-      ...transactionModelFixture,
+      ...createTransactionInputFisture,
       id: undefined as never, // Remove id for input
     };
     delete mockTransactionInput.id;

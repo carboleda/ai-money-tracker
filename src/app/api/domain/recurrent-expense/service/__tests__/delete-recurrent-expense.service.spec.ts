@@ -6,7 +6,7 @@ import {
   Frequency,
   RecurrentExpenseModel,
 } from "@/app/api/domain/recurrent-expense/model/recurrent-expense.model";
-import { DomainError } from "@/app/api/domain/errors/domain.error";
+import { DomainError } from "@/app/api/domain/shared/errors/domain.error";
 import { getRepositoryToken } from "@/app/api/decorators/tsyringe.decorator";
 
 describe("DeleteRecurrentExpenseService", () => {

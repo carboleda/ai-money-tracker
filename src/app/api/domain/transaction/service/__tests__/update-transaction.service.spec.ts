@@ -4,8 +4,12 @@ import { UpdateTransactionService } from "../update-transaction.service";
 import { TransactionRepository } from "@/app/api/domain/transaction/repository/transaction.repository";
 import { TransactionModel } from "@/app/api/domain/transaction/model/transaction.model";
 import { getRepositoryToken } from "@/app/api/decorators/tsyringe.decorator";
-import { transactionModelFixtureWithId } from "./fixtures/transaction.model.fixture";
+import {
+  transactionModelFixtureWithId,
+  updateTransactionInputFixture,
+} from "./fixtures/transaction.model.fixture";
 import { pubsub } from "@/app/api/helpers/pubsub";
+import { ValidateAccountService } from "@/app/api/domain/account/service/validate-account.service";
 
 // Mock pubsub
 jest.mock("@/app/api/helpers/pubsub", () => ({
@@ -37,6 +41,11 @@ describe("UpdateTransactionService", () => {
     container.register(getRepositoryToken(TransactionModel), {
       useValue: mockRepository,
     });
+    container.register(ValidateAccountService, {
+      useValue: {
+        execute: jest.fn().mockResolvedValue(true),
+      } as unknown as ValidateAccountService,
+    });
 
     // Register service
     container.register(UpdateTransactionService, {
@@ -55,7 +64,7 @@ describe("UpdateTransactionService", () => {
   });
 
   it("should call the repository with the correct transaction", async () => {
-    await service.execute(transactionModelFixtureWithId);
+    await service.execute(updateTransactionInputFixture);
 
     expect(transactionRepository.update).toHaveBeenCalledWith(
       transactionModelFixtureWithId
@@ -70,7 +79,7 @@ describe("UpdateTransactionService", () => {
     jest.spyOn(transactionRepository, "getById").mockResolvedValue(null);
 
     const rejects = expect(
-      service.execute(transactionModelFixtureWithId)
+      service.execute(updateTransactionInputFixture)
     ).rejects;
     await rejects.toThrow("Transaction not found");
   });

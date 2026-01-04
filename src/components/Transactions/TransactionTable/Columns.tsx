@@ -1,5 +1,4 @@
-import { formatCurrency, getAccountName } from "@/config/utils";
-import { Transaction } from "@/interfaces/transaction";
+import { formatCurrency } from "@/config/utils";
 import { Chip } from "@heroui/chip";
 import { Button } from "@heroui/button";
 import { TableCell } from "@heroui/table";
@@ -10,6 +9,7 @@ import dayjs from "dayjs";
 import { JSX } from "react";
 import { IconEdit } from "@/components/shared/icons";
 import { DeleteTableItemButton } from "@/components/DeleteTableItemButton";
+import { TransactionOutput } from "@/app/api/domain/transaction/ports/outbound/filter-transactions.port";
 
 const columnsDesktop: TableColumn[] = [
   {
@@ -40,7 +40,7 @@ const columnsMobile: TableColumn[] = [
 const renderCellDesktop = ({
   key,
   item,
-}: RenderCellProps<Transaction>): JSX.Element => {
+}: RenderCellProps<TransactionOutput>): JSX.Element => {
   switch (key) {
     case "description":
       return (
@@ -49,11 +49,11 @@ const renderCellDesktop = ({
             <span className="font-normal">{item.description}</span>
             <div className="flex flex-row gap-1 items-center text-md">
               <span className="flex flex-row gap-1 items-center flex-wrap font-light text-default-600">
-                {getAccountName(item.sourceAccount)}
+                {item.sourceAccount.name}
                 {item.destinationAccount && (
                   <span className="flex gap-1 font-light whitespace-nowrap">
                     <span className="hidden lg:inline">&#10141;</span>
-                    {getAccountName(item.destinationAccount)}
+                    {item.destinationAccount.name}
                   </span>
                 )}
               </span>
@@ -93,7 +93,7 @@ const renderCellMobile = ({
   onEdit,
   onDelete,
   isDeleteDisabled,
-}: RenderCellProps<Transaction>): JSX.Element => {
+}: RenderCellProps<TransactionOutput>): JSX.Element => {
   switch (key) {
     case "transaction":
       return (
@@ -114,12 +114,10 @@ const renderCellMobile = ({
                 )}
               </div>
               <div className="flex flex-col items-end text-xs">
-                <span className="font-semibold">
-                  {getAccountName(item.sourceAccount)}
-                </span>
+                <span className="font-semibold">{item.sourceAccount.name}</span>
                 {item.destinationAccount && (
                   <span className="font-light">
-                    {getAccountName(item.destinationAccount)}
+                    {item.destinationAccount.name}
                   </span>
                 )}
               </div>

@@ -1,17 +1,25 @@
 import { Timestamp } from "firebase-admin/firestore";
+import {
+  AccountModel,
+  AccountType,
+} from "@/app/api/domain/account/model/account.model";
 
-export interface AccountEntity {
-  account: string;
-  balance: number;
-}
+export const DEFAULT_ICON = "🏦";
 
-export interface Account extends AccountEntity {
+export const ACCOUNT_TYPES: { label: string; key: AccountType }[] = [
+  { key: AccountType.SAVING, label: "saving" },
+  { key: AccountType.CREDIT, label: "credit" },
+  { key: AccountType.INVESTMENT, label: "investment" },
+];
+
+export interface Account extends AccountModel {
   id: string;
 }
 
 export interface GetAccountsResponse {
   accounts: Account[];
 }
+
 export interface TransactionsSummaryHistoryEntity {
   incomes: number;
   expenses: number;
@@ -24,9 +32,3 @@ export interface TransactionsSummaryHistory
   id: string;
   createdAt: string;
 }
-
-export type ValidAccount = {
-  label: string;
-  category: string;
-  enabled: boolean;
-};

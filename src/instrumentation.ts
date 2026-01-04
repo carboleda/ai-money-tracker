@@ -1,9 +1,10 @@
-import { getFirestore } from "firebase-admin/firestore";
+import "reflect-metadata";
 import { Env } from "./config/env";
+import { getFirestore } from "firebase-admin/firestore";
 
 export async function register() {
   if (process.env.NEXT_RUNTIME === "nodejs") {
-    await import("@/genai/genkitAI");
+    await import("@/app/api/drivers/genai/genkit/genkit.service");
 
     // Initialize Firebase App
     const { initializeApp, cert, getApps } = await import("firebase-admin/app");

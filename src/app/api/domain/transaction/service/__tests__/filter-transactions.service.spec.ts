@@ -49,11 +49,13 @@ describe("FilterTransactionsService", () => {
   it.each([TransactionStatus.COMPLETE, TransactionStatus.PENDING])(
     "should fetch transactions based on filter params when status is %s",
     async (status) => {
-      const mockTransactions = getSeveralTransactionModels(2, {
-        status: TransactionStatus.COMPLETE,
-        sourceAccount: "C1234",
-        createdAt: new Date("2025-07-26T00:00:00.000Z"),
-      });
+      const mockTransactions = getSeveralTransactionModels(2, [
+        {
+          status: TransactionStatus.COMPLETE,
+          sourceAccount: "C1234",
+          createdAt: new Date("2025-07-26T00:00:00.000Z"),
+        },
+      ]);
       mockTransactions[1].status = TransactionStatus.PENDING;
       jest
         .spyOn(transactionRepository, "searchTransactions")

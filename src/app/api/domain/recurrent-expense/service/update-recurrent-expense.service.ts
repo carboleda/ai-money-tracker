@@ -4,7 +4,7 @@ import {
   Injectable,
   InjectRepository,
 } from "@/app/api/decorators/tsyringe.decorator";
-import { DomainError } from "@/app/api/domain/errors/domain.error";
+import { DomainError } from "@/app/api/domain/shared/errors/domain.error";
 
 @Injectable()
 export class UpdateRecurrentExpenseService {

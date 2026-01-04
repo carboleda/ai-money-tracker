@@ -8,6 +8,7 @@ import { ThemeProvider as NextThemesProvider } from "next-themes";
 import { SWRConfig } from "swr";
 import { ToastProvider } from "@heroui/toast";
 import TranslationsProvider from "@/components/providers/TranslationsProvider";
+import { AccountsProvider } from "@/components/providers/AccountsProvider";
 
 export interface ProvidersProps {
   children: React.ReactNode;
@@ -28,7 +29,9 @@ export function Providers({ children }: ProvidersProps) {
               fetch(resource, init).then((res) => res.json()),
           }}
         >
-          <TranslationsProvider>{children}</TranslationsProvider>
+          <TranslationsProvider>
+            <AccountsProvider>{children}</AccountsProvider>
+          </TranslationsProvider>
         </SWRConfig>
       </NextThemesProvider>
     </HeroUIProvider>

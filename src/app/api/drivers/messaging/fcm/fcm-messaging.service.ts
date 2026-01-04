@@ -4,7 +4,7 @@ import {
   MessagingService,
   SendMessageRequest,
   SendMessageResponse,
-} from "@/app/api/domain/interfaces/messaging.interface";
+} from "@/app/api/domain/shared/ports/messaging.interface";
 
 @Injectable()
 export class FcmMessagingService implements MessagingService {

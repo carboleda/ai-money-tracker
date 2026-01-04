@@ -1,14 +1,14 @@
 import {
-  TransactionModel,
   TransactionStatus,
   TransactionType,
+  TransactionModel,
 } from "@/app/api/domain/transaction/model/transaction.model";
 import type {
   TransactionCreatedEvent,
   TransactionDeletedEvent,
   TransactionUpdatedEvent,
-} from "@/app/api/domain/interfaces/account-events.interface";
-import { EventTypes } from "@/app/api/domain/interfaces/account-events.interface";
+} from "@/app/api/domain/shared/interfaces/account-events.interface";
+import { EventTypes } from "@/app/api/domain/shared/interfaces/account-events.interface";
 import { AccountModel } from "@/app/api/domain/account/model/account.model";
 import {
   InjectRepository,
@@ -17,7 +17,7 @@ import {
 } from "@/app/api/decorators/tsyringe.decorator";
 import type { AccountRepository } from "../repository/account.repository";
 
-type AccountModelForUpdate = Omit<AccountModel, "id">;
+type AccountModelForUpdate = Pick<AccountModel, "ref" | "balance">;
 
 @Injectable()
 export class AccountEventsService {
@@ -35,7 +35,7 @@ export class AccountEventsService {
     });
     for (const account of accountEntities) {
       await this.accountRepository.updateOrCreateAccount(
-        account.account,
+        account.ref,
         account.balance
       );
     }
@@ -51,7 +51,7 @@ export class AccountEventsService {
     });
     for (const account of accountEntities) {
       await this.accountRepository.updateOrCreateAccount(
-        account.account,
+        account.ref,
         account.balance
       );
     }
@@ -87,10 +87,10 @@ export class AccountEventsService {
     }
 
     const updates = mergedAccountEntities.reduce((updates, update) => {
-      if (!updates[update.account]) {
-        updates[update.account] = 0;
+      if (!updates[update.ref]) {
+        updates[update.ref] = 0;
       }
-      updates[update.account] += update.balance;
+      updates[update.ref] += update.balance;
       return updates;
     }, {} as Record<string, number>);
 
@@ -113,17 +113,17 @@ export class AccountEventsService {
     if (transaction.type === TransactionType.TRANSFER) {
       accountEntities.push(
         {
-          account: transaction.sourceAccount,
+          ref: transaction.sourceAccount.ref,
           balance: transaction.amount * (isRollback ? 1 : -1),
         },
         {
-          account: transaction.destinationAccount!,
+          ref: transaction.destinationAccount!.ref,
           balance: transaction.amount * (isRollback ? -1 : 1),
         }
       );
     } else {
       accountEntities.push({
-        account: transaction.sourceAccount,
+        ref: transaction.sourceAccount.ref,
         balance:
           transaction.amount *
           (transaction.type === TransactionType.EXPENSE ? -1 : 1) *

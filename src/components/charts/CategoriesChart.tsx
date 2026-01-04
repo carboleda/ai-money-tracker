@@ -13,16 +13,16 @@ import {
   TableHeader,
   TableRow,
 } from "@heroui/table";
-import { Transaction } from "@/interfaces/transaction";
 import { formatCurrency, formatTimeDate } from "@/config/utils";
 import { TransactionTypeDecorator } from "../TransactionTypeDecorator";
 import { Chip } from "@heroui/chip";
-import { Trans, useTranslation } from "react-i18next";
+import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
+import { TransactionOutput } from "@/app/api/domain/transaction/ports/outbound/filter-transactions.port";
 
 export interface CategoriesChartProps {
   data?: CategorySummary[];
-  detail?: Transaction[];
+  detail?: TransactionOutput[];
 }
 
 export const CategoriesChart: React.FC<CategoriesChartProps> = ({

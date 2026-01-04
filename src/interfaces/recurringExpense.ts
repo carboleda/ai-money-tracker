@@ -1,5 +1,5 @@
+import { TransactionCategory } from "@/app/api/domain/transaction/model/transaction.model";
 import { Timestamp } from "firebase-admin/firestore";
-import { TransactionCategory } from "./transaction";
 
 export enum Frequency {
   Monthly = "monthly",
