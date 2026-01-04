@@ -19,7 +19,7 @@ const CreateAccountSchema = z.object({
   name: z.string().min(1, "Name is required"),
   icon: z.string().min(1, "Icon is required"),
   type: AccountTypeSchema,
-  balance: z.number().min(0, "Balance must be non-negative"),
+  balance: z.number(),
   description: z.string().optional(),
 });
 
@@ -28,7 +28,7 @@ const UpdateAccountSchema = z.object({
   name: z.string().min(1, "Name must not be empty").optional(),
   icon: z.string().min(1, "Icon must not be empty").optional(),
   type: AccountTypeSchema.optional(),
-  balance: z.number().min(0, "Balance must be non-negative"),
+  balance: z.number(),
   description: z.string().optional(),
 });
 
