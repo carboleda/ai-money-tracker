@@ -1,6 +1,7 @@
 import { formatCurrency } from "@/config/utils";
 import { Chip } from "@heroui/chip";
-import { TableCell, TableRow } from "@heroui/table";
+import { Button } from "@heroui/button";
+import { TableCell } from "@heroui/table";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { TableColumn, RenderCellProps } from "@/interfaces/global";
 import { Account } from "@/interfaces/account";
@@ -8,6 +9,8 @@ import { JSX } from "react";
 import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
 import { TransactionTypeDecorator } from "@/components/TransactionTypeDecorator";
+import { IconEdit } from "@/components/shared/icons";
+import { DeleteTableItemButton } from "@/components/DeleteTableItemButton";
 
 const columnsDesktop: TableColumn[] = [
   {
@@ -85,73 +88,74 @@ const renderCellDesktop = ({
 const renderCellMobile = ({
   key,
   item,
+  t,
+  onEdit,
+  onDelete,
+  isDeleteDisabled,
 }: RenderCellProps<Account>): JSX.Element => {
-  switch (key) {
-    case "account":
-      return (
-        <TableCell>
-          <div className="flex flex-row items-center gap-2">
-            <span className="text-2xl">{item.icon}</span>
-            <div className="flex flex-col">
-              <span className="font-bold">{item.name}</span>
-              <span className="text-sm">
-                <TransactionTypeDecorator
-                  size="sm"
-                  color={item.balance >= 0 ? "success" : "danger"}
-                >
-                  {formatCurrency(item.balance)}
-                </TransactionTypeDecorator>
-              </span>
+  if (key === "account") {
+    return (
+      <TableCell>
+        <div className="flex flex-row items-end justify-start gap-2">
+          <span className="text-4xl">{item.icon}</span>
+          <div className="flex flex-col gap-1">
+            <span className="font-bold">{item.name}</span>
+            <div className="flex gap-2 text-sm">
+              <TransactionTypeDecorator
+                size="sm"
+                color={item.balance >= 0 ? "success" : "danger"}
+              >
+                {formatCurrency(item.balance)}
+              </TransactionTypeDecorator>
+              <Chip radius="sm" variant="flat" size="sm">
+                <span className="text-xs font-light">{t?.(item.type)}</span>
+              </Chip>
             </div>
           </div>
-        </TableCell>
-      );
-    default:
-      return <></>;
+          <div className="flex ml-auto gap-1">
+            <Button
+              isIconOnly
+              color="warning"
+              variant="light"
+              className="self-center"
+              size="sm"
+              aria-label="Edit"
+              onPress={() => onEdit?.(item)}
+            >
+              <IconEdit />
+            </Button>
+            <DeleteTableItemButton
+              size="sm"
+              itemId={item.id}
+              isDisabled={isDeleteDisabled}
+              deleteTableItem={onDelete!}
+            />
+          </div>
+        </div>
+      </TableCell>
+    );
+  } else {
+    return <></>;
   }
 };
 
-interface UseRenderCellReturn {
-  columns: TableColumn[];
-  renderCell: ({ key, item }: RenderCellProps<Account>) => JSX.Element;
-  rowHeight: number;
-  renderSeparator: (id: string, colSpan: number, title: string) => JSX.Element;
-}
-
-export const useRenderCell = (): UseRenderCellReturn => {
+export const useRenderCell = () => {
   const isMobile = useIsMobile();
   const { t } = useTranslation(LocaleNamespace.Accounts);
 
   const columns = isMobile ? columnsMobile : columnsDesktop;
 
-  const renderCell = ({ key, item }: RenderCellProps<Account>): JSX.Element => {
+  const renderCell = (props: RenderCellProps<Account>): JSX.Element => {
     if (isMobile) {
-      return renderCellMobile({ key, item, t });
+      return renderCellMobile({ ...props, t });
     }
 
-    return renderCellDesktop({ key, item, t });
-  };
-
-  const renderSeparator = (
-    id: string,
-    colSpan: number,
-    title: string
-  ): JSX.Element => {
-    return (
-      <TableRow key={id}>
-        <TableCell colSpan={colSpan} className="text-center px-3">
-          <div className="py-3 my-3 font-bold text-zinc-200 bg-blue-600 rounded-md">
-            {title}
-          </div>
-        </TableCell>
-      </TableRow>
-    );
+    return renderCellDesktop({ ...props, t });
   };
 
   return {
     columns,
     renderCell,
-    rowHeight: isMobile ? 80 : 52,
-    renderSeparator,
+    rowHeight: isMobile ? 70 : 52,
   };
 };

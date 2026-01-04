@@ -11,6 +11,6 @@ export interface RenderCellProps<T> {
   item: T;
   t?: TFunction;
   isDeleteDisabled?: boolean;
-  onEdit?: (item: T) => void;
-  onDelete?: (id: string) => void;
+  onEdit?: (item: T) => Promise<any> | void;
+  onDelete?: (id: string) => Promise<any> | void;
 }

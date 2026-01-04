@@ -133,6 +133,45 @@ export const AccountModalForm: React.FC<AccountModalFormProps> = ({
       });
   };
 
+  const renderEmojiPickerPopover = () => {
+    return (
+      <Popover
+        isOpen={isEmojiPickerOpen}
+        onOpenChange={setIsEmojiPickerOpen}
+        placement="bottom"
+      >
+        <PopoverTrigger>
+          <Button
+            isIconOnly
+            variant="bordered"
+            className="text-2xl h-14 w-16"
+            title={t("icon")}
+          >
+            {iconInput || DEFAULT_ICON}
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-80">
+          <div className="px-1 py-2">
+            <EmojiPicker
+              onEmojiClick={(emojiData) => {
+                createProxiedSetter(setIconInput)(emojiData.emoji);
+                setIsEmojiPickerOpen(false);
+              }}
+              theme={Theme.AUTO}
+              width="100%"
+              height={400}
+              previewConfig={{
+                showPreview: false,
+              }}
+              searchDisabled={false}
+              lazyLoadEmojis={true}
+            />
+          </div>
+        </PopoverContent>
+      </Popover>
+    );
+  };
+
   return (
     <Modal
       placement="top-center"
@@ -152,6 +191,7 @@ export const AccountModalForm: React.FC<AccountModalFormProps> = ({
                 <div className="text-red-500 text-sm">{validationError}</div>
               )}
               <div className="flex gap-2">
+                {renderEmojiPickerPopover()}
                 <Input
                   label={t("ref")}
                   variant="bordered"
@@ -161,40 +201,6 @@ export const AccountModalForm: React.FC<AccountModalFormProps> = ({
                   disabled={!!item}
                   placeholder="e.g., C1408"
                 />
-                <Popover
-                  isOpen={isEmojiPickerOpen}
-                  onOpenChange={setIsEmojiPickerOpen}
-                  placement="bottom"
-                >
-                  <PopoverTrigger>
-                    <Button
-                      isIconOnly
-                      variant="bordered"
-                      className="text-2xl h-14 w-16"
-                      title={t("icon")}
-                    >
-                      {iconInput || DEFAULT_ICON}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-80">
-                    <div className="px-1 py-2">
-                      <EmojiPicker
-                        onEmojiClick={(emojiData) => {
-                          createProxiedSetter(setIconInput)(emojiData.emoji);
-                          setIsEmojiPickerOpen(false);
-                        }}
-                        theme={Theme.AUTO}
-                        width="100%"
-                        height={400}
-                        previewConfig={{
-                          showPreview: false,
-                        }}
-                        searchDisabled={false}
-                        lazyLoadEmojis={true}
-                      />
-                    </div>
-                  </PopoverContent>
-                </Popover>
               </div>
               <Input
                 autoFocus

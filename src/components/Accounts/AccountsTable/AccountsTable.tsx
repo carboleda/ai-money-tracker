@@ -142,6 +142,8 @@ export const AccountsTable: React.FC<AccountsTableProps> = ({
                   key: columnKey,
                   item,
                   onEdit,
+                  onDelete: deleteAccount,
+                  isDeleteDisabled: isMutating,
                 });
               }}
             </TableRow>
