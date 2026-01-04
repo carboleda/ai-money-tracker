@@ -19,8 +19,14 @@ export type PageGroup = {
 
 export const pages: (Page | PageGroup)[] = [
   {
-    label: "transactions",
+    label: "summary",
     href: "/private",
+    icon: HiChartPie,
+    className: "bg-primary/10 text-primary",
+  },
+  {
+    label: "transactions",
+    href: "/private/transactions",
     icon: HiCollection,
     className: "bg-secondary/10 text-secondary",
   },
@@ -29,12 +35,6 @@ export const pages: (Page | PageGroup)[] = [
     href: "/private/recurring-expenses/management",
     icon: MdPending,
     className: "bg-warning/10 text-warning",
-  },
-  {
-    label: "summary",
-    href: "/private/summary",
-    icon: HiChartPie,
-    className: "bg-primary/10 text-primary",
   },
   {
     groupLabel: "settings",
