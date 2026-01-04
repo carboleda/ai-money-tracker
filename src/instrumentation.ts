@@ -1,5 +1,6 @@
-import { getFirestore } from "firebase-admin/firestore";
+import "reflect-metadata";
 import { Env } from "./config/env";
+import { getFirestore } from "firebase-admin/firestore";
 
 export async function register() {
   if (process.env.NEXT_RUNTIME === "nodejs") {
