@@ -1,4 +1,4 @@
-import PageContent from "@/components/Summary/PageContent";
+import PageContent from "@/components/features/Summary/PageContent";
 
 function Summary() {
   return <PageContent />;

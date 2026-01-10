@@ -10,14 +10,14 @@ import {
 } from "@heroui/table";
 import { TableSkeleton } from "@/components/shared/TableSkeleton";
 import { useMutateTransaction } from "@/hooks/useMutateTransaction";
-import { DeleteTableItemButton } from "../../DeleteTableItemButton";
+import { DeleteTableItemButton } from "@/components/DeleteTableItemButton";
 import { Button } from "@heroui/button";
 import { CompleteTransactionModalForm } from "../CompleteTransactionModalForm/CompleteTransactionModalForm";
 import { useCallback, useMemo, useState } from "react";
 import { useRenderCell } from "./Columns";
 import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
-import { SearchToolbar } from "@/components/Transactions/SearchToolbar";
+import { SearchToolbar } from "@/components/features/Transactions/SearchToolbar";
 import { useTableHeight } from "@/hooks/useTableHeight";
 import { FaRegCircleCheck } from "react-icons/fa6";
 import { TransactionOutput } from "@/app/api/domain/transaction/ports/outbound/filter-transactions.port";

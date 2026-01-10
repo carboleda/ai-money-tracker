@@ -1,4 +1,4 @@
-import PageContent from "@/components/RecurringExpenses/PageContent";
+import PageContent from "@/components/features/RecurringExpenses/PageContent";
 
 function RecurringExpenses() {
   return <PageContent />;

@@ -41,12 +41,13 @@ export const SearchToolbar: React.FC<SearchToolbarProps> = ({
   };
 
   useEffect(() => {
-    setIsInputFocused(isMobile ? false : true);
+    setIsInputFocused(!isMobile);
   }, [isMobile]);
 
   return (
     <>
       <div
+        role="search"
         className="w-fit h-full flex items-center gap-2"
         onBlur={onClickOutside}
       >
