@@ -109,7 +109,7 @@ export const CameraMode: React.FC<CameraModeProps> = ({
               imageCapture
                 .getPhotoCapabilities()
                 .then((photoCapabilities: PhotoCapabilities) => {
-                  //todo: check if camera has a torch
+                  //TODO: check if camera has a torch
                   console.log("photoCapabilities", { photoCapabilities });
                   const fillLightModeCount =
                     photoCapabilities?.fillLightMode?.length ?? 0;
