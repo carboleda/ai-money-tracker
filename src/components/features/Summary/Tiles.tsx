@@ -15,7 +15,7 @@ export const Tiles: React.FC<TilesProps> = ({ tiles }) => {
     <div className="grid grid-cols-1 md:grid-cols-2 grid-flow-row items-start gap-4">
       {tiles.map((tile, index) => (
         <div
-          key={index}
+          key={`${tile.title}-${index}`}
           className={`w-full flex flex-row flex-wrap justify-start ${tile.className}`}
         >
           <span className="subtitle text-lg font-bold my-2">{tile.title}</span>
