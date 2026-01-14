@@ -119,7 +119,7 @@ export async function DELETE(req: NextRequest) {
       await service.execute(validatedData.id);
 
       return NextResponse.json(null, {
-        status: 204,
+        status: 200,
         statusText: "Account deleted successfully",
       });
     } catch (error) {

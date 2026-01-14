@@ -87,7 +87,7 @@ export async function DELETE(req: NextRequest) {
       await service.execute(id);
 
       return new NextResponse(null, {
-        status: 204,
+        status: 200,
         statusText: "Recurrent expense deleted successfully",
       });
     } catch (error) {
