@@ -5,6 +5,7 @@ import { Firestore, getFirestore } from "firebase-admin/firestore";
 import { UserFirestoreRepository } from "./user/user-firestore.repository";
 import { RecurrentExpenseFirestoreRepository } from "./recurrent-expense/recurrent-expense-firestore.repository";
 import { SummaryHistoryFirestoreRepository } from "./summary/summary-history-firestore.repository";
+import { CategoryFirestoreRepository } from "./category/category-firestore.repository";
 import {
   getRepositoryToken,
   getUserContextToken,
@@ -14,6 +15,7 @@ import { AccountModel } from "@/app/api/domain/account/model/account.model";
 import { UserModel } from "@/app/api/domain/user/model/user.model";
 import { RecurrentExpenseModel } from "@/app/api/domain/recurrent-expense/model/recurrent-expense.model";
 import { SummaryHistoryModel } from "@/app/api/domain/summary/model/summary-history.model";
+import { CategoryModel } from "@/app/api/domain/category/model/category.model";
 import { getUserContext } from "@/app/api/context/user-context";
 
 export class FirestoreModule {
@@ -47,6 +49,10 @@ export class FirestoreModule {
 
     container.register(getRepositoryToken(SummaryHistoryModel), {
       useClass: SummaryHistoryFirestoreRepository,
+    });
+
+    container.register(getRepositoryToken(CategoryModel), {
+      useClass: CategoryFirestoreRepository,
     });
   }
 }

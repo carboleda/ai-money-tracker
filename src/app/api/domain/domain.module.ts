@@ -4,6 +4,7 @@ import { TransactionModule } from "./transaction/transaction.module";
 import { SummaryModule } from "./summary/summary.module";
 import { NotificationModule } from "./notification/notification.module";
 import { RecurrentExpenseModule } from "./recurrent-expense/recurrent-expense.module";
+import { CategoryModule } from "./category/category.module";
 
 export class DomainModule {
   static register(): void {
@@ -13,5 +14,6 @@ export class DomainModule {
     SummaryModule.register();
     RecurrentExpenseModule.register();
     NotificationModule.register();
+    CategoryModule.register();
   }
 }

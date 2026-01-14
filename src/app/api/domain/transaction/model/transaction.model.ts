@@ -35,6 +35,14 @@ export type AccountSummary = {
   icon?: string | null;
 };
 
+export type CategorySummary = {
+  ref: string;
+  name: string;
+  icon?: string | null;
+  color?: string | null;
+  isCustom?: boolean;
+};
+
 export class TransactionModel {
   id: string | null;
   description: string;
@@ -42,7 +50,7 @@ export class TransactionModel {
   notes?: string;
   type: TransactionType;
   status: TransactionStatus;
-  category?: TransactionCategory | string;
+  category?: CategorySummary | TransactionCategory | string;
   sourceAccount: AccountSummary;
   destinationAccount?: AccountSummary;
   amount: number;
@@ -56,7 +64,7 @@ export class TransactionModel {
     notes?: string;
     type: TransactionType;
     status: TransactionStatus;
-    category?: TransactionCategory | string;
+    category?: CategorySummary | TransactionCategory | string;
     sourceAccount: AccountSummary;
     destinationAccount?: AccountSummary;
     amount: number;

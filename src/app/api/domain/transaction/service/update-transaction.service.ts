@@ -11,6 +11,7 @@ import {
 import { DomainError } from "@/app/api/domain/shared/errors/domain.error";
 import { pubsub } from "@/app/api/helpers/pubsub";
 import { ValidateAccountService } from "@/app/api/domain/account/service/validate-account.service";
+import { ValidateCategoryService } from "@/app/api/domain/category/service/validate-category.service";
 import { UpdateTransactionInput } from "../ports/inbound/update-transaction.port";
 import { Service } from "@/app/api/domain/shared/ports/service.interface";
 import { TransactionMapper } from "../mapper/transaction.mapper";
@@ -22,7 +23,8 @@ export class UpdateTransactionService
   constructor(
     @InjectRepository(TransactionModel)
     private readonly transactionRepository: TransactionRepository,
-    private readonly validateAccountService: ValidateAccountService
+    private readonly validateAccountService: ValidateAccountService,
+    private readonly validateCategoryService: ValidateCategoryService
   ) {}
 
   async execute(transaction: UpdateTransactionInput): Promise<void> {
@@ -46,6 +48,14 @@ export class UpdateTransactionService
       sourceAccount: transaction.sourceAccount,
       destinationAccount: transaction.destinationAccount,
     });
+
+    // Validate category if provided
+    if (transaction.category) {
+      await this.validateCategoryService.execute({
+        categoryRef: transaction.category,
+        transactionType: transaction.type,
+      });
+    }
 
     const transactionModel = TransactionMapper.fromUpdateToModel(transaction);
     await this.transactionRepository.update(transactionModel);

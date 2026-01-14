@@ -9,6 +9,7 @@ import {
   TransactionModel,
   TransactionStatus,
   AccountSummary,
+  CategorySummary,
 } from "@/app/api/domain//transaction/model/transaction.model";
 import { Filter, Firestore, UpdateData } from "firebase-admin/firestore";
 import { TransactionAdapter } from "./transaction.adapter";
@@ -18,19 +19,56 @@ import type { FilterParams } from "@/app/api/domain/shared/interfaces/transactio
 import { BaseFirestoreRepository } from "@/app/api/drivers/firestore/base/base.firestore.repository";
 import type { UserContext } from "@/app/api/context/user-context";
 import type { AccountRepository } from "@/app/api/domain/account/repository/account.repository";
+import type { CategoryRepository } from "@/app/api/domain/category/repository/category.repository";
 import { AccountModel } from "@/app/api/domain/account/model/account.model";
+import { CategoryModel } from "@/app/api/domain/category/model/category.model";
+import * as fs from "node:fs";
+import * as path from "node:path";
+
+interface PredefinedCategory {
+  ref: string;
+  name: string;
+  icon: string;
+  color: string;
+  type: string;
+  description: string;
+}
 
 @Injectable()
 export class TransactionFirestoreRepository
   extends BaseFirestoreRepository
-  implements TransactionRepository {
+  implements TransactionRepository
+{
+  private readonly predefinedCategoryMap: Map<string, PredefinedCategory> =
+    new Map();
+
   constructor(
     @Inject(Firestore) firestore: Firestore,
     @InjectUserContext() userContext: UserContext,
     @InjectRepository(AccountModel)
-    private readonly accountRepository: AccountRepository
+    private readonly accountRepository: AccountRepository,
+    @InjectRepository(CategoryModel)
+    private readonly categoryRepository: CategoryRepository
   ) {
     super(Collections.Transactions, firestore, userContext);
+    this.loadPredefinedCategories();
+  }
+
+  private loadPredefinedCategories(): void {
+    try {
+      const filePath = path.join(
+        process.cwd(),
+        "src/config/predefined-categories.json"
+      );
+      const jsonData = fs.readFileSync(filePath, "utf-8");
+      const categories: PredefinedCategory[] = JSON.parse(jsonData);
+
+      categories.forEach((cat) => {
+        this.predefinedCategoryMap.set(cat.ref, cat);
+      });
+    } catch (error) {
+      console.error("Failed to load predefined categories:", error);
+    }
   }
 
   /**
@@ -60,7 +98,7 @@ export class TransactionFirestoreRepository
 
       const destinationAccountSummary = transaction.destinationAccount
         ? accountMap.get(transaction.destinationAccount) ??
-        transaction.destinationAccount
+          transaction.destinationAccount
         : undefined;
 
       // Store the enriched data separately for adapter to use
@@ -69,6 +107,60 @@ export class TransactionFirestoreRepository
         sourceAccount: sourceAccountSummary as any,
         destinationAccount: destinationAccountSummary as any,
       };
+    });
+  }
+
+  /**
+   * Enriches transactions with category details (name, icon, color)
+   * Merges predefined and custom categories, then maps to category summaries
+   */
+  private async enrichTransactionsWithCategories(
+    transactions: Array<
+      (TransactionEntity & { id: string }) | TransactionEntity
+    >
+  ): Promise<Array<TransactionEntity & { id?: string }>> {
+    // Get all custom categories from Firestore
+    const customCategories = await this.categoryRepository.getAll();
+
+    // Create lookup maps
+    const customCategoryMap = new Map<string, CategorySummary>();
+    customCategories.forEach((cat) => {
+      customCategoryMap.set(cat.ref, {
+        ref: cat.ref,
+        name: cat.name,
+        icon: cat.icon,
+        color: cat.color,
+        isCustom: cat.isCustom,
+      });
+    });
+
+    // Enrich transactions with category summaries
+    return transactions.map((transaction) => {
+      if (!transaction.category) {
+        return transaction;
+      }
+
+      const categoryRef = transaction.category;
+
+      // Check custom categories first, then predefined
+      let categorySummary: CategorySummary | undefined;
+      if (customCategoryMap.has(categoryRef)) {
+        categorySummary = customCategoryMap.get(categoryRef);
+      } else if (this.predefinedCategoryMap.has(categoryRef)) {
+        const predefined = this.predefinedCategoryMap.get(categoryRef)!;
+        categorySummary = {
+          ref: predefined.ref,
+          name: predefined.name,
+          icon: predefined.icon,
+          color: predefined.color,
+          isCustom: false,
+        };
+      }
+
+      return {
+        ...transaction,
+        category: categorySummary ?? categoryRef,
+      } as any;
     });
   }
 
@@ -81,8 +173,13 @@ export class TransactionFirestoreRepository
     const entity = { ...doc.data(), id: doc.id } as TransactionEntity & {
       id: string;
     };
-    const enriched = await this.enrichTransactionsWithAccounts([entity]);
-    return TransactionAdapter.toModel(enriched[0], doc.id);
+    const enrichedAccounts = await this.enrichTransactionsWithAccounts([
+      entity,
+    ]);
+    const enrichedCategories = await this.enrichTransactionsWithCategories(
+      enrichedAccounts
+    );
+    return TransactionAdapter.toModel(enrichedCategories[0], doc.id);
   }
 
   async create(transaction: TransactionModel): Promise<string> {
@@ -136,9 +233,14 @@ export class TransactionFirestoreRepository
       id: doc.id,
     })) as Array<TransactionEntity & { id: string }>;
 
-    const enriched = await this.enrichTransactionsWithAccounts(entities);
-    return enriched.map((entity) =>
-      TransactionAdapter.toModel(entity, entity.id)
+    const enrichedAccounts = await this.enrichTransactionsWithAccounts(
+      entities
+    );
+    const enrichedCategories = await this.enrichTransactionsWithCategories(
+      enrichedAccounts
+    );
+    return enrichedCategories.map((entity) =>
+      TransactionAdapter.toModel(entity, entity.id || "")
     );
   }
 }

@@ -8,6 +8,7 @@ export const Collections = {
   Transactions: `transactions${suffix}`,
   TransactionsSummaryHistory: `accounts-history${suffix}`,
   RecurringExpenses: `recurring-expenses${suffix}`,
+  Categories: `categories${suffix}`,
 } as const;
 
 export type CollectionsType = (typeof Collections)[keyof typeof Collections];

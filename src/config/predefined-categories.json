@@ -1,0 +1,210 @@
+[
+  {
+    "ref": "GROCERIES",
+    "name": "Groceries",
+    "icon": "🛒",
+    "color": "#10B981",
+    "type": "expense",
+    "description": "Grocery shopping and food items"
+  },
+  {
+    "ref": "SALARY",
+    "name": "Salary",
+    "icon": "💰",
+    "color": "#059669",
+    "type": "income",
+    "description": "Regular salary or wages"
+  },
+  {
+    "ref": "FOOD",
+    "name": "Food & Dining",
+    "icon": "🍽️",
+    "color": "#F59E0B",
+    "type": "expense",
+    "description": "Restaurants and dining out"
+  },
+  {
+    "ref": "EDUCATION",
+    "name": "Education",
+    "icon": "📚",
+    "color": "#3B82F6",
+    "type": "expense",
+    "description": "Tuition, books, courses"
+  },
+  {
+    "ref": "INVESTMENT",
+    "name": "Investment",
+    "icon": "📈",
+    "color": "#6366F1",
+    "type": "income",
+    "description": "Investment returns and gains"
+  },
+  {
+    "ref": "HEALTH",
+    "name": "Health & Medical",
+    "icon": "⚕️",
+    "color": "#EF4444",
+    "type": "expense",
+    "description": "Medical expenses and healthcare"
+  },
+  {
+    "ref": "UTILITIES",
+    "name": "Utilities",
+    "icon": "⚡",
+    "color": "#FBBF24",
+    "type": "expense",
+    "description": "Electricity, water, gas"
+  },
+  {
+    "ref": "TRANSPORTATION",
+    "name": "Transportation",
+    "icon": "🚗",
+    "color": "#8B5CF6",
+    "type": "expense",
+    "description": "Gas, public transport, maintenance"
+  },
+  {
+    "ref": "ENTERTAINMENT",
+    "name": "Entertainment",
+    "icon": "🎬",
+    "color": "#EC4899",
+    "type": "expense",
+    "description": "Movies, games, subscriptions"
+  },
+  {
+    "ref": "HOUSING",
+    "name": "Housing",
+    "icon": "🏠",
+    "color": "#A16207",
+    "type": "expense",
+    "description": "Rent or mortgage payments"
+  },
+  {
+    "ref": "INSURANCE",
+    "name": "Insurance",
+    "icon": "🛡️",
+    "color": "#1E40AF",
+    "type": "expense",
+    "description": "Insurance payments"
+  },
+  {
+    "ref": "CLOTHING",
+    "name": "Clothing",
+    "icon": "👕",
+    "color": "#BE185D",
+    "type": "expense",
+    "description": "Apparel and fashion"
+  },
+  {
+    "ref": "CHILDCARE",
+    "name": "Childcare",
+    "icon": "👶",
+    "color": "#F43F5E",
+    "type": "expense",
+    "description": "Baby and child expenses"
+  },
+  {
+    "ref": "PETS",
+    "name": "Pets",
+    "icon": "🐾",
+    "color": "#78350F",
+    "type": "expense",
+    "description": "Pet food and care"
+  },
+  {
+    "ref": "PERSONAL_CARE",
+    "name": "Personal Care",
+    "icon": "💇",
+    "color": "#7C3AED",
+    "type": "expense",
+    "description": "Haircuts, salon, grooming"
+  },
+  {
+    "ref": "GIFTS",
+    "name": "Gifts & Donations",
+    "icon": "🎁",
+    "color": "#D946EF",
+    "type": "expense",
+    "description": "Gifts and charitable donations"
+  },
+  {
+    "ref": "HOBBIES",
+    "name": "Hobbies",
+    "icon": "🎨",
+    "color": "#F97316",
+    "type": "expense",
+    "description": "Hobbies and recreational activities"
+  },
+  {
+    "ref": "VACATION",
+    "name": "Vacation & Travel",
+    "icon": "✈️",
+    "color": "#0891B2",
+    "type": "expense",
+    "description": "Travel and vacation expenses"
+  },
+  {
+    "ref": "FREELANCE",
+    "name": "Freelance Income",
+    "icon": "💻",
+    "color": "#15803D",
+    "type": "income",
+    "description": "Freelance and side gig income"
+  },
+  {
+    "ref": "REFUND",
+    "name": "Refund",
+    "icon": "↩️",
+    "color": "#1F2937",
+    "type": "income",
+    "description": "Refunds and returns"
+  },
+  {
+    "ref": "TRANSFER_OUT",
+    "name": "Transfer Out",
+    "icon": "➡️",
+    "color": "#6B7280",
+    "type": "transfer",
+    "description": "Money transfer to another account"
+  },
+  {
+    "ref": "TRANSFER_IN",
+    "name": "Transfer In",
+    "icon": "⬅️",
+    "color": "#4B5563",
+    "type": "transfer",
+    "description": "Money transfer from another account"
+  },
+  {
+    "ref": "OTHER",
+    "name": "Other",
+    "icon": "📌",
+    "color": "#6B7280",
+    "type": "expense",
+    "description": "Other expenses"
+  },
+  {
+    "ref": "CREDIT_CARD_PAYMENT",
+    "name": "Credit Card Payment",
+    "icon": "💳",
+    "color": "#1E40AF",
+    "type": "expense",
+    "description": "Credit card payment"
+  },
+  {
+    "ref": "TAXES",
+    "name": "Taxes",
+    "icon": "📋",
+    "color": "#7C3AED",
+    "type": "expense",
+    "description": "Taxes and declarations"
+  },
+  {
+    "ref": "WITHDRAWALS",
+    "name": "Withdrawals",
+    "icon": "💸",
+    "color": "#EC4899",
+    "type": "expense",
+    "description": "Cash withdrawals"
+  }
+]
