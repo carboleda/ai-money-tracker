@@ -14,6 +14,7 @@ import { ValidateCategoryService } from "@/app/api/domain/category/service/valid
 import { CreateTransactionInput } from "../ports/inbound/create-transaction.port";
 import { Service } from "@/app/api/domain/shared/ports/service.interface";
 import { TransactionMapper } from "../mapper/transaction.mapper";
+import { GetAllCategoriesService } from "@/app/api/domain/category/service/get-all-categories.service";
 
 @Injectable()
 export class CreateTransactionService
@@ -22,6 +23,7 @@ export class CreateTransactionService
   constructor(
     @InjectRepository(TransactionModel)
     private readonly transactionRepository: TransactionRepository,
+    private readonly getAllCategoriesService: GetAllCategoriesService,
     private readonly validateAccountService: ValidateAccountService,
     private readonly validateCategoryService: ValidateCategoryService
   ) {}
@@ -41,9 +43,13 @@ export class CreateTransactionService
       destinationAccount: transaction.destinationAccount,
     });
 
+    // Get all categories (predefined + custom merged)
+    const categories = await this.getAllCategoriesService.execute();
+
     // Validate category if provided
     if (transaction.category) {
       await this.validateCategoryService.execute({
+        categories,
         categoryRef: transaction.category,
         transactionType: transaction.type,
       });

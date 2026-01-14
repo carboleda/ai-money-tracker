@@ -1,15 +1,11 @@
-import type { CategoryRepository } from "../repository/category.repository";
 import { Service } from "@/app/api/domain/shared/ports/service.interface";
-import {
-  InjectRepository,
-  Injectable,
-} from "@/app/api/decorators/tsyringe.decorator";
+import { Injectable } from "@/app/api/decorators/tsyringe.decorator";
 import { DomainError } from "@/app/api/domain/shared/errors/domain.error";
-import { CategoryModel } from "../model/category.model";
 import { TransactionType } from "@/app/api/domain/transaction/model/transaction.model";
-import { GetAllCategoriesService } from "./get-all-categories.service";
+import { CategoryModel } from "../model/category.model";
 
 interface ValidateCategoryParams {
+  categories: CategoryModel[];
   categoryRef: string;
   transactionType: TransactionType;
 }
@@ -18,21 +14,14 @@ interface ValidateCategoryParams {
 export class ValidateCategoryService
   implements Service<ValidateCategoryParams, void>
 {
-  constructor(
-    @InjectRepository(CategoryModel)
-    private readonly categoryRepository: CategoryRepository,
-    private readonly getAllCategoriesService: GetAllCategoriesService
-  ) {}
+  constructor() {}
 
   async execute(params: ValidateCategoryParams): Promise<void> {
-    const { categoryRef, transactionType } = params;
+    const { categories, categoryRef, transactionType } = params;
 
     try {
-      // Get all categories (predefined + custom merged)
-      const allCategories = await this.getAllCategoriesService.execute();
-
       // Find category by ref
-      const category = allCategories.find((c) => c.ref === categoryRef);
+      const category = categories.find((c) => c.ref === categoryRef);
 
       if (!category || category.isDeleted) {
         throw new DomainError(

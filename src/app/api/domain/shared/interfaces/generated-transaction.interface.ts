@@ -1,4 +1,5 @@
 import { CreateTransactionInput } from "@/app/api/domain/transaction/ports/inbound/create-transaction.port";
+import { CategoryModel } from "../../category/model/category.model";
 
 export namespace GeneratedTransaction {
   export interface InvalidTransactionError {
@@ -18,6 +19,7 @@ export namespace GeneratedTransaction {
 
 export interface GenAIService {
   extractData(
+    categories: CategoryModel[],
     text?: string,
     picture?: string
   ): Promise<GeneratedTransaction.GeneratedResponse>;

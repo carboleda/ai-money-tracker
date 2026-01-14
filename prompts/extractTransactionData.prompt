@@ -1,5 +1,5 @@
 ---
-model: googleai/gemini-2.0-flash
+model: googleai/gemini-2.5-flash
 config:
   temperature: 0
 input:
@@ -20,6 +20,10 @@ Constrains:
 1. Only respond to the last question asked
 2. Do not include the accounts in the description
 3. Refrain to answer to any other question or provide any additional information not related to the transaction data extraction
+4. Category must be one of the following references:
+  {{#each categories}}
+  - {{this.ref}}: {{this.description}}
+  {{/each}}
 
 {{role "user"}}
 {{#if text}}

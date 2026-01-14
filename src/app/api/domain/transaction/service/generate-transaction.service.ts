@@ -9,6 +9,7 @@ import { DomainError } from "@/app/api/domain/shared/errors/domain.error";
 import { CreateTransactionService } from "./create-transaction.service";
 import { Service } from "@/app/api/domain/shared/ports/service.interface";
 import { CreateTransactionInput } from "../ports/inbound/create-transaction.port";
+import { GetAllCategoriesService } from "@/app/api/domain/category/service/get-all-categories.service";
 
 type GenerateTransaction = {
   text?: string;
@@ -23,6 +24,7 @@ export class GenerateTransactionService
 {
   constructor(
     private readonly createTransactionService: CreateTransactionService,
+    private readonly getAllCategoriesService: GetAllCategoriesService,
     @Inject("GenAIService")
     private readonly genAIService: GenAIService
   ) {}
@@ -44,7 +46,11 @@ export class GenerateTransactionService
       }
     }
 
+    // Get all categories (predefined + custom merged)
+    const categories = await this.getAllCategoriesService.execute();
+
     const generatedResponse = await this.genAIService.extractData(
+      categories,
       text,
       picture
     );
