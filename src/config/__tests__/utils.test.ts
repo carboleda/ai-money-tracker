@@ -1,4 +1,8 @@
-import { computeBiannualDates } from "../utils";
+import {
+  computeBiannualDates,
+  getMonthBounds,
+  getPreviousMonth,
+} from "../utils";
 
 describe("utils", () => {
   describe("computeBiannualDates", () => {
@@ -46,6 +50,68 @@ describe("utils", () => {
 
       expect(second.getMonth()).toBe(11); // December
       expect(first.getMonth()).toBe(6); // June (next year)
+    });
+  });
+
+  describe("getPreviousMonth", () => {
+    it("should return the previous month for a given date when the day is the first day of the month", () => {
+      const date = new Date("2024-03-01");
+      const previousMonth = getPreviousMonth(date);
+
+      expect(previousMonth.getMonth()).toBe(1); // February
+      expect(previousMonth.getFullYear()).toBe(2024);
+    });
+
+    it("should return the previous month for a given date when the day is in the middle of the month", () => {
+      const date = new Date("2024-03-15");
+      const previousMonth = getPreviousMonth(date);
+
+      expect(previousMonth.getMonth()).toBe(1); // February
+      expect(previousMonth.getFullYear()).toBe(2024);
+    });
+
+    it("should return the previous month for a given date when the day is the last day of the month", () => {
+      const date = new Date("2024-02-29");
+      const previousMonth = getPreviousMonth(date);
+
+      expect(previousMonth.getMonth()).toBe(0); // January
+      expect(previousMonth.getFullYear()).toBe(2024);
+    });
+
+    it("should handle year transition correctly", () => {
+      const date = new Date("2024-01-10");
+      const previousMonth = getPreviousMonth(date);
+
+      expect(previousMonth.getMonth()).toBe(11); // December
+      expect(previousMonth.getFullYear()).toBe(2023);
+    });
+  });
+
+  describe("getMonthBounds", () => {
+    it("should return correct start and end dates for a given date object", () => {
+      const date = new Date("2026-01-02");
+      const { start, end } = getMonthBounds(date);
+
+      expect(start.getFullYear()).toBe(2026);
+      expect(start.getMonth()).toBe(0);
+      expect(start.getDate()).toBe(1);
+
+      expect(end.getFullYear()).toBe(2026);
+      expect(end.getMonth()).toBe(0);
+      expect(end.getDate()).toBe(31);
+    });
+
+    it("should handle leap years correctly", () => {
+      const date = new Date("2024-02-15");
+      const { start, end } = getMonthBounds(date);
+
+      expect(start.getFullYear()).toBe(2024);
+      expect(start.getMonth()).toBe(1);
+      expect(start.getDate()).toBe(1);
+
+      expect(end.getFullYear()).toBe(2024);
+      expect(end.getMonth()).toBe(1);
+      expect(end.getDate()).toBe(29);
     });
   });
 });
