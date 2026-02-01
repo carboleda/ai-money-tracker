@@ -1,5 +1,9 @@
 import type { TransactionRepository } from "../repository/transaction.repository";
-import { TransactionModel, TransactionType } from "../model/transaction.model";
+import {
+  TransactionModel,
+  TransactionStatus,
+  TransactionType,
+} from "../model/transaction.model";
 import {
   InjectRepository,
   Injectable,
@@ -38,10 +42,12 @@ export class CreateTransactionService
     }
 
     // Validate accounts exist and are not deleted
-    await this.validateAccountService.execute({
-      sourceAccount: transaction.sourceAccount,
-      destinationAccount: transaction.destinationAccount,
-    });
+    if (transaction.status != TransactionStatus.PENDING) {
+      await this.validateAccountService.execute({
+        sourceAccount: transaction.sourceAccount,
+        destinationAccount: transaction.destinationAccount,
+      });
+    }
 
     // Get all categories (predefined + custom merged)
     const categories = await this.getAllCategoriesService.execute();

@@ -2,7 +2,10 @@ import "reflect-metadata";
 import { container } from "tsyringe";
 import { CreateTransactionService } from "../create-transaction.service";
 import { TransactionRepository } from "@/app/api/domain/transaction/repository/transaction.repository";
-import { TransactionModel } from "@/app/api/domain/transaction/model/transaction.model";
+import {
+  TransactionModel,
+  TransactionStatus,
+} from "@/app/api/domain/transaction/model/transaction.model";
 import { getRepositoryToken } from "@/app/api/decorators/tsyringe.decorator";
 import {
   EventTypes,
@@ -203,5 +206,48 @@ describe("CreateTransactionService", () => {
 
     // Event should not be emitted if repository fails
     expect(pubsub.emit).not.toHaveBeenCalled();
+  });
+
+  it("should call validateAccountService for COMPLETE transactions", async () => {
+    const mockTransactionInput = {
+      ...createTransactionInputFisture,
+      id: null,
+      status: TransactionStatus.COMPLETE,
+    };
+    const mockTransactionId = "mock-transaction-id";
+
+    jest
+      .spyOn(transactionRepository, "create")
+      .mockResolvedValue(mockTransactionId);
+
+    const validateAccountService = container.resolve(ValidateAccountService);
+    const validateSpy = jest.spyOn(validateAccountService, "execute");
+
+    await service.execute(mockTransactionInput);
+
+    expect(validateSpy).toHaveBeenCalledWith({
+      sourceAccount: mockTransactionInput.sourceAccount,
+      destinationAccount: mockTransactionInput.destinationAccount,
+    });
+  });
+
+  it("should not call validateAccountService for PENDING transactions", async () => {
+    const mockTransactionInput = {
+      ...createTransactionInputFisture,
+      id: null,
+      status: TransactionStatus.PENDING,
+    };
+    const mockTransactionId = "mock-transaction-id";
+
+    jest
+      .spyOn(transactionRepository, "create")
+      .mockResolvedValue(mockTransactionId);
+
+    const validateAccountService = container.resolve(ValidateAccountService);
+    const validateSpy = jest.spyOn(validateAccountService, "execute");
+
+    await service.execute(mockTransactionInput);
+
+    expect(validateSpy).not.toHaveBeenCalled();
   });
 });
