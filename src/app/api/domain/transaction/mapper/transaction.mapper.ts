@@ -35,7 +35,7 @@ export class TransactionMapper {
   private static minimalAccountSummary(
     accountRef?: string
   ): AccountSummary | undefined {
-    if (!accountRef) {
+    if (accountRef === undefined) {
       return;
     }
 
