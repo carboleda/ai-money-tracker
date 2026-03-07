@@ -59,7 +59,7 @@ const renderCellDesktop = ({
               </span>
               {item.category && (
                 <Chip radius="sm" variant="flat">
-                  {item.category}
+                  {`${item.category.icon} ${item.category.name}`}
                 </Chip>
               )}
             </div>
@@ -109,7 +109,7 @@ const renderCellMobile = ({
                 </TransactionTypeDecorator>
                 {item.category && (
                   <Chip radius="sm" variant="flat" size="sm">
-                    {item.category}
+                    {`${item.category.icon} ${item.category.name}`}
                   </Chip>
                 )}
               </div>
