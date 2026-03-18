@@ -9,12 +9,13 @@ import { SWRConfig } from "swr";
 import { ToastProvider } from "@heroui/toast";
 import TranslationsProvider from "@/components/providers/TranslationsProvider";
 import { AccountsProvider } from "@/components/providers/AccountsProvider";
+import { CategoriesProvider } from "@/components/providers/CategoriesProvider";
 
 export interface ProvidersProps {
   children: React.ReactNode;
 }
 
-export function Providers({ children }: ProvidersProps) {
+export function Providers({ children }: Readonly<ProvidersProps>) {
   const router = useRouter();
 
   return (
@@ -30,7 +31,9 @@ export function Providers({ children }: ProvidersProps) {
           }}
         >
           <TranslationsProvider>
-            <AccountsProvider>{children}</AccountsProvider>
+            <AccountsProvider>
+              <CategoriesProvider>{children}</CategoriesProvider>
+            </AccountsProvider>
           </TranslationsProvider>
         </SWRConfig>
       </NextThemesProvider>

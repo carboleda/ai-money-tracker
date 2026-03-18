@@ -10,8 +10,8 @@ import { Input } from "@heroui/input";
 import { Button } from "@heroui/button";
 import { DatePicker } from "@heroui/date-picker";
 import { parseAbsoluteToLocal, ZonedDateTime } from "@internationalized/date";
-import { Autocomplete, AutocompleteItem } from "@heroui/autocomplete";
-import { transactionCategoryOptions } from "@/interfaces/transaction";
+import { CategoriesAutocomplete } from "@/components/CategoriesAutocomplete";
+import { CategoryModel } from "@/app/api/domain/category/model/category.model";
 import { MaskedCurrencyInput } from "@/components/shared/MaskedCurrencyInput";
 import { useMutateTransaction } from "@/hooks/useMutateTransaction";
 import { Chip } from "@heroui/chip";
@@ -21,7 +21,6 @@ import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
 import { TransactionOutput } from "@/app/api/domain/transaction/ports/outbound/filter-transactions.port";
 import {
-  TransactionCategory,
   TransactionType,
 } from "@/app/api/domain/transaction/model/transaction.model";
 import { UpdateTransactionInput } from "@/app/api/domain/transaction/ports/inbound/update-transaction.port";
@@ -44,7 +43,7 @@ export const UpdateTransactionModalForm: React.FC<
   const [destinationAccountInput, setDestinationAccountInput] =
     useState<string>("");
   const [transactonCategoryInput, setTransactonCategoryInput] =
-    useState<TransactionCategory>();
+    useState<CategoryModel["ref"] | undefined>();
   const [amountInput, setAmountInput] = useState<number>();
   const [createdAtInput, setCreatedAtInput] = useState<ZonedDateTime>();
 
@@ -56,7 +55,7 @@ export const UpdateTransactionModalForm: React.FC<
       setSourceAccountInput(item.sourceAccount.ref);
       item.destinationAccount &&
         setDestinationAccountInput(item.destinationAccount.ref);
-      setTransactonCategoryInput(item.category as TransactionCategory);
+      setTransactonCategoryInput(item.category?.ref);
       setCreatedAtInput(
         item.createdAt ? parseAbsoluteToLocal(item.createdAt) : undefined
       );
@@ -163,22 +162,11 @@ export const UpdateTransactionModalForm: React.FC<
                 )}
               </div>
               <div className="flex gap-2">
-                <Autocomplete
-                  allowsCustomValue
+                <CategoriesAutocomplete
                   label={t("category")}
-                  variant="bordered"
-                  defaultItems={transactionCategoryOptions}
-                  selectedKey={transactonCategoryInput}
-                  onSelectionChange={(v) =>
-                    setTransactonCategoryInput(v as TransactionCategory)
-                  }
-                >
-                  {(item) => (
-                    <AutocompleteItem key={item.value}>
-                      {item.label}
-                    </AutocompleteItem>
-                  )}
-                </Autocomplete>
+                  value={transactonCategoryInput}
+                  onChange={setTransactonCategoryInput}
+                />
 
                 <MaskedCurrencyInput
                   label={t("amount")}

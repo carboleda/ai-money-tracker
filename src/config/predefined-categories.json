@@ -106,7 +106,7 @@
   {
     "ref": "PETS",
     "name": "Pets",
-    "icon": "🐾",
+    "icon": "🐶",
     "color": "#78350F",
     "type": "expense",
     "description": "Pet food and care"
@@ -176,14 +176,6 @@
     "description": "Money transfer from another account"
   },
   {
-    "ref": "OTHER",
-    "name": "Other",
-    "icon": "📌",
-    "color": "#6B7280",
-    "type": "expense",
-    "description": "Other expenses"
-  },
-  {
     "ref": "CREDIT_CARD_PAYMENT",
     "name": "Credit Card Payment",
     "icon": "💳",
@@ -206,5 +198,13 @@
     "color": "#EC4899",
     "type": "expense",
     "description": "Cash withdrawals"
+  },
+  {
+    "ref": "OTHER",
+    "name": "Other",
+    "icon": "📌",
+    "color": "#6B7280",
+    "type": "expense",
+    "description": "Other expenses"
   }
 ]

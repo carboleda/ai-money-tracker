@@ -20,9 +20,9 @@ import {
 import { Frequency, RecurringExpense } from "@/interfaces/recurringExpense";
 import { FrequencyDropdown } from "@/components/FrequencyDropdown";
 import { useMutateRecurringExpenses } from "@/hooks/useMutateRecurrentExpense";
-import { Autocomplete, AutocompleteItem } from "@heroui/autocomplete";
-import { transactionCategoryOptions } from "@/interfaces/transaction";
 import { IconComment, IconLink } from "@/components/shared/icons";
+import { CategoriesAutocomplete } from "@/components/CategoriesAutocomplete";
+import { CategoryModel } from "@/app/api/domain/category/model/category.model";
 import { Env } from "@/config/env";
 import { MaskedCurrencyInput } from "@/components/shared/MaskedCurrencyInput";
 import { useTranslation } from "react-i18next";
@@ -30,7 +30,6 @@ import { LocaleNamespace } from "@/i18n/namespace";
 import { Switch } from "@heroui/switch";
 import { HiMinusSm, HiPlusSm } from "react-icons/hi";
 import { useToast } from "@/hooks/useToast";
-import { TransactionCategory } from "@/app/api/domain/transaction/model/transaction.model";
 
 const fixedMonth = parseAbsoluteToLocal(
   new Date(Env.NEXT_PUBLIC_FIXED_MONTH).toISOString()
@@ -54,7 +53,7 @@ export const RecurringExpenseModalForm: React.FC<
   const [paymentLinkInput, setPaymentLinkInput] = useState<string>();
   const [notesInput, setNotesInput] = useState<string>();
   const [transactonCategoryInput, setTransactonCategoryInput] =
-    useState<TransactionCategory>();
+    useState<CategoryModel["ref"] | undefined>();
   const [frequencyInput, setFrequencyInput] = useState<Frequency>(
     Frequency.Monthly
   );
@@ -133,7 +132,7 @@ export const RecurringExpenseModalForm: React.FC<
       dueDate: dueDateInput.toDate().toISOString(),
       disabled: disabledInput,
       amount: amountInput!,
-      category: transactonCategoryInput,
+      category: transactonCategoryInput as RecurringExpense["category"],
       paymentLink: paymentLinkInput,
       notes: notesInput,
     };
@@ -185,23 +184,12 @@ export const RecurringExpenseModalForm: React.FC<
                 onValueChange={setDescriptionInput}
               />
               <div className="flex gap-2">
-                <Autocomplete
-                  allowsCustomValue
+                <CategoriesAutocomplete
                   label={t("category")}
-                  variant="bordered"
                   isRequired
-                  defaultItems={transactionCategoryOptions}
-                  selectedKey={transactonCategoryInput}
-                  onSelectionChange={(v) =>
-                    setTransactonCategoryInput(v as TransactionCategory)
-                  }
-                >
-                  {(item) => (
-                    <AutocompleteItem key={item.value}>
-                      {item.label}
-                    </AutocompleteItem>
-                  )}
-                </Autocomplete>
+                  value={transactonCategoryInput}
+                  onChange={setTransactonCategoryInput}
+                />
 
                 <MaskedCurrencyInput
                   label={t("amount")}

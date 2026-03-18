@@ -49,11 +49,11 @@ export class CreateTransactionService
       });
     }
 
-    // Get all categories (predefined + custom merged)
-    const categories = await this.getAllCategoriesService.execute();
-
     // Validate category if provided
     if (transaction.category) {
+      // Get all categories (predefined + custom merged)
+      const categories = await this.getAllCategoriesService.execute();
+
       await this.validateCategoryService.execute({
         categories,
         categoryRef: transaction.category,
