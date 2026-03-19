@@ -40,7 +40,7 @@ export const pages: (Page | PageGroup)[] = [
     groupLabel: "settings",
     pages: [
       {
-        label: "recurrent",
+        label: "recurring",
         href: "/private/recurring-expenses",
         icon: HiMiniArrowPathRoundedSquare,
         className: "bg-info/10 text-info",

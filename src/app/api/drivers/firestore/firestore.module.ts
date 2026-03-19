@@ -3,7 +3,7 @@ import { AccountFirestoreRepository } from "./account/account-firestore.reposito
 import { TransactionFirestoreRepository } from "./transaction/transaction-firestore.repository";
 import { Firestore, getFirestore } from "firebase-admin/firestore";
 import { UserFirestoreRepository } from "./user/user-firestore.repository";
-import { RecurrentExpenseFirestoreRepository } from "./recurrent-expense/recurrent-expense-firestore.repository";
+import { RecurringExpenseFirestoreRepository } from "./recurring-expense/recurring-expense-firestore.repository";
 import { SummaryHistoryFirestoreRepository } from "./summary/summary-history-firestore.repository";
 import { CategoryFirestoreRepository } from "./category/category-firestore.repository";
 import {
@@ -13,7 +13,7 @@ import {
 import { TransactionModel } from "@/app/api/domain/transaction/model/transaction.model";
 import { AccountModel } from "@/app/api/domain/account/model/account.model";
 import { UserModel } from "@/app/api/domain/user/model/user.model";
-import { RecurrentExpenseModel } from "@/app/api/domain/recurrent-expense/model/recurrent-expense.model";
+import { RecurringExpenseModel } from "@/app/api/domain/recurring-expense/model/recurring-expense.model";
 import { SummaryHistoryModel } from "@/app/api/domain/summary/model/summary-history.model";
 import { CategoryModel } from "@/app/api/domain/category/model/category.model";
 import { getUserContext } from "@/app/api/context/user-context";
@@ -43,8 +43,8 @@ export class FirestoreModule {
       useClass: UserFirestoreRepository,
     });
 
-    container.register(getRepositoryToken(RecurrentExpenseModel), {
-      useClass: RecurrentExpenseFirestoreRepository,
+    container.register(getRepositoryToken(RecurringExpenseModel), {
+      useClass: RecurringExpenseFirestoreRepository,
     });
 
     container.register(getRepositoryToken(SummaryHistoryModel), {

@@ -5,8 +5,8 @@ import { TableCell, TableRow } from "@heroui/table";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { TableColumn, RenderCellProps } from "@/interfaces/global";
 import { TransactionTypeDecorator } from "@/components/TransactionTypeDecorator";
-import { Frequency } from "@/app/api/domain/recurrent-expense/model/recurrent-expense.model";
-import type { RecurrentExpenseOutput } from "@/app/api/domain/recurrent-expense/ports/outbound/get-recurrent-expenses.port";
+import { Frequency } from "@/app/api/domain/recurring-expense/model/recurring-expense.model";
+import type { RecurringExpenseOutput } from "@/app/api/domain/recurring-expense/ports/outbound/get-recurring-expenses.port";
 import { JSX } from "react";
 import { IconEdit } from "@/components/shared/icons";
 import { DeleteTableItemButton } from "@/components/DeleteTableItemButton";
@@ -44,7 +44,7 @@ const columnsMobile: TableColumn[] = [
 const renderCellDesktop = ({
   key,
   item,
-}: RenderCellProps<RecurrentExpenseOutput>): JSX.Element => {
+}: RenderCellProps<RecurringExpenseOutput>): JSX.Element => {
   switch (key) {
     case "description":
       return (
@@ -103,7 +103,7 @@ const renderCellMobile = ({
   onEdit,
   onDelete,
   isDeleteDisabled,
-}: RenderCellProps<RecurrentExpenseOutput>): JSX.Element => {
+}: RenderCellProps<RecurringExpenseOutput>): JSX.Element => {
   switch (key) {
     case "expense":
       return (

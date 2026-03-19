@@ -30,7 +30,7 @@ interface PendingTransactionTableProps {
 export const PendingTransactionTable: React.FC<
   PendingTransactionTableProps
 > = ({ isLoading, pendingTransactions }) => {
-  const { t } = useTranslation(LocaleNamespace.RecurrentExpenses);
+  const { t } = useTranslation(LocaleNamespace.RecurringExpenses);
   const [selectedItem, setSelectedItem] = useState<TransactionOutput>();
   const [isOpen, setIsOpen] = useState(false);
   const [filterValue, setFilterValue] = useState("");

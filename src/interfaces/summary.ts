@@ -11,14 +11,14 @@ export interface TypeSummary {
   total: number;
 }
 
-export interface RecurrentVsVariableEntry {
+export interface RecurringVsVariableEntry {
   value: number;
   type: "recurrent" | "variable";
 }
 
-export interface RecurrentVsVariable {
-  count: RecurrentVsVariableEntry[];
-  total: RecurrentVsVariableEntry[];
+export interface RecurringVsVariable {
+  count: RecurringVsVariableEntry[];
+  total: RecurringVsVariableEntry[];
 }
 
 export interface Summary {
@@ -26,7 +26,7 @@ export interface Summary {
   transactionsSummaryHistory: TransactionsSummaryHistory[];
   byCategory: CategorySummary[];
   byType: TypeSummary[];
-  recurrentVsVariable: RecurrentVsVariable;
+  recurringVsVariable: RecurringVsVariable;
   totalBalance: number;
 }
 

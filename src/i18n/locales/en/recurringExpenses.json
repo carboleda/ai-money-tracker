@@ -1,0 +1,21 @@
+{
+  "management.subtitle": "What you have to pay this month",
+  "management.emptyContent": "You're up to date, well done 👏!.",
+  "subtitle": "Your recurring expenses",
+  "emptyContent": "No recurring expenses to display.",
+  "biannualAndYearly": "Biannual and Yearly",
+  "separatorTitle": "BIANNUAL AND YEARLY EXPENSES",
+  "allFieldAreRequired": "Filled all the required fields. Please fill them out.",
+  "recurringExpenses": "Recurring Expense",
+  "paymentLink": "Payment Link",
+  "notes": "Notes",
+  "notesPlaceholder": "Enter your notes here",
+  "pendingTransactionCountMessage": "{{count}} pending",
+  "pendingTransactions": "Pending Transactions",
+  "completeTransaction": "Complete transaction",
+  "paidOn": "Paid on",
+  "completeTransationButton": "Complete",
+  "transactionCompleted": "Transaction completed successfully!",
+  "recurringExpenseCreated": "Recurring expense created!",
+  "recurringExpenseUpdated": "Recurring expense updated!"
+}

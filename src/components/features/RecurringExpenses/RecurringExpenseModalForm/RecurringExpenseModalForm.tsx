@@ -17,11 +17,11 @@ import {
   startOfYear,
   endOfYear,
 } from "@internationalized/date";
-import { Frequency } from "@/app/api/domain/recurrent-expense/model/recurrent-expense.model";
-import type { RecurrentExpenseOutput } from "@/app/api/domain/recurrent-expense/ports/outbound/get-recurrent-expenses.port";
-import type { CreateRecurrentExpenseInput } from "@/app/api/domain/recurrent-expense/ports/inbound/create-recurrent-expense.port";
+import { Frequency } from "@/app/api/domain/recurring-expense/model/recurring-expense.model";
+import type { RecurringExpenseOutput } from "@/app/api/domain/recurring-expense/ports/outbound/get-recurring-expenses.port";
+import type { CreateRecurringExpenseInput } from "@/app/api/domain/recurring-expense/ports/inbound/create-recurring-expense.port";
 import { FrequencyDropdown } from "@/components/FrequencyDropdown";
-import { useMutateRecurringExpenses } from "@/hooks/useMutateRecurrentExpense";
+import { useMutateRecurringExpenses } from "@/hooks/useMutateRecurringExpense";
 import { IconComment, IconLink } from "@/components/shared/icons";
 import { CategoriesAutocomplete } from "@/components/CategoriesAutocomplete";
 import { CategoryModel } from "@/app/api/domain/category/model/category.model";
@@ -38,7 +38,7 @@ const fixedMonth = parseAbsoluteToLocal(
 );
 
 interface RecurringExpenseModalFormProps {
-  item?: RecurrentExpenseOutput;
+  item?: RecurringExpenseOutput;
   isOpen: boolean;
   onDismiss: () => void;
 }
@@ -46,7 +46,7 @@ interface RecurringExpenseModalFormProps {
 export const RecurringExpenseModalForm: React.FC<
   RecurringExpenseModalFormProps
 > = ({ item, onDismiss, isOpen }) => {
-  const { t } = useTranslation(LocaleNamespace.RecurrentExpenses);
+  const { t } = useTranslation(LocaleNamespace.RecurringExpenses);
   const { showSuccessToast } = useToast();
   const { isMutating, createConfig, updateConfig } =
     useMutateRecurringExpenses();
@@ -128,7 +128,7 @@ export const RecurringExpenseModalForm: React.FC<
     clearError();
 
     const isUpdate = !!item?.id;
-    const payload: CreateRecurrentExpenseInput = {
+    const payload: CreateRecurringExpenseInput = {
       description: descriptionInput,
       frequency: frequencyInput,
       dueDate: dueDateInput.toDate(),
@@ -147,7 +147,7 @@ export const RecurringExpenseModalForm: React.FC<
         onDismiss();
         showSuccessToast({
           title: t(
-            isUpdate ? "recurrentExpenseUpdated" : "recurrentExpenseCreated"
+            isUpdate ? "recurringExpenseUpdated" : "recurringExpenseCreated"
           ),
         });
       })
@@ -166,7 +166,7 @@ export const RecurringExpenseModalForm: React.FC<
         {(onClose) => (
           <>
             <ModalHeader className="flex flex-row justify-between pr-6 mt-4">
-              <span>{t("recurrentExpenses")}</span>
+              <span>{t("recurringExpenses")}</span>
               <Switch
                 aria-label={t("disabled")}
                 size="sm"

@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import useSWR from "swr";
 import { RecurringExpensesTable } from "@/components/features/RecurringExpenses";
-import type { GetRecurrentExpensesOutput } from "@/app/api/domain/recurrent-expense/ports/outbound/get-recurrent-expenses.port";
+import type { GetRecurringExpensesOutput } from "@/app/api/domain/recurring-expense/ports/outbound/get-recurring-expenses.port";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { formatCurrency } from "@/config/utils";
 import { TransactionTypeDecorator } from "@/components/TransactionTypeDecorator";
@@ -14,15 +14,15 @@ import { useAppStore } from "@/stores/useAppStore";
 
 function PageContent() {
   const isMobile = useIsMobile();
-  const { t } = useTranslation(LocaleNamespace.RecurrentExpenses);
+  const { t } = useTranslation(LocaleNamespace.RecurringExpenses);
   const { setPageTitle } = useAppStore();
 
   useEffect(() => {
-    setPageTitle(t("recurrent"), t("subtitle"));
+    setPageTitle(t("recurring"), t("subtitle"));
   }, [t, setPageTitle]);
 
   const { isLoading, data: reesponse } = useSWR<
-    GetRecurrentExpensesOutput,
+    GetRecurringExpensesOutput,
     Error
   >("/api/recurring-expenses");
 

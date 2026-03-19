@@ -6,7 +6,7 @@ import {
   DropdownItem,
 } from "@heroui/dropdown";
 import { Button } from "@heroui/button";
-import { Frequency } from "@/app/api/domain/recurrent-expense/model/recurrent-expense.model";
+import { Frequency } from "@/app/api/domain/recurring-expense/model/recurring-expense.model";
 import { frequencyOptions } from "@/interfaces/recurringExpense";
 import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";

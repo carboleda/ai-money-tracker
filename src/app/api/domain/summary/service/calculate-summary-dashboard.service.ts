@@ -5,7 +5,7 @@ import { GetAllAccountsService } from "@/app/api/domain/account/service/get-all.
 import { GetSummaryHistoryService } from "./get-summary-history.service";
 import { CalculateCategorySummaryService } from "./calculate-category-summary.service";
 import { CalculateTypeSummaryService } from "./calculate-type-summary.service";
-import { CalculateRecurrentVsVariableService } from "./calculate-recurrent-vs-variable.service";
+import { CalculateRecurringVsVariableService } from "./calculate-recurring-vs-variable.service";
 import { CalculateBalanceService } from "./calculate-balance.service";
 import { GetSummaryResponseDto } from "../model/summary.dto";
 
@@ -17,7 +17,7 @@ export class CalculateSummaryDashboardService {
     private readonly getSummaryHistoryService: GetSummaryHistoryService,
     private readonly calculateCategorySummaryService: CalculateCategorySummaryService,
     private readonly calculateTypeSummaryService: CalculateTypeSummaryService,
-    private readonly calculateRecurrentVsVariableService: CalculateRecurrentVsVariableService,
+    private readonly calculateRecurringVsVariableService: CalculateRecurringVsVariableService,
     private readonly calculateBalanceService: CalculateBalanceService
   ) {}
 
@@ -48,11 +48,11 @@ export class CalculateSummaryDashboardService {
     }));
 
     // Calculate all summaries in parallel
-    const [byCategory, byType, recurrentVsVariable, totalBalance] =
+    const [byCategory, byType, recurringVsVariable, totalBalance] =
       await Promise.all([
         this.calculateCategorySummaryService.execute(mappedTransactions),
         this.calculateTypeSummaryService.execute(mappedTransactions),
-        this.calculateRecurrentVsVariableService.execute(mappedTransactions),
+        this.calculateRecurringVsVariableService.execute(mappedTransactions),
         this.calculateBalanceService.execute(accountsBalance),
       ]);
 
@@ -62,7 +62,7 @@ export class CalculateSummaryDashboardService {
         transactionsSummaryHistory,
         byCategory,
         byType,
-        recurrentVsVariable,
+        recurringVsVariable,
         totalBalance,
       },
       transactions: mappedTransactions,
