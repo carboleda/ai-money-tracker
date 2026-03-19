@@ -49,7 +49,7 @@ export const PendingTransactionTable: React.FC<
           transaction.description
             .toLowerCase()
             .includes(filterValue.toLowerCase()) ||
-          transaction.category
+          transaction.category?.name
             ?.toLowerCase()
             .includes(filterValue.toLowerCase())
       );

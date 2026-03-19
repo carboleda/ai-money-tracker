@@ -1,8 +1,6 @@
 import { GetAllRecurrentExpensesService } from "./get-all-recurrent-expenses.service";
-import {
-  Frequency,
-  RecurrentExpenseModel,
-} from "../model/recurrent-expense.model";
+import { Frequency } from "../model/recurrent-expense.model";
+import type { RecurrentExpenseOutput } from "../ports/outbound/get-recurrent-expenses.port";
 import { CreateTransactionService } from "@/app/api/domain/transaction/service/create-transaction.service";
 import {
   TransactionType,
@@ -27,10 +25,10 @@ export class ScheduleRecurrentExpenseService {
     let created = 0;
     let skipped = 0;
 
-    const { recurringExpenses } =
+    const { recurringExpensesConfig } =
       await this.getAllRecurrentExpensesService.execute();
 
-    for (const recurringExpense of recurringExpenses) {
+    for (const recurringExpense of recurringExpensesConfig) {
       if (recurringExpense.disabled) {
         skipped++;
         continue;
@@ -46,7 +44,7 @@ export class ScheduleRecurrentExpenseService {
         status: TransactionStatus.PENDING,
         isRecurrent: true,
         description: recurringExpense.description,
-        category: recurringExpense.category,
+        category: recurringExpense.category.ref,
         amount: recurringExpense.amount,
         createdAt,
         paymentLink: recurringExpense.paymentLink,
@@ -72,7 +70,7 @@ export class ScheduleRecurrentExpenseService {
    * @returns null if the transaction should not be created for the current period.
    */
   private getTransactionDate(
-    recurringExpense: RecurrentExpenseModel
+    recurringExpense: RecurrentExpenseOutput
   ): Date | null {
     const now = new Date();
     const dueDate = new Date(recurringExpense.dueDate);

@@ -9,8 +9,13 @@ import { container } from "tsyringe";
 import { Firestore, Timestamp } from "firebase-admin/firestore";
 import { recurrentExpenseModelFixture } from "./fixtures/recurrent-expense.fixture";
 import { RecurrentExpenseAdapter } from "../recurrent-expense.adapter";
-import { getUserContextToken } from "@/app/api/decorators/tsyringe.decorator";
+import {
+  getUserContextToken,
+  getRepositoryToken,
+} from "@/app/api/decorators/tsyringe.decorator";
 import type { UserContext } from "@/app/api/context/user-context";
+import { CategoryModel } from "@/app/api/domain/category/model/category.model";
+import type { CategoryRepository } from "@/app/api/domain/category/repository/category.repository";
 
 describe("RecurrentExpenseFirestoreRepository", () => {
   let repository: RecurrentExpenseFirestoreRepository;
@@ -37,6 +42,18 @@ describe("RecurrentExpenseFirestoreRepository", () => {
     };
     testContainer.register(getUserContextToken(), {
       useValue: testUserContext,
+    });
+
+    const mockCategoryRepository: CategoryRepository = {
+      getAll: jest.fn().mockResolvedValue([]),
+      getById: jest.fn(),
+      create: jest.fn(),
+      update: jest.fn(),
+      delete: jest.fn(),
+    } as unknown as CategoryRepository;
+
+    testContainer.register(getRepositoryToken(CategoryModel), {
+      useValue: mockCategoryRepository,
     });
 
     testContainer.register(RecurrentExpenseFirestoreRepository, {

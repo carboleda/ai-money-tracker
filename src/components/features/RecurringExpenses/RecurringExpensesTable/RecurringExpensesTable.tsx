@@ -11,8 +11,8 @@ import {
 import {
   Frequency,
   FrequencyGroup,
-  RecurringExpense,
-} from "@/interfaces/recurringExpense";
+} from "@/app/api/domain/recurrent-expense/model/recurrent-expense.model";
+import type { RecurrentExpenseOutput } from "@/app/api/domain/recurrent-expense/ports/outbound/get-recurrent-expenses.port";
 import { TableSkeleton } from "@/components/shared/TableSkeleton";
 import { Button } from "@heroui/button";
 import { IconEdit } from "@/components/shared/icons";
@@ -29,21 +29,21 @@ import { SearchToolbar } from "@/components/features/Transactions/SearchToolbar"
 
 interface RecurringExpensesTableProps {
   isLoading: boolean;
-  recurringExpenses?: RecurringExpense[];
+  recurringExpenses?: RecurrentExpenseOutput[];
 }
 
-const groupByFrequency = (recurringExpenses: RecurringExpense[]) => {
+const groupByFrequency = (recurringExpenses: RecurrentExpenseOutput[]) => {
   const { monthly = [], others = [] } = Object.groupBy(
     recurringExpenses,
     (expense) =>
-      expense.frequency == Frequency.Monthly
-        ? FrequencyGroup.Monthly
-        : FrequencyGroup.Others
+      expense.frequency == Frequency.MONTHLY
+        ? FrequencyGroup.MONTHLY
+        : FrequencyGroup.OTHERS
   );
 
   const separator = {
-    id: FrequencyGroup.Others,
-  } as unknown as RecurringExpense;
+    id: FrequencyGroup.OTHERS,
+  } as unknown as RecurrentExpenseOutput;
 
   return [
     ...monthly,
@@ -57,7 +57,7 @@ export const RecurringExpensesTable: React.FC<RecurringExpensesTableProps> = ({
   recurringExpenses,
 }) => {
   const { t } = useTranslation(LocaleNamespace.RecurrentExpenses);
-  const [selectedItem, setSelectedItem] = useState<RecurringExpense>();
+  const [selectedItem, setSelectedItem] = useState<RecurrentExpenseOutput>();
   const [isOpen, setIsOpen] = useState(false);
   const [filterValue, setFilterValue] = useState("");
   const { isMutating, deleteConfig } = useMutateRecurringExpenses();
@@ -75,7 +75,7 @@ export const RecurringExpensesTable: React.FC<RecurringExpensesTableProps> = ({
           expense.description
             .toLowerCase()
             .includes(filterValue.toLowerCase()) ||
-          expense.category.toLowerCase().includes(filterValue.toLowerCase())
+          expense.category.name.toLowerCase().includes(filterValue.toLowerCase())
       );
     }
 
@@ -87,7 +87,7 @@ export const RecurringExpensesTable: React.FC<RecurringExpensesTableProps> = ({
     setIsOpen(false);
   };
 
-  const onEdit = (item: RecurringExpense) => {
+  const onEdit = (item: RecurrentExpenseOutput) => {
     setSelectedItem(item);
     setIsOpen(true);
   };
@@ -125,7 +125,7 @@ export const RecurringExpensesTable: React.FC<RecurringExpensesTableProps> = ({
         maxTableHeight={maxTableHeight}
         rowHeight={rowHeight}
         aria-label={t("recurrentExpenses")}
-        disabledKeys={[FrequencyGroup.Others]}
+        disabledKeys={[FrequencyGroup.OTHERS]}
         topContentPlacement="outside"
         topContent={renderTopContent()}
       >
@@ -138,7 +138,7 @@ export const RecurringExpensesTable: React.FC<RecurringExpensesTableProps> = ({
         </TableHeader>
         <TableBody items={transactions} emptyContent={t("emptyContent")}>
           {(item) => {
-            if (item.id === FrequencyGroup.Others) {
+            if (item.id === FrequencyGroup.OTHERS) {
               return renderSeparator(
                 item.id,
                 columns.length,

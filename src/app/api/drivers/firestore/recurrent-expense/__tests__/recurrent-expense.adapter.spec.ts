@@ -50,7 +50,12 @@ describe("RecurrentExpenseAdapter", () => {
       expect(model).toBeInstanceOf(RecurrentExpenseModel);
       expect(model.id).toBe(id);
       expect(model.description).toBe("Monthly Rent");
-      expect(model.category).toBe("Housing");
+      expect(model.category).toEqual({
+        ref: "Housing",
+        name: "Unknown",
+        icon: null,
+        color: null,
+      });
       expect(model.frequency).toBe(Frequency.MONTHLY);
       expect(model.amount).toBe(1000);
       expect(model.disabled).toBe(false);

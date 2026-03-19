@@ -3,7 +3,6 @@
   "management.emptyContent": "You're up to date, well done 👏!.",
   "subtitle": "Your recurring expenses",
   "emptyContent": "No recurring expenses to display.",
-  "monthly": "Monthly",
   "biannualAndYearly": "Biannual and Yearly",
   "separatorTitle": "BIANNUAL AND YEARLY EXPENSES",
   "allFieldAreRequired": "Filled all the required fields. Please fill them out.",

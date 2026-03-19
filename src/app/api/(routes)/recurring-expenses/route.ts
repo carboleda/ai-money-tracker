@@ -4,7 +4,8 @@ import { GetAllRecurrentExpensesService } from "@/app/api/domain/recurrent-expen
 import { CreateRecurrentExpenseService } from "@/app/api/domain/recurrent-expense/service/create-recurrent-expense.service";
 import { UpdateRecurrentExpenseService } from "@/app/api/domain/recurrent-expense/service/update-recurrent-expense.service";
 import { DeleteRecurrentExpenseService } from "@/app/api/domain/recurrent-expense/service/delete-recurrent-expense.service";
-import { RecurrentExpenseModel } from "@/app/api/domain/recurrent-expense/model/recurrent-expense.model";
+import type { CreateRecurrentExpenseInput } from "@/app/api/domain/recurrent-expense/ports/inbound/create-recurrent-expense.port";
+import type { UpdateRecurrentExpenseInput } from "@/app/api/domain/recurrent-expense/ports/inbound/update-recurrent-expense.port";
 import { DomainError } from "@/app/api/domain/shared/errors/domain.error";
 import { api } from "@/app/api";
 import { withUserContext } from "@/app/api/context/initialize-context";
@@ -15,19 +16,7 @@ export async function GET(req: NextRequest) {
 
     try {
       const result = await service.execute();
-
-      // Transform the response to match the original API format
-      const recurringExpensesConfig = result.recurringExpenses.map(
-        (expense) => ({
-          ...expense,
-          dueDate: expense.dueDate.toISOString(),
-        })
-      );
-
-      return NextResponse.json({
-        recurringExpensesConfig,
-        groupTotal: result.groupTotal,
-      });
+      return NextResponse.json(result);
     } catch (error) {
       const domainError = error as DomainError<unknown>;
       return new NextResponse(null, {
@@ -43,9 +32,12 @@ export async function POST(req: NextRequest) {
     const service = api.resolve(CreateRecurrentExpenseService);
 
     try {
-      const recurrentExpense = (await req.json()) as RecurrentExpenseModel;
-      recurrentExpense.dueDate = new Date(recurrentExpense.dueDate);
-      const id = await service.execute(recurrentExpense);
+      const body = (await req.json()) as CreateRecurrentExpenseInput;
+      const input: CreateRecurrentExpenseInput = {
+        ...body,
+        dueDate: new Date(body.dueDate),
+      };
+      const id = await service.execute(input);
 
       return NextResponse.json({ id });
     } catch (error) {
@@ -63,11 +55,14 @@ export async function PUT(req: NextRequest) {
     const service = api.resolve(UpdateRecurrentExpenseService);
 
     try {
-      const recurrentExpense = (await req.json()) as RecurrentExpenseModel;
-      recurrentExpense.dueDate = new Date(recurrentExpense.dueDate);
-      await service.execute(recurrentExpense);
+      const body = (await req.json()) as UpdateRecurrentExpenseInput;
+      const input: UpdateRecurrentExpenseInput = {
+        ...body,
+        dueDate: new Date(body.dueDate),
+      };
+      await service.execute(input);
 
-      return NextResponse.json({ id: recurrentExpense.id });
+      return NextResponse.json({ id: input.id });
     } catch (error) {
       const domainError = error as DomainError<unknown>;
       return new NextResponse(null, {

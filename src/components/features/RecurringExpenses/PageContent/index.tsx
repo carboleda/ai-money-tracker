@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import useSWR from "swr";
 import { RecurringExpensesTable } from "@/components/features/RecurringExpenses";
-import { GetRecurringExpensesResponse } from "@/interfaces/recurringExpense";
+import type { GetRecurrentExpensesOutput } from "@/app/api/domain/recurrent-expense/ports/outbound/get-recurrent-expenses.port";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { formatCurrency } from "@/config/utils";
 import { TransactionTypeDecorator } from "@/components/TransactionTypeDecorator";
@@ -22,7 +22,7 @@ function PageContent() {
   }, [t, setPageTitle]);
 
   const { isLoading, data: reesponse } = useSWR<
-    GetRecurringExpensesResponse,
+    GetRecurrentExpensesOutput,
     Error
   >("/api/recurring-expenses");
 

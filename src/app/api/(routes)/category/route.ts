@@ -139,7 +139,7 @@ export async function PUT(req: NextRequest) {
   });
 }
 
-export async function DELETE(req: NextRequest, res: NextResponse) {
+export async function DELETE(req: NextRequest) {
   return withUserContext(req, async () => {
     try {
       const id = await req.text();

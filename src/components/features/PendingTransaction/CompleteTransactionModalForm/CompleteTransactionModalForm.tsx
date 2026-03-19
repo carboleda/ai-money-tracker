@@ -78,6 +78,7 @@ export const CompleteTransactionModalForm: React.FC<
 
     const payload: UpdateTransactionInput = {
       ...item!,
+      category: item?.category?.ref,
       sourceAccount: selectedAccount,
       destinationAccount: item?.destinationAccount?.ref || "",
       amount: amountInput!,

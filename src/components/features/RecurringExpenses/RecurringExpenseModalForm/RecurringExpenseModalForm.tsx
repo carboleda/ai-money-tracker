@@ -17,7 +17,9 @@ import {
   startOfYear,
   endOfYear,
 } from "@internationalized/date";
-import { Frequency, RecurringExpense } from "@/interfaces/recurringExpense";
+import { Frequency } from "@/app/api/domain/recurrent-expense/model/recurrent-expense.model";
+import type { RecurrentExpenseOutput } from "@/app/api/domain/recurrent-expense/ports/outbound/get-recurrent-expenses.port";
+import type { CreateRecurrentExpenseInput } from "@/app/api/domain/recurrent-expense/ports/inbound/create-recurrent-expense.port";
 import { FrequencyDropdown } from "@/components/FrequencyDropdown";
 import { useMutateRecurringExpenses } from "@/hooks/useMutateRecurrentExpense";
 import { IconComment, IconLink } from "@/components/shared/icons";
@@ -36,7 +38,7 @@ const fixedMonth = parseAbsoluteToLocal(
 );
 
 interface RecurringExpenseModalFormProps {
-  item?: RecurringExpense;
+  item?: RecurrentExpenseOutput;
   isOpen: boolean;
   onDismiss: () => void;
 }
@@ -55,7 +57,7 @@ export const RecurringExpenseModalForm: React.FC<
   const [transactonCategoryInput, setTransactonCategoryInput] =
     useState<CategoryModel["ref"] | undefined>();
   const [frequencyInput, setFrequencyInput] = useState<Frequency>(
-    Frequency.Monthly
+    Frequency.MONTHLY
   );
   const [amountInput, setAmountInput] = useState<number>();
   const [dueDateInput, setDueDateInput] = useState<ZonedDateTime>();
@@ -70,7 +72,7 @@ export const RecurringExpenseModalForm: React.FC<
   useEffect(() => {
     if (item) {
       setDescriptionInput(item.description);
-      setTransactonCategoryInput(item.category);
+      setTransactonCategoryInput(item.category.ref);
       setFrequencyInput(item.frequency);
       setDueDateInput(
         item.dueDate ? parseAbsoluteToLocal(item.dueDate) : undefined
@@ -83,7 +85,7 @@ export const RecurringExpenseModalForm: React.FC<
   }, [item]);
 
   useEffect(() => {
-    if (frequencyInput === Frequency.Monthly) {
+    if (frequencyInput === Frequency.MONTHLY) {
       const min = startOfMonth(fixedMonth);
       const max = endOfMonth(fixedMonth);
       setDueDateMinMax({ min, max });
@@ -102,7 +104,7 @@ export const RecurringExpenseModalForm: React.FC<
   const clearInputs = () => {
     setDescriptionInput("");
     setTransactonCategoryInput(undefined);
-    setFrequencyInput(Frequency.Monthly);
+    setFrequencyInput(Frequency.MONTHLY);
     setDisabledInput(false);
     setDueDateInput(undefined);
     setAmountInput(0);
@@ -126,13 +128,13 @@ export const RecurringExpenseModalForm: React.FC<
     clearError();
 
     const isUpdate = !!item?.id;
-    const payload: Omit<RecurringExpense, "id"> = {
+    const payload: CreateRecurrentExpenseInput = {
       description: descriptionInput,
       frequency: frequencyInput,
-      dueDate: dueDateInput.toDate().toISOString(),
+      dueDate: dueDateInput.toDate(),
       disabled: disabledInput,
       amount: amountInput!,
-      category: transactonCategoryInput as RecurringExpense["category"],
+      category: transactonCategoryInput,
       paymentLink: paymentLinkInput,
       notes: notesInput,
     };

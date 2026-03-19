@@ -1,5 +1,6 @@
 import useSWRMutation from "swr/mutation";
-import { RecurringExpense } from "@/interfaces/recurringExpense";
+import type { CreateRecurrentExpenseInput } from "@/app/api/domain/recurrent-expense/ports/inbound/create-recurrent-expense.port";
+import type { UpdateRecurrentExpenseInput } from "@/app/api/domain/recurrent-expense/ports/inbound/update-recurrent-expense.port";
 import { sendRequest } from "@/config/request";
 
 const KEY = "/api/recurring-expenses";
@@ -7,7 +8,7 @@ const KEY = "/api/recurring-expenses";
 export const useMutateRecurringExpenses = () => {
   const { trigger, isMutating } = useSWRMutation(KEY, sendRequest(KEY));
 
-  const createConfig = async (config: Omit<RecurringExpense, "id">) => {
+  const createConfig = async (config: CreateRecurrentExpenseInput) => {
     return trigger({ method: "POST", body: JSON.stringify(config) }).then(
       (res) => {
         if (res.status !== 200) {
@@ -19,7 +20,7 @@ export const useMutateRecurringExpenses = () => {
     );
   };
 
-  const updateConfig = async (config: RecurringExpense) => {
+  const updateConfig = async (config: UpdateRecurrentExpenseInput) => {
     return trigger({ method: "PUT", body: JSON.stringify(config) }).then(
       (res) => {
         if (res.status !== 200) {

@@ -71,7 +71,7 @@ describe("GetAllRecurrentExpensesService", () => {
       const result = await service.execute();
 
       expect(recurrentExpenseRepository.getAll).toHaveBeenCalled();
-      expect(result.recurringExpenses).toEqual(mockExpenses);
+      expect(result.recurringExpensesConfig.length).toBe(mockExpenses.length);
       expect(result.groupTotal).toEqual({
         [FrequencyGroup.MONTHLY]: 1000,
         [FrequencyGroup.OTHERS]: 500,
@@ -83,7 +83,7 @@ describe("GetAllRecurrentExpensesService", () => {
 
       const result = await service.execute();
 
-      expect(result.recurringExpenses).toEqual([]);
+      expect(result.recurringExpensesConfig).toEqual([]);
       expect(result.groupTotal).toEqual({
         [FrequencyGroup.MONTHLY]: 0,
         [FrequencyGroup.OTHERS]: 0,

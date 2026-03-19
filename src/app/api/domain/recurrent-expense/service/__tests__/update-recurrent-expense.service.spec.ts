@@ -6,6 +6,7 @@ import {
   Frequency,
   RecurrentExpenseModel,
 } from "@/app/api/domain/recurrent-expense/model/recurrent-expense.model";
+import type { UpdateRecurrentExpenseInput } from "@/app/api/domain/recurrent-expense/ports/inbound/update-recurrent-expense.port";
 import { DomainError } from "@/app/api/domain/shared/errors/domain.error";
 import { getRepositoryToken } from "@/app/api/decorators/tsyringe.decorator";
 
@@ -34,7 +35,7 @@ describe("UpdateRecurrentExpenseService", () => {
   });
 
   it("should update a recurring expense successfully", async () => {
-    const input = new RecurrentExpenseModel({
+    const input: UpdateRecurrentExpenseInput = {
       id: "1",
       description: "Updated Monthly Rent",
       category: "Housing",
@@ -43,7 +44,7 @@ describe("UpdateRecurrentExpenseService", () => {
       amount: 1200,
       paymentLink: "https://example.com",
       notes: "Updated monthly rent payment",
-    });
+    };
 
     jest.spyOn(recurrentExpenseRepository, "update").mockResolvedValue();
 
@@ -59,14 +60,14 @@ describe("UpdateRecurrentExpenseService", () => {
   });
 
   it("should convert dueDate string to Date object", async () => {
-    const input = new RecurrentExpenseModel({
+    const input: UpdateRecurrentExpenseInput = {
       id: "1",
       description: "Monthly Rent",
       category: "Housing",
       frequency: Frequency.MONTHLY,
       dueDate: new Date("2024-01-01"),
       amount: 1000,
-    });
+    };
 
     jest.spyOn(recurrentExpenseRepository, "update").mockResolvedValue();
 
@@ -80,14 +81,14 @@ describe("UpdateRecurrentExpenseService", () => {
   });
 
   it("should throw error when ID is missing", async () => {
-    const input = new RecurrentExpenseModel({
+    const input: UpdateRecurrentExpenseInput = {
       id: "",
       description: "Monthly Rent",
       category: "Housing",
       frequency: Frequency.MONTHLY,
       dueDate: new Date("2024-01-01"),
       amount: 1000,
-    });
+    };
 
     await expect(service.execute(input)).rejects.toThrow(DomainError);
     await expect(service.execute(input)).rejects.toThrow(
@@ -96,14 +97,14 @@ describe("UpdateRecurrentExpenseService", () => {
   });
 
   it("should throw error when description is missing", async () => {
-    const input = new RecurrentExpenseModel({
+    const input: UpdateRecurrentExpenseInput = {
       id: "1",
       description: "",
       category: "Housing",
       frequency: Frequency.MONTHLY,
       dueDate: new Date("2024-01-01"),
       amount: 1000,
-    });
+    };
 
     await expect(service.execute(input)).rejects.toThrow(DomainError);
     await expect(service.execute(input)).rejects.toThrow(
@@ -112,14 +113,14 @@ describe("UpdateRecurrentExpenseService", () => {
   });
 
   it("should throw error when category is missing", async () => {
-    const input = new RecurrentExpenseModel({
+    const input: UpdateRecurrentExpenseInput = {
       id: "1",
       description: "Monthly Rent",
       category: "",
       frequency: Frequency.MONTHLY,
       dueDate: new Date("2024-01-01"),
       amount: 1000,
-    });
+    };
 
     await expect(service.execute(input)).rejects.toThrow(DomainError);
     await expect(service.execute(input)).rejects.toThrow(
@@ -128,14 +129,14 @@ describe("UpdateRecurrentExpenseService", () => {
   });
 
   it("should throw error when amount is zero", async () => {
-    const input = new RecurrentExpenseModel({
+    const input: UpdateRecurrentExpenseInput = {
       id: "1",
       description: "Monthly Rent",
       category: "Housing",
       frequency: Frequency.MONTHLY,
       dueDate: new Date("2024-01-01"),
       amount: 0,
-    });
+    };
 
     await expect(service.execute(input)).rejects.toThrow(DomainError);
     await expect(service.execute(input)).rejects.toThrow(
@@ -144,14 +145,14 @@ describe("UpdateRecurrentExpenseService", () => {
   });
 
   it("should throw error when amount is negative", async () => {
-    const input = new RecurrentExpenseModel({
+    const input: UpdateRecurrentExpenseInput = {
       id: "1",
       description: "Monthly Rent",
       category: "Housing",
       frequency: Frequency.MONTHLY,
       dueDate: new Date("2024-01-01"),
       amount: -100,
-    });
+    };
 
     await expect(service.execute(input)).rejects.toThrow(DomainError);
     await expect(service.execute(input)).rejects.toThrow(

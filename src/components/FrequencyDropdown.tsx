@@ -1,4 +1,4 @@
-import React, { use, useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   Dropdown,
   DropdownTrigger,
@@ -6,7 +6,8 @@ import {
   DropdownItem,
 } from "@heroui/dropdown";
 import { Button } from "@heroui/button";
-import { Frequency, frequencyOptions } from "@/interfaces/recurringExpense";
+import { Frequency } from "@/app/api/domain/recurrent-expense/model/recurrent-expense.model";
+import { frequencyOptions } from "@/interfaces/recurringExpense";
 import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
 
@@ -25,9 +26,9 @@ export const FrequencyDropdown: React.FC<FrequencyDropdownProps> = ({
   const selectedValue = useMemo(
     () =>
       Array.from(selectedKeys)
-        .map((key) => frequencyOptions[key] ?? "")
+        .map((key) => key ?? "")
         .join(", "),
-    [selectedKeys]
+    [selectedKeys],
   );
 
   useEffect(() => {
@@ -51,7 +52,7 @@ export const FrequencyDropdown: React.FC<FrequencyDropdownProps> = ({
         >
           <div className="text-start mh-5">
             <label className="text-xs text-default-600">{t("frequency")}</label>
-            <div>{selectedValue}</div>
+            <div>{t(selectedValue)}</div>
           </div>
         </Button>
       </DropdownTrigger>
@@ -63,13 +64,8 @@ export const FrequencyDropdown: React.FC<FrequencyDropdownProps> = ({
         selectedKeys={selectedKeys}
         onSelectionChange={onSelectionChange}
       >
-        {/* {frequencyLabels.map((label, index) => {
-          return (
-            <DropdownItem key={frequencyKeys[index]}>{label}</DropdownItem>
-          );
-        })} */}
-        {Object.entries(frequencyOptions).map(([key, label]) => {
-          return <DropdownItem key={key}>{label}</DropdownItem>;
+        {Object.keys(frequencyOptions).map((key) => {
+          return <DropdownItem key={key}>{t(key)}</DropdownItem>;
         })}
       </DropdownMenu>
     </Dropdown>

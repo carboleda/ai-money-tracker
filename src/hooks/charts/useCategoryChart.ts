@@ -1,8 +1,8 @@
 import {
   AgBarSeriesThemeableOptions,
   AgNodeClickEvent,
+  AgChartOptions,
 } from "ag-charts-community";
-import { AgChartOptions } from "ag-charts-community";
 import { CategorySummary } from "@/interfaces/summary";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
@@ -56,8 +56,8 @@ export const useCategoryChart = ({
         },
         listeners: {
           seriesNodeClick: (
-            event: AgNodeClickEvent<"seriesNodeClick", CategorySummary>
-          ) => onCategoryClick && onCategoryClick(event.datum),
+            event: AgNodeClickEvent<"seriesNodeClick", CategorySummary>,
+          ) => onCategoryClick?.(event.datum),
         },
       },
     ],

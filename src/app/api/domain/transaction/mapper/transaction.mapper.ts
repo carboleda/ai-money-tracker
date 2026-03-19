@@ -1,4 +1,4 @@
-import { AccountSummary, TransactionModel } from "../model/transaction.model";
+import { AccountSummary, CategorySummary, TransactionModel } from "../model/transaction.model";
 import { CreateTransactionInput } from "../ports/inbound/create-transaction.port";
 import { UpdateTransactionInput } from "../ports/inbound/update-transaction.port";
 import { TransactionOutput } from "../ports/outbound/filter-transactions.port";
@@ -23,9 +23,15 @@ export class TransactionMapper {
   }
 
   static toOutputPort(model: TransactionModel): TransactionOutput {
+    const category =
+      model.category !== undefined && typeof model.category === "object"
+        ? (model.category as CategorySummary)
+        : undefined;
+
     return {
       ...model,
       id: model.id!,
+      category,
       sourceAccount: model.sourceAccount,
       destinationAccount: model.destinationAccount,
       createdAt: model.createdAt.toISOString(),

@@ -72,7 +72,7 @@ export const CategoriesChart: React.FC<CategoriesChartProps> = ({
               </TableHeader>
               <TableBody>
                 {detail
-                  .filter((t) => t.category === selectedCategory.category)
+                  .filter((t) => t.category?.name === selectedCategory.category)
                   .map((transaction) => (
                     <TableRow key={transaction.id}>
                       <TableCell>{transaction.description}</TableCell>

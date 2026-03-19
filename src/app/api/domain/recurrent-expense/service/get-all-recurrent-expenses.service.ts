@@ -1,25 +1,34 @@
 import type { RecurrentExpenseRepository } from "../repository/recurrent-expense.repository";
-import { RecurrentExpenseModel, Frequency, FrequencyGroup } from "../model/recurrent-expense.model";
+import {
+  RecurrentExpenseModel,
+  Frequency,
+  FrequencyGroup,
+} from "../model/recurrent-expense.model";
 import {
   Injectable,
   InjectRepository,
 } from "@/app/api/decorators/tsyringe.decorator";
+import type { GetRecurrentExpensesOutput } from "../ports/outbound/get-recurrent-expenses.port";
+import { RecurrentExpenseMapper } from "../mapper/recurrent-expense.mapper";
+import { Service } from "@/app/api/domain/shared/ports/service.interface";
 
 @Injectable()
-export class GetAllRecurrentExpensesService {
+export class GetAllRecurrentExpensesService
+  implements Service<void, GetRecurrentExpensesOutput>
+{
   constructor(
     @InjectRepository(RecurrentExpenseModel)
     private readonly recurrentExpenseRepository: RecurrentExpenseRepository
   ) {}
 
-  async execute(): Promise<{
-    recurringExpenses: RecurrentExpenseModel[];
-    groupTotal: Record<FrequencyGroup, number>;
-  }> {
+  async execute(): Promise<GetRecurrentExpensesOutput> {
     const recurringExpenses = await this.recurrentExpenseRepository.getAll();
     const groupTotal = this.getGroupedTotal(recurringExpenses);
+    const recurringExpensesConfig = recurringExpenses.map(
+      RecurrentExpenseMapper.toOutputPort
+    );
 
-    return { recurringExpenses, groupTotal };
+    return { recurringExpensesConfig, groupTotal };
   }
 
   private getGroupedTotal(

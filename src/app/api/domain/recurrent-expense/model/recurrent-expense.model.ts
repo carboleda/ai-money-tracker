@@ -9,10 +9,12 @@ export enum FrequencyGroup {
   OTHERS = "others",
 }
 
+import type { CategorySummary } from "@/app/api/domain/transaction/model/transaction.model";
+
 export class RecurrentExpenseModel {
   id: string;
   description: string;
-  category: string;
+  category: CategorySummary | string;
   frequency: Frequency;
   dueDate: Date;
   disabled: boolean;
@@ -23,7 +25,7 @@ export class RecurrentExpenseModel {
   constructor(params: {
     id: string;
     description: string;
-    category: string;
+    category: CategorySummary | string;
     frequency: Frequency;
     dueDate: Date;
     disabled?: boolean;

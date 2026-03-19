@@ -38,6 +38,9 @@
   "bankAccount": "Bank account",
   "itemDeleted": "Item deleted successfully",
   "globalBalance": "Global Balance",
+  "monthly": "Monthly",
+  "biannual": "Biannual",
+  "yearly": "Yearly",
   "notificationsRequest": {
     "title": "Zolvent wants to keep you informed! 🔔",
     "description": "To provide you with real-time alerts and reminders about your spending, income, and financial goals, we need your permission to send push notifications. This will help you:",
