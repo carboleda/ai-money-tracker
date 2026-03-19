@@ -3,7 +3,7 @@ import {
   TransactionModel,
   TransactionStatus,
   TransactionType,
-  TransactionCategory,
+  CategorySummary,
 } from "@/app/api/domain/transaction/model/transaction.model";
 import { RecurringVsVariableDto } from "../model/recurring-vs-variable.dto";
 
@@ -19,13 +19,16 @@ export class CalculateRecurringVsVariableService {
       variableTotal: 0,
     };
 
-    const recurringCategories = new Set([TransactionCategory.Mercado]);
+    // TODO This is a naive implementation, we should ideally have a more robust way to determine if a transaction
+    // is recurrent or variable, such as linking transactions to recurring expense templates.
+    // For now, we'll use a simple heuristic based on transaction properties and categories.
+    const recurringCategories = new Set(["GROCERIES"]);
 
-    const isRecurrent = (transaction: TransactionModel): boolean =>
+    const isRecurring = (transaction: TransactionModel): boolean =>
       transaction.status === TransactionStatus.COMPLETE &&
       transaction.type === TransactionType.EXPENSE &&
       (transaction.isRecurrent ||
-        recurringCategories.has(transaction.category as TransactionCategory));
+        recurringCategories.has((transaction.category as CategorySummary).ref));
 
     const summary = transactions.reduce((acc, transaction) => {
       if (
@@ -35,7 +38,7 @@ export class CalculateRecurringVsVariableService {
         return acc;
       }
 
-      if (isRecurrent(transaction)) {
+      if (isRecurring(transaction)) {
         acc.recurringCount++;
         acc.recurringTotal += transaction.amount;
       } else {

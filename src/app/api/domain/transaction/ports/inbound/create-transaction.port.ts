@@ -1,5 +1,4 @@
 import {
-  TransactionCategory,
   TransactionStatus,
   TransactionType,
 } from "@/app/api/domain/transaction/model/transaction.model";
@@ -10,7 +9,7 @@ export interface CreateTransactionInput {
   notes?: string;
   type: TransactionType;
   status: TransactionStatus;
-  category?: TransactionCategory | string;
+  category?: string;
   sourceAccount: string;
   destinationAccount?: string;
   amount: number;

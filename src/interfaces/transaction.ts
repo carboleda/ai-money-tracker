@@ -1,4 +1,3 @@
-import { TransactionCategory } from "@/app/api/domain/transaction/model/transaction.model";
 import { TransactionOutput } from "@/app/api/domain/transaction/ports/outbound/filter-transactions.port";
 import { TransactionEntity } from "@/app/api/drivers/firestore/transaction/transaction.entity";
 
@@ -41,10 +40,3 @@ export interface GetTransactionsResponse {
   transactions: TransactionOutput[];
   summary: Summary;
 }
-
-export const transactionCategoryOptions = Object.entries(TransactionCategory).reduce(
-  (acc, [_key, value]) => {
-    return [...acc, { value: value, label: value }];
-  },
-  [] as Record<string, string>[]
-);

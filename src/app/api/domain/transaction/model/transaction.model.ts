@@ -9,25 +9,6 @@ export enum TransactionStatus {
   COMPLETE = "complete",
 }
 
-export enum TransactionCategory {
-  Salario = "Salario",
-  PagoTC = "Pago TC",
-  Alimentos = "Alimentos",
-  Mercado = "Mercado",
-  Educacion = "Educación",
-  Inversion = "Inversión",
-  Salud = "Salud",
-  Servicios = "Servicios",
-  Transporte = "Transporte",
-  Vivienda = "Vivienda",
-  Bebe = "Bebé",
-  Zeus = "Zeus",
-  Ocio = "Ocio",
-  Impuesto = "Impuesto",
-  Retiros = "Retiros",
-  Vestuario = "Vestuario",
-  Otros = "Otros",
-}
 
 export type AccountSummary = {
   ref: string;
@@ -50,7 +31,7 @@ export class TransactionModel {
   notes?: string;
   type: TransactionType;
   status: TransactionStatus;
-  category?: CategorySummary | TransactionCategory | string;
+  category?: CategorySummary | string;
   sourceAccount: AccountSummary;
   destinationAccount?: AccountSummary;
   amount: number;
@@ -64,7 +45,7 @@ export class TransactionModel {
     notes?: string;
     type: TransactionType;
     status: TransactionStatus;
-    category?: CategorySummary | TransactionCategory | string;
+    category?: CategorySummary | string;
     sourceAccount: AccountSummary;
     destinationAccount?: AccountSummary;
     amount: number;
