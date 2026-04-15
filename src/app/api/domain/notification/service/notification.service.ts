@@ -4,6 +4,7 @@ import type {
   SendMessageRequest,
 } from "@/app/api/domain/shared/ports/messaging.interface";
 import { NotificationModel } from "../model/notification.model";
+import { NullifyStaleTokensService } from "@/app/api/domain/user/service/nullify-stale-tokens.service";
 
 interface NotificationResult {
   success: boolean;
@@ -24,13 +25,14 @@ export class NotificationService {
 
   constructor(
     @Inject("MessagingService")
-    private readonly messagingService: MessagingService
-  ) { }
+    private readonly messagingService: MessagingService,
+    private readonly nullifyStaleTokensService: NullifyStaleTokensService,
+  ) {}
 
   async sendNotification(
     userId: string,
     fcmToken: string,
-    notification: NotificationModel
+    notification: NotificationModel,
   ): Promise<NotificationResult> {
     try {
       const response = await this.messagingService.sendMessage({
@@ -42,6 +44,10 @@ export class NotificationService {
         extraData: notification.extraData,
       });
 
+      if (response.isTokenInvalid && response.token) {
+        await this.nullifyStaleTokensService.execute([response.token]);
+      }
+
       return {
         success: response.success,
         messageId: response.messageId,
@@ -49,7 +55,7 @@ export class NotificationService {
     } catch (error) {
       console.error(
         `${this.logPrefix} Failed to send notification to user ${userId}:`,
-        error
+        error,
       );
       return {
         success: false,
@@ -63,7 +69,7 @@ export class NotificationService {
       userId: string;
       fcmToken: string;
       notification: NotificationModel;
-    }>
+    }>,
   ): Promise<BulkNotificationResult> {
     const requests = notifications.map(
       (item): SendMessageRequest => ({
@@ -73,12 +79,23 @@ export class NotificationService {
           body: item.notification.body,
         },
         extraData: item.notification.extraData,
-      })
+      }),
     );
 
-    const responses = await this.messagingService.sendMultipleMessages(
-      requests
-    );
+    const responses =
+      await this.messagingService.sendMultipleMessages(requests);
+
+    // Collect all permanently-invalid tokens and clean them up in one batch.
+    const staleTokens = responses
+      .filter((r) => r.isTokenInvalid && r.token)
+      .map((r) => r.token as string);
+
+    if (staleTokens.length) {
+      console.log(
+        `${this.logPrefix} Scheduling cleanup for ${staleTokens.length} stale token(s).`,
+      );
+      await this.nullifyStaleTokensService.execute(staleTokens);
+    }
 
     const results: NotificationResult[] = responses.map((response) => ({
       success: response.success,

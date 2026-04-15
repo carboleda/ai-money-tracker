@@ -3,10 +3,12 @@ import { container } from "tsyringe";
 import { NotificationService } from "../notification.service";
 import { MessagingService } from "@/app/api/domain/shared/ports/messaging.interface";
 import { NotificationModel } from "../../model/notification.model";
+import { NullifyStaleTokensService } from "@/app/api/domain/user/service/nullify-stale-tokens.service";
 
 describe("NotificationService", () => {
   let service: NotificationService;
   let messagingService: jest.Mocked<MessagingService>;
+  let nullifyStaleTokensService: jest.Mocked<NullifyStaleTokensService>;
 
   beforeEach(() => {
     // Create a child container for each test
@@ -17,14 +19,23 @@ describe("NotificationService", () => {
       sendMultipleMessages: jest.fn(),
     };
 
+    const mockNullifyStaleTokensService = {
+      execute: jest.fn().mockResolvedValue(undefined),
+    } as unknown as jest.Mocked<NullifyStaleTokensService>;
+
     // Register mocks in the test container
     testContainer.register<MessagingService>("MessagingService", {
       useValue: mockMessagingService,
     });
 
+    testContainer.register(NullifyStaleTokensService, {
+      useValue: mockNullifyStaleTokensService,
+    });
+
     // Resolve the service from the test container
     service = testContainer.resolve(NotificationService);
     messagingService = mockMessagingService as jest.Mocked<MessagingService>;
+    nullifyStaleTokensService = mockNullifyStaleTokensService;
   });
 
   afterEach(() => {
@@ -123,6 +134,36 @@ describe("NotificationService", () => {
         error: "Network error",
       });
     });
+
+    it("should nullify stale token when sendMessage returns isTokenInvalid", async () => {
+      // Arrange
+      const userId = "user123";
+      const fcmToken = "stale-token";
+      const notification = new NotificationModel({
+        title: "Test Title",
+        body: "Test Body",
+      });
+
+      messagingService.sendMessage.mockResolvedValue({
+        success: false,
+        messageId: "",
+        token: fcmToken,
+        isTokenInvalid: true,
+      });
+
+      // Act
+      const result = await service.sendNotification(
+        userId,
+        fcmToken,
+        notification,
+      );
+
+      // Assert
+      expect(result).toEqual({ success: false, messageId: "" });
+      expect(nullifyStaleTokensService.execute).toHaveBeenCalledWith([
+        fcmToken,
+      ]);
+    });
   });
 
   describe("sendBulkNotifications", () => {
@@ -218,6 +259,83 @@ describe("NotificationService", () => {
           { success: false, messageId: "" },
         ],
       });
+    });
+
+    it("should nullify stale tokens found in bulk send results", async () => {
+      // Arrange
+      const notifications = [
+        {
+          userId: "user1",
+          fcmToken: "token1",
+          notification: new NotificationModel({ title: "T1", body: "B1" }),
+        },
+        {
+          userId: "user2",
+          fcmToken: "stale-token2",
+          notification: new NotificationModel({ title: "T2", body: "B2" }),
+        },
+        {
+          userId: "user3",
+          fcmToken: "stale-token3",
+          notification: new NotificationModel({ title: "T3", body: "B3" }),
+        },
+      ];
+
+      messagingService.sendMultipleMessages.mockResolvedValue([
+        { success: true, messageId: "msg1", token: "token1" },
+        {
+          success: false,
+          messageId: "",
+          token: "stale-token2",
+          isTokenInvalid: true,
+        },
+        {
+          success: false,
+          messageId: "",
+          token: "stale-token3",
+          isTokenInvalid: true,
+        },
+      ]);
+
+      // Act
+      const result = await service.sendBulkNotifications(notifications);
+
+      // Assert
+      expect(nullifyStaleTokensService.execute).toHaveBeenCalledWith([
+        "stale-token2",
+        "stale-token3",
+      ]);
+      expect(result).toEqual({
+        totalSent: 3,
+        successful: 1,
+        failed: 2,
+        results: [
+          { success: true, messageId: "msg1" },
+          { success: false, messageId: "" },
+          { success: false, messageId: "" },
+        ],
+      });
+    });
+
+    it("should not call nullify when no stale tokens are found", async () => {
+      // Arrange
+      const notifications = [
+        {
+          userId: "user1",
+          fcmToken: "token1",
+          notification: new NotificationModel({ title: "T1", body: "B1" }),
+        },
+      ];
+
+      messagingService.sendMultipleMessages.mockResolvedValue([
+        { success: true, messageId: "msg1", token: "token1" },
+      ]);
+
+      // Act
+      await service.sendBulkNotifications(notifications);
+
+      // Assert
+      expect(nullifyStaleTokensService.execute).not.toHaveBeenCalled();
     });
 
     it("should handle empty notifications array", async () => {

@@ -16,6 +16,10 @@ export interface SendMessageRequest {
 export interface SendMessageResponse {
   messageId: string;
   success: boolean;
+  /** The FCM token that was used for this send attempt. */
+  token?: string;
+  /** True when FCM rejected the token as permanently invalid (e.g. app uninstalled, token rotated). */
+  isTokenInvalid?: boolean;
 }
 
 export interface MessagingService {

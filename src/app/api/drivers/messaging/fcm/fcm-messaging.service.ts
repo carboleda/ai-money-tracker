@@ -10,6 +10,12 @@ import {
 export class FcmMessagingService implements MessagingService {
   private readonly logPrefix = `[${FcmMessagingService.name}]`;
 
+  /** FCM error codes that indicate the token is permanently invalid and should be removed. */
+  private static readonly INVALID_TOKEN_CODES = new Set([
+    "messaging/registration-token-not-registered",
+    "messaging/invalid-registration-token",
+  ]);
+
   async sendMessage(request: SendMessageRequest): Promise<SendMessageResponse> {
     try {
       const messaging = getMessaging();
@@ -25,13 +31,10 @@ export class FcmMessagingService implements MessagingService {
       return {
         messageId,
         success: true,
+        token,
       };
     } catch (error) {
-      console.error(`${this.logPrefix} Failed to send FCM message:`, error);
-      return {
-        messageId: "",
-        success: false,
-      };
+      return this.handleSendError(error, request.token);
     }
   }
 
@@ -52,5 +55,26 @@ export class FcmMessagingService implements MessagingService {
         success: false,
       };
     });
+  }
+
+  private handleSendError(error: unknown, token: string): SendMessageResponse {
+    const code = (error as { code?: string }).code ?? "";
+    const isTokenInvalid = FcmMessagingService.INVALID_TOKEN_CODES.has(code);
+
+    if (isTokenInvalid) {
+      console.warn(
+        `${this.logPrefix} Stale FCM token detected (${code}):`,
+        token
+      );
+    } else {
+      console.error(`${this.logPrefix} Failed to send FCM message:`, error);
+    }
+
+    return {
+      messageId: "",
+      success: false,
+      token,
+      isTokenInvalid,
+    };
   }
 }
