@@ -75,6 +75,38 @@ export class UserFirestoreRepository
     });
   }
 
+  async nullifyStaleTokens(fcmTokens: string[]): Promise<void> {
+    if (!fcmTokens.length) return;
+
+    const { id } = this.getUserContext();
+    const docRef = this.firestore.collection(Collections.Users).doc(id);
+    const doc = await docRef.get();
+
+    if (!doc.exists) return;
+
+    const staleSet = new Set(fcmTokens);
+    const devices: UserDeviceEntity[] = (doc.data() as UserEntity).devices || [];
+    const batch = this.firestore.batch();
+    let operationCount = 0;
+
+    devices.forEach((device, index) => {
+      if (device.fcmToken && staleSet.has(device.fcmToken)) {
+        batch.update(docRef, {
+          [`devices.${index}.fcmToken`]: null,
+          [`devices.${index}.updatedAt`]: Timestamp.now(),
+        });
+        operationCount++;
+      }
+    });
+
+    if (operationCount > 0) {
+      await batch.commit();
+      console.log(
+        `[UserFirestoreRepository] Nullified ${operationCount} stale FCM token(s) in a single batch write.`
+      );
+    }
+  }
+
   private mergeDevices(
     existingDevices: UserDeviceEntity[],
     newDevices: UserDeviceModel[]

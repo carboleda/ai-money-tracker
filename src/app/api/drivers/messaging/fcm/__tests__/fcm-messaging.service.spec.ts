@@ -67,6 +67,7 @@ describe("FcmMessagingService", () => {
       expect(result).toEqual({
         messageId: expectedMessageId,
         success: true,
+        token: "fcm-token-123",
       });
     });
 
@@ -91,8 +92,39 @@ describe("FcmMessagingService", () => {
       expect(result).toEqual({
         messageId: "",
         success: false,
+        token: "invalid-token",
+        isTokenInvalid: false,
       });
     });
+
+    it.each([
+      "messaging/registration-token-not-registered",
+      "messaging/invalid-registration-token",
+    ])(
+      "should set isTokenInvalid=true for %s error code",
+      async (errorCode) => {
+        // Arrange
+        const request = {
+          token: "stale-token",
+          notification: { title: "T", body: "B" },
+          extraData: {},
+        };
+
+        const error = Object.assign(new Error(errorCode), { code: errorCode });
+        mockMessaging.send.mockRejectedValue(error);
+
+        // Act
+        const result = await service.sendMessage(request);
+
+        // Assert
+        expect(result).toEqual({
+          messageId: "",
+          success: false,
+          token: "stale-token",
+          isTokenInvalid: true,
+        });
+      }
+    );
 
     it("should handle message with no extra data", async () => {
       // Arrange
@@ -122,6 +154,7 @@ describe("FcmMessagingService", () => {
       expect(result).toEqual({
         messageId: expectedMessageId,
         success: true,
+        token: "fcm-token-123",
       });
     });
 
@@ -183,8 +216,8 @@ describe("FcmMessagingService", () => {
       // Assert
       expect(mockMessaging.send).toHaveBeenCalledTimes(2);
       expect(results).toEqual([
-        { messageId: "msg-id-1", success: true },
-        { messageId: "msg-id-2", success: true },
+        { messageId: "msg-id-1", success: true, token: "token1" },
+        { messageId: "msg-id-2", success: true, token: "token2" },
       ]);
     });
 
@@ -212,8 +245,8 @@ describe("FcmMessagingService", () => {
 
       // Assert
       expect(results).toEqual([
-        { messageId: "msg-id-1", success: true },
-        { messageId: "", success: false },
+        { messageId: "msg-id-1", success: true, token: "valid-token" },
+        { messageId: "", success: false, token: "invalid-token", isTokenInvalid: false },
       ]);
     });
 
@@ -241,8 +274,8 @@ describe("FcmMessagingService", () => {
 
       // Assert
       expect(results).toEqual([
-        { messageId: "", success: false },
-        { messageId: "", success: false },
+        { messageId: "", success: false, token: "invalid-token-1", isTokenInvalid: false },
+        { messageId: "", success: false, token: "invalid-token-2", isTokenInvalid: false },
       ]);
     });
 
@@ -292,9 +325,9 @@ describe("FcmMessagingService", () => {
 
       // Assert
       expect(results).toEqual([
-        { messageId: "msg-1", success: true },
-        { messageId: "", success: false },
-        { messageId: "msg-3", success: true },
+        { messageId: "msg-1", success: true, token: "token1" },
+        { messageId: "", success: false, token: "token2", isTokenInvalid: false },
+        { messageId: "msg-3", success: true, token: "token3" },
       ]);
       expect(mockMessaging.send).toHaveBeenCalledTimes(3);
     });
