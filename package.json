@@ -14,7 +14,8 @@
     "test": "jest --coverage",
     "test:watch": "jest --watch --coverage",
     "start": "next start",
-    "lint": "eslint src --ext .ts,.tsx,.js,.jsx"
+    "lint": "tsc --noEmit && eslint src --ext .ts,.tsx,.js,.jsx",
+    "gen:api": "openapi-gen generate"
   },
   "dependencies": {
     "@genkit-ai/googleai": "^1.21.0",
@@ -104,6 +105,7 @@
     "jest": "^30.2.0",
     "minimist": "^1.2.8",
     "mkdirp": "^3.0.1",
+    "next-openapi-gen": "^1.0.7",
     "ts-jest": "^29.4.5",
     "typescript": "5.9.3"
   },
