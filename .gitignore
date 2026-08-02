@@ -46,3 +46,5 @@ public/swEnv.js
 # AI
 .agents
 openspec
+.opencode/package-lock.json
+opencode.json
