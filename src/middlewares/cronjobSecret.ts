@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import vercelJson from "../../vercel.json" assert { type: "json" };
+import vercelJson from "../../vercel.json" with { type: "json" };
 
 export async function cronjobSecretMiddleware(
   request: NextRequest
