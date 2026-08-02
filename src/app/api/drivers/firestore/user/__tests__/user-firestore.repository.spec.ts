@@ -197,4 +197,88 @@ describe("UserFirestoreRepository", () => {
       expect(result).toHaveLength(0);
     });
   });
+
+  describe("nullifyStaleTokens", () => {
+    it("should do nothing when no fcmTokens are provided", async () => {
+      const docMock = jest.fn();
+      (firestore.collection as jest.Mock).mockReturnValue({ doc: docMock });
+
+      await repository.nullifyStaleTokens([]);
+
+      expect(docMock).not.toHaveBeenCalled();
+    });
+
+    it("should do nothing when the user does not exist", async () => {
+      const updateMock = jest.fn();
+      const getMock = jest.fn().mockResolvedValue({ exists: false });
+      const docMock = jest.fn().mockReturnValue({
+        get: getMock,
+        update: updateMock,
+      });
+      (firestore.collection as jest.Mock).mockReturnValue({ doc: docMock });
+
+      await repository.nullifyStaleTokens(["stale-token"]);
+
+      expect(updateMock).not.toHaveBeenCalled();
+    });
+
+    it("should keep devices as an array and only nullify matching tokens", async () => {
+      const updateMock = jest.fn().mockResolvedValue(undefined);
+      const mockDoc = {
+        exists: true,
+        data: () => ({
+          devices: [
+            { deviceId: "device-1", fcmToken: "stale-token" },
+            { deviceId: "device-2", fcmToken: "fresh-token" },
+          ],
+        }),
+      };
+      const getMock = jest.fn().mockResolvedValue(mockDoc);
+      const docMock = jest.fn().mockReturnValue({
+        get: getMock,
+        update: updateMock,
+      });
+      (firestore.collection as jest.Mock).mockReturnValue({ doc: docMock });
+
+      await repository.nullifyStaleTokens(["stale-token"]);
+
+      expect(updateMock).toHaveBeenCalledTimes(1);
+      const [updatePayload] = updateMock.mock.calls[0];
+
+      // Regression guard: devices must stay a real array, never dot-path
+      // keys like "devices.0.fcmToken" that Firestore would coerce into a map.
+      expect(Array.isArray(updatePayload.devices)).toBe(true);
+      expect(Object.keys(updatePayload)).toEqual(["devices"]);
+      expect(updatePayload.devices).toEqual([
+        expect.objectContaining({
+          deviceId: "device-1",
+          fcmToken: null,
+        }),
+        expect.objectContaining({
+          deviceId: "device-2",
+          fcmToken: "fresh-token",
+        }),
+      ]);
+    });
+
+    it("should not call update when no device matches a stale token", async () => {
+      const updateMock = jest.fn();
+      const mockDoc = {
+        exists: true,
+        data: () => ({
+          devices: [{ deviceId: "device-1", fcmToken: "fresh-token" }],
+        }),
+      };
+      const getMock = jest.fn().mockResolvedValue(mockDoc);
+      const docMock = jest.fn().mockReturnValue({
+        get: getMock,
+        update: updateMock,
+      });
+      (firestore.collection as jest.Mock).mockReturnValue({ doc: docMock });
+
+      await repository.nullifyStaleTokens(["stale-token"]);
+
+      expect(updateMock).not.toHaveBeenCalled();
+    });
+  });
 });

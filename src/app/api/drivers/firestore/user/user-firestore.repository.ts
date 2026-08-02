@@ -86,23 +86,24 @@ export class UserFirestoreRepository
 
     const staleSet = new Set(fcmTokens);
     const devices: UserDeviceEntity[] = (doc.data() as UserEntity).devices || [];
-    const batch = this.firestore.batch();
     let operationCount = 0;
 
-    devices.forEach((device, index) => {
+    const updatedDevices = devices.map((device) => {
       if (device.fcmToken && staleSet.has(device.fcmToken)) {
-        batch.update(docRef, {
-          [`devices.${index}.fcmToken`]: null,
-          [`devices.${index}.updatedAt`]: Timestamp.now(),
-        });
         operationCount++;
+        return {
+          ...device,
+          fcmToken: null,
+          updatedAt: Timestamp.now(),
+        };
       }
+      return device;
     });
 
     if (operationCount > 0) {
-      await batch.commit();
+      await docRef.update({ devices: updatedDevices });
       console.log(
-        `[UserFirestoreRepository] Nullified ${operationCount} stale FCM token(s) in a single batch write.`
+        `[UserFirestoreRepository] Nullified ${operationCount} stale FCM token(s).`
       );
     }
   }
@@ -111,7 +112,7 @@ export class UserFirestoreRepository
     existingDevices: UserDeviceEntity[],
     newDevices: UserDeviceModel[]
   ): UserDeviceEntity[] {
-    if (!existingDevices) return newDevices as UserDeviceEntity[];
+    if (!existingDevices) return newDevices;
 
     // Update existing devices or keep them as-is
     const merged = existingDevices.map((ed) => {

@@ -14,7 +14,8 @@
     "test": "jest --coverage",
     "test:watch": "jest --watch --coverage",
     "start": "next start",
-    "lint": "eslint src --ext .ts,.tsx,.js,.jsx"
+    "lint": "next typegen && tsc --noEmit && eslint src --ext .ts,.tsx,.js,.jsx",
+    "gen:api": "openapi-gen generate"
   },
   "dependencies": {
     "@genkit-ai/googleai": "^1.21.0",
@@ -40,7 +41,7 @@
     "@heroui/system": "2.4.23",
     "@heroui/table": "2.2.27",
     "@heroui/tabs": "2.2.24",
-    "@heroui/theme": "2.4.23",
+    "@heroui/theme": "2.4.26",
     "@heroui/toast": "^2.0.17",
     "@heroui/user": "^2.2.22",
     "@react-aria/ssr": "^3.9.10",
@@ -59,7 +60,7 @@
     "eslint-config-next": "^15.5.6",
     "firebase": "^10.13.1",
     "firebase-admin": "^12.4.0",
-    "framer-motion": "12.23.24",
+    "framer-motion": "^12.43.0",
     "genkit": "^1.21.0",
     "i18next": "^24.2.0",
     "i18next-browser-languagedetector": "^8.2.0",
@@ -104,6 +105,7 @@
     "jest": "^30.2.0",
     "minimist": "^1.2.8",
     "mkdirp": "^3.0.1",
+    "next-openapi-gen": "^1.0.7",
     "ts-jest": "^29.4.5",
     "typescript": "5.9.3"
   },

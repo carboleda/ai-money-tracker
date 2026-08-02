@@ -30,6 +30,7 @@ yarn-error.log*
 
 # vercel
 .vercel
+.openapi-gen
 
 # firebase
 .genkit
@@ -41,3 +42,9 @@ next-env.d.ts
 
 certificates
 public/swEnv.js
+
+# AI
+.agents
+openspec
+.opencode/package-lock.json
+opencode.json

@@ -34,6 +34,7 @@ Showcase the power of Gen AI by generating transactions entries from text inputs
     - [Generate Favicon](https://realfavicongenerator.net/your-favicon-is-ready)
 - [Firestore Admin - Compound queries](https://cloud.google.com/firestore/docs/query-data/queries#compound_and_queries)
 - [i18n with Next.js 13/14 and app directory / App Router](https://locize.com/blog/next-app-dir-i18n/#step-5)
+- [Next.js OpenAPI Generator](https://github.com/tazo90/next-openapi-gen)
 
 ## How to Use
 
