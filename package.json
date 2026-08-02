@@ -14,7 +14,7 @@
     "test": "jest --coverage",
     "test:watch": "jest --watch --coverage",
     "start": "next start",
-    "lint": "tsc --noEmit && eslint src --ext .ts,.tsx,.js,.jsx",
+    "lint": "next typegen && tsc --noEmit && eslint src --ext .ts,.tsx,.js,.jsx",
     "gen:api": "openapi-gen generate"
   },
   "dependencies": {
