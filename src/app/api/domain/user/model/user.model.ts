@@ -1,7 +1,7 @@
 export interface UserDeviceModel {
   deviceId: string;
   deviceName: string;
-  fcmToken?: string;
+  fcmToken?: string | null;
 }
 
 export class UserModel {
