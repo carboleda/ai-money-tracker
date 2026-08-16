@@ -21,18 +21,11 @@ import type { UserContext } from "@/app/api/context/user-context";
 import type { AccountRepository } from "@/app/api/domain/account/repository/account.repository";
 import type { CategoryRepository } from "@/app/api/domain/category/repository/category.repository";
 import { AccountModel } from "@/app/api/domain/account/model/account.model";
-import { CategoryModel } from "@/app/api/domain/category/model/category.model";
-import * as fs from "node:fs";
-import * as path from "node:path";
-
-interface PredefinedCategory {
-  ref: string;
-  name: string;
-  icon: string;
-  color: string;
-  type: string;
-  description: string;
-}
+import {
+  CategoryModel,
+  PredefinedCategory,
+} from "@/app/api/domain/category/model/category.model";
+import { loadPredefinedCategoryMap } from "@/app/api/drivers/firestore/category/predefined-category.helper";
 
 @Injectable()
 export class TransactionFirestoreRepository
@@ -40,7 +33,7 @@ export class TransactionFirestoreRepository
   implements TransactionRepository
 {
   private readonly predefinedCategoryMap: Map<string, PredefinedCategory> =
-    new Map();
+    loadPredefinedCategoryMap();
 
   constructor(
     @Inject(Firestore) firestore: Firestore,
@@ -51,24 +44,6 @@ export class TransactionFirestoreRepository
     private readonly categoryRepository: CategoryRepository
   ) {
     super(Collections.Transactions, firestore, userContext);
-    this.loadPredefinedCategories();
-  }
-
-  private loadPredefinedCategories(): void {
-    try {
-      const filePath = path.join(
-        process.cwd(),
-        "src/config/predefined-categories.json"
-      );
-      const jsonData = fs.readFileSync(filePath, "utf-8");
-      const categories: PredefinedCategory[] = JSON.parse(jsonData);
-
-      categories.forEach((cat) => {
-        this.predefinedCategoryMap.set(cat.ref, cat);
-      });
-    } catch (error) {
-      console.error("Failed to load predefined categories:", error);
-    }
   }
 
   /**

@@ -1,21 +1,11 @@
 import type { CategoryRepository } from "../repository/category.repository";
-import { CategoryModel, CategoryType } from "../model/category.model";
+import { CategoryModel, PredefinedCategory } from "../model/category.model";
 import { Service } from "@/app/api/domain/shared/ports/service.interface";
 import {
   InjectRepository,
   Injectable,
 } from "@/app/api/decorators/tsyringe.decorator";
-import * as fs from "node:fs";
-import * as path from "node:path";
-
-interface PredefinedCategory {
-  ref: string;
-  name: string;
-  icon: string;
-  color: string;
-  type: CategoryType;
-  description: string;
-}
+import predefinedCategoriesJson from "@/config/predefined-categories.json";
 
 @Injectable()
 export class GetAllCategoriesService implements Service<void, CategoryModel[]> {
@@ -29,34 +19,24 @@ export class GetAllCategoriesService implements Service<void, CategoryModel[]> {
   }
 
   private loadPredefinedCategories(): void {
-    try {
-      const filePath = path.join(
-        process.cwd(),
-        "src/config/predefined-categories.json"
-      );
-      const jsonData = fs.readFileSync(filePath, "utf-8");
-      const categories: PredefinedCategory[] = JSON.parse(jsonData);
+    const categories = predefinedCategoriesJson as PredefinedCategory[];
 
-      this.predefinedCategories = categories.map(
-        (cat, index) =>
-          new CategoryModel({
-            id: null,
-            ref: cat.ref,
-            name: cat.name,
-            icon: cat.icon,
-            color: cat.color,
-            type: cat.type,
-            description: cat.description,
-            isCustom: false,
-            isDeleted: false,
-            createdAt: new Date(),
-            updatedAt: new Date(),
-          })
-      );
-    } catch (error) {
-      console.error("Failed to load predefined categories:", error);
-      this.predefinedCategories = [];
-    }
+    this.predefinedCategories = categories.map(
+      (cat) =>
+        new CategoryModel({
+          id: null,
+          ref: cat.ref,
+          name: cat.name,
+          icon: cat.icon,
+          color: cat.color,
+          type: cat.type,
+          description: cat.description,
+          isCustom: false,
+          isDeleted: false,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        })
+    );
   }
 
   async execute(): Promise<CategoryModel[]> {

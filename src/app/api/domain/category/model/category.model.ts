@@ -9,6 +9,15 @@ export type CategoryBudget = {
   alertThreshold?: number;
 };
 
+export interface PredefinedCategory {
+  ref: string;
+  name: string;
+  icon: string;
+  color: string;
+  type: CategoryType;
+  description: string;
+}
+
 export class CategoryModel {
   id: string | null;
   ref: string;
