@@ -6,7 +6,7 @@ import { GetAllAccountsService } from "@/app/api/domain/account/service/get-all.
 import { GetSummaryHistoryService } from "../get-summary-history.service";
 import { CalculateCategorySummaryService } from "../calculate-category-summary.service";
 import { CalculateTypeSummaryService } from "../calculate-type-summary.service";
-import { CalculateRecurrentVsVariableService } from "../calculate-recurrent-vs-variable.service";
+import { CalculateRecurringVsVariableService } from "../calculate-recurring-vs-variable.service";
 import { CalculateBalanceService } from "../calculate-balance.service";
 import {
   TransactionStatus,
@@ -22,7 +22,7 @@ describe("CalculateSummaryDashboardService", () => {
   let getSummaryHistoryService: jest.Mocked<GetSummaryHistoryService>;
   let calculateCategorySummaryService: jest.Mocked<CalculateCategorySummaryService>;
   let calculateTypeSummaryService: jest.Mocked<CalculateTypeSummaryService>;
-  let calculateRecurrentVsVariableService: jest.Mocked<CalculateRecurrentVsVariableService>;
+  let calculateRecurringVsVariableService: jest.Mocked<CalculateRecurringVsVariableService>;
   let calculateBalanceService: jest.Mocked<CalculateBalanceService>;
 
   beforeEach(() => {
@@ -43,9 +43,9 @@ describe("CalculateSummaryDashboardService", () => {
     const mockCalculateTypeSummaryService = {
       execute: jest.fn(),
     } as unknown as jest.Mocked<CalculateTypeSummaryService>;
-    const mockCalculateRecurrentVsVariableService = {
+    const mockCalculateRecurringVsVariableService = {
       execute: jest.fn(),
-    } as unknown as jest.Mocked<CalculateRecurrentVsVariableService>;
+    } as unknown as jest.Mocked<CalculateRecurringVsVariableService>;
     const mockCalculateBalanceService = {
       execute: jest.fn(),
     } as unknown as jest.Mocked<CalculateBalanceService>;
@@ -65,8 +65,8 @@ describe("CalculateSummaryDashboardService", () => {
     testContainer.register(CalculateTypeSummaryService, {
       useValue: mockCalculateTypeSummaryService,
     });
-    testContainer.register(CalculateRecurrentVsVariableService, {
-      useValue: mockCalculateRecurrentVsVariableService,
+    testContainer.register(CalculateRecurringVsVariableService, {
+      useValue: mockCalculateRecurringVsVariableService,
     });
     testContainer.register(CalculateBalanceService, {
       useValue: mockCalculateBalanceService,
@@ -78,8 +78,8 @@ describe("CalculateSummaryDashboardService", () => {
     getSummaryHistoryService = mockGetSummaryHistoryService;
     calculateCategorySummaryService = mockCalculateCategorySummaryService;
     calculateTypeSummaryService = mockCalculateTypeSummaryService;
-    calculateRecurrentVsVariableService =
-      mockCalculateRecurrentVsVariableService;
+    calculateRecurringVsVariableService =
+      mockCalculateRecurringVsVariableService;
     calculateBalanceService = mockCalculateBalanceService;
   });
 
@@ -129,7 +129,7 @@ describe("CalculateSummaryDashboardService", () => {
     calculateTypeSummaryService.execute.mockResolvedValue([
       { type: "expense", total: 100 },
     ]);
-    calculateRecurrentVsVariableService.execute.mockResolvedValue({
+    calculateRecurringVsVariableService.execute.mockResolvedValue({
       count: [
         { value: 1, type: "recurrent" },
         { value: 0, type: "variable" },
@@ -149,7 +149,7 @@ describe("CalculateSummaryDashboardService", () => {
         transactionsSummaryHistory: mockHistory,
         byCategory: [{ category: "Test Category", total: -100 }],
         byType: [{ type: "expense", total: 100 }],
-        recurrentVsVariable: {
+        recurringVsVariable: {
           count: [
             { value: 1, type: "recurrent" },
             { value: 0, type: "variable" },

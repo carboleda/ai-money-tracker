@@ -70,8 +70,8 @@ function PageContent() {
     },
     {
       title: t("reccurentVsVariable"),
-      data: response?.summary?.recurrentVsVariable && (
-        <FixedVsVariableChart data={response?.summary?.recurrentVsVariable} />
+      data: response?.summary?.recurringVsVariable && (
+        <FixedVsVariableChart data={response?.summary?.recurringVsVariable} />
       ),
     },
   ];

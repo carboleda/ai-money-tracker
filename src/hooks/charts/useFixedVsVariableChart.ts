@@ -1,5 +1,5 @@
 import { AgChartOptions } from "ag-charts-community";
-import { RecurrentVsVariable } from "@/interfaces/summary";
+import { RecurringVsVariable } from "@/interfaces/summary";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 import { formatCurrency } from "@/config/utils";
@@ -8,7 +8,7 @@ const ligthColor = "#FFFFFF";
 const darkColor = "#18181B";
 
 export interface FixedVsVariableChartProps {
-  data?: RecurrentVsVariable;
+  data?: RecurringVsVariable;
 }
 
 export interface FixedVsVariableChartResult {

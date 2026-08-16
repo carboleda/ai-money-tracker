@@ -14,6 +14,7 @@ import {
 import { getRepositoryToken } from "@/app/api/decorators/tsyringe.decorator";
 import * as utils from "@/config/utils";
 import { CreateTransactionService } from "../create-transaction.service";
+import { GetAllCategoriesService } from "@/app/api/domain/category/service/get-all-categories.service";
 
 jest.mock("@/config/utils", () => {
   const originalModule = jest.requireActual("@/config/utils");
@@ -37,6 +38,7 @@ describe("GenerateTransactionService", () => {
   let service: GenerateTransactionService;
   let genAIService: GenAIService;
   let createTransactionService: CreateTransactionService;
+  const mockCategories: never[] = [];
 
   beforeEach(() => {
     container.clearInstances();
@@ -50,6 +52,10 @@ describe("GenerateTransactionService", () => {
     const mockCreateTransactionService = {
       execute: jest.fn(),
     } as unknown as CreateTransactionService;
+
+    const mockGetAllCategoriesService = {
+      execute: jest.fn().mockResolvedValue(mockCategories),
+    } as unknown as GetAllCategoriesService;
 
     const mockRepository = {
       create: jest.fn(),
@@ -66,6 +72,10 @@ describe("GenerateTransactionService", () => {
 
     container.register(CreateTransactionService, {
       useValue: mockCreateTransactionService,
+    });
+
+    container.register(GetAllCategoriesService, {
+      useValue: mockGetAllCategoriesService,
     });
 
     container.register(getRepositoryToken(TransactionModel), {
@@ -144,6 +154,7 @@ describe("GenerateTransactionService", () => {
     });
 
     expect(genAIService.extractData).toHaveBeenCalledWith(
+      mockCategories,
       "Payment of internet bill by 20000, C1234",
       undefined
     );
@@ -188,6 +199,7 @@ describe("GenerateTransactionService", () => {
     });
 
     expect(genAIService.extractData).toHaveBeenCalledWith(
+      mockCategories,
       "Payment of internet bill by 20000, C1234",
       undefined
     );

@@ -7,6 +7,12 @@ import { getRepositoryToken } from "@/app/api/decorators/tsyringe.decorator";
 import { SummaryHistoryModel } from "../../model/summary-history.model";
 import { transactionModelFixture } from "@/app/api/domain/transaction/service/__tests__/fixtures/transaction.model.fixture";
 
+jest.mock("@/config/env", () => ({
+  Env: { RUN_ON_DAY_OF_MONTH: 15 },
+}));
+
+const mockRunOnDayOfMonth = 15;
+
 describe("CreateMonthlySummaryService", () => {
   let service: CreateMonthlySummaryService;
   let mockRepository: jest.Mocked<SummaryHistoryRepository>;
@@ -42,9 +48,11 @@ describe("CreateMonthlySummaryService", () => {
     expect(service).toBeDefined();
   });
 
-  it("should skip execution if not the 2nd of the month", async () => {
-    // Mock date to not be the 2nd
-    jest.spyOn(Date.prototype, "getDate").mockReturnValue(1);
+  it("should skip execution if not the configured day of the month", async () => {
+    // Mock date to not match the configured run day
+    jest
+      .spyOn(Date.prototype, "getDate")
+      .mockReturnValue(mockRunOnDayOfMonth + 1);
 
     await service.execute();
 
@@ -53,7 +61,9 @@ describe("CreateMonthlySummaryService", () => {
   });
 
   it("should create a monthly summary", async () => {
-    jest.spyOn(Date.prototype, "getDate").mockReturnValue(2);
+    jest
+      .spyOn(Date.prototype, "getDate")
+      .mockReturnValue(mockRunOnDayOfMonth);
     mockFilterService.execute.mockResolvedValue([transactionModelFixture]);
 
     await service.execute();

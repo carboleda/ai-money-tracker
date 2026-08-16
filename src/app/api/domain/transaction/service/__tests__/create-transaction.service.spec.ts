@@ -11,9 +11,11 @@ import {
   EventTypes,
   TransactionCreatedEvent,
 } from "@/app/api/domain/shared/interfaces/account-events.interface";
-import { createTransactionInputFisture } from "./fixtures/transaction.model.fixture";
+import { createTransactionInputFixture } from "./fixtures/transaction.model.fixture";
 import { pubsub } from "@/app/api/helpers/pubsub";
 import { ValidateAccountService } from "@/app/api/domain/account/service/validate-account.service";
+import { GetAllCategoriesService } from "@/app/api/domain/category/service/get-all-categories.service";
+import { ValidateCategoryService } from "@/app/api/domain/category/service/validate-category.service";
 
 // Mock pubsub
 jest.mock("@/app/api/helpers/pubsub", () => ({
@@ -50,6 +52,16 @@ describe("CreateTransactionService", () => {
         execute: jest.fn().mockResolvedValue(true),
       } as unknown as ValidateAccountService,
     });
+    container.register(GetAllCategoriesService, {
+      useValue: {
+        execute: jest.fn().mockResolvedValue([]),
+      } as unknown as GetAllCategoriesService,
+    });
+    container.register(ValidateCategoryService, {
+      useValue: {
+        execute: jest.fn().mockResolvedValue(undefined),
+      } as unknown as ValidateCategoryService,
+    });
 
     // Register service
     container.register(CreateTransactionService, {
@@ -69,7 +81,7 @@ describe("CreateTransactionService", () => {
 
   it("should call the repository create method with correct input", async () => {
     const mockTransactionInput = {
-      ...createTransactionInputFisture,
+      ...createTransactionInputFixture,
       id: null, // Remove id for input
     };
     const mockTransactionId = "mock-transaction-id";
@@ -94,7 +106,7 @@ describe("CreateTransactionService", () => {
 
   it("should emit the correct event with transaction data", async () => {
     const mockTransactionInput = {
-      ...createTransactionInputFisture,
+      ...createTransactionInputFixture,
       id: null, // Remove id for input
     };
     const mockTransactionId = "mock-transaction-id";
@@ -129,7 +141,7 @@ describe("CreateTransactionService", () => {
 
   it("should return the transaction ID from the repository", async () => {
     const mockTransactionInput = {
-      ...createTransactionInputFisture,
+      ...createTransactionInputFixture,
       id: undefined as never, // Remove id for input
     };
     delete mockTransactionInput.id;
@@ -146,7 +158,7 @@ describe("CreateTransactionService", () => {
 
   it("should handle the complete flow correctly", async () => {
     const mockTransactionInput = {
-      ...createTransactionInputFisture,
+      ...createTransactionInputFixture,
       id: null,
     };
     const mockTransactionId = "mock-transaction-id";
@@ -190,7 +202,7 @@ describe("CreateTransactionService", () => {
 
   it("should propagate repository errors", async () => {
     const mockTransactionInput = {
-      ...createTransactionInputFisture,
+      ...createTransactionInputFixture,
       id: undefined as never, // Remove id for input
     };
     delete mockTransactionInput.id;
@@ -210,7 +222,7 @@ describe("CreateTransactionService", () => {
 
   it("should call validateAccountService for COMPLETE transactions", async () => {
     const mockTransactionInput = {
-      ...createTransactionInputFisture,
+      ...createTransactionInputFixture,
       id: null,
       status: TransactionStatus.COMPLETE,
     };
@@ -233,7 +245,7 @@ describe("CreateTransactionService", () => {
 
   it("should not call validateAccountService for PENDING transactions", async () => {
     const mockTransactionInput = {
-      ...createTransactionInputFisture,
+      ...createTransactionInputFixture,
       id: null,
       status: TransactionStatus.PENDING,
     };

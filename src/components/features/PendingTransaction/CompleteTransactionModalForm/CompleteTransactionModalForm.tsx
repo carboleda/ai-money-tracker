@@ -29,7 +29,7 @@ interface CompleteTransactionModalFormProps {
 export const CompleteTransactionModalForm: React.FC<
   CompleteTransactionModalFormProps
 > = ({ item, onDismiss, isOpen }) => {
-  const { t } = useTranslation(LocaleNamespace.RecurrentExpenses);
+  const { t } = useTranslation(LocaleNamespace.RecurringExpenses);
   const { showSuccessToast } = useToast();
   const { isMutating, updateTransaction } = useMutateTransaction();
   const [validationError, setValidationError] = useState<string>("");
@@ -78,6 +78,7 @@ export const CompleteTransactionModalForm: React.FC<
 
     const payload: UpdateTransactionInput = {
       ...item!,
+      category: item?.category?.ref,
       sourceAccount: selectedAccount,
       destinationAccount: item?.destinationAccount?.ref || "",
       amount: amountInput!,

@@ -1,7 +1,6 @@
 import {
   TransactionType,
   TransactionStatus,
-  TransactionCategory,
 } from "@/app/api/domain/transaction/model/transaction.model";
 import { TransactionEntity } from "../../transaction.entity";
 import { Timestamp } from "firebase-admin/firestore";
@@ -15,7 +14,7 @@ export const transactionEntityFixture: TransactionEntity = {
   notes: "Test notes",
   type: TransactionType.EXPENSE,
   status: TransactionStatus.COMPLETE,
-  category: TransactionCategory.Alimentos,
+  category: "Alimentos",
   sourceAccount: "checking",
   destinationAccount: "savings",
   amount: 100.5,
@@ -58,7 +57,7 @@ export const roundTripTransactionEntityFixture: TransactionEntity = {
   notes: "Round trip notes",
   type: TransactionType.EXPENSE,
   status: TransactionStatus.PENDING,
-  category: TransactionCategory.Servicios,
+  category: "Servicios",
   sourceAccount: "checking",
   destinationAccount: "credit",
   amount: 150.75,

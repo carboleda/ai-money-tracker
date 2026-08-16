@@ -1,5 +1,4 @@
 import {
-  TransactionCategory,
   TransactionModel,
   TransactionStatus,
   TransactionType,
@@ -178,7 +177,7 @@ export const transactionModelFixture = new TransactionModel({
   notes: "Test notes",
   type: TransactionType.EXPENSE,
   status: TransactionStatus.COMPLETE,
-  category: TransactionCategory.Alimentos,
+  category: "Alimentos",
   sourceAccount: {
     ref: "checking",
   },
@@ -289,10 +288,13 @@ export const largeNumbers = [largeIncome, largeExpense];
 
 // Ports
 
-export const createTransactionInputFisture: CreateTransactionInput = {
+export const createTransactionInputFixture: CreateTransactionInput = {
   ...transactionModelFixture,
   sourceAccount: transactionModelFixture.sourceAccount.ref,
   destinationAccount: transactionModelFixture.destinationAccount?.ref,
+  category: typeof transactionModelFixture.category === "string"
+    ? transactionModelFixture.category
+    : (transactionModelFixture.category as { ref: string })?.ref,
 };
 
 export const updateTransactionInputFixture: UpdateTransactionInput = {
@@ -300,4 +302,7 @@ export const updateTransactionInputFixture: UpdateTransactionInput = {
   sourceAccount: transactionModelFixture.sourceAccount.ref,
   destinationAccount: transactionModelFixture.destinationAccount?.ref,
   createdAt: transactionModelFixture.createdAt.toISOString(),
+  category: typeof transactionModelFixture.category === "string"
+    ? transactionModelFixture.category
+    : (transactionModelFixture.category as { ref: string })?.ref,
 };

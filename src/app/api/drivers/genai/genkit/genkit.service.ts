@@ -11,6 +11,7 @@ import {
   GeneratedTransaction,
 } from "@/app/api/domain/shared/interfaces/generated-transaction.interface";
 import path from "node:path";
+import { CategoryModel } from "@/app/api/domain/category/model/category.model";
 
 @Injectable()
 export class GenkitService implements GenAIService {
@@ -22,12 +23,11 @@ export class GenkitService implements GenAIService {
   >;
 
   constructor() {
-    console.log(
-      "Initializing GenkitService...",
-      path.join(process.cwd(), "prompts")
-    );
+    const promptDir = path.join(process.cwd(), "prompts");
+    console.log("Initializing GenkitService...", promptDir);
+
     this.ai = genkit({
-      promptDir: path.join(process.cwd(), "prompts"),
+      promptDir,
       plugins: [googleAI()],
       model: gemini20Flash,
     });
@@ -43,10 +43,15 @@ export class GenkitService implements GenAIService {
   }
 
   async extractData(
+    categories: CategoryModel[],
     text?: string,
     picture?: string
   ): Promise<GeneratedTransaction.GeneratedResponse> {
     const input = {
+      categories: categories.map((c) => ({
+        ref: c.ref,
+        description: c.description || c.name,
+      })),
       text: text,
       picture: picture,
     } as CreateTransactionInputType;

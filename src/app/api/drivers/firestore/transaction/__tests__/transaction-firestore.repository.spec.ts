@@ -13,6 +13,7 @@ import {
 import type { UserContext } from "@/app/api/context/user-context";
 import { transactionModelFixture } from "@/app/api/domain/transaction/service/__tests__/fixtures/transaction.model.fixture";
 import { AccountModel } from "@/app/api/domain/account/model/account.model";
+import { CategoryModel } from "@/app/api/domain/category/model/category.model";
 
 describe("TransactionFirestoreRepository", () => {
   let firestore: Firestore;
@@ -45,6 +46,12 @@ describe("TransactionFirestoreRepository", () => {
     });
 
     testContainer.register(getRepositoryToken(AccountModel), {
+      useValue: {
+        getAll: jest.fn().mockResolvedValue([]),
+      },
+    });
+
+    testContainer.register(getRepositoryToken(CategoryModel), {
       useValue: {
         getAll: jest.fn().mockResolvedValue([]),
       },

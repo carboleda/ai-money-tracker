@@ -5,7 +5,8 @@ import { TableCell, TableRow } from "@heroui/table";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { TableColumn, RenderCellProps } from "@/interfaces/global";
 import { TransactionTypeDecorator } from "@/components/TransactionTypeDecorator";
-import { Frequency, RecurringExpense } from "@/interfaces/recurringExpense";
+import { Frequency } from "@/app/api/domain/recurring-expense/model/recurring-expense.model";
+import type { RecurringExpenseOutput } from "@/app/api/domain/recurring-expense/ports/outbound/get-recurring-expenses.port";
 import { JSX } from "react";
 import { IconEdit } from "@/components/shared/icons";
 import { DeleteTableItemButton } from "@/components/DeleteTableItemButton";
@@ -43,7 +44,7 @@ const columnsMobile: TableColumn[] = [
 const renderCellDesktop = ({
   key,
   item,
-}: RenderCellProps<RecurringExpense>): JSX.Element => {
+}: RenderCellProps<RecurringExpenseOutput>): JSX.Element => {
   switch (key) {
     case "description":
       return (
@@ -51,8 +52,8 @@ const renderCellDesktop = ({
           <div className="flex flex-row items-center gap-2">
             <span>{item.description}</span>
             {item.category && (
-              <Chip radius="sm" variant="flat" className="ml-2">
-                {item.category}
+              <Chip radius="sm" variant="flat" size="sm">
+                {`${item.category.icon} ${item.category.name}`}
               </Chip>
             )}
           </div>
@@ -67,7 +68,7 @@ const renderCellDesktop = ({
         <TableCell className="text-end">
           <TransactionTypeDecorator
             color={
-              item.frequency === Frequency.Monthly ? "primary" : "secondary"
+              item.frequency === Frequency.MONTHLY ? "primary" : "secondary"
             }
             disabled={item.disabled}
           >
@@ -102,7 +103,7 @@ const renderCellMobile = ({
   onEdit,
   onDelete,
   isDeleteDisabled,
-}: RenderCellProps<RecurringExpense>): JSX.Element => {
+}: RenderCellProps<RecurringExpenseOutput>): JSX.Element => {
   switch (key) {
     case "expense":
       return (
@@ -113,7 +114,7 @@ const renderCellMobile = ({
               <span>
                 <TransactionTypeDecorator
                   color={
-                    item.frequency === Frequency.Monthly
+                    item.frequency === Frequency.MONTHLY
                       ? "primary"
                       : "secondary"
                   }
@@ -124,7 +125,7 @@ const renderCellMobile = ({
                 </TransactionTypeDecorator>
                 {item.category && (
                   <Chip radius="sm" variant="flat" size="sm" className="ml-2">
-                    {item.category}
+                    {`${item.category.icon} ${item.category.name}`}
                   </Chip>
                 )}
               </span>

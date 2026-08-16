@@ -1,10 +1,10 @@
 import "reflect-metadata";
 import { NextResponse } from "next/server";
-import { ScheduleRecurrentExpenseForAllUsersService } from "@/app/api/domain/recurrent-expense/service/schedule-recurrent-expense-for-all-users.service";
+import { ScheduleRecurringExpenseForAllUsersService } from "@/app/api/domain/recurring-expense/service/schedule-recurring-expense-for-all-users.service";
 import { api } from "@/app/api";
 
 export async function GET() {
-  const service = api.resolve(ScheduleRecurrentExpenseForAllUsersService);
+  const service = api.resolve(ScheduleRecurringExpenseForAllUsersService);
 
   const result = await service.execute();
 

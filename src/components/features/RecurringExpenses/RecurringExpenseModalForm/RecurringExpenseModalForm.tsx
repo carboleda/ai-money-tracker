@@ -17,12 +17,14 @@ import {
   startOfYear,
   endOfYear,
 } from "@internationalized/date";
-import { Frequency, RecurringExpense } from "@/interfaces/recurringExpense";
+import { Frequency } from "@/app/api/domain/recurring-expense/model/recurring-expense.model";
+import type { RecurringExpenseOutput } from "@/app/api/domain/recurring-expense/ports/outbound/get-recurring-expenses.port";
+import type { CreateRecurringExpenseInput } from "@/app/api/domain/recurring-expense/ports/inbound/create-recurring-expense.port";
 import { FrequencyDropdown } from "@/components/FrequencyDropdown";
-import { useMutateRecurringExpenses } from "@/hooks/useMutateRecurrentExpense";
-import { Autocomplete, AutocompleteItem } from "@heroui/autocomplete";
-import { transactionCategoryOptions } from "@/interfaces/transaction";
+import { useMutateRecurringExpenses } from "@/hooks/useMutateRecurringExpense";
 import { IconComment, IconLink } from "@/components/shared/icons";
+import { CategoriesAutocomplete } from "@/components/CategoriesAutocomplete";
+import { CategoryModel } from "@/app/api/domain/category/model/category.model";
 import { Env } from "@/config/env";
 import { MaskedCurrencyInput } from "@/components/shared/MaskedCurrencyInput";
 import { useTranslation } from "react-i18next";
@@ -30,14 +32,13 @@ import { LocaleNamespace } from "@/i18n/namespace";
 import { Switch } from "@heroui/switch";
 import { HiMinusSm, HiPlusSm } from "react-icons/hi";
 import { useToast } from "@/hooks/useToast";
-import { TransactionCategory } from "@/app/api/domain/transaction/model/transaction.model";
 
 const fixedMonth = parseAbsoluteToLocal(
   new Date(Env.NEXT_PUBLIC_FIXED_MONTH).toISOString()
 );
 
 interface RecurringExpenseModalFormProps {
-  item?: RecurringExpense;
+  item?: RecurringExpenseOutput;
   isOpen: boolean;
   onDismiss: () => void;
 }
@@ -45,7 +46,7 @@ interface RecurringExpenseModalFormProps {
 export const RecurringExpenseModalForm: React.FC<
   RecurringExpenseModalFormProps
 > = ({ item, onDismiss, isOpen }) => {
-  const { t } = useTranslation(LocaleNamespace.RecurrentExpenses);
+  const { t } = useTranslation(LocaleNamespace.RecurringExpenses);
   const { showSuccessToast } = useToast();
   const { isMutating, createConfig, updateConfig } =
     useMutateRecurringExpenses();
@@ -54,9 +55,9 @@ export const RecurringExpenseModalForm: React.FC<
   const [paymentLinkInput, setPaymentLinkInput] = useState<string>();
   const [notesInput, setNotesInput] = useState<string>();
   const [transactonCategoryInput, setTransactonCategoryInput] =
-    useState<TransactionCategory>();
+    useState<CategoryModel["ref"] | undefined>();
   const [frequencyInput, setFrequencyInput] = useState<Frequency>(
-    Frequency.Monthly
+    Frequency.MONTHLY
   );
   const [amountInput, setAmountInput] = useState<number>();
   const [dueDateInput, setDueDateInput] = useState<ZonedDateTime>();
@@ -71,7 +72,7 @@ export const RecurringExpenseModalForm: React.FC<
   useEffect(() => {
     if (item) {
       setDescriptionInput(item.description);
-      setTransactonCategoryInput(item.category);
+      setTransactonCategoryInput(item.category.ref);
       setFrequencyInput(item.frequency);
       setDueDateInput(
         item.dueDate ? parseAbsoluteToLocal(item.dueDate) : undefined
@@ -84,7 +85,7 @@ export const RecurringExpenseModalForm: React.FC<
   }, [item]);
 
   useEffect(() => {
-    if (frequencyInput === Frequency.Monthly) {
+    if (frequencyInput === Frequency.MONTHLY) {
       const min = startOfMonth(fixedMonth);
       const max = endOfMonth(fixedMonth);
       setDueDateMinMax({ min, max });
@@ -103,7 +104,7 @@ export const RecurringExpenseModalForm: React.FC<
   const clearInputs = () => {
     setDescriptionInput("");
     setTransactonCategoryInput(undefined);
-    setFrequencyInput(Frequency.Monthly);
+    setFrequencyInput(Frequency.MONTHLY);
     setDisabledInput(false);
     setDueDateInput(undefined);
     setAmountInput(0);
@@ -127,10 +128,10 @@ export const RecurringExpenseModalForm: React.FC<
     clearError();
 
     const isUpdate = !!item?.id;
-    const payload: Omit<RecurringExpense, "id"> = {
+    const payload: CreateRecurringExpenseInput = {
       description: descriptionInput,
       frequency: frequencyInput,
-      dueDate: dueDateInput.toDate().toISOString(),
+      dueDate: dueDateInput.toDate(),
       disabled: disabledInput,
       amount: amountInput!,
       category: transactonCategoryInput,
@@ -146,7 +147,7 @@ export const RecurringExpenseModalForm: React.FC<
         onDismiss();
         showSuccessToast({
           title: t(
-            isUpdate ? "recurrentExpenseUpdated" : "recurrentExpenseCreated"
+            isUpdate ? "recurringExpenseUpdated" : "recurringExpenseCreated"
           ),
         });
       })
@@ -165,7 +166,7 @@ export const RecurringExpenseModalForm: React.FC<
         {(onClose) => (
           <>
             <ModalHeader className="flex flex-row justify-between pr-6 mt-4">
-              <span>{t("recurrentExpenses")}</span>
+              <span>{t("recurringExpenses")}</span>
               <Switch
                 aria-label={t("disabled")}
                 size="sm"
@@ -185,23 +186,12 @@ export const RecurringExpenseModalForm: React.FC<
                 onValueChange={setDescriptionInput}
               />
               <div className="flex gap-2">
-                <Autocomplete
-                  allowsCustomValue
+                <CategoriesAutocomplete
                   label={t("category")}
-                  variant="bordered"
                   isRequired
-                  defaultItems={transactionCategoryOptions}
-                  selectedKey={transactonCategoryInput}
-                  onSelectionChange={(v) =>
-                    setTransactonCategoryInput(v as TransactionCategory)
-                  }
-                >
-                  {(item) => (
-                    <AutocompleteItem key={item.value}>
-                      {item.label}
-                    </AutocompleteItem>
-                  )}
-                </Autocomplete>
+                  value={transactonCategoryInput}
+                  onChange={setTransactonCategoryInput}
+                />
 
                 <MaskedCurrencyInput
                   label={t("amount")}

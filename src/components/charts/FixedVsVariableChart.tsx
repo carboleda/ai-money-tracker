@@ -2,11 +2,11 @@
 
 import React from "react";
 import { AgCharts } from "ag-charts-react";
-import { RecurrentVsVariable } from "@/interfaces/summary";
+import { RecurringVsVariable } from "@/interfaces/summary";
 import { useFixedVsVariableChart } from "@/hooks/charts/useFixedVsVariableChart";
 
 export interface FixedVsVariableChartProps {
-  data?: RecurrentVsVariable;
+  data?: RecurringVsVariable;
 }
 
 export const FixedVsVariableChart: React.FC<FixedVsVariableChartProps> = ({

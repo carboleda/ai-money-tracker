@@ -89,11 +89,11 @@ export const formatFrequency = (frequency: Frequency, dueDate: string) => {
   const date = new Date(dueDate);
   const daySuffix = getEnglishOrdinalSuffix(date);
 
-  if (frequency === Frequency.Monthly) {
+  if (frequency === Frequency.MONTHLY) {
     return `Every month on the ${date.getDate()}${daySuffix}`;
   }
 
-  if (frequency === Frequency.Yearly) {
+  if (frequency === Frequency.YEARLY) {
     return `Every year on ${monthFormatter.format(
       date
     )} ${date.getDate()}${daySuffix}`;

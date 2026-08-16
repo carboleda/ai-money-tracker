@@ -66,7 +66,7 @@ export async function DELETE(req: NextRequest) {
     await deleteTransactionService.execute(id);
 
     return new NextResponse(null, {
-      status: 204,
+      status: 200,
       statusText: "Transaction deleted successfully",
     });
   });

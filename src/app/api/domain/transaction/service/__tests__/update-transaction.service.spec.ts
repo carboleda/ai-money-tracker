@@ -10,6 +10,8 @@ import {
 } from "./fixtures/transaction.model.fixture";
 import { pubsub } from "@/app/api/helpers/pubsub";
 import { ValidateAccountService } from "@/app/api/domain/account/service/validate-account.service";
+import { GetAllCategoriesService } from "@/app/api/domain/category/service/get-all-categories.service";
+import { ValidateCategoryService } from "@/app/api/domain/category/service/validate-category.service";
 
 // Mock pubsub
 jest.mock("@/app/api/helpers/pubsub", () => ({
@@ -45,6 +47,16 @@ describe("UpdateTransactionService", () => {
       useValue: {
         execute: jest.fn().mockResolvedValue(true),
       } as unknown as ValidateAccountService,
+    });
+    container.register(GetAllCategoriesService, {
+      useValue: {
+        execute: jest.fn().mockResolvedValue([]),
+      } as unknown as GetAllCategoriesService,
+    });
+    container.register(ValidateCategoryService, {
+      useValue: {
+        execute: jest.fn().mockResolvedValue(undefined),
+      } as unknown as ValidateCategoryService,
     });
 
     // Register service

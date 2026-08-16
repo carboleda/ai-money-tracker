@@ -50,7 +50,7 @@ const renderCellDesktop = ({
             <div className="flex flex-row gap-1 items-center text-md">
               <span className="flex flex-row gap-1 items-center flex-wrap font-light text-default-600">
                 {item.sourceAccount.name}
-                {item.destinationAccount && (
+                {item.destinationAccount?.ref && (
                   <span className="flex gap-1 font-light whitespace-nowrap">
                     <span className="hidden lg:inline">&#10141;</span>
                     {item.destinationAccount.name}
@@ -59,7 +59,7 @@ const renderCellDesktop = ({
               </span>
               {item.category && (
                 <Chip radius="sm" variant="flat">
-                  {item.category}
+                  {`${item.category.icon} ${item.category.name}`}
                 </Chip>
               )}
             </div>
@@ -109,13 +109,13 @@ const renderCellMobile = ({
                 </TransactionTypeDecorator>
                 {item.category && (
                   <Chip radius="sm" variant="flat" size="sm">
-                    {item.category}
+                    {`${item.category.icon} ${item.category.name}`}
                   </Chip>
                 )}
               </div>
               <div className="flex flex-col items-end text-xs">
                 <span className="font-semibold">{item.sourceAccount.name}</span>
-                {item.destinationAccount && (
+                {item.destinationAccount?.ref && (
                   <span className="font-light">
                     {item.destinationAccount.name}
                   </span>

@@ -5,7 +5,7 @@ import { CalculateCurrentMonthSummaryService } from "./service/calculate-current
 import { CalculateSummaryDashboardService } from "./service/calculate-summary-dashboard.service";
 import { CalculateCategorySummaryService } from "./service/calculate-category-summary.service";
 import { CalculateTypeSummaryService } from "./service/calculate-type-summary.service";
-import { CalculateRecurrentVsVariableService } from "./service/calculate-recurrent-vs-variable.service";
+import { CalculateRecurringVsVariableService } from "./service/calculate-recurring-vs-variable.service";
 import { CalculateBalanceService } from "./service/calculate-balance.service";
 import { CalculateSummaryMetricsService } from "./service/calculate-summary-metrics.service";
 
@@ -33,8 +33,8 @@ export class SummaryModule {
     container.register(CalculateTypeSummaryService, {
       useClass: CalculateTypeSummaryService,
     });
-    container.register(CalculateRecurrentVsVariableService, {
-      useClass: CalculateRecurrentVsVariableService,
+    container.register(CalculateRecurringVsVariableService, {
+      useClass: CalculateRecurringVsVariableService,
     });
     container.register(CalculateBalanceService, {
       useClass: CalculateBalanceService,

@@ -3,7 +3,7 @@ import { TransactionModel } from "../../transaction/model/transaction.model";
 import { SummaryHistoryModel } from "./summary-history.model";
 import { CategorySummaryDto } from "./category-summary.dto";
 import { TypeSummaryDto } from "./type-summary.dto";
-import { RecurrentVsVariableDto } from "./recurrent-vs-variable.dto";
+import { RecurringVsVariableDto } from "./recurring-vs-variable.dto";
 
 export interface GetSummaryResponseDto {
   summary: SummaryDto;
@@ -15,6 +15,6 @@ export interface SummaryDto {
   transactionsSummaryHistory: SummaryHistoryModel[];
   byCategory: CategorySummaryDto[];
   byType: TypeSummaryDto[];
-  recurrentVsVariable: RecurrentVsVariableDto;
+  recurringVsVariable: RecurringVsVariableDto;
   totalBalance: number;
 }

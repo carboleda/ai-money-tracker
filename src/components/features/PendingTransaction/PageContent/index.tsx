@@ -11,7 +11,7 @@ import { useAppStore } from "@/stores/useAppStore";
 import { TransactionStatus } from "@/app/api/domain/transaction/model/transaction.model";
 
 function PageContent() {
-  const { t } = useTranslation(LocaleNamespace.RecurrentExpenses);
+  const { t } = useTranslation(LocaleNamespace.RecurringExpenses);
   const { setPageTitle } = useAppStore();
   const { isLoading, data: reesponse } = useSWR<GetTransactionsResponse, Error>(
     `/api/transaction/${TransactionStatus.PENDING}`

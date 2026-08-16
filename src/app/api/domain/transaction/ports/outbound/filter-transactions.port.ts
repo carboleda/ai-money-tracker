@@ -1,6 +1,6 @@
 import {
   AccountSummary,
-  TransactionCategory,
+  CategorySummary,
   TransactionStatus,
   TransactionType,
 } from "@/app/api/domain/transaction/model/transaction.model";
@@ -12,7 +12,7 @@ export interface TransactionOutput {
   notes?: string;
   type: TransactionType;
   status: TransactionStatus;
-  category?: TransactionCategory | string;
+  category?: CategorySummary;
   sourceAccount: AccountSummary;
   destinationAccount?: AccountSummary;
   amount: number;
