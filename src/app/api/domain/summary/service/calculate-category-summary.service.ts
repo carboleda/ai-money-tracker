@@ -14,7 +14,9 @@ export class CalculateCategorySummaryService {
     const filteredTransactions = transactions.filter(
       (t) => t.type !== TransactionType.TRANSFER
     );
-    const categoryGroups = _.groupBy(filteredTransactions, "category.name");
+    const categoryGroups = _.groupBy(filteredTransactions, (t) =>
+      typeof t.category === "string" ? t.category : t.category?.name
+    );
     return Object.entries(categoryGroups).map(([category, transactions]) => {
       const total =
         transactions?.reduce(

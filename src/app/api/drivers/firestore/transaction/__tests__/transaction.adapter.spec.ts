@@ -33,7 +33,12 @@ describe("TransactionAdapter", () => {
       expect(result.notes).toBe(transactionEntityFixture.notes);
       expect(result.type).toBe(transactionEntityFixture.type);
       expect(result.status).toBe(transactionEntityFixture.status);
-      expect(result.category).toBe(transactionEntityFixture.category);
+      expect(result.category).toEqual({
+        ref: transactionEntityFixture.category,
+        name: "Unknown",
+        icon: null,
+        color: null,
+      });
       expect(result.sourceAccount.ref).toBe("checking");
       expect(result.destinationAccount?.ref).toBe("savings");
       expect(result.amount).toBe(transactionEntityFixture.amount);
@@ -80,7 +85,12 @@ describe("TransactionAdapter", () => {
         id
       );
 
-      expect(result.category).toBe("Custom Category");
+      expect(result.category).toEqual({
+        ref: "Custom Category",
+        name: "Unknown",
+        icon: null,
+        color: null,
+      });
     });
 
     it("should handle transfer transaction type", () => {
