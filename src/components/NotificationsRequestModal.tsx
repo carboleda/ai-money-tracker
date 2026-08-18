@@ -26,7 +26,7 @@ export const NotificationRequestModal: React.FC<
   const doNotAskAgainCheckox = useRef<HTMLInputElement>(null);
   const [doNotAskAgain, setDoNotAskAgain] = useLocalStorage(
     "doNotAskAgain",
-    false
+    false,
   );
   const permission = Env.isServer ? "granted" : Notification.permission;
 
@@ -75,23 +75,21 @@ export const NotificationRequestModal: React.FC<
   };
 
   return (
-    <>
-      <ConfirmationModal
-        title={t("notificationsRequest.title")}
-        isOpen={isOpen}
-        onAction={onAction}
-      >
-        <p>{t("notificationsRequest.description")}</p>
-        <ul>
-          <li>◦ {t("notificationsRequest.reminderOverduePayments")}</li>
-          <li>◦ {t("notificationsRequest.reminderBillsPayments")}</li>
-          <li>◦ {t("notificationsRequest.neverMissPayment")}</li>
-        </ul>
+    <ConfirmationModal
+      title={t("notificationsRequest.title")}
+      isOpen={isOpen}
+      onAction={onAction}
+    >
+      <p>{t("notificationsRequest.description")}</p>
+      <ul>
+        <li>◦ {t("notificationsRequest.reminderOverduePayments")}</li>
+        <li>◦ {t("notificationsRequest.reminderBillsPayments")}</li>
+        <li>◦ {t("notificationsRequest.neverMissPayment")}</li>
+      </ul>
 
-        <Checkbox ref={doNotAskAgainCheckox}>
-          {t("notificationsRequest.doNotAskAgain")}
-        </Checkbox>
-      </ConfirmationModal>
-    </>
+      <Checkbox ref={doNotAskAgainCheckox}>
+        {t("notificationsRequest.doNotAskAgain")}
+      </Checkbox>
+    </ConfirmationModal>
   );
 };
