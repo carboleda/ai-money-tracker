@@ -11,7 +11,7 @@ export const NetworkIndicator = () => {
   if (isOnline) return null;
 
   return (
-    <Chip color="warning" size="sm" variant="flat" avatar={<MdWifiOff />}>
+    <Chip color="default" size="sm" variant="flat" avatar={<MdWifiOff />}>
       {t("offline.indicator")}
     </Chip>
   );

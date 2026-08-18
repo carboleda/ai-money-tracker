@@ -12,14 +12,12 @@ export default function PrivateLayout({
   children,
 }: Readonly<PropsWithChildren>) {
   return (
-    <AuthGuard>
-      <section>
-        <FcmProvider firebaseApp={firebaseApp} />
-        <Sidebar>
-          <Navbar />
-          {children}
-        </Sidebar>
-      </section>
-    </AuthGuard>
+    <section>
+      <FcmProvider firebaseApp={firebaseApp} />
+      <Sidebar>
+        <Navbar />
+        <AuthGuard>{children}</AuthGuard>
+      </Sidebar>
+    </section>
   );
 }

@@ -1,5 +1,6 @@
 import "@/styles/globals.css";
 import { Metadata, Viewport } from "next";
+import { cookies } from "next/headers";
 import { siteConfig } from "@/config/site";
 import { fontSans } from "@/config/fonts";
 import clsx from "clsx";
@@ -24,9 +25,16 @@ export const viewport: Viewport = {
   ],
 };
 
-export default function Layout({ children }: Readonly<PropsWithChildren>) {
+export default async function Layout({ children }: Readonly<PropsWithChildren>) {
+  const cookieStore = await cookies();
+  // next-themes only persists to localStorage, invisible to this Server
+  // Component, so ThemeCookieSync mirrors it into a cookie — read here to
+  // pick the correct initial class and avoid a flash of the wrong theme.
+  // "dark" matches the app's defaultTheme when no cookie exists yet.
+  const theme = cookieStore.get("theme")?.value === "light" ? "light" : "dark";
+
   return (
-    <html suppressHydrationWarning>
+    <html suppressHydrationWarning lang="en" className={theme}>
       <head>
         <link
           rel="icon"

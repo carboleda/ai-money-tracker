@@ -3,7 +3,6 @@
 import { PropsWithChildren, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useIsRestoring } from "@tanstack/react-query";
-import { Spinner } from "@heroui/spinner";
 import { useGetUser } from "@/hooks/useGetUser";
 import { useOnlineStatus } from "@/hooks/useOnlineStatus";
 import { pages } from "@/config/site";
@@ -47,13 +46,10 @@ export function AuthGuard({ children }: Readonly<PropsWithChildren>) {
     PRIVATE_ROUTES.forEach((href) => router.prefetch(href));
   }, [isChecking, user, isOnline, router]);
 
-  if (isChecking || !user) {
-    return (
-      <div className="flex h-screen items-center justify-center">
-        <Spinner size="lg" />
-      </div>
-    );
-  }
+  // Only a confirmed unauthenticated state blanks the content — while
+  // checking (the common case, since the query cache is usually already
+  // warm from persistence), render immediately so navigation feels instant.
+  if (!isChecking && !user) return null;
 
   return <>{children}</>;
 }

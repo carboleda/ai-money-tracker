@@ -11,6 +11,7 @@ import { AccountsProvider } from "@/components/providers/AccountsProvider";
 import { CategoriesProvider } from "@/components/providers/CategoriesProvider";
 import { QueryProvider } from "@/components/providers/QueryProvider";
 import { ServiceWorkerRegistrar } from "@/components/providers/ServiceWorkerRegistrar";
+import { ThemeCookieSync } from "@/components/providers/ThemeCookieSync";
 
 export interface ProvidersProps {
   children: React.ReactNode;
@@ -23,6 +24,7 @@ export function Providers({ children }: Readonly<ProvidersProps>) {
     <HeroUIProvider navigate={router.push}>
       <ToastProvider toastOffset={40} />
       <NextThemesProvider attribute="class" defaultTheme="dark">
+        <ThemeCookieSync />
         <QueryProvider>
           <ServiceWorkerRegistrar />
           <TranslationsProvider>
