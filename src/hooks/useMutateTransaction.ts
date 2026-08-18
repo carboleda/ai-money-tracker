@@ -5,6 +5,7 @@ import { UpdateTransactionInput } from "@/app/api/domain/transaction/ports/inbou
 import { useOfflineWriteGuard } from "@/hooks/useOnlineStatus";
 
 const KEY = "/api/transaction";
+const dependentQueries = [KEY, "/api/account", "/api/summary"];
 
 export const useMutateTransaction = () => {
   const queryClient = useQueryClient();
@@ -12,7 +13,7 @@ export const useMutateTransaction = () => {
 
   const { mutateAsync, isPending } = useMutation({
     mutationFn: (request: MutationRequest) => sendRequest(KEY, request),
-    onSuccess: () => invalidateResource(queryClient, KEY),
+    onSuccess: () => invalidateResource(queryClient, dependentQueries),
   });
 
   const createTransaction = async (payload: CreateTranaction) => {

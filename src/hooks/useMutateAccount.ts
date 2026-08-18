@@ -4,6 +4,7 @@ import { sendRequest, invalidateResource, MutationRequest } from "@/config/reque
 import { useOfflineWriteGuard } from "@/hooks/useOnlineStatus";
 
 const KEY = "/api/account";
+const dependentQueries = [KEY, "/api/summary"];
 
 export const useMutateAccount = () => {
   const queryClient = useQueryClient();
@@ -11,7 +12,7 @@ export const useMutateAccount = () => {
 
   const { mutateAsync, isPending } = useMutation({
     mutationFn: (request: MutationRequest) => sendRequest(KEY, request),
-    onSuccess: () => invalidateResource(queryClient, KEY),
+    onSuccess: () => invalidateResource(queryClient, dependentQueries),
   });
 
   const createAccount = async (account: Omit<Account, "id">) => {

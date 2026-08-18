@@ -16,8 +16,11 @@ export const sendRequest = (url: string, request: MutationRequest) =>
 
 export const invalidateResource = (
   queryClient: QueryClient,
-  resource: string
-) =>
-  queryClient.invalidateQueries({
-    predicate: (query) => query.queryKey[0] === resource,
+  resource: string | string[]
+) => {
+  const resources = Array.isArray(resource) ? resource : [resource];
+
+  return queryClient.invalidateQueries({
+    predicate: (query) => resources.includes(query.queryKey[0] as string),
   });
+};
