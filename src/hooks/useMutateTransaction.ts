@@ -1,14 +1,24 @@
-import useSWRMutation from "swr/mutation";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { CreateTranaction } from "@/interfaces/transaction";
-import { sendRequest } from "@/config/request";
+import { sendRequest, invalidateResource, MutationRequest } from "@/config/request";
 import { UpdateTransactionInput } from "@/app/api/domain/transaction/ports/inbound/update-transaction.port";
+import { useOfflineWriteGuard } from "@/hooks/useOnlineStatus";
 
 const KEY = "/api/transaction";
+const dependentQueries = [KEY, "/api/account", "/api/summary"];
 
 export const useMutateTransaction = () => {
-  const { trigger, isMutating } = useSWRMutation(KEY, sendRequest(KEY));
+  const queryClient = useQueryClient();
+  const guardOnline = useOfflineWriteGuard();
+
+  const { mutateAsync, isPending } = useMutation({
+    mutationFn: (request: MutationRequest) => sendRequest(KEY, request),
+    onSuccess: () => invalidateResource(queryClient, dependentQueries),
+  });
 
   const createTransaction = async (payload: CreateTranaction) => {
+    if (!guardOnline()) throw new Error("Offline");
+
     const formData = new FormData();
     payload.text && formData.append("text", payload.text);
     payload.picture && formData.append("picture", payload.picture);
@@ -16,7 +26,7 @@ export const useMutateTransaction = () => {
       formData.append("sourceAccount", payload.sourceAccount);
     payload.createdAt && formData.append("createdAt", payload.createdAt);
 
-    return trigger({
+    return mutateAsync({
       method: "POST",
       body: formData,
     }).then((res) => {
@@ -29,7 +39,9 @@ export const useMutateTransaction = () => {
   };
 
   const updateTransaction = async (trasaction: UpdateTransactionInput) => {
-    return trigger({ method: "PUT", body: JSON.stringify(trasaction) }).then(
+    if (!guardOnline()) throw new Error("Offline");
+
+    return mutateAsync({ method: "PUT", body: JSON.stringify(trasaction) }).then(
       (res) => {
         if (res.status !== 200) {
           throw new Error(res.statusText);
@@ -41,11 +53,13 @@ export const useMutateTransaction = () => {
   };
 
   const deleteTransaction = (id: string) => {
-    return trigger({ method: "DELETE", body: id });
+    if (!guardOnline()) return Promise.resolve();
+
+    return mutateAsync({ method: "DELETE", body: id });
   };
 
   return {
-    isMutating,
+    isMutating: isPending,
     createTransaction,
     updateTransaction,
     deleteTransaction,

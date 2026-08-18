@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import useSWR from "swr";
+import { useQuery } from "@tanstack/react-query";
 import { RecurringExpensesTable } from "@/components/features/RecurringExpenses";
 import type { GetRecurringExpensesOutput } from "@/app/api/domain/recurring-expense/ports/outbound/get-recurring-expenses.port";
 import { useIsMobile } from "@/hooks/useIsMobile";
@@ -11,6 +11,9 @@ import { HiFire, HiOutlineCalendar } from "react-icons/hi";
 import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
 import { useAppStore } from "@/stores/useAppStore";
+import { fetchJson } from "@/config/request";
+
+const KEY = "/api/recurring-expenses";
 
 function PageContent() {
   const isMobile = useIsMobile();
@@ -21,10 +24,10 @@ function PageContent() {
     setPageTitle(t("recurring"), t("subtitle"));
   }, [t, setPageTitle]);
 
-  const { isLoading, data: reesponse } = useSWR<
-    GetRecurringExpensesOutput,
-    Error
-  >("/api/recurring-expenses");
+  const { isLoading, data: reesponse } = useQuery<GetRecurringExpensesOutput>({
+    queryKey: [KEY],
+    queryFn: () => fetchJson<GetRecurringExpensesOutput>(KEY),
+  });
 
   return (
     <section className="flex flex-col items-center justify-center gap-4">

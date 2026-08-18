@@ -1,26 +1,29 @@
-import useSWR from "swr";
+import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { useAccountStore } from "@/stores/useAccountStore";
 import { GetAccountsResponse } from "@/interfaces/account";
+import { fetchJson } from "@/config/request";
+
+const KEY = "/api/account";
 
 /**
- * Hook that fetches accounts using SWR and syncs them to Zustand store
+ * Hook that fetches accounts using TanStack Query and syncs them to Zustand store
  *
  * Benefits:
- * - SWR handles caching, revalidation, and deduplication
+ * - TanStack Query handles caching, revalidation, deduplication, and offline persistence
  * - Zustand provides global state for non-hook components
- * - Automatic background updates when browser regains focus
  */
 export function useAccountsLoader() {
   const setAccounts = useAccountStore((state) => state.setAccounts);
   const setIsLoading = useAccountStore((state) => state.setIsLoading);
   const setError = useAccountStore((state) => state.setError);
 
-  // SWR handles the actual fetching with built-in caching and revalidation
-  const { data, error, isLoading } =
-    useSWR<GetAccountsResponse>("/api/account");
+  const { data, error, isLoading } = useQuery<GetAccountsResponse>({
+    queryKey: [KEY],
+    queryFn: () => fetchJson<GetAccountsResponse>(KEY),
+  });
 
-  // Sync SWR data to Zustand store whenever it changes
+  // Sync query data to Zustand store whenever it changes
   useEffect(() => {
     if (data) {
       setAccounts(data.accounts || []);

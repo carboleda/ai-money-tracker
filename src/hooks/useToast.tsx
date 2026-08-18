@@ -18,6 +18,7 @@ const DEFAULT_TOAST_CONFIG: Partial<ToastProps> = {
 
 interface UseToastReturn {
   showSuccessToast: (config: ToastConfig) => void;
+  showErrorToast: (config: ToastConfig) => void;
   showConfirmDeleteToast: (config: ToastConfirmConfig) => void;
 }
 
@@ -28,6 +29,14 @@ export const useToast = (): UseToastReturn => {
     addToast({
       ...DEFAULT_TOAST_CONFIG,
       color: "success",
+      ...config,
+    });
+  }, []);
+
+  const showErrorToast = useCallback((config: ToastConfig) => {
+    addToast({
+      ...DEFAULT_TOAST_CONFIG,
+      color: "danger",
       ...config,
     });
   }, []);
@@ -59,5 +68,5 @@ export const useToast = (): UseToastReturn => {
     [t]
   );
 
-  return { showSuccessToast, showConfirmDeleteToast };
+  return { showSuccessToast, showErrorToast, showConfirmDeleteToast };
 };

@@ -53,5 +53,10 @@
     "title": "Confirm deletion",
     "description": "This action cannot be undone.",
     "confirmButton": "Yes, delete it!"
+  },
+  "offline": {
+    "writeBlockedTitle": "You're offline",
+    "writeBlockedDescription": "This action requires an internet connection. Please reconnect and try again.",
+    "indicator": "Offline"
   }
 }

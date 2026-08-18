@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import useSWR from "swr";
+import { useQuery } from "@tanstack/react-query";
 import { AccountsTable } from "../AccountsTable/AccountsTable";
 import { Account } from "@/interfaces/account";
 import { useTranslation } from "react-i18next";
@@ -12,6 +12,9 @@ import { useAccountStore } from "@/stores/useAccountStore";
 import { TransactionTypeDecorator } from "@/components/TransactionTypeDecorator";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { HiScale } from "react-icons/hi";
+import { fetchJson } from "@/config/request";
+
+const KEY = "/api/account";
 
 export function PageContent() {
   const isMobile = useIsMobile();
@@ -23,9 +26,10 @@ export function PageContent() {
     setPageTitle(t("accounts"), t("subtitle"));
   }, [t, setPageTitle]);
 
-  const { isLoading, data: response } = useSWR<{ accounts: Account[] }>(
-    "/api/account"
-  );
+  const { isLoading, data: response } = useQuery<{ accounts: Account[] }>({
+    queryKey: [KEY],
+    queryFn: () => fetchJson<{ accounts: Account[] }>(KEY),
+  });
 
   useEffect(() => {
     if (response?.accounts && Array.isArray(response.accounts)) {
