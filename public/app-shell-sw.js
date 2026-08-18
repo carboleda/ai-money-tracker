@@ -177,8 +177,16 @@ async function networkFirstWithCache(
       // respondWith() resolves.
       event.waitUntil(cache.put(cacheKey, response.clone()));
     }
+    event.waitUntil(broadcastNetworkStatus(true));
     return response;
   } catch (error) {
+    // A real fetch failure here is the SW's own ground truth for
+    // connectivity — navigator.onLine/the online/offline events on the page
+    // are unreliable (e.g. connected to a LAN with no upstream internet
+    // never fires 'offline'), so tell every open tab explicitly whenever a
+    // request actually fails, instead of leaving them to guess.
+    event.waitUntil(broadcastNetworkStatus(false));
+
     const cached = await cache.match(cacheKey);
     if (cached) return cached;
 
@@ -190,6 +198,13 @@ async function networkFirstWithCache(
     if (isNavigation) return offlineFallbackResponse();
 
     throw error;
+  }
+}
+
+async function broadcastNetworkStatus(isOnline) {
+  const clients = await self.clients.matchAll({ type: "window" });
+  for (const client of clients) {
+    client.postMessage({ type: "network-status", isOnline });
   }
 }
 

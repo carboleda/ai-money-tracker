@@ -12,6 +12,7 @@ import { CategoriesProvider } from "@/components/providers/CategoriesProvider";
 import { QueryProvider } from "@/components/providers/QueryProvider";
 import { ServiceWorkerRegistrar } from "@/components/providers/ServiceWorkerRegistrar";
 import { ThemeCookieSync } from "@/components/providers/ThemeCookieSync";
+import { OnlineStatusListener } from "@/components/providers/OnlineStatusListener";
 
 export interface ProvidersProps {
   children: React.ReactNode;
@@ -25,6 +26,7 @@ export function Providers({ children }: Readonly<ProvidersProps>) {
       <ToastProvider toastOffset={40} />
       <NextThemesProvider attribute="class" defaultTheme="dark">
         <ThemeCookieSync />
+        <OnlineStatusListener />
         <QueryProvider>
           <ServiceWorkerRegistrar />
           <TranslationsProvider>

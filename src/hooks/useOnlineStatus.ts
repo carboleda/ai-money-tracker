@@ -1,27 +1,15 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
 import { useToast } from "@/hooks/useToast";
+import { useOnlineStore } from "@/stores/useOnlineStore";
 
+// Reads from a store populated once by OnlineStatusListener (mounted at the
+// app root) rather than tracking its own state — every consumer must share
+// the same isOnline value regardless of when/whether it individually mounts.
 export function useOnlineStatus() {
-  const [isOnline, setIsOnline] = useState(
-    () => typeof navigator === "undefined" || navigator.onLine
-  );
-
-  useEffect(() => {
-    const handleOnline = () => setIsOnline(true);
-    const handleOffline = () => setIsOnline(false);
-
-    window.addEventListener("online", handleOnline);
-    window.addEventListener("offline", handleOffline);
-
-    return () => {
-      window.removeEventListener("online", handleOnline);
-      window.removeEventListener("offline", handleOffline);
-    };
-  }, []);
+  const isOnline = useOnlineStore((state) => state.isOnline);
 
   return { isOnline };
 }
