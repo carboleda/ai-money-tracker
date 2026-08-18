@@ -56,6 +56,7 @@
   },
   "offline": {
     "writeBlockedTitle": "Estás sin conexión",
-    "writeBlockedDescription": "Esta acción requiere conexión a internet. Por favor reconéctate e inténtalo de nuevo."
+    "writeBlockedDescription": "Esta acción requiere conexión a internet. Por favor reconéctate e inténtalo de nuevo.",
+    "indicator": "Sin conexión"
   }
 }

@@ -9,12 +9,10 @@
 // --- Firebase Cloud Messaging -----------------------------------------
 
 importScripts(
-  "https://www.gstatic.com/firebasejs/11.6.1/firebase-app-compat.js"
+  "https://www.gstatic.com/firebasejs/11.6.1/firebase-app-compat.js",
+  "https://www.gstatic.com/firebasejs/11.6.1/firebase-messaging-compat.js",
+  "swEnv.js",
 );
-importScripts(
-  "https://www.gstatic.com/firebasejs/11.6.1/firebase-messaging-compat.js"
-);
-importScripts("swEnv.js");
 
 firebase.initializeApp(swEnv.NEXT_PUBLIC_FIREBASE_APP_CONFIG);
 
@@ -63,12 +61,12 @@ self.addEventListener("notificationclick", function (event) {
 
 function getCurrentNotification(transactionId) {
   const notifications = self.registration.getNotifications();
-  for (let i = 0; i < notifications.length; i++) {
+  for (const notification of notifications) {
     if (
-      notifications[i].data &&
-      notifications[i].data.transactionId === transactionId
+      notification.data &&
+      notification.data.transactionId === transactionId
     ) {
-      return notifications[i];
+      return notification;
     }
   }
 }
@@ -85,7 +83,7 @@ function getCurrentNotification(transactionId) {
 // transition re-fetches the destination route's Flight payload over the
 // network and fails offline even for a page visited moments earlier.
 
-const APP_SHELL_CACHE = "app-shell-v1";
+const APP_SHELL_CACHE = "app-shell-v2";
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
@@ -137,10 +135,28 @@ self.addEventListener("fetch", (event) => {
 // normalized to the bare pathname instead, with RSC responses kept in a
 // separate keyspace from full-document responses for the same pathname
 // (same URL, but completely different response shape).
+//
+// Next's App Router (since the segment cache became the only prefetch/
+// navigation mechanism) issues MULTIPLE distinct RSC requests for a single
+// route — a route-tree metadata request plus one or more per-segment data
+// requests — all to the SAME pathname, distinguished only by the
+// `next-router-segment-prefetch` header (which piece) and, for routes
+// without PPR, the `next-router-state-tree` header (what the client already
+// has rendered). Without folding those headers into the key, every one of
+// those requests collapses onto one cache entry and overwrites the last,
+// so router.prefetch()'s warm-up (src/components/shared/AuthGuard.tsx)
+// leaves behind a cached response that doesn't match what an actual offline
+// navigation asks for — the route "warms" but still fails to load offline.
 function cacheKeyFor(request, isRscRequest) {
   const url = new URL(request.url);
   url.searchParams.delete("_rsc");
-  if (isRscRequest) url.searchParams.set("__sw_rsc", "1");
+  if (isRscRequest) {
+    url.searchParams.set("__sw_rsc", "1");
+    const segmentPrefetch = request.headers.get("next-router-segment-prefetch");
+    if (segmentPrefetch) url.searchParams.set("__sw_segment", segmentPrefetch);
+    const stateTree = request.headers.get("next-router-state-tree");
+    if (stateTree) url.searchParams.set("__sw_tree", stateTree);
+  }
   return url.toString();
 }
 

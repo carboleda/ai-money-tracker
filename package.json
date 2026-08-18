@@ -14,7 +14,7 @@
     "test": "jest --coverage",
     "test:watch": "jest --watch --coverage",
     "start": "next start",
-    "start:dev": "GENKIT_ENV=dev FIRESTORE_EMULATOR_HOST=127.0.0.1:8080 next start",
+    "start:localdb": "GENKIT_ENV=dev FIRESTORE_EMULATOR_HOST=127.0.0.1:8080 next start",
     "lint": "next typegen && tsc --noEmit && eslint src --ext .ts,.tsx,.js,.jsx",
     "gen:api": "openapi-gen generate"
   },
