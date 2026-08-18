@@ -15,12 +15,12 @@ export const useMutateUser = () => {
   });
 
   const updateUser = async (user: User) => {
-    if (!guardOnline()) return Promise.reject(new Error("Offline"));
+    if (!guardOnline()) throw new Error("Offline");
 
     return mutateAsync({ method: "PUT", body: JSON.stringify(user) }).then(
       (res) => {
         if (res.status !== 200) {
-          return Promise.reject(res.statusText);
+          throw new Error(res.statusText);
         }
 
         return res.json();

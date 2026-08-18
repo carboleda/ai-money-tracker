@@ -16,7 +16,7 @@ export const useMutateTransaction = () => {
   });
 
   const createTransaction = async (payload: CreateTranaction) => {
-    if (!guardOnline()) return Promise.reject(new Error("Offline"));
+    if (!guardOnline()) throw new Error("Offline");
 
     const formData = new FormData();
     payload.text && formData.append("text", payload.text);
@@ -38,7 +38,7 @@ export const useMutateTransaction = () => {
   };
 
   const updateTransaction = async (trasaction: UpdateTransactionInput) => {
-    if (!guardOnline()) return Promise.reject(new Error("Offline"));
+    if (!guardOnline()) throw new Error("Offline");
 
     return mutateAsync({ method: "PUT", body: JSON.stringify(trasaction) }).then(
       (res) => {

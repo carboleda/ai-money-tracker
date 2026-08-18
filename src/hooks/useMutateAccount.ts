@@ -15,7 +15,7 @@ export const useMutateAccount = () => {
   });
 
   const createAccount = async (account: Omit<Account, "id">) => {
-    if (!guardOnline()) return Promise.reject(new Error("Offline"));
+    if (!guardOnline()) throw new Error("Offline");
 
     return mutateAsync({ method: "POST", body: JSON.stringify(account) }).then(
       (res) => {
@@ -29,7 +29,7 @@ export const useMutateAccount = () => {
   };
 
   const updateAccount = async (account: Account) => {
-    if (!guardOnline()) return Promise.reject(new Error("Offline"));
+    if (!guardOnline()) throw new Error("Offline");
 
     return mutateAsync({ method: "PUT", body: JSON.stringify(account) }).then(
       (res) => {
