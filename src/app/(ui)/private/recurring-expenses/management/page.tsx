@@ -1,3 +1,5 @@
+"use client";
+
 import PageContent from "@/components/features/PendingTransaction/PageContent";
 
 function PendingTransactions() {

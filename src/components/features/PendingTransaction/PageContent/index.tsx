@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import useSWR from "swr";
+import { useQuery } from "@tanstack/react-query";
 import { GetTransactionsResponse } from "@/interfaces/transaction";
 import { PendingTransactionTable } from "@/components/features/PendingTransaction";
 import { SummaryPanel } from "@/components/SummaryPanel";
@@ -9,13 +9,16 @@ import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
 import { useAppStore } from "@/stores/useAppStore";
 import { TransactionStatus } from "@/app/api/domain/transaction/model/transaction.model";
+import { fetchJson } from "@/config/request";
 
 function PageContent() {
   const { t } = useTranslation(LocaleNamespace.RecurringExpenses);
   const { setPageTitle } = useAppStore();
-  const { isLoading, data: reesponse } = useSWR<GetTransactionsResponse, Error>(
-    `/api/transaction/${TransactionStatus.PENDING}`
-  );
+  const url = `/api/transaction/${TransactionStatus.PENDING}`;
+  const { isLoading, data: reesponse } = useQuery<GetTransactionsResponse>({
+    queryKey: ["/api/transaction", TransactionStatus.PENDING],
+    queryFn: () => fetchJson<GetTransactionsResponse>(url),
+  });
 
   useEffect(() => {
     setPageTitle(t("pending"), t("management.subtitle"));

@@ -25,7 +25,7 @@ const FcmProviderFrontend: React.FC<FcmProviderProps> = ({
   const { updateUser } = useMutateUser();
   const { user, isLoading } = useGetUser();
   // Tracks whether the one-time token refresh for this mount has already run,
-  // preventing re-execution when SWR revalidates and updates `user`.
+  // preventing re-execution when the query revalidates and updates `user`.
   const tokenRefreshed = useRef(false);
 
   // Silently refresh the FCM token once per app load when permission is already
@@ -33,7 +33,7 @@ const FcmProviderFrontend: React.FC<FcmProviderProps> = ({
   // ensures the stored token in Firestore always stays current without ever
   // prompting the user again.
   useEffect(() => {
-    // Wait until SWR has resolved the user profile before comparing tokens.
+    // Wait until the query has resolved the user profile before comparing tokens.
     // Bail out if the refresh has already run this mount.
     if (isLoading || tokenRefreshed.current) return;
     if (Notification.permission !== "granted" || !firebaseApp) return;
@@ -43,10 +43,14 @@ const FcmProviderFrontend: React.FC<FcmProviderProps> = ({
     const refreshToken = async () => {
       try {
         const messaging = getMessaging(firebaseApp);
-        const [freshToken, { deviceId, deviceName }] = await Promise.all([
-          getToken(messaging, { vapidKey: Env.NEXT_PUBLIC_FIREBASE_VAPID_KEY }),
+        const [registration, { deviceId, deviceName }] = await Promise.all([
+          navigator.serviceWorker.ready,
           DeviceInfo.generate(),
         ]);
+        const freshToken = await getToken(messaging, {
+          vapidKey: Env.NEXT_PUBLIC_FIREBASE_VAPID_KEY,
+          serviceWorkerRegistration: registration,
+        });
 
         if (!freshToken) return;
 

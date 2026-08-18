@@ -1,8 +1,9 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import useSWR from "swr";
+import { useQuery } from "@tanstack/react-query";
 import { GetSummaryResponse } from "@/interfaces/summary";
+import { fetchJson } from "@/config/request";
 import { getMonthBounds } from "@/config/utils";
 import { CustomDateRangePicker } from "@/components/shared/CustomDateRangePicker";
 import { parseAbsoluteToLocal, ZonedDateTime } from "@internationalized/date";
@@ -28,9 +29,11 @@ function PageContent() {
   });
   const dateWithinStart = dateWithin.start.toDate().toISOString();
   const dateWithinEnd = dateWithin.end.toDate().toISOString();
-  const { data: response } = useSWR<GetSummaryResponse, Error>(
-    `/api/summary?start=${dateWithinStart}&end=${dateWithinEnd}`
-  );
+  const url = `/api/summary?start=${dateWithinStart}&end=${dateWithinEnd}`;
+  const { data: response } = useQuery<GetSummaryResponse>({
+    queryKey: ["/api/summary", { start: dateWithinStart, end: dateWithinEnd }],
+    queryFn: () => fetchJson<GetSummaryResponse>(url),
+  });
 
   useEffect(() => {
     setPageTitle(t("summary"), t("subtitle"));

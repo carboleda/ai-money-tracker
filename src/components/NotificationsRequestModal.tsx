@@ -52,12 +52,14 @@ export const NotificationRequestModal: React.FC<
 
       if (permission === "granted") {
         const messaging = getMessaging(firebaseApp);
-        const [fcmToken, { deviceId, deviceName }] = await Promise.all([
-          getToken(messaging, {
-            vapidKey: Env.NEXT_PUBLIC_FIREBASE_VAPID_KEY,
-          }),
+        const [registration, { deviceId, deviceName }] = await Promise.all([
+          navigator.serviceWorker.ready,
           DeviceInfo.generate(),
         ]);
+        const fcmToken = await getToken(messaging, {
+          vapidKey: Env.NEXT_PUBLIC_FIREBASE_VAPID_KEY,
+          serviceWorkerRegistration: registration,
+        });
         await updateUser({
           devices: [{ deviceId, deviceName, fcmToken }],
         });

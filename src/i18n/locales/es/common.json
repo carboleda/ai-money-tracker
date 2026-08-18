@@ -53,5 +53,9 @@
     "title": "Confirmar eliminación",
     "description": "Esta acción no se puede deshacer.",
     "confirmButton": "Sí, eliminar!"
+  },
+  "offline": {
+    "writeBlockedTitle": "Estás sin conexión",
+    "writeBlockedDescription": "Esta acción requiere conexión a internet. Por favor reconéctate e inténtalo de nuevo."
   }
 }

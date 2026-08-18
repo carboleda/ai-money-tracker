@@ -1,26 +1,29 @@
-import useSWR from "swr";
+import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { useCategoryStore } from "@/stores/useCategoryStore";
 import { GetCategoriesResponse } from "@/interfaces/category";
+import { fetchJson } from "@/config/request";
+
+const KEY = "/api/category";
 
 /**
- * Hook that fetches categories using SWR and syncs them to Zustand store
+ * Hook that fetches categories using TanStack Query and syncs them to Zustand store
  *
  * Benefits:
- * - SWR handles caching, revalidation, and deduplication
+ * - TanStack Query handles caching, revalidation, deduplication, and offline persistence
  * - Zustand provides global state for non-hook components
- * - Automatic background updates when browser regains focus
  */
 export function useCategoriesLoader() {
   const setCategories = useCategoryStore((state) => state.setCategories);
   const setIsLoading = useCategoryStore((state) => state.setIsLoading);
   const setError = useCategoryStore((state) => state.setError);
 
-  // SWR handles the actual fetching with built-in caching and revalidation
-  const { data, error, isLoading } =
-    useSWR<GetCategoriesResponse>("/api/category");
+  const { data, error, isLoading } = useQuery<GetCategoriesResponse>({
+    queryKey: [KEY],
+    queryFn: () => fetchJson<GetCategoriesResponse>(KEY),
+  });
 
-  // Sync SWR data to Zustand store whenever it changes
+  // Sync query data to Zustand store whenever it changes
   useEffect(() => {
     if (data) {
       setCategories(data.categories || []);

@@ -1,14 +1,23 @@
-import useSWRMutation from "swr/mutation";
-import { sendRequest } from "@/config/request";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { sendRequest, invalidateResource, MutationRequest } from "@/config/request";
 import { User } from "@/interfaces/user";
+import { useOfflineWriteGuard } from "@/hooks/useOnlineStatus";
 
 const KEY = "/api/user";
 
 export const useMutateUser = () => {
-  const { trigger, isMutating } = useSWRMutation(KEY, sendRequest(KEY));
+  const queryClient = useQueryClient();
+  const guardOnline = useOfflineWriteGuard();
+
+  const { mutateAsync, isPending } = useMutation({
+    mutationFn: (request: MutationRequest) => sendRequest(KEY, request),
+    onSuccess: () => invalidateResource(queryClient, KEY),
+  });
 
   const updateUser = async (user: User) => {
-    return trigger({ method: "PUT", body: JSON.stringify(user) }).then(
+    if (!guardOnline()) return Promise.reject(new Error("Offline"));
+
+    return mutateAsync({ method: "PUT", body: JSON.stringify(user) }).then(
       (res) => {
         if (res.status !== 200) {
           return Promise.reject(res.statusText);
@@ -20,7 +29,7 @@ export const useMutateUser = () => {
   };
 
   return {
-    isMutating,
+    isMutating: isPending,
     updateUser,
   };
 };

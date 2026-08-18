@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import useSWR from "swr";
+import { useQuery } from "@tanstack/react-query";
 import { GetTransactionsResponse, Summary } from "@/interfaces/transaction";
+import { fetchJson } from "@/config/request";
 import {
   CreateTransactionModalForm,
   TransactionTable,
@@ -36,9 +37,15 @@ function PageContent() {
   });
   const dateWithinStart = dateWithin.start.toDate().toISOString();
   const dateWithinEnd = dateWithin.end.toDate().toISOString();
-  const { isLoading, data: reesponse } = useSWR<GetTransactionsResponse, Error>(
-    `/api/transaction/${TransactionStatus.COMPLETE}/?acc=${selectedAccount}&start=${dateWithinStart}&end=${dateWithinEnd}`
-  );
+  const url = `/api/transaction/${TransactionStatus.COMPLETE}/?acc=${selectedAccount}&start=${dateWithinStart}&end=${dateWithinEnd}`;
+  const { isLoading, data: reesponse } = useQuery<GetTransactionsResponse>({
+    queryKey: [
+      "/api/transaction",
+      TransactionStatus.COMPLETE,
+      { acc: selectedAccount, start: dateWithinStart, end: dateWithinEnd },
+    ],
+    queryFn: () => fetchJson<GetTransactionsResponse>(url),
+  });
 
   useEffect(() => {
     setPageTitle(t("transactions"), t("subtitle"));
