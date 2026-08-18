@@ -13,6 +13,7 @@ import { QueryProvider } from "@/components/providers/QueryProvider";
 import { ServiceWorkerRegistrar } from "@/components/providers/ServiceWorkerRegistrar";
 import { ThemeCookieSync } from "@/components/providers/ThemeCookieSync";
 import { OnlineStatusListener } from "@/components/providers/OnlineStatusListener";
+import { AuthUserInfoProvider } from "@/components/providers/AuthUserInfoProvider";
 
 export interface ProvidersProps {
   children: React.ReactNode;
@@ -27,6 +28,7 @@ export function Providers({ children }: Readonly<ProvidersProps>) {
       <NextThemesProvider attribute="class" defaultTheme="dark">
         <ThemeCookieSync />
         <OnlineStatusListener />
+        <AuthUserInfoProvider />
         <QueryProvider>
           <ServiceWorkerRegistrar />
           <TranslationsProvider>

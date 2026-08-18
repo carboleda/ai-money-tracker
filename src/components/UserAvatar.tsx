@@ -1,32 +1,12 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React from "react";
 import { Env } from "@/config/env";
 import { User } from "@heroui/user";
-import { auth } from "@/firebase/client/auth";
-
-export type User = {
-  email?: string;
-  name?: string;
-  picture?: string;
-};
+import { useAuthUser } from "@/hooks/useAuthUser";
 
 export const UserAvatar: React.FC = () => {
-  const [user, setUser] = React.useState<User | null>(null);
-
-  useEffect(() => {
-    if (user) return;
-
-    auth.authStateReady().then(() => {
-      const authUser = auth.currentUser;
-
-      setUser({
-        name: authUser?.displayName || undefined,
-        picture: authUser?.photoURL || undefined,
-        email: authUser?.email || undefined,
-      });
-    });
-  }, [user]);
+  const user = useAuthUser();
 
   return (
     <User
