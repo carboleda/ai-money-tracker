@@ -1,14 +1,8 @@
 "use client";
 
 import React, { useEffect, useMemo, useState } from "react";
-import {
-  Dropdown,
-  DropdownTrigger,
-  DropdownMenu,
-  DropdownItem,
-} from "@heroui/dropdown";
-import { Button } from "@heroui/button";
-import { cn } from "@heroui/theme";
+import { Dropdown, Button, Label } from "@heroui/react";
+import clsx from "clsx";
 
 export interface CustomDropdownProps {
   values: { key: string; label: string }[];
@@ -51,42 +45,40 @@ export const CustomDropdown: React.FC<CustomDropdownProps> = ({
   };
 
   return (
-    <Dropdown placement="bottom-start">
-      <DropdownTrigger>
-        <Button
-          variant="bordered"
-          size="md"
-          className={cn("justify-start px-3 rounded-xl", className, {
-            "py-6": showLabel,
-          })}
-        >
-          <div className="text-start mh-5">
-            {showLabel ? (
-              <>
-                <label className="text-xs text-default-600">
-                  {label}{" "}
-                  {isRequired && <span className="text-red-600">*</span>}
-                </label>
-                <div className="text-default-600">{selectedValue}</div>
-              </>
-            ) : (
-              <div>{selectedValue || label}</div>
-            )}
-          </div>
-        </Button>
-      </DropdownTrigger>
-      <DropdownMenu
-        aria-label={label}
-        variant="flat"
-        closeOnSelect={true}
-        selectionMode="single"
-        selectedKeys={selectedKeys}
-        onSelectionChange={onSelectionChange}
+    <Dropdown>
+      <Button
+        variant="secondary"
+        className={clsx("justify-start px-3 rounded-xl", className, {
+          "py-6": showLabel,
+        })}
       >
-        {values.map(({ key, label }) => (
-          <DropdownItem key={key}>{label}</DropdownItem>
-        ))}
-      </DropdownMenu>
+        <div className="text-start mh-5">
+          {showLabel ? (
+            <>
+              <label className="text-xs text-default-600">
+                {label} {isRequired && <span className="text-red-600">*</span>}
+              </label>
+              <div className="text-default-600">{selectedValue}</div>
+            </>
+          ) : (
+            <div>{selectedValue || label}</div>
+          )}
+        </div>
+      </Button>
+      <Dropdown.Popover>
+        <Dropdown.Menu
+          aria-label={label}
+          selectionMode="single"
+          selectedKeys={selectedKeys}
+          onSelectionChange={onSelectionChange}
+        >
+          {values.map(({ key, label }) => (
+            <Dropdown.Item key={key} id={key} textValue={label}>
+              <Label>{label}</Label>
+            </Dropdown.Item>
+          ))}
+        </Dropdown.Menu>
+      </Dropdown.Popover>
     </Dropdown>
   );
 };

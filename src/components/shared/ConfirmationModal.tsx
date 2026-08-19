@@ -1,11 +1,4 @@
-import {
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-} from "@heroui/modal";
-import { Button } from "@heroui/button";
+import { Modal, Button } from "@heroui/react";
 import { PropsWithChildren } from "react";
 
 export enum Action {
@@ -27,35 +20,32 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   onAction,
 }) => {
   return (
-    <>
-      <Modal
-        id="confirmation-modal"
-        backdrop="blur"
+    <Modal>
+      <Modal.Backdrop
+        variant="blur"
         isOpen={isOpen}
         onOpenChange={() => onAction(Action.Cancel)}
         isDismissable={false}
       >
-        <ModalContent>
-          {(onClose) => (
-            <>
-              <ModalHeader className="flex flex-col gap-1">{title}</ModalHeader>
-              <ModalBody>{children}</ModalBody>
-              <ModalFooter>
-                <Button
-                  color="danger"
-                  variant="light"
-                  onPress={() => onAction(Action.No)}
-                >
-                  No
-                </Button>
-                <Button color="primary" onPress={() => onAction(Action.Yes)}>
-                  Yes
-                </Button>
-              </ModalFooter>
-            </>
-          )}
-        </ModalContent>
-      </Modal>
-    </>
+        <Modal.Container>
+          <Modal.Dialog>
+            <Modal.Header>
+              <Modal.Heading className="flex flex-col gap-1">
+                {title}
+              </Modal.Heading>
+            </Modal.Header>
+            <Modal.Body>{children}</Modal.Body>
+            <Modal.Footer>
+              <Button variant="danger-soft" onPress={() => onAction(Action.No)}>
+                No
+              </Button>
+              <Button variant="primary" onPress={() => onAction(Action.Yes)}>
+                Yes
+              </Button>
+            </Modal.Footer>
+          </Modal.Dialog>
+        </Modal.Container>
+      </Modal.Backdrop>
+    </Modal>
   );
 };

@@ -1,4 +1,4 @@
-import { Skeleton } from "@heroui/skeleton";
+import { Skeleton } from "@heroui/react";
 
 export const TableSkeleton: React.FC = () => {
   return (
@@ -16,18 +16,7 @@ export const TableSkeleton: React.FC = () => {
 function renderRow(height: string = "h-6") {
   return (
     <div className="flex flex-row gap-3">
-      <Skeleton className="rounded-lg w-full">
-        <div className={`${height} rounded-lg bg-default-200`}></div>
-      </Skeleton>
-      {/* <Skeleton className="rounded-lg w-3/4">
-        <div className={`${height} rounded-lg bg-default-200`}></div>
-      </Skeleton>
-      <Skeleton className="rounded-lg w-1/3">
-        <div className={`${height} rounded-lg bg-default-200`}></div>
-      </Skeleton>
-      <Skeleton className="rounded-lg w-1/3">
-        <div className={`${height} rounded-lg bg-default-200`}></div>
-      </Skeleton> */}
+      <Skeleton className={`${height} w-full rounded-lg`} />
     </div>
   );
 }
