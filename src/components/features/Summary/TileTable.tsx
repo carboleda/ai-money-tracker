@@ -28,7 +28,9 @@ export const TileTable: React.FC<TableTileProps> = ({ columns, data }) => {
       <Table.ScrollContainer>
         <Table.Content aria-label="Summary table">
           <Table.Header>
-            <Table.Column id="name">{columns[0]}</Table.Column>
+            <Table.Column id="name" isRowHeader>
+              {columns[0]}
+            </Table.Column>
             <Table.Column id="amount" className="text-end">
               {columns[1]}
             </Table.Column>

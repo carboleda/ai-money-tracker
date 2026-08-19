@@ -13,6 +13,7 @@ const columnsDesktop: TableColumn[] = [
   {
     key: "description",
     className: "uppercase",
+    isRowHeader: true,
   },
   {
     key: "frequency",
@@ -32,6 +33,7 @@ const columnsMobile: TableColumn[] = [
   {
     key: "expense",
     className: "uppercase",
+    isRowHeader: true,
   },
   // {
   //   key: "actions",

@@ -93,6 +93,7 @@ export const PendingTransactionTable: React.FC<
                   key={column.key}
                   id={column.key}
                   className={column.className}
+                  isRowHeader={column.isRowHeader}
                 >
                   {t(column.key)}
                 </Table.Column>

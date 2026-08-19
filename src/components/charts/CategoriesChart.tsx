@@ -55,7 +55,7 @@ export const CategoriesChart: React.FC<CategoriesChartProps> = ({
               <Table.ScrollContainer>
                 <Table.Content aria-label="Category detail">
                   <Table.Header>
-                    <Table.Column id="description">
+                    <Table.Column id="description" isRowHeader>
                       {t("description")}
                     </Table.Column>
                     <Table.Column id="date">{t("date")}</Table.Column>

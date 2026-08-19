@@ -22,6 +22,7 @@ const columnsDesktop: TableColumn[] = [
   {
     key: "description",
     className: "uppercase text-start",
+    isRowHeader: true,
   },
   {
     key: "amount",
@@ -37,6 +38,7 @@ const columnsMobile: TableColumn[] = [
   {
     key: "transaction",
     className: "uppercase",
+    isRowHeader: true,
   },
 ];
 
