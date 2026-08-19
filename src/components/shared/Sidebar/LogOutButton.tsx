@@ -34,9 +34,9 @@ export const LogOutButton: React.FC = () => {
       onPress={onSignOut}
     >
       <IconWrapper className="bg-danger/10 text-danger">
-        <HiArrowRightEndOnRectangle className=" text-lg md:text-medium" />
+        <HiArrowRightEndOnRectangle className=" text-lg md:text-base" />
       </IconWrapper>
-      <span className="text-small font-normal">{t("signOut")}</span>
+      <span className="text-sm font-normal">{t("signOut")}</span>
     </Button>
   );
 };

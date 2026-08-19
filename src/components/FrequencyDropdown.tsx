@@ -37,7 +37,7 @@ export const FrequencyDropdown: React.FC<FrequencyDropdownProps> = ({
   };
 
   return (
-    <Dropdown placement="bottom-start">
+    <Dropdown>
       <Button
         variant="secondary"
         className="h-14 w-full"
@@ -48,7 +48,7 @@ export const FrequencyDropdown: React.FC<FrequencyDropdownProps> = ({
           <div>{t(selectedValue)}</div>
         </div>
       </Button>
-      <Dropdown.Popover>
+      <Dropdown.Popover placement="bottom start">
         <Dropdown.Menu
           aria-label="Frequency"
           selectionMode="single"

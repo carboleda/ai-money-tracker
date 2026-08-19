@@ -2,10 +2,8 @@
 
 import "@/firebase/client";
 import * as React from "react";
-import { HeroUIProvider } from "@heroui/system";
-import { useRouter } from "next/navigation";
+import { Toast } from "@heroui/react";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
-import { ToastProvider } from "@heroui/toast";
 import TranslationsProvider from "@/components/providers/TranslationsProvider";
 import { AccountsProvider } from "@/components/providers/AccountsProvider";
 import { CategoriesProvider } from "@/components/providers/CategoriesProvider";
@@ -20,11 +18,9 @@ export interface ProvidersProps {
 }
 
 export function Providers({ children }: Readonly<ProvidersProps>) {
-  const router = useRouter();
-
   return (
-    <HeroUIProvider navigate={router.push}>
-      <ToastProvider toastOffset={40} />
+    <>
+      <Toast.Provider />
       <NextThemesProvider attribute="class" defaultTheme="dark">
         <ThemeCookieSync />
         <OnlineStatusListener />
@@ -38,6 +34,6 @@ export function Providers({ children }: Readonly<ProvidersProps>) {
           </TranslationsProvider>
         </QueryProvider>
       </NextThemesProvider>
-    </HeroUIProvider>
+    </>
   );
 }

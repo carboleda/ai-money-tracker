@@ -44,7 +44,7 @@ export const IconWrapper = ({ children, className }: IconWrapperProps) => (
   <div
     className={clsx(
       className,
-      "flex items-center rounded-small justify-center w-7 h-7"
+      "flex items-center rounded-sm justify-center w-7 h-7"
     )}
   >
     {children}
@@ -60,7 +60,7 @@ const renderPageItem = (page: Page, t: TFunction, pathname: string) => {
       textValue={page.label}
     >
       <IconWrapper className={page.className}>
-        <page.icon className="text-lg md:text-medium" />
+        <page.icon className="text-lg md:text-base" />
       </IconWrapper>
       <Label>{t(page.label)}</Label>
       {page.label === keyLabel.get(pathname) && (
@@ -126,7 +126,7 @@ export const SidebarMenuItems: React.FC<SidebarMenuItemsProps> = ({
           textValue={t("enablePushNotifications")}
         >
           <IconWrapper className="bg-success/10 text-success">
-            <HiBell className="text-lg md:text-medium" />
+            <HiBell className="text-lg md:text-base" />
           </IconWrapper>
           <Label>{t("enablePushNotifications")}</Label>
         </ListBox.Item>

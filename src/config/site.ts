@@ -22,13 +22,13 @@ export const pages: (Page | PageGroup)[] = [
     label: "summary",
     href: "/private",
     icon: HiChartPie,
-    className: "bg-primary/10 text-primary",
+    className: "bg-accent/10 text-accent",
   },
   {
     label: "transactions",
     href: "/private/transactions",
     icon: HiCollection,
-    className: "bg-secondary/10 text-secondary",
+    className: "bg-default/10 text-accent",
   },
   {
     label: "pending",

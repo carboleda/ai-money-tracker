@@ -23,7 +23,7 @@ export const Navbar = () => {
       <div className="flex flex-col w-full">
         <h1 className="lg:hidden">{pageTitle}</h1>
         <div className="flex items-center justify-between gap-2 min-h-6">
-          <h3 className="text-small lg:font-normal font-light dark:text-zinc-400">
+          <h3 className="text-sm lg:font-normal font-light dark:text-zinc-400">
             {pageSubtitle}
           </h3>
           <NetworkIndicator />

@@ -66,12 +66,11 @@ export const SearchToolbar: React.FC<SearchToolbarProps> = ({
             value={filterValue}
             onChange={onValueChange}
           >
-            <InputGroup>
+            <InputGroup variant="secondary">
               <InputGroup.Prefix>
                 <HiOutlineSearch />
               </InputGroup.Prefix>
               <InputGroup.Input
-                variant="secondary"
                 placeholder={t("searchByDescription")}
                 autoFocus={isMobile}
               />

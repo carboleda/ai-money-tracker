@@ -11,7 +11,7 @@ import {
   Label,
   Modal,
   Switch,
-  Textarea,
+  TextArea,
   TextField,
 } from "@heroui/react";
 import {
@@ -272,11 +272,11 @@ export const RecurringExpenseModalForm: React.FC<
               </div>
               <TextField value={paymentLinkInput} onChange={setPaymentLinkInput}>
                 <Label>{t("paymentLink")}</Label>
-                <InputGroup>
+                <InputGroup variant="secondary">
                   <InputGroup.Prefix>
                     <IconLink />
                   </InputGroup.Prefix>
-                  <InputGroup.Input variant="secondary" />
+                  <InputGroup.Input />
                 </InputGroup>
               </TextField>
               <TextField value={notesInput} onChange={setNotesInput}>
@@ -285,7 +285,7 @@ export const RecurringExpenseModalForm: React.FC<
                   <InputGroup.Prefix>
                     <IconComment size={20} />
                   </InputGroup.Prefix>
-                  <Textarea
+                  <TextArea
                     variant="secondary"
                     placeholder={t("notesPlaceholder")}
                   />

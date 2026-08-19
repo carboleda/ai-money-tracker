@@ -139,7 +139,7 @@ export const AccountModalForm: React.FC<AccountModalFormProps> = ({
           isIconOnly
           variant="outline"
           className="text-2xl h-14 w-16"
-          title={t("icon")}
+          aria-label={t("icon")}
         >
           {iconInput || DEFAULT_ICON}
         </Button>

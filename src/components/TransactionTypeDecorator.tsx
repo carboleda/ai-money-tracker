@@ -1,6 +1,7 @@
 import { PropsWithChildren } from "react";
 import { Chip, ChipProps, Skeleton } from "@heroui/react";
 import { TransactionType } from "@/app/api/domain/transaction/model/transaction.model";
+import clsx from "clsx";
 
 type TransactionTypeDecoratorProps = (
   | {
@@ -33,11 +34,10 @@ export const TransactionTypeDecorator: React.FC<
 
   return (
     <Chip
-      className="rounded-sm"
+      className={clsx("rounded-sm", disabled && "opacity-50")}
       variant="tertiary"
       size={size}
       color={color ?? colorMapper[type!]}
-      isDisabled={disabled ?? false}
     >
       {avatar}
       {children}

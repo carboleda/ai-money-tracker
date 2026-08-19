@@ -42,7 +42,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ children }) => {
         onClick={(e) => showSidebar && e.stopPropagation()}
       >
         <div id="default-sidebar" className="w-full h-full">
-          <div className="flex flex-col h-full px-3 py-4 overflow-y-auto shadow-xl border-r bg-content1 dark:bg-content1 border-gray-200 dark:border-zinc-700">
+          <div className="flex flex-col h-full px-3 py-4 overflow-y-auto shadow-xl border-r bg-surface dark:bg-surface border-gray-200 dark:border-zinc-700">
             <div className="flex w-full justify-start items-end gap-3">
               <Image
                 width={40}
@@ -61,7 +61,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ children }) => {
                 <Separator className="my-2" />
                 <LogOutButton />
                 <div className="flex flex-row gap-2 justify-between m-4">
-                  <span className="text-small font-semibold">Theme</span>
+                  <span className="text-sm font-semibold">Theme</span>
                   <ThemeSwitch />
                 </div>
               </div>

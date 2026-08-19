@@ -2,7 +2,7 @@ import { Skeleton } from "@heroui/react";
 
 export const TableSkeleton: React.FC = () => {
   return (
-    <div className="w-full space-y-5 rounded-large p-4 bg-slate-100 dark:bg-zinc-900">
+    <div className="w-full space-y-5 rounded-lg p-4 bg-slate-100 dark:bg-zinc-900">
       {renderRow("h-10")}
       <div className="space-y-3">
         {renderRow("h-16")}

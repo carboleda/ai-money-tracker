@@ -28,6 +28,7 @@ enum RangeList {
 export interface CustomDateRangePickerProps
   extends Omit<DateRangePickerProps<ZonedDateTime>, "value" | "onChange"> {
   value: RangeValue<ZonedDateTime>;
+  label?: string;
   showLabel?: boolean;
   onChange: (value: RangeValue<ZonedDateTime>) => void;
 }
