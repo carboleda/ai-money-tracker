@@ -1,8 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { Button } from "@heroui/button";
-import { Code } from "@heroui/code";
+import { Button } from "@heroui/react";
 
 export default function Error({
   error,
@@ -23,15 +22,10 @@ export default function Error({
           Something went wrong!
         </h2>
         <h3 className="text-lg text-gray-700 mb-4">{error.message}</h3>
-        <Code color="danger" className="text-wrap mb-4">
+        <code className="block text-wrap mb-4 rounded-md bg-danger/10 p-3 text-sm text-danger">
           <p className="text-wrap">{error.stack}</p>
-        </Code>
-        <Button
-          variant="solid"
-          color="primary"
-          onPress={() => reset()}
-          className="w-full"
-        >
+        </code>
+        <Button variant="primary" onPress={() => reset()} className="w-full">
           Try again
         </Button>
       </div>

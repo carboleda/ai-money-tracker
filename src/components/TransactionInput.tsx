@@ -1,7 +1,12 @@
 "use client";
 
-import { Textarea } from "@heroui/input";
-import { Spinner } from "@heroui/spinner";
+import {
+  FieldError,
+  InputGroup,
+  Spinner,
+  TextArea,
+  TextField,
+} from "@heroui/react";
 import { IconBrain } from "@/components/shared/icons";
 import { FormEvent, useState } from "react";
 import { usePlaceholderAnimation } from "@/hooks/usePlaceholderAnimation";
@@ -63,29 +68,32 @@ export const TransactionInput: React.FC<TransactionInputProps> = ({
       className="w-full"
       {...(createOnSubmit && { onSubmit: onCreateTransaction })}
     >
-      <Textarea
+      <TextField
         aria-label={t("newTransaction")}
-        labelPlacement="outside"
-        variant="bordered"
-        type="text"
-        size="lg"
-        placeholder={placeholder}
-        value={inputText}
-        readOnly={isMutating}
-        classNames={{
-          inputWrapper: "bg-default-100",
-          input: "input-placeholder-animation text-sm",
-        }}
-        startContent={
-          <IconBrain className="text-base text-default-400 pointer-events-none flex-shrink-0" />
-        }
-        endContent={isMutating && <Spinner size="sm" />}
-        onValueChange={onValueChange}
-        onClear={clearError}
         isInvalid={!!validationError}
         isRequired={isRequired}
-        errorMessage={validationError}
-      />
+      >
+        <InputGroup className="bg-default-100">
+          <InputGroup.Prefix>
+            <IconBrain className="text-base text-default-400 pointer-events-none flex-shrink-0" />
+          </InputGroup.Prefix>
+          <TextArea
+            placeholder={placeholder}
+            value={inputText}
+            readOnly={isMutating}
+            className="input-placeholder-animation text-sm"
+            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+              onValueChange(e.target.value)
+            }
+          />
+          {isMutating && (
+            <InputGroup.Suffix>
+              <Spinner size="sm" />
+            </InputGroup.Suffix>
+          )}
+        </InputGroup>
+        <FieldError>{validationError}</FieldError>
+      </TextField>
     </form>
   );
 };

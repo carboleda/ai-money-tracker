@@ -1,4 +1,4 @@
-import { Skeleton } from "@heroui/skeleton";
+import { Skeleton } from "@heroui/react";
 
 export type Tile = {
   title: string;
@@ -19,11 +19,7 @@ export const Tiles: React.FC<TilesProps> = ({ tiles }) => {
           className={`w-full flex flex-row flex-wrap justify-start ${tile.className}`}
         >
           <span className="subtitle text-lg font-bold my-2">{tile.title}</span>
-          {tile.data ?? (
-            <Skeleton className="rounded-lg w-full">
-              <div className={`h-40 rounded-lg bg-default-200`}></div>
-            </Skeleton>
-          )}
+          {tile.data ?? <Skeleton className="h-40 rounded-lg w-full" />}
         </div>
       ))}
     </div>

@@ -1,6 +1,5 @@
 import { PropsWithChildren } from "react";
-import { Chip, ChipProps } from "@heroui/chip";
-import { Skeleton } from "@heroui/skeleton";
+import { Chip, ChipProps, Skeleton } from "@heroui/react";
 import { TransactionType } from "@/app/api/domain/transaction/model/transaction.model";
 
 type TransactionTypeDecoratorProps = (
@@ -34,13 +33,13 @@ export const TransactionTypeDecorator: React.FC<
 
   return (
     <Chip
-      radius="sm"
-      variant="flat"
+      className="rounded-sm"
+      variant="tertiary"
       size={size}
-      avatar={avatar}
       color={color ?? colorMapper[type!]}
       isDisabled={disabled ?? false}
     >
+      {avatar}
       {children}
     </Chip>
   );

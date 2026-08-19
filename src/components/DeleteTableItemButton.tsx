@@ -1,4 +1,4 @@
-import { Button, ButtonProps } from "@heroui/button";
+import { Button, ButtonProps } from "@heroui/react";
 import { FaRegCircleXmark } from "react-icons/fa6";
 import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
@@ -38,12 +38,11 @@ export const DeleteTableItemButton: React.FC<DeleteTableItemButtonProps> = ({
   return (
     <Button
       isIconOnly
-      color="danger"
-      variant="light"
+      variant="danger-soft"
       className="self-center"
       aria-label={t("delete")}
       size="sm"
-      disabled={isDisabled}
+      isDisabled={isDisabled}
       onPress={onClick}
       {...props}
     >

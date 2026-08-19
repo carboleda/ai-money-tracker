@@ -14,7 +14,7 @@ import { RangeValue } from "@react-types/shared";
 import { getMonthBounds } from "@/config/utils";
 import { SummaryPanel } from "@/components/SummaryPanel";
 import { HiOutlinePlusCircle } from "react-icons/hi";
-import { Button } from "@heroui/button";
+import { Button } from "@heroui/react";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { CustomDateRangePicker } from "@/components/shared/CustomDateRangePicker";
 import { useTranslation } from "react-i18next";
@@ -86,7 +86,6 @@ function PageContent() {
             <div className="flex flex-row gap-2">
               <CustomDateRangePicker
                 label={t("dateRangeFilter")}
-                variant="bordered"
                 granularity="day"
                 isRequired
                 value={dateWithin}
@@ -97,9 +96,8 @@ function PageContent() {
                 onChange={setSelectedAccount}
               />
               <Button
-                color="success"
-                radius="sm"
-                variant="solid"
+                variant="primary"
+                className="rounded-sm bg-success text-white"
                 isIconOnly
                 onPress={() => setIsOpen(true)}
               >

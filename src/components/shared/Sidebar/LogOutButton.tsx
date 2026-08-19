@@ -3,7 +3,7 @@ import { IconWrapper } from "./SidebarMenuItems";
 import { HiArrowRightEndOnRectangle } from "react-icons/hi2";
 import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
-import { Button } from "@heroui/button";
+import { Button } from "@heroui/react";
 import { startTransition } from "react";
 import { useRouter } from "next/navigation";
 
@@ -29,7 +29,7 @@ export const LogOutButton: React.FC = () => {
   return (
     <Button
       className="flex flex-row gap-3 items-center justify-start p-2"
-      variant="light"
+      variant="ghost"
       fullWidth
       onPress={onSignOut}
     >

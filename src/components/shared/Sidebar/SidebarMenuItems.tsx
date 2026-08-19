@@ -9,9 +9,8 @@ import clsx from "clsx";
 import { HiBell } from "react-icons/hi";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { LocaleNamespace } from "@/i18n/namespace";
-import { Listbox, ListboxSection, ListboxItem } from "@heroui/listbox";
+import { ListBox, Label, Header, Separator, Chip } from "@heroui/react";
 import { FaCircleArrowRight } from "react-icons/fa6";
-import { Chip } from "@heroui/chip";
 import { TFunction } from "i18next";
 
 const keyLabel = new Map(
@@ -54,26 +53,22 @@ export const IconWrapper = ({ children, className }: IconWrapperProps) => (
 
 const renderPageItem = (page: Page, t: TFunction, pathname: string) => {
   return (
-    <ListboxItem
+    <ListBox.Item
       key={page.label}
+      id={page.label}
       href={page.href}
       textValue={page.label}
-      title={t(page.label)}
-      startContent={
-        <IconWrapper className={page.className}>
-          <page.icon className="text-lg md:text-medium" />
-        </IconWrapper>
-      }
-      endContent={
-        page.label === keyLabel.get(pathname) && (
-          <Chip variant="light" color="success">
-            <FaCircleArrowRight />
-          </Chip>
-        )
-      }
     >
-      {t(page.label)}
-    </ListboxItem>
+      <IconWrapper className={page.className}>
+        <page.icon className="text-lg md:text-medium" />
+      </IconWrapper>
+      <Label>{t(page.label)}</Label>
+      {page.label === keyLabel.get(pathname) && (
+        <Chip variant="soft" color="success" className="ml-auto">
+          <FaCircleArrowRight />
+        </Chip>
+      )}
+    </ListBox.Item>
   );
 };
 
@@ -109,50 +104,52 @@ export const SidebarMenuItems: React.FC<SidebarMenuItemsProps> = ({
   };
 
   return (
-    <Listbox
+    <ListBox
       className="flex w-full flex-col justify-start items-start"
       aria-label="User Menu"
       selectionMode="none"
-      variant="flat"
-      color="default"
+      variant="default"
       onAction={onAction}
       disabledKeys={disabledKeys}
     >
-      <ListboxSection showDivider>
-        <ListboxItem key={SidebarMenuItemKeys.Avatar} textValue="User Avatar">
-          <UserAvatar />
-        </ListboxItem>
-        <ListboxItem
-          key={SidebarMenuItemKeys.Notifications}
-          textValue={t("enablePushNotifications")}
-          title={t("enablePushNotifications")}
-          startContent={
-            <IconWrapper className="bg-success/10 text-success">
-              <HiBell className="text-lg md:text-medium" />
-            </IconWrapper>
-          }
+      <ListBox.Section>
+        <ListBox.Item
+          key={SidebarMenuItemKeys.Avatar}
+          id={SidebarMenuItemKeys.Avatar}
+          textValue="User Avatar"
         >
-          {t("enablePushNotifications")}
-        </ListboxItem>
-      </ListboxSection>
-      <ListboxSection showDivider>
+          <UserAvatar />
+        </ListBox.Item>
+        <ListBox.Item
+          key={SidebarMenuItemKeys.Notifications}
+          id={SidebarMenuItemKeys.Notifications}
+          textValue={t("enablePushNotifications")}
+        >
+          <IconWrapper className="bg-success/10 text-success">
+            <HiBell className="text-lg md:text-medium" />
+          </IconWrapper>
+          <Label>{t("enablePushNotifications")}</Label>
+        </ListBox.Item>
+      </ListBox.Section>
+      <Separator />
+      <ListBox.Section>
         {siteConfig.pages
           .filter((page: any) => "href" in page)
           .map((page) => renderPageItem(page as Page, t, pathname))}
-      </ListboxSection>
-      <>
-        {siteConfig.pages
-          .filter((page: any) => "groupLabel" in page)
-          .map((page: any) => {
-            return (
-              <ListboxSection key={page.groupLabel} title={t(page.groupLabel)}>
-                {page.pages.map((groupPage: Page) =>
-                  renderPageItem(groupPage, t, pathname)
-                )}
-              </ListboxSection>
-            );
-          })}
-      </>
-    </Listbox>
+      </ListBox.Section>
+      <Separator />
+      {siteConfig.pages
+        .filter((page: any) => "groupLabel" in page)
+        .map((page: any) => {
+          return (
+            <ListBox.Section key={page.groupLabel}>
+              <Header>{t(page.groupLabel)}</Header>
+              {page.pages.map((groupPage: Page) =>
+                renderPageItem(groupPage, t, pathname)
+              )}
+            </ListBox.Section>
+          );
+        })}
+    </ListBox>
   );
 };

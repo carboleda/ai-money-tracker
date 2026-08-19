@@ -2,8 +2,7 @@
 
 import { formatCurrency } from "@/config/utils";
 import { Summary } from "@/interfaces/transaction";
-import { Chip, ChipProps } from "@heroui/chip";
-import { Skeleton } from "@heroui/skeleton";
+import { Chip, ChipProps, Skeleton } from "@heroui/react";
 
 import { FaBalanceScaleLeft } from "react-icons/fa";
 import { HiMiniPlusCircle, HiMinusCircle, HiBell } from "react-icons/hi2";
@@ -29,7 +28,7 @@ const keyValueMapping = {
   },
   totalBalance: {
     icon: <FaBalanceScaleLeft />,
-    color: "primary",
+    color: "accent",
   },
 };
 
@@ -74,10 +73,10 @@ export const SummaryPanel: React.FC<SummaryPanelProps> = ({
             key={key}
             color={color as ChipProps["color"]}
             size={isMobile ? "sm" : "md"}
-            variant="flat"
-            radius="sm"
-            avatar={icon}
+            variant="tertiary"
+            className="rounded-sm"
           >
+            {icon}
             {renderNumber(summary[key], shortNumber)}
           </Chip>
         );
