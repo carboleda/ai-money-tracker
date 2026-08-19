@@ -1,16 +1,8 @@
 "use client";
 
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableColumn,
-  TableHeader,
-  TableRow,
-} from "@heroui/table";
+import { Button, Table } from "@heroui/react";
 import { Account } from "@/interfaces/account";
 import { TableSkeleton } from "@/components/shared/TableSkeleton";
-import { Button } from "@heroui/button";
 import { IconEdit } from "@/components/shared/icons";
 import { AccountModalForm } from "../AccountModalForm/AccountModalForm";
 import { useMemo, useState } from "react";
@@ -37,7 +29,7 @@ export const AccountsTable: React.FC<AccountsTableProps> = ({
   const [isOpen, setIsOpen] = useState(false);
   const [filterValue, setFilterValue] = useState("");
   const { isMutating, deleteAccount } = useMutateAccount();
-  const { columns, renderCell, rowHeight } = useRenderCell();
+  const { columns, renderCell } = useRenderCell();
   const { maxTableHeight } = useTableHeight();
 
   const filteredAccounts = useMemo(() => {
@@ -76,9 +68,8 @@ export const AccountsTable: React.FC<AccountsTableProps> = ({
         />
         <div className="flex w-fit justify-end">
           <Button
-            color="success"
-            radius="sm"
-            variant="solid"
+            variant="primary"
+            className="rounded-sm bg-success text-success-foreground"
             isIconOnly
             onPress={() => setIsOpen(true)}
           >
@@ -93,62 +84,69 @@ export const AccountsTable: React.FC<AccountsTableProps> = ({
 
   return (
     <>
-      <Table
-        isStriped
-        isCompact
-        isVirtualized
-        maxTableHeight={maxTableHeight}
-        rowHeight={rowHeight}
-        aria-label={t("accounts")}
-        topContentPlacement="outside"
-        topContent={renderTopContent()}
-      >
-        <TableHeader columns={columns}>
-          {(column) => (
-            <TableColumn key={column.key} className={`${column.className}`}>
-              {t(column.key)}
-            </TableColumn>
-          )}
-        </TableHeader>
-        <TableBody items={filteredAccounts} emptyContent={t("emptyContent")}>
-          {(item) => (
-            <TableRow key={item.id}>
-              {(columnKey) => {
-                if (columnKey === "actions") {
-                  return (
-                    <TableCell>
-                      <div className="text-center flex flex-row justify-center">
-                        <Button
-                          isIconOnly
-                          color="warning"
-                          variant="light"
-                          className="self-center"
-                          aria-label="Edit"
-                          onPress={() => onEdit(item)}
-                        >
-                          <IconEdit />
-                        </Button>
-                        <DeleteTableItemButton
-                          itemId={item.id}
-                          isDisabled={isMutating}
-                          deleteTableItem={deleteAccount}
-                        />
-                      </div>
-                    </TableCell>
-                  );
-                }
+      {renderTopContent()}
+      <Table>
+        <Table.ScrollContainer
+          className="overflow-y-auto"
+          style={{ maxHeight: maxTableHeight }}
+        >
+          <Table.Content aria-label={t("accounts")}>
+            <Table.Header columns={columns}>
+              {(column) => (
+                <Table.Column
+                  key={column.key}
+                  id={column.key}
+                  className={column.className}
+                >
+                  {t(column.key)}
+                </Table.Column>
+              )}
+            </Table.Header>
+            <Table.Body
+              items={filteredAccounts}
+              renderEmptyState={() => <span>{t("emptyContent")}</span>}
+            >
+              {(item) => (
+                <Table.Row key={item.id} id={item.id}>
+                  <Table.Collection items={columns}>
+                    {(column) => {
+                      if (column.key === "actions") {
+                        return (
+                          <Table.Cell>
+                            <div className="text-center flex flex-row justify-center">
+                              <Button
+                                isIconOnly
+                                variant="tertiary"
+                                className="self-center text-warning"
+                                aria-label="Edit"
+                                onPress={() => onEdit(item)}
+                              >
+                                <IconEdit />
+                              </Button>
+                              <DeleteTableItemButton
+                                itemId={item.id}
+                                isDisabled={isMutating}
+                                deleteTableItem={deleteAccount}
+                              />
+                            </div>
+                          </Table.Cell>
+                        );
+                      }
 
-                return renderCell({
-                  key: columnKey,
-                  item,
-                  onEdit,
-                  onDelete: deleteAccount,
-                  isDeleteDisabled: isMutating,
-                });
-              }}
-            </TableRow>
-          )}
-        </TableBody>
+                      return renderCell({
+                        key: column.key,
+                        item,
+                        onEdit,
+                        onDelete: deleteAccount,
+                        isDeleteDisabled: isMutating,
+                      });
+                    }}
+                  </Table.Collection>
+                </Table.Row>
+              )}
+            </Table.Body>
+          </Table.Content>
+        </Table.ScrollContainer>
       </Table>
       <AccountModalForm
         item={selectedItem}

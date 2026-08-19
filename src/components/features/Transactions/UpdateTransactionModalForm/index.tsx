@@ -174,7 +174,7 @@ export const UpdateTransactionModalForm: React.FC<
 
                 <MaskedCurrencyInput
                   label={t("amount")}
-                  variant="bordered"
+                  variant="secondary"
                   type="text"
                   isRequired
                   value={amountInput?.toString()}

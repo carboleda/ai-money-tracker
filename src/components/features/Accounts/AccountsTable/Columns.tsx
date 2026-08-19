@@ -1,7 +1,5 @@
 import { formatCurrency } from "@/config/utils";
-import { Chip } from "@heroui/chip";
-import { Button } from "@heroui/button";
-import { TableCell } from "@heroui/table";
+import { Button, Chip, Table } from "@heroui/react";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { TableColumn, RenderCellProps } from "@/interfaces/global";
 import { Account } from "@/interfaces/account";
@@ -54,31 +52,31 @@ const renderCellDesktop = ({
   switch (key) {
     case "icon":
       return (
-        <TableCell>
+        <Table.Cell>
           <div className="text-2xl">{item.icon}</div>
-        </TableCell>
+        </Table.Cell>
       );
     case "ref":
       return (
-        <TableCell>
-          <Chip radius="sm" variant="flat" className="font-bold">
+        <Table.Cell>
+          <Chip variant="tertiary" className="rounded-sm font-bold">
             {item.ref}
           </Chip>
-        </TableCell>
+        </Table.Cell>
       );
     case "name":
-      return <TableCell>{item.name}</TableCell>;
+      return <Table.Cell>{item.name}</Table.Cell>;
     case "type":
-      return <TableCell>{t?.(item.type)}</TableCell>;
+      return <Table.Cell>{t?.(item.type)}</Table.Cell>;
     case "balance":
       return (
-        <TableCell className="text-end font-bold">
+        <Table.Cell className="text-end font-bold">
           <TransactionTypeDecorator
             color={item.balance >= 0 ? "success" : "danger"}
           >
             {formatCurrency(item.balance)}
           </TransactionTypeDecorator>
-        </TableCell>
+        </Table.Cell>
       );
     default:
       return <></>;
@@ -95,7 +93,7 @@ const renderCellMobile = ({
 }: RenderCellProps<Account>): JSX.Element => {
   if (key === "account") {
     return (
-      <TableCell>
+      <Table.Cell>
         <div className="flex flex-row items-end justify-start gap-2">
           <span className="text-4xl">{item.icon}</span>
           <div className="flex flex-col gap-1">
@@ -107,7 +105,7 @@ const renderCellMobile = ({
               >
                 {formatCurrency(item.balance)}
               </TransactionTypeDecorator>
-              <Chip radius="sm" variant="flat" size="sm">
+              <Chip variant="tertiary" size="sm" className="rounded-sm">
                 <span className="text-xs font-light">{t?.(item.type)}</span>
               </Chip>
             </div>
@@ -115,9 +113,8 @@ const renderCellMobile = ({
           <div className="flex ml-auto gap-1">
             <Button
               isIconOnly
-              color="warning"
-              variant="light"
-              className="self-center"
+              variant="tertiary"
+              className="self-center text-warning"
               size="sm"
               aria-label="Edit"
               onPress={() => onEdit?.(item)}
@@ -132,7 +129,7 @@ const renderCellMobile = ({
             />
           </div>
         </div>
-      </TableCell>
+      </Table.Cell>
     );
   } else {
     return <></>;
@@ -156,6 +153,5 @@ export const useRenderCell = () => {
   return {
     columns,
     renderCell,
-    rowHeight: isMobile ? 70 : 52,
   };
 };

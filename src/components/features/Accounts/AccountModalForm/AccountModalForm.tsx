@@ -1,14 +1,13 @@
 import React, { useCallback, useEffect, useState } from "react";
 import {
+  Button,
+  FieldError,
+  Input,
+  Label,
   Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-} from "@heroui/modal";
-import { Input } from "@heroui/input";
-import { Button } from "@heroui/button";
-import { Popover, PopoverTrigger, PopoverContent } from "@heroui/popover";
+  Popover,
+  TextField,
+} from "@heroui/react";
 import { Account, ACCOUNT_TYPES, DEFAULT_ICON } from "@/interfaces/account";
 import { useMutateAccount } from "@/hooks/useMutateAccount";
 import { useTranslation } from "react-i18next";
@@ -65,7 +64,7 @@ export const AccountModalForm: React.FC<AccountModalFormProps> = ({
     }
   }, [item, isOpen]);
 
-  const onOpenChangeHandler = (open: boolean) => {
+  const onOpenChangeHandler = () => {
     clearInputs();
     clearError();
     onDismiss();
@@ -135,81 +134,81 @@ export const AccountModalForm: React.FC<AccountModalFormProps> = ({
 
   const renderEmojiPickerPopover = () => {
     return (
-      <Popover
-        isOpen={isEmojiPickerOpen}
-        onOpenChange={setIsEmojiPickerOpen}
-        placement="bottom"
-      >
-        <PopoverTrigger>
-          <Button
-            isIconOnly
-            variant="bordered"
-            className="text-2xl h-14 w-16"
-            title={t("icon")}
-          >
-            {iconInput || DEFAULT_ICON}
-          </Button>
-        </PopoverTrigger>
-        <PopoverContent className="w-80">
-          <div className="px-1 py-2">
-            <EmojiPicker
-              onEmojiClick={(emojiData) => {
-                createProxiedSetter(setIconInput)(emojiData.emoji);
-                setIsEmojiPickerOpen(false);
-              }}
-              theme={Theme.AUTO}
-              width="100%"
-              height={400}
-              previewConfig={{
-                showPreview: false,
-              }}
-              searchDisabled={false}
-              lazyLoadEmojis={true}
-            />
-          </div>
-        </PopoverContent>
+      <Popover isOpen={isEmojiPickerOpen} onOpenChange={setIsEmojiPickerOpen}>
+        <Button
+          isIconOnly
+          variant="outline"
+          className="text-2xl h-14 w-16"
+          title={t("icon")}
+        >
+          {iconInput || DEFAULT_ICON}
+        </Button>
+        <Popover.Content placement="bottom" className="w-80">
+          <Popover.Dialog>
+            <div className="px-1 py-2">
+              <EmojiPicker
+                onEmojiClick={(emojiData) => {
+                  createProxiedSetter(setIconInput)(emojiData.emoji);
+                  setIsEmojiPickerOpen(false);
+                }}
+                theme={Theme.AUTO}
+                width="100%"
+                height={400}
+                previewConfig={{
+                  showPreview: false,
+                }}
+                searchDisabled={false}
+                lazyLoadEmojis={true}
+              />
+            </div>
+          </Popover.Dialog>
+        </Popover.Content>
       </Popover>
     );
   };
 
   return (
-    <Modal
-      placement="top-center"
-      backdrop="blur"
-      isOpen={isOpen}
-      onOpenChange={onOpenChangeHandler}
-      isDismissable={false}
-    >
-      <ModalContent>
-        {(onClose) => (
-          <>
-            <ModalHeader className="flex flex-col gap-1">
-              {t("accounts")}
-            </ModalHeader>
-            <ModalBody>
+    <Modal>
+      <Modal.Backdrop
+        variant="blur"
+        isOpen={isOpen}
+        onOpenChange={onOpenChangeHandler}
+        isDismissable={false}
+      >
+        <Modal.Container>
+          <Modal.Dialog>
+            <Modal.Header>
+              <Modal.Heading className="flex flex-col gap-1">
+                {t("accounts")}
+              </Modal.Heading>
+            </Modal.Header>
+            <Modal.Body>
               {validationError && (
-                <div className="text-red-500 text-sm">{validationError}</div>
+                <div className="text-danger text-sm">{validationError}</div>
               )}
               <div className="flex gap-2">
                 {renderEmojiPickerPopover()}
-                <Input
-                  label={t("ref")}
-                  variant="bordered"
+                <TextField
                   isRequired
+                  isDisabled={!!item}
                   value={refInput}
-                  onValueChange={createProxiedSetter(setRefInput)}
-                  disabled={!!item}
-                  placeholder="e.g., C1408"
-                />
+                  onChange={createProxiedSetter(setRefInput)}
+                >
+                  <Label>{t("ref")}</Label>
+                  <Input variant="secondary" placeholder="e.g., C1408" />
+                  <FieldError />
+                </TextField>
               </div>
-              <Input
+              <TextField
                 autoFocus
-                label={t("name")}
-                variant="bordered"
                 isRequired
                 value={nameInput}
-                onValueChange={createProxiedSetter(setNameInput)}
-              />
+                onChange={createProxiedSetter(setNameInput)}
+              >
+                <Label>{t("name")}</Label>
+                <Input variant="secondary" />
+                <FieldError />
+              </TextField>
               <CustomDropdown
                 values={ACCOUNT_TYPES.map((type) => ({
                   key: type.key,
@@ -223,7 +222,7 @@ export const AccountModalForm: React.FC<AccountModalFormProps> = ({
               />
               <MaskedCurrencyInput
                 label={t("balance")}
-                variant="bordered"
+                variant="secondary"
                 type="text"
                 isRequired
                 value={balanceInput?.toString()}
@@ -231,35 +230,34 @@ export const AccountModalForm: React.FC<AccountModalFormProps> = ({
                   createProxiedSetter(setBalanceInput)(v.floatValue || 0)
                 }
               />
-              <Input
-                label={t("description")}
-                variant="bordered"
+              <TextField
                 value={descriptionInput}
-                onValueChange={setDescriptionInput}
-                placeholder={t("description")}
-              />
-            </ModalBody>
-            <ModalFooter>
+                onChange={setDescriptionInput}
+              >
+                <Label>{t("description")}</Label>
+                <Input variant="secondary" placeholder={t("description")} />
+              </TextField>
+            </Modal.Body>
+            <Modal.Footer>
               <Button
-                color="danger"
-                variant="flat"
-                disabled={areButtonsDisabled}
-                onPress={onClose}
+                variant="danger-soft"
+                isDisabled={areButtonsDisabled}
+                onPress={onOpenChangeHandler}
               >
                 {t("cancel")}
               </Button>
               <Button
-                color="primary"
-                isLoading={isMutating}
-                disabled={areButtonsDisabled}
+                variant="primary"
+                isPending={isMutating}
+                isDisabled={areButtonsDisabled}
                 onPress={onSave}
               >
                 {t("save")}
               </Button>
-            </ModalFooter>
-          </>
-        )}
-      </ModalContent>
+            </Modal.Footer>
+          </Modal.Dialog>
+        </Modal.Container>
+      </Modal.Backdrop>
     </Modal>
   );
 };
