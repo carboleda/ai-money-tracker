@@ -14,7 +14,7 @@ export const UserAvatar: React.FC = () => {
     <div className="inline-flex items-center gap-2 rounded-sm">
       <Avatar className="w-9 h-9 ring-2 ring-background">
         {src && <Avatar.Image src={src} alt={user?.name ?? "User"} />}
-        <Avatar.Fallback className="bg-success/20 text-success-700">
+        <Avatar.Fallback className="bg-success/20 text-success">
           {initials}
         </Avatar.Fallback>
       </Avatar>
