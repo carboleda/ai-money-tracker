@@ -85,7 +85,7 @@ export const RecurringExpensesTable: React.FC<RecurringExpensesTableProps> = ({
   };
 
   const renderTopContent = () => (
-    <div className="flex flex-col gap-4">
+    <div className="flex w-full flex-col gap-4">
       <div className="flex justify-between gap-3 items-center w-full">
         <SearchToolbar
           filterValue={filterValue}
