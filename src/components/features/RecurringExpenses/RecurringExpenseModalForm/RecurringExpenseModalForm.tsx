@@ -1,14 +1,19 @@
 import React, { useEffect, useState } from "react";
 import {
+  Button,
+  Calendar,
+  Chip,
+  DateField,
+  DatePicker,
+  FieldError,
+  Input,
+  InputGroup,
+  Label,
   Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-} from "@heroui/modal";
-import { Input, Textarea } from "@heroui/input";
-import { Button } from "@heroui/button";
-import { DatePicker } from "@heroui/date-picker";
+  Switch,
+  Textarea,
+  TextField,
+} from "@heroui/react";
 import {
   parseAbsoluteToLocal,
   ZonedDateTime,
@@ -29,7 +34,6 @@ import { Env } from "@/config/env";
 import { MaskedCurrencyInput } from "@/components/shared/MaskedCurrencyInput";
 import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
-import { Switch } from "@heroui/switch";
 import { HiMinusSm, HiPlusSm } from "react-icons/hi";
 import { useToast } from "@/hooks/useToast";
 
@@ -155,36 +159,43 @@ export const RecurringExpenseModalForm: React.FC<
   };
 
   return (
-    <Modal
-      placement="top-center"
-      backdrop="blur"
-      isOpen={isOpen}
-      onOpenChange={onOpenChangeHandler}
-      isDismissable={false}
-    >
-      <ModalContent>
-        {(onClose) => (
-          <>
-            <ModalHeader className="flex flex-row justify-between pr-6 mt-4">
-              <span>{t("recurringExpenses")}</span>
+    <Modal>
+      <Modal.Backdrop
+        variant="blur"
+        isOpen={isOpen}
+        onOpenChange={onOpenChangeHandler}
+        isDismissable={false}
+      >
+        <Modal.Container>
+          <Modal.Dialog>
+            <Modal.Header className="flex flex-row justify-between pr-6 mt-4">
+              <Modal.Heading>{t("recurringExpenses")}</Modal.Heading>
               <Switch
                 aria-label={t("disabled")}
                 size="sm"
-                endContent={<HiMinusSm />}
-                startContent={<HiPlusSm />}
                 isSelected={!disabledInput}
-                onValueChange={(v) => setDisabledInput(!v)}
-              />
-            </ModalHeader>
-            <ModalBody>
-              <Input
+                onChange={(v) => setDisabledInput(!v)}
+              >
+                <Switch.Content>
+                  <Switch.Control className="flex items-center gap-2">
+                    <HiPlusSm />
+                    <Switch.Thumb />
+                    <HiMinusSm />
+                  </Switch.Control>
+                </Switch.Content>
+              </Switch>
+            </Modal.Header>
+            <Modal.Body>
+              <TextField
                 autoFocus
-                label={t("description")}
-                variant="bordered"
                 isRequired
                 value={descriptionInput}
-                onValueChange={setDescriptionInput}
-              />
+                onChange={setDescriptionInput}
+              >
+                <Label>{t("description")}</Label>
+                <Input variant="secondary" />
+                <FieldError />
+              </TextField>
               <div className="flex gap-2">
                 <CategoriesAutocomplete
                   label={t("category")}
@@ -195,7 +206,7 @@ export const RecurringExpenseModalForm: React.FC<
 
                 <MaskedCurrencyInput
                   label={t("amount")}
-                  variant="bordered"
+                  variant="secondary"
                   type="text"
                   isRequired
                   value={amountInput?.toString()}
@@ -210,53 +221,106 @@ export const RecurringExpenseModalForm: React.FC<
                   />
                 </div>
                 <DatePicker
-                  label={t("dueDate")}
-                  variant="bordered"
                   granularity="day"
                   minValue={dueDateMinMax?.min}
                   maxValue={dueDateMinMax?.max}
-                  value={dueDateInput}
+                  value={dueDateInput ?? null}
                   onChange={(v) => setDueDateInput(v!)}
                   isRequired
-                />
+                >
+                  <Label>{t("dueDate")}</Label>
+                  <DateField.Group fullWidth>
+                    <DateField.Input>
+                      {(segment) => <DateField.Segment segment={segment} />}
+                    </DateField.Input>
+                    <DateField.Suffix>
+                      <DatePicker.Trigger>
+                        <DatePicker.TriggerIndicator />
+                      </DatePicker.Trigger>
+                    </DateField.Suffix>
+                  </DateField.Group>
+                  <DatePicker.Popover>
+                    <Calendar aria-label={t("dueDate")}>
+                      <Calendar.Header>
+                        <Calendar.YearPickerTrigger>
+                          <Calendar.YearPickerTriggerHeading />
+                          <Calendar.YearPickerTriggerIndicator />
+                        </Calendar.YearPickerTrigger>
+                        <Calendar.NavButton slot="previous" />
+                        <Calendar.NavButton slot="next" />
+                      </Calendar.Header>
+                      <Calendar.Grid>
+                        <Calendar.GridHeader>
+                          {(day) => (
+                            <Calendar.HeaderCell>{day}</Calendar.HeaderCell>
+                          )}
+                        </Calendar.GridHeader>
+                        <Calendar.GridBody>
+                          {(date) => <Calendar.Cell date={date} />}
+                        </Calendar.GridBody>
+                      </Calendar.Grid>
+                      <Calendar.YearPickerGrid>
+                        <Calendar.YearPickerGridBody>
+                          {({ year }) => (
+                            <Calendar.YearPickerCell year={year} />
+                          )}
+                        </Calendar.YearPickerGridBody>
+                      </Calendar.YearPickerGrid>
+                    </Calendar>
+                  </DatePicker.Popover>
+                </DatePicker>
               </div>
-              <Input
-                label={t("paymentLink")}
-                variant="bordered"
-                startContent={<IconLink />}
-                value={paymentLinkInput}
-                onValueChange={setPaymentLinkInput}
-              />
-              <Textarea
-                label={t("notes")}
-                placeholder={t("notesPlaceholder")}
-                variant="bordered"
-                startContent={<IconComment size={20} />}
-                value={notesInput}
-                onValueChange={setNotesInput}
-              />
-            </ModalBody>
-            <ModalFooter>
+              <TextField value={paymentLinkInput} onChange={setPaymentLinkInput}>
+                <Label>{t("paymentLink")}</Label>
+                <InputGroup>
+                  <InputGroup.Prefix>
+                    <IconLink />
+                  </InputGroup.Prefix>
+                  <InputGroup.Input variant="secondary" />
+                </InputGroup>
+              </TextField>
+              <TextField value={notesInput} onChange={setNotesInput}>
+                <Label>{t("notes")}</Label>
+                <InputGroup>
+                  <InputGroup.Prefix>
+                    <IconComment size={20} />
+                  </InputGroup.Prefix>
+                  <Textarea
+                    variant="secondary"
+                    placeholder={t("notesPlaceholder")}
+                  />
+                </InputGroup>
+              </TextField>
+              {validationError && (
+                <Chip
+                  variant="soft"
+                  color="danger"
+                  className="text-wrap max-w-full w-full h-fit p-2 rounded-sm"
+                >
+                  {validationError}
+                </Chip>
+              )}
+            </Modal.Body>
+            <Modal.Footer>
               <Button
-                color="danger"
-                variant="flat"
-                disabled={areButtonsDisabled}
-                onPress={onClose}
+                variant="danger-soft"
+                isDisabled={areButtonsDisabled}
+                onPress={() => onOpenChangeHandler(false)}
               >
                 {t("cancel")}
               </Button>
               <Button
-                color="primary"
-                isLoading={isMutating}
-                disabled={areButtonsDisabled}
+                variant="primary"
+                isPending={isMutating}
+                isDisabled={areButtonsDisabled}
                 onPress={onSave}
               >
                 {t("save")}
               </Button>
-            </ModalFooter>
-          </>
-        )}
-      </ModalContent>
+            </Modal.Footer>
+          </Modal.Dialog>
+        </Modal.Container>
+      </Modal.Backdrop>
     </Modal>
   );
 };

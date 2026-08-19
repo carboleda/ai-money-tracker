@@ -1,11 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import {
-  Dropdown,
-  DropdownTrigger,
-  DropdownMenu,
-  DropdownItem,
-} from "@heroui/dropdown";
-import { Button } from "@heroui/button";
+import { Button, Dropdown, Label } from "@heroui/react";
 import { Frequency } from "@/app/api/domain/recurring-expense/model/recurring-expense.model";
 import { frequencyOptions } from "@/interfaces/recurringExpense";
 import { useTranslation } from "react-i18next";
@@ -44,30 +38,30 @@ export const FrequencyDropdown: React.FC<FrequencyDropdownProps> = ({
 
   return (
     <Dropdown placement="bottom-start">
-      <DropdownTrigger>
-        <Button
-          variant="bordered"
-          className="h-14 w-full"
-          style={{ justifyContent: "flex-start" }}
-        >
-          <div className="text-start mh-5">
-            <label className="text-xs text-default-600">{t("frequency")}</label>
-            <div>{t(selectedValue)}</div>
-          </div>
-        </Button>
-      </DropdownTrigger>
-      <DropdownMenu
-        aria-label="Frequency"
-        variant="flat"
-        closeOnSelect={true}
-        selectionMode="single"
-        selectedKeys={selectedKeys}
-        onSelectionChange={onSelectionChange}
+      <Button
+        variant="secondary"
+        className="h-14 w-full"
+        style={{ justifyContent: "flex-start" }}
       >
-        {Object.keys(frequencyOptions).map((key) => {
-          return <DropdownItem key={key}>{t(key)}</DropdownItem>;
-        })}
-      </DropdownMenu>
+        <div className="text-start mh-5">
+          <label className="text-xs text-default-600">{t("frequency")}</label>
+          <div>{t(selectedValue)}</div>
+        </div>
+      </Button>
+      <Dropdown.Popover>
+        <Dropdown.Menu
+          aria-label="Frequency"
+          selectionMode="single"
+          selectedKeys={selectedKeys}
+          onSelectionChange={onSelectionChange}
+        >
+          {Object.keys(frequencyOptions).map((key) => (
+            <Dropdown.Item key={key} id={key} textValue={t(key)}>
+              <Label>{t(key)}</Label>
+            </Dropdown.Item>
+          ))}
+        </Dropdown.Menu>
+      </Dropdown.Popover>
     </Dropdown>
   );
 };

@@ -1,7 +1,5 @@
 import { formatCurrency, formatFrequency } from "@/config/utils";
-import { Chip } from "@heroui/chip";
-import { Button } from "@heroui/button";
-import { TableCell, TableRow } from "@heroui/table";
+import { Button, Chip, Table } from "@heroui/react";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { TableColumn, RenderCellProps } from "@/interfaces/global";
 import { TransactionTypeDecorator } from "@/components/TransactionTypeDecorator";
@@ -48,33 +46,33 @@ const renderCellDesktop = ({
   switch (key) {
     case "description":
       return (
-        <TableCell>
+        <Table.Cell>
           <div className="flex flex-row items-center gap-2">
             <span>{item.description}</span>
             {item.category && (
-              <Chip radius="sm" variant="flat" size="sm">
+              <Chip variant="tertiary" size="sm" className="rounded-sm">
                 {`${item.category.icon} ${item.category.name}`}
               </Chip>
             )}
           </div>
-        </TableCell>
+        </Table.Cell>
       );
     case "frequency":
       return (
-        <TableCell>{formatFrequency(item.frequency, item.dueDate)}</TableCell>
+        <Table.Cell>{formatFrequency(item.frequency, item.dueDate)}</Table.Cell>
       );
     case "amount":
       return (
-        <TableCell className="text-end">
+        <Table.Cell className="text-end">
           <TransactionTypeDecorator
             color={
-              item.frequency === Frequency.MONTHLY ? "primary" : "secondary"
+              item.frequency === Frequency.MONTHLY ? "accent" : "default"
             }
             disabled={item.disabled}
           >
             {formatCurrency(item.amount)}
           </TransactionTypeDecorator>
-        </TableCell>
+        </Table.Cell>
       );
     default:
       return <></>;
@@ -87,13 +85,13 @@ const renderSeparatorDesktop = (
   title: string
 ): JSX.Element => {
   return (
-    <TableRow key={id}>
-      <TableCell colSpan={colSpan} className="text-center px-3">
+    <Table.Row key={id} id={id}>
+      <Table.Cell colSpan={colSpan} className="text-center px-3">
         <div className="py-3 my-3 font-bold text-zinc-200 bg-blue-600 rounded-md">
           {title}
         </div>
-      </TableCell>
-    </TableRow>
+      </Table.Cell>
+    </Table.Row>
   );
 };
 
@@ -107,7 +105,7 @@ const renderCellMobile = ({
   switch (key) {
     case "expense":
       return (
-        <TableCell>
+        <Table.Cell>
           <div className="flex flex-col items-start gap-2">
             <p className="text-xs font-normal">{item.description}</p>
             <div className="flex flex-row w-full items-center justify-between">
@@ -115,8 +113,8 @@ const renderCellMobile = ({
                 <TransactionTypeDecorator
                   color={
                     item.frequency === Frequency.MONTHLY
-                      ? "primary"
-                      : "secondary"
+                      ? "accent"
+                      : "default"
                   }
                   size="sm"
                   disabled={item.disabled}
@@ -124,7 +122,11 @@ const renderCellMobile = ({
                   {formatCurrency(item.amount)}
                 </TransactionTypeDecorator>
                 {item.category && (
-                  <Chip radius="sm" variant="flat" size="sm" className="ml-2">
+                  <Chip
+                    variant="tertiary"
+                    size="sm"
+                    className="ml-2 rounded-sm"
+                  >
                     {`${item.category.icon} ${item.category.name}`}
                   </Chip>
                 )}
@@ -137,9 +139,8 @@ const renderCellMobile = ({
               <div className="flex flex-row items-center">
                 <Button
                   isIconOnly
-                  color="warning"
-                  variant="light"
-                  className="self-center"
+                  variant="tertiary"
+                  className="self-center text-warning"
                   size="sm"
                   aria-label="Edit"
                   onPress={() => onEdit?.(item)}
@@ -155,7 +156,7 @@ const renderCellMobile = ({
               </div>
             </div>
           </div>
-        </TableCell>
+        </Table.Cell>
       );
     default:
       return <></>;
@@ -168,13 +169,13 @@ const renderSeparatorMobile = (
   title: string
 ): JSX.Element => {
   return (
-    <TableRow key={id}>
-      <TableCell colSpan={colSpan} className="text-center px-3">
+    <Table.Row key={id} id={id}>
+      <Table.Cell colSpan={colSpan} className="text-center px-3">
         <div className="py-3 my-3 mx-3 font-bold text-zinc-200 bg-blue-600 rounded-md">
           {title}
         </div>
-      </TableCell>
-    </TableRow>
+      </Table.Cell>
+    </Table.Row>
   );
 };
 
@@ -186,7 +187,6 @@ export const useRenderCell = () => {
   const renderSeparator = isMobile
     ? renderSeparatorMobile
     : renderSeparatorDesktop;
-  const rowHeight = isMobile ? 110 : 50;
 
-  return { columns, renderCell, rowHeight, renderSeparator };
+  return { columns, renderCell, renderSeparator };
 };

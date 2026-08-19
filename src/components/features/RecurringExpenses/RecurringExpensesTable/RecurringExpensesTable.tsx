@@ -1,20 +1,12 @@
 "use client";
 
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableColumn,
-  TableHeader,
-  TableRow,
-} from "@heroui/table";
+import { Button, Table } from "@heroui/react";
 import {
   Frequency,
   FrequencyGroup,
 } from "@/app/api/domain/recurring-expense/model/recurring-expense.model";
 import type { RecurringExpenseOutput } from "@/app/api/domain/recurring-expense/ports/outbound/get-recurring-expenses.port";
 import { TableSkeleton } from "@/components/shared/TableSkeleton";
-import { Button } from "@heroui/button";
 import { IconEdit } from "@/components/shared/icons";
 import { RecurringExpenseModalForm } from "../RecurringExpenseModalForm/RecurringExpenseModalForm";
 import { useMemo, useState } from "react";
@@ -61,7 +53,7 @@ export const RecurringExpensesTable: React.FC<RecurringExpensesTableProps> = ({
   const [isOpen, setIsOpen] = useState(false);
   const [filterValue, setFilterValue] = useState("");
   const { isMutating, deleteConfig } = useMutateRecurringExpenses();
-  const { columns, renderCell, rowHeight, renderSeparator } = useRenderCell();
+  const { columns, renderCell, renderSeparator } = useRenderCell();
   const { maxTableHeight } = useTableHeight();
 
   const transactions = useMemo(() => {
@@ -101,9 +93,8 @@ export const RecurringExpensesTable: React.FC<RecurringExpensesTableProps> = ({
         />
         <div className="flex w-fit justify-end">
           <Button
-            color="success"
-            radius="sm"
-            variant="solid"
+            variant="primary"
+            className="rounded-sm bg-success text-success-foreground"
             isIconOnly
             onPress={() => setIsOpen(true)}
           >
@@ -118,72 +109,78 @@ export const RecurringExpensesTable: React.FC<RecurringExpensesTableProps> = ({
 
   return (
     <>
-      <Table
-        isStriped
-        isCompact
-        isVirtualized
-        maxTableHeight={maxTableHeight}
-        rowHeight={rowHeight}
-        aria-label={t("recurringExpenses")}
-        disabledKeys={[FrequencyGroup.OTHERS]}
-        topContentPlacement="outside"
-        topContent={renderTopContent()}
-      >
-        <TableHeader columns={columns}>
-          {(column) => (
-            <TableColumn key={column.key} className={`${column.className}`}>
-              {t(column.key)}
-            </TableColumn>
-          )}
-        </TableHeader>
-        <TableBody items={transactions} emptyContent={t("emptyContent")}>
-          {(item) => {
-            if (item.id === FrequencyGroup.OTHERS) {
-              return renderSeparator(
-                item.id,
-                columns.length,
-                t("separatorTitle")
-              );
-            }
+      {renderTopContent()}
+      <Table>
+        <Table.ScrollContainer
+          className="overflow-y-auto"
+          style={{ maxHeight: maxTableHeight }}
+        >
+          <Table.Content aria-label={t("recurringExpenses")}>
+            <Table.Header columns={columns}>
+              {(column) => (
+                <Table.Column
+                  key={column.key}
+                  id={column.key}
+                  className={column.className}
+                >
+                  {t(column.key)}
+                </Table.Column>
+              )}
+            </Table.Header>
+            <Table.Body
+              items={transactions}
+              renderEmptyState={() => <span>{t("emptyContent")}</span>}
+            >
+              {(item) => {
+                if (item.id === FrequencyGroup.OTHERS) {
+                  return renderSeparator(
+                    item.id,
+                    columns.length,
+                    t("separatorTitle")
+                  );
+                }
 
-            return (
-              <TableRow key={item.id}>
-                {(columnKey) => {
-                  if (columnKey === "actions") {
-                    return (
-                      <TableCell>
-                        <div className="text-center flex flex-row justify-center">
-                          <Button
-                            isIconOnly
-                            color="warning"
-                            variant="light"
-                            className="self-center"
-                            aria-label="Edit"
-                            onPress={() => onEdit(item)}
-                          >
-                            <IconEdit />
-                          </Button>
-                          <DeleteTableItemButton
-                            itemId={item.id}
-                            isDisabled={isMutating}
-                            deleteTableItem={deleteConfig}
-                          />
-                        </div>
-                      </TableCell>
-                    );
-                  }
+                return (
+                  <Table.Row key={item.id} id={item.id}>
+                    <Table.Collection items={columns}>
+                      {(column) => {
+                        if (column.key === "actions") {
+                          return (
+                            <Table.Cell>
+                              <div className="text-center flex flex-row justify-center">
+                                <Button
+                                  isIconOnly
+                                  variant="tertiary"
+                                  className="self-center text-warning"
+                                  aria-label="Edit"
+                                  onPress={() => onEdit(item)}
+                                >
+                                  <IconEdit />
+                                </Button>
+                                <DeleteTableItemButton
+                                  itemId={item.id}
+                                  isDisabled={isMutating}
+                                  deleteTableItem={deleteConfig}
+                                />
+                              </div>
+                            </Table.Cell>
+                          );
+                        }
 
-                  return renderCell({
-                    key: columnKey,
-                    item,
-                    onEdit,
-                    onDelete: deleteConfig,
-                  });
-                }}
-              </TableRow>
-            );
-          }}
-        </TableBody>
+                        return renderCell({
+                          key: column.key,
+                          item,
+                          onEdit,
+                          onDelete: deleteConfig,
+                        });
+                      }}
+                    </Table.Collection>
+                  </Table.Row>
+                );
+              }}
+            </Table.Body>
+          </Table.Content>
+        </Table.ScrollContainer>
       </Table>
       <RecurringExpenseModalForm
         item={selectedItem}
