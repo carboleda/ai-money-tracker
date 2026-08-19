@@ -1,17 +1,9 @@
 "use client";
 
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableColumn,
-  TableHeader,
-  TableRow,
-} from "@heroui/table";
+import { Button, Table } from "@heroui/react";
 import { TableSkeleton } from "@/components/shared/TableSkeleton";
 import { useMutateTransaction } from "@/hooks/useMutateTransaction";
 import { DeleteTableItemButton } from "@/components/DeleteTableItemButton";
-import { Button } from "@heroui/button";
 import { CompleteTransactionModalForm } from "../CompleteTransactionModalForm/CompleteTransactionModalForm";
 import { useCallback, useMemo, useState } from "react";
 import { useRenderCell } from "./Columns";
@@ -35,7 +27,7 @@ export const PendingTransactionTable: React.FC<
   const [isOpen, setIsOpen] = useState(false);
   const [filterValue, setFilterValue] = useState("");
   const { isMutating, deleteTransaction } = useMutateTransaction();
-  const { columns, renderCell, rowHeight } = useRenderCell();
+  const { columns, renderCell } = useRenderCell();
   const { maxTableHeight } = useTableHeight();
 
   const transactions = useMemo(() => {
@@ -88,63 +80,67 @@ export const PendingTransactionTable: React.FC<
 
   return (
     <>
-      <Table
-        isStriped
-        isCompact
-        isVirtualized
-        maxTableHeight={maxTableHeight}
-        rowHeight={rowHeight}
-        aria-label={t("pendingTransactions")}
-        topContentPlacement="outside"
-        topContent={renderTopContent()}
-      >
-        <TableHeader columns={columns}>
-          {(column) => (
-            <TableColumn key={column.key} className={`${column.className}`}>
-              {t(column.key)}
-            </TableColumn>
-          )}
-        </TableHeader>
-        <TableBody
-          items={transactions}
-          emptyContent={t("management.emptyContent")}
+      {renderTopContent()}
+      <Table>
+        <Table.ScrollContainer
+          className="overflow-y-auto"
+          style={{ maxHeight: maxTableHeight }}
         >
-          {(item) => (
-            <TableRow key={item.id}>
-              {(columnKey) => {
-                if (columnKey === "actions") {
-                  return (
-                    <TableCell>
-                      <div className="flex flex-row justify-center">
-                        <Button
-                          isIconOnly
-                          color="success"
-                          variant="light"
-                          className="self-center"
-                          aria-label={t("confirm")}
-                          onPress={() => onConfirm(item)}
-                        >
-                          <FaRegCircleCheck className="text-xl" />
-                        </Button>
-                        <DeleteTableItemButton
-                          itemId={item.id}
-                          isDisabled={isMutating}
-                          deleteTableItem={deleteTransaction}
-                        />
-                      </div>
-                    </TableCell>
-                  );
-                }
-                return renderCell({
-                  key: columnKey,
-                  item,
-                  onEdit: onConfirm,
-                  onDelete: deleteTransaction,
-                });
-              }}
-            </TableRow>
-          )}
-        </TableBody>
+          <Table.Content aria-label={t("pendingTransactions")}>
+            <Table.Header columns={columns}>
+              {(column) => (
+                <Table.Column
+                  key={column.key}
+                  id={column.key}
+                  className={column.className}
+                >
+                  {t(column.key)}
+                </Table.Column>
+              )}
+            </Table.Header>
+            <Table.Body
+              items={transactions}
+              renderEmptyState={() => <span>{t("management.emptyContent")}</span>}
+            >
+              {(item) => (
+                <Table.Row key={item.id} id={item.id}>
+                  <Table.Collection items={columns}>
+                    {(column) => {
+                      if (column.key === "actions") {
+                        return (
+                          <Table.Cell>
+                            <div className="flex flex-row justify-center">
+                              <Button
+                                isIconOnly
+                                variant="tertiary"
+                                className="self-center text-success"
+                                aria-label={t("confirm")}
+                                onPress={() => onConfirm(item)}
+                              >
+                                <FaRegCircleCheck className="text-xl" />
+                              </Button>
+                              <DeleteTableItemButton
+                                itemId={item.id}
+                                isDisabled={isMutating}
+                                deleteTableItem={deleteTransaction}
+                              />
+                            </div>
+                          </Table.Cell>
+                        );
+                      }
+                      return renderCell({
+                        key: column.key,
+                        item,
+                        onEdit: onConfirm,
+                        onDelete: deleteTransaction,
+                      });
+                    }}
+                  </Table.Collection>
+                </Table.Row>
+              )}
+            </Table.Body>
+          </Table.Content>
+        </Table.ScrollContainer>
       </Table>
       <CompleteTransactionModalForm
         item={selectedItem}

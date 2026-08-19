@@ -1,18 +1,17 @@
 import React, { useEffect, useState } from "react";
 import {
+  Button,
+  Calendar,
+  Chip,
+  DateField,
+  DatePicker,
+  Label,
   Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-} from "@heroui/modal";
-import { Button } from "@heroui/button";
-import { DatePicker } from "@heroui/date-picker";
+} from "@heroui/react";
 import { getLocalTimeZone, now, ZonedDateTime } from "@internationalized/date";
 import { BankAccounDropdown } from "@/components/BankAccounsDropdown";
 import { useMutateTransaction } from "@/hooks/useMutateTransaction";
 import { MaskedCurrencyInput } from "@/components/shared/MaskedCurrencyInput";
-import { Chip } from "@heroui/chip";
 import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
 import { useToast } from "@/hooks/useToast";
@@ -45,7 +44,7 @@ export const CompleteTransactionModalForm: React.FC<
     setAmountInput(item?.amount);
   }, [item]);
 
-  const onOpenChangeHandler = (_open: boolean) => {
+  const onOpenChangeHandler = () => {
     onDismiss();
     clearInputs();
   };
@@ -98,23 +97,24 @@ export const CompleteTransactionModalForm: React.FC<
   };
 
   return (
-    <Modal
-      placement="top-center"
-      backdrop="blur"
-      isOpen={isOpen}
-      onOpenChange={onOpenChangeHandler}
-      isDismissable={false}
-    >
-      <ModalContent>
-        {(onClose) => (
-          <>
-            <ModalHeader className="flex flex-col gap-1">
-              <span>{t("completeTransaction")}</span>
-              <span className="text-sm font-normal subtitle">
-                {item?.description}
-              </span>
-            </ModalHeader>
-            <ModalBody>
+    <Modal>
+      <Modal.Backdrop
+        variant="blur"
+        isOpen={isOpen}
+        onOpenChange={onOpenChangeHandler}
+        isDismissable={false}
+      >
+        <Modal.Container>
+          <Modal.Dialog>
+            <Modal.Header>
+              <Modal.Heading className="flex flex-col gap-1">
+                <span>{t("completeTransaction")}</span>
+                <span className="text-sm font-normal subtitle">
+                  {item?.description}
+                </span>
+              </Modal.Heading>
+            </Modal.Header>
+            <Modal.Body>
               <div className="self-start w-full">
                 <BankAccounDropdown
                   label={t("bankAccount")}
@@ -126,52 +126,85 @@ export const CompleteTransactionModalForm: React.FC<
               </div>
               <MaskedCurrencyInput
                 label={t("amount")}
-                variant="bordered"
+                variant="secondary"
                 type="text"
                 isRequired
                 value={amountInput?.toString()}
                 onValueChange={(v) => setAmountInput(v.floatValue)}
               />
               <DatePicker
-                label={t("paidOn")}
-                variant="bordered"
                 granularity="day"
                 isRequired
-                value={paymentDateInput}
+                value={paymentDateInput ?? null}
                 onChange={setPaymentDateInput}
-              />
+              >
+                <Label>{t("paidOn")}</Label>
+                <DateField.Group fullWidth>
+                  <DateField.Input>
+                    {(segment) => <DateField.Segment segment={segment} />}
+                  </DateField.Input>
+                  <DateField.Suffix>
+                    <DatePicker.Trigger>
+                      <DatePicker.TriggerIndicator />
+                    </DatePicker.Trigger>
+                  </DateField.Suffix>
+                </DateField.Group>
+                <DatePicker.Popover>
+                  <Calendar aria-label={t("paidOn")}>
+                    <Calendar.Header>
+                      <Calendar.YearPickerTrigger>
+                        <Calendar.YearPickerTriggerHeading />
+                        <Calendar.YearPickerTriggerIndicator />
+                      </Calendar.YearPickerTrigger>
+                      <Calendar.NavButton slot="previous" />
+                      <Calendar.NavButton slot="next" />
+                    </Calendar.Header>
+                    <Calendar.Grid>
+                      <Calendar.GridHeader>
+                        {(day) => <Calendar.HeaderCell>{day}</Calendar.HeaderCell>}
+                      </Calendar.GridHeader>
+                      <Calendar.GridBody>
+                        {(date) => <Calendar.Cell date={date} />}
+                      </Calendar.GridBody>
+                    </Calendar.Grid>
+                    <Calendar.YearPickerGrid>
+                      <Calendar.YearPickerGridBody>
+                        {({ year }) => <Calendar.YearPickerCell year={year} />}
+                      </Calendar.YearPickerGridBody>
+                    </Calendar.YearPickerGrid>
+                  </Calendar>
+                </DatePicker.Popover>
+              </DatePicker>
               {validationError && (
                 <Chip
-                  variant="flat"
+                  variant="soft"
                   color="danger"
-                  radius="sm"
-                  className="text-wrap max-w-full w-full h-fit p-2"
+                  className="text-wrap max-w-full w-full h-fit p-2 rounded-sm"
                 >
                   {validationError}
                 </Chip>
               )}
-            </ModalBody>
-            <ModalFooter>
+            </Modal.Body>
+            <Modal.Footer>
               <Button
-                color="danger"
-                variant="flat"
-                disabled={areButtonsDisabled}
-                onPress={onClose}
+                variant="danger-soft"
+                isDisabled={areButtonsDisabled}
+                onPress={onOpenChangeHandler}
               >
                 {t("cancel")}
               </Button>
               <Button
-                color="success"
-                isLoading={isMutating}
-                disabled={areButtonsDisabled}
+                variant="primary"
+                isPending={isMutating}
+                isDisabled={areButtonsDisabled}
                 onPress={onSave}
               >
                 {t("completeTransationButton")}
               </Button>
-            </ModalFooter>
-          </>
-        )}
-      </ModalContent>
+            </Modal.Footer>
+          </Modal.Dialog>
+        </Modal.Container>
+      </Modal.Backdrop>
     </Modal>
   );
 };

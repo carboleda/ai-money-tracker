@@ -1,7 +1,5 @@
 import { formatCurrency, formatDate } from "@/config/utils";
-import { Chip } from "@heroui/chip";
-import { Button } from "@heroui/button";
-import { TableCell } from "@heroui/table";
+import { Button, Chip, Table } from "@heroui/react";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { TableColumn, RenderCellProps } from "@/interfaces/global";
 import { TransactionTypeDecorator } from "@/components/TransactionTypeDecorator";
@@ -49,11 +47,11 @@ const renderCellDesktop = ({
   switch (key) {
     case "description":
       return (
-        <TableCell>
+        <Table.Cell>
           <div className="flex flex-row items-start gap-2">
             <span className="text-gray-400">
               {item.category && (
-                <Chip radius="sm" variant="flat" size="sm">
+                <Chip variant="tertiary" size="sm" className="rounded-sm">
                   {`${item.category.icon} ${item.category.name}`}
                 </Chip>
               )}
@@ -62,20 +60,20 @@ const renderCellDesktop = ({
             <span className="text-gray-400">{item.description}</span>
             {item.notes && <NotePopover content={item.notes} />}
           </div>
-        </TableCell>
+        </Table.Cell>
       );
     case "date":
       return (
-        <TableCell>
+        <Table.Cell>
           <div className="flex items-center gap-0">
             <DueDateIndicator dueDate={item.createdAt} />
             {formatDate(new Date(item.createdAt))}
           </div>
-        </TableCell>
+        </Table.Cell>
       );
     case "amount":
       return (
-        <TableCell>
+        <Table.Cell>
           <div className="flex flex-row items-center gap-2 justify-end">
             {item.paymentLink && (
               <Link href={item.paymentLink} target="_blank">
@@ -86,7 +84,7 @@ const renderCellDesktop = ({
               {formatCurrency(item.amount)}
             </TransactionTypeDecorator>
           </div>
-        </TableCell>
+        </Table.Cell>
       );
     default:
       return <></>;
@@ -103,7 +101,7 @@ const renderCellMobile = ({
   switch (key) {
     case "transaction":
       return (
-        <TableCell>
+        <Table.Cell>
           <div className="flex flex-col gap-1">
             <div className="flex flex-row items-center justify-between gap-1">
               <div className="flex items-center">
@@ -128,7 +126,11 @@ const renderCellMobile = ({
                   {formatCurrency(item.amount)}
                 </TransactionTypeDecorator>
                 {item.category && (
-                  <Chip radius="sm" variant="flat" size="sm" className="ml-2">
+                  <Chip
+                    variant="tertiary"
+                    size="sm"
+                    className="ml-2 rounded-sm"
+                  >
                     {`${item.category.icon} ${item.category.name}`}
                   </Chip>
                 )}
@@ -141,9 +143,8 @@ const renderCellMobile = ({
               <div className="flex flex-row items-center">
                 <Button
                   isIconOnly
-                  color="success"
-                  variant="light"
-                  className="self-center"
+                  variant="tertiary"
+                  className="self-center text-success"
                   size="sm"
                   aria-label="Edit"
                   onPress={() => onConfirm?.(item)}
@@ -159,7 +160,7 @@ const renderCellMobile = ({
               </div>
             </div>
           </div>
-        </TableCell>
+        </Table.Cell>
       );
     default:
       return <></>;
@@ -171,7 +172,6 @@ export const useRenderCell = () => {
 
   const columns = isMobile ? columnsMobile : columnsDesktop;
   const renderCell = isMobile ? renderCellMobile : renderCellDesktop;
-  const rowHeight = isMobile ? 90 : 50;
 
-  return { columns, renderCell, rowHeight };
+  return { columns, renderCell };
 };
