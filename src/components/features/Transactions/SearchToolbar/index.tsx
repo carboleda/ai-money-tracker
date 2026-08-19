@@ -1,8 +1,7 @@
 "use client";
 
 import React, { PropsWithChildren, useEffect, useState } from "react";
-import { Input } from "@heroui/input";
-import { Button } from "@heroui/button";
+import { Button, CloseButton, InputGroup, TextField } from "@heroui/react";
 import { HiOutlineSearch } from "react-icons/hi";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { useTranslation } from "react-i18next";
@@ -53,8 +52,7 @@ export const SearchToolbar: React.FC<SearchToolbarProps> = ({
       >
         {isMobile && !isInputFocused && (
           <Button
-            variant="flat"
-            size="md"
+            variant="tertiary"
             className="w-fit md:w-fit justify-start px-3 rounded-xl"
             onPress={setFocus}
             isIconOnly
@@ -63,19 +61,27 @@ export const SearchToolbar: React.FC<SearchToolbarProps> = ({
           </Button>
         )}
         {(isInputFocused || !isMobile) && (
-          <Input
-            radius="md"
-            variant="faded"
-            classNames={{ inputWrapper: "py-0" }}
+          <TextField
             className="w-fit"
-            placeholder={t("searchByDescription")}
-            startContent={<HiOutlineSearch />}
             value={filterValue}
-            onClear={onClear}
-            onValueChange={onValueChange}
-            autoFocus={isMobile}
-            isClearable
-          />
+            onChange={onValueChange}
+          >
+            <InputGroup>
+              <InputGroup.Prefix>
+                <HiOutlineSearch />
+              </InputGroup.Prefix>
+              <InputGroup.Input
+                variant="secondary"
+                placeholder={t("searchByDescription")}
+                autoFocus={isMobile}
+              />
+              {filterValue && (
+                <InputGroup.Suffix>
+                  <CloseButton aria-label={t("clear")} onPress={onClear} />
+                </InputGroup.Suffix>
+              )}
+            </InputGroup>
+          </TextField>
         )}
       </div>
       <div className={!isMobile || !isInputFocused ? "flex gap-2" : "hidden"}>

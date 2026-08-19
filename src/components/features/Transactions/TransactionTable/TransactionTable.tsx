@@ -1,18 +1,10 @@
 "use client";
 
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableColumn,
-  TableHeader,
-  TableRow,
-} from "@heroui/table";
+import { Button, Table } from "@heroui/react";
 import { TableSkeleton } from "@/components/shared/TableSkeleton";
 import { useMutateTransaction } from "@/hooks/useMutateTransaction";
 import { DeleteTableItemButton } from "@/components/DeleteTableItemButton";
 import { useRenderCell } from "./Columns";
-import { Button } from "@heroui/button";
 import { IconEdit } from "@/components/shared/icons";
 import { useState } from "react";
 import { UpdateTransactionModalForm } from "@/components/features/Transactions/UpdateTransactionModalForm";
@@ -36,7 +28,7 @@ export const TransactionTable: React.FC<TranactionTableProps> = ({
   const [selectedItem, setSelectedItem] = useState<TransactionOutput>();
   const [isOpen, setIsOpen] = useState(false);
   const { isMutating, deleteTransaction } = useMutateTransaction();
-  const { columns, renderCell, rowHeight } = useRenderCell();
+  const { columns, renderCell } = useRenderCell();
   const { maxTableHeight } = useTableHeight();
 
   const onDialogDismissed = () => {
@@ -53,61 +45,68 @@ export const TransactionTable: React.FC<TranactionTableProps> = ({
 
   return (
     <>
-      <Table
-        isStriped
-        isCompact
-        isVirtualized
-        maxTableHeight={maxTableHeight}
-        rowHeight={rowHeight}
-        aria-label={t("subtitle")}
-        topContentPlacement="outside"
-        topContent={topContent}
-      >
-        <TableHeader columns={columns}>
-          {(column) => (
-            <TableColumn key={column.key} className={`${column.className}`}>
-              {t(column.key)}
-            </TableColumn>
-          )}
-        </TableHeader>
-        <TableBody items={transactions} emptyContent={t("emptyContent")}>
-          {(item) => (
-            <TableRow key={item.id}>
-              {(columnKey) => {
-                if (columnKey === "actions") {
-                  return (
-                    <TableCell>
-                      <div className="flex flex-col items-center md:flex-row md:justify-center">
-                        <Button
-                          isIconOnly
-                          color="warning"
-                          variant="light"
-                          className="self-center"
-                          aria-label={t("edit")}
-                          onPress={() => onEdit(item)}
-                        >
-                          <IconEdit />
-                        </Button>
-                        <DeleteTableItemButton
-                          itemId={item.id}
-                          isDisabled={isMutating}
-                          deleteTableItem={deleteTransaction}
-                        />
-                      </div>
-                    </TableCell>
-                  );
-                }
+      {topContent}
+      <Table>
+        <Table.ScrollContainer
+          className="overflow-y-auto"
+          style={{ maxHeight: maxTableHeight }}
+        >
+          <Table.Content aria-label={t("subtitle")}>
+            <Table.Header columns={columns}>
+              {(column) => (
+                <Table.Column
+                  key={column.key}
+                  id={column.key}
+                  className={column.className}
+                >
+                  {t(column.key)}
+                </Table.Column>
+              )}
+            </Table.Header>
+            <Table.Body
+              items={transactions}
+              renderEmptyState={() => <span>{t("emptyContent")}</span>}
+            >
+              {(item) => (
+                <Table.Row key={item.id} id={item.id}>
+                  <Table.Collection items={columns}>
+                    {(column) => {
+                      if (column.key === "actions") {
+                        return (
+                          <Table.Cell>
+                            <div className="flex flex-col items-center md:flex-row md:justify-center">
+                              <Button
+                                isIconOnly
+                                variant="tertiary"
+                                className="self-center text-warning"
+                                aria-label={t("edit")}
+                                onPress={() => onEdit(item)}
+                              >
+                                <IconEdit />
+                              </Button>
+                              <DeleteTableItemButton
+                                itemId={item.id}
+                                isDisabled={isMutating}
+                                deleteTableItem={deleteTransaction}
+                              />
+                            </div>
+                          </Table.Cell>
+                        );
+                      }
 
-                return renderCell({
-                  key: columnKey,
-                  item,
-                  onEdit,
-                  onDelete: deleteTransaction,
-                });
-              }}
-            </TableRow>
-          )}
-        </TableBody>
+                      return renderCell({
+                        key: column.key,
+                        item,
+                        onEdit,
+                        onDelete: deleteTransaction,
+                      });
+                    }}
+                  </Table.Collection>
+                </Table.Row>
+              )}
+            </Table.Body>
+          </Table.Content>
+        </Table.ScrollContainer>
       </Table>
       <UpdateTransactionModalForm
         item={selectedItem}

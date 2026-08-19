@@ -4,7 +4,7 @@ import React, { useRef, useState } from "react";
 import Image from "next/image";
 import Webcam from "react-webcam";
 import { BankAccounDropdown } from "@/components/BankAccounsDropdown";
-import { Switch, SwitchThumbIconProps } from "@heroui/switch";
+import { Switch } from "@heroui/react";
 import { HiLightBulb, HiOutlineLightBulb } from "react-icons/hi2";
 import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
@@ -21,17 +21,6 @@ export interface CameraModeProps {
   setPicture: (picture?: string) => void;
   setSelectedAccount: (account: string) => void;
 }
-
-// Move thumbIcon component outside of CameraMode
-const renderCameraThumbIcon = ({
-  isSelected,
-  className,
-}: SwitchThumbIconProps) =>
-  isSelected ? (
-    <HiOutlineLightBulb className={className} />
-  ) : (
-    <HiLightBulb className={className} />
-  );
 
 export const CameraMode: React.FC<CameraModeProps> = ({
   setSelectedAccount,
@@ -72,13 +61,17 @@ export const CameraMode: React.FC<CameraModeProps> = ({
           showLabel
           onChange={setSelectedAccount}
         />
-        <Switch
-          size="md"
-          color="warning"
-          isSelected={isFlashEnabled}
-          onValueChange={onFlashChange}
-          thumbIcon={renderCameraThumbIcon}
-        />
+        <Switch size="md" isSelected={isFlashEnabled} onChange={onFlashChange}>
+          <Switch.Content>
+            <Switch.Control className="data-[selected=true]:bg-warning">
+              <Switch.Thumb>
+                <Switch.Icon>
+                  {isFlashEnabled ? <HiOutlineLightBulb /> : <HiLightBulb />}
+                </Switch.Icon>
+              </Switch.Thumb>
+            </Switch.Control>
+          </Switch.Content>
+        </Switch>
       </div>
       {imgSrc ? (
         <Image

@@ -1,20 +1,21 @@
 import React, { useEffect, useState } from "react";
 import {
+  Button,
+  Calendar,
+  Chip,
+  DateField,
+  DatePicker,
+  FieldError,
+  Input,
+  Label,
   Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-} from "@heroui/modal";
-import { Input } from "@heroui/input";
-import { Button } from "@heroui/button";
-import { DatePicker } from "@heroui/date-picker";
+  TextField,
+} from "@heroui/react";
 import { parseAbsoluteToLocal, ZonedDateTime } from "@internationalized/date";
 import { CategoriesAutocomplete } from "@/components/CategoriesAutocomplete";
 import { CategoryModel } from "@/app/api/domain/category/model/category.model";
 import { MaskedCurrencyInput } from "@/components/shared/MaskedCurrencyInput";
 import { useMutateTransaction } from "@/hooks/useMutateTransaction";
-import { Chip } from "@heroui/chip";
 import { BankAccounDropdown } from "@/components/BankAccounsDropdown";
 import { useToast } from "@/hooks/useToast";
 import { useTranslation } from "react-i18next";
@@ -119,28 +120,31 @@ export const UpdateTransactionModalForm: React.FC<
   };
 
   return (
-    <Modal
-      placement="top-center"
-      backdrop="blur"
-      isOpen={isOpen}
-      onOpenChange={onOpenChangeHandler}
-      isDismissable={false}
-    >
-      <ModalContent>
-        {(onClose) => (
-          <>
-            <ModalHeader className="flex flex-col gap-1">
-              {t("updateTransaction")}
-            </ModalHeader>
-            <ModalBody>
-              <Input
+    <Modal>
+      <Modal.Backdrop
+        variant="blur"
+        isOpen={isOpen}
+        onOpenChange={onOpenChangeHandler}
+        isDismissable={false}
+      >
+        <Modal.Container>
+          <Modal.Dialog>
+            <Modal.Header>
+              <Modal.Heading className="flex flex-col gap-1">
+                {t("updateTransaction")}
+              </Modal.Heading>
+            </Modal.Header>
+            <Modal.Body>
+              <TextField
                 autoFocus
-                label={t("description")}
-                variant="bordered"
                 isRequired
                 value={descriptionInput}
-                onValueChange={setDescriptionInput}
-              />
+                onChange={setDescriptionInput}
+              >
+                <Label>{t("description")}</Label>
+                <Input variant="secondary" />
+                <FieldError />
+              </TextField>
               <div className="flex gap-2">
                 <BankAccounDropdown
                   label={t("sourceAccount")}
@@ -178,46 +182,79 @@ export const UpdateTransactionModalForm: React.FC<
                 />
               </div>
               <DatePicker
-                label={t("transactionDate")}
-                variant="bordered"
                 granularity="minute"
-                value={createdAtInput}
-                onChange={(v) => setCreatedAtInput(v!)}
+                value={createdAtInput ?? null}
+                onChange={(v) => setCreatedAtInput(v as ZonedDateTime)}
                 isRequired
                 hideTimeZone
-              />
+              >
+                <Label>{t("transactionDate")}</Label>
+                <DateField.Group fullWidth>
+                  <DateField.Input>
+                    {(segment) => <DateField.Segment segment={segment} />}
+                  </DateField.Input>
+                  <DateField.Suffix>
+                    <DatePicker.Trigger>
+                      <DatePicker.TriggerIndicator />
+                    </DatePicker.Trigger>
+                  </DateField.Suffix>
+                </DateField.Group>
+                <DatePicker.Popover>
+                  <Calendar aria-label={t("transactionDate")}>
+                    <Calendar.Header>
+                      <Calendar.YearPickerTrigger>
+                        <Calendar.YearPickerTriggerHeading />
+                        <Calendar.YearPickerTriggerIndicator />
+                      </Calendar.YearPickerTrigger>
+                      <Calendar.NavButton slot="previous" />
+                      <Calendar.NavButton slot="next" />
+                    </Calendar.Header>
+                    <Calendar.Grid>
+                      <Calendar.GridHeader>
+                        {(day) => <Calendar.HeaderCell>{day}</Calendar.HeaderCell>}
+                      </Calendar.GridHeader>
+                      <Calendar.GridBody>
+                        {(date) => <Calendar.Cell date={date} />}
+                      </Calendar.GridBody>
+                    </Calendar.Grid>
+                    <Calendar.YearPickerGrid>
+                      <Calendar.YearPickerGridBody>
+                        {({ year }) => <Calendar.YearPickerCell year={year} />}
+                      </Calendar.YearPickerGridBody>
+                    </Calendar.YearPickerGrid>
+                  </Calendar>
+                </DatePicker.Popover>
+              </DatePicker>
               {validationError && (
                 <Chip
-                  variant="flat"
+                  variant="soft"
                   color="danger"
-                  radius="sm"
-                  className="text-wrap max-w-full w-full h-fit p-2"
+                  className="text-wrap max-w-full w-full h-fit p-2 rounded-sm"
                 >
                   {validationError}
                 </Chip>
               )}
-            </ModalBody>
-            <ModalFooter>
+            </Modal.Body>
+            <Modal.Footer>
               <Button
-                color="danger"
-                variant="flat"
-                disabled={areButtonsDisabled}
-                onPress={onClose}
+                variant="danger-soft"
+                isDisabled={areButtonsDisabled}
+                onPress={() => onOpenChangeHandler(false)}
               >
                 {t("cancel")}
               </Button>
               <Button
-                color="primary"
-                isLoading={isMutating}
-                disabled={areButtonsDisabled}
+                variant="primary"
+                isPending={isMutating}
+                isDisabled={areButtonsDisabled}
                 onPress={onSave}
               >
                 {t("save")}
               </Button>
-            </ModalFooter>
-          </>
-        )}
-      </ModalContent>
+            </Modal.Footer>
+          </Modal.Dialog>
+        </Modal.Container>
+      </Modal.Backdrop>
     </Modal>
   );
 };

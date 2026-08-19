@@ -1,7 +1,5 @@
 import { formatCurrency } from "@/config/utils";
-import { Chip } from "@heroui/chip";
-import { Button } from "@heroui/button";
-import { TableCell } from "@heroui/table";
+import { Button, Chip, Table } from "@heroui/react";
 import { TransactionTypeDecorator } from "@/components/TransactionTypeDecorator";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { TableColumn, RenderCellProps } from "@/interfaces/global";
@@ -44,7 +42,7 @@ const renderCellDesktop = ({
   switch (key) {
     case "description":
       return (
-        <TableCell>
+        <Table.Cell>
           <div className="flex flex-col items-start gap-1">
             <span className="font-normal">{item.description}</span>
             <div className="flex flex-row gap-1 items-center text-md">
@@ -58,29 +56,29 @@ const renderCellDesktop = ({
                 )}
               </span>
               {item.category && (
-                <Chip radius="sm" variant="flat">
+                <Chip variant="tertiary" className="rounded-sm">
                   {`${item.category.icon} ${item.category.name}`}
                 </Chip>
               )}
             </div>
           </div>
-        </TableCell>
+        </Table.Cell>
       );
     case "date":
       return (
-        <TableCell>
+        <Table.Cell>
           <span className="font-normal">
             {dayjs(new Date(item.createdAt)).format("MMM D, YYYY hh:mm A")}
           </span>
-        </TableCell>
+        </Table.Cell>
       );
     case "amount":
       return (
-        <TableCell className="text-end">
+        <Table.Cell className="text-end">
           <TransactionTypeDecorator type={item.type}>
             {formatCurrency(item.amount)}
           </TransactionTypeDecorator>
-        </TableCell>
+        </Table.Cell>
       );
     default:
       return <></>;
@@ -97,7 +95,7 @@ const renderCellMobile = ({
   switch (key) {
     case "transaction":
       return (
-        <TableCell>
+        <Table.Cell>
           <div className="flex flex-col gap-1 py-1">
             <p className="text-xs font-normal">{item.description}</p>
             <div className="flex flex-row w-full items-center justify-between">
@@ -108,7 +106,7 @@ const renderCellMobile = ({
                   </span>
                 </TransactionTypeDecorator>
                 {item.category && (
-                  <Chip radius="sm" variant="flat" size="sm">
+                  <Chip variant="tertiary" size="sm" className="rounded-sm">
                     {`${item.category.icon} ${item.category.name}`}
                   </Chip>
                 )}
@@ -129,9 +127,8 @@ const renderCellMobile = ({
               <div className="flex flex-row items-center">
                 <Button
                   isIconOnly
-                  color="warning"
-                  variant="light"
-                  className="self-center"
+                  variant="tertiary"
+                  className="self-center text-warning"
                   size="sm"
                   aria-label="Edit"
                   onPress={() => onEdit?.(item)}
@@ -147,7 +144,7 @@ const renderCellMobile = ({
               </div>
             </div>
           </div>
-        </TableCell>
+        </Table.Cell>
       );
     default:
       return <></>;
@@ -159,7 +156,6 @@ export const useRenderCell = () => {
 
   const columns = isMobile ? columnsMobile : columnsDesktop;
   const renderCell = isMobile ? renderCellMobile : renderCellDesktop;
-  const rowHeight = isMobile ? 90 : 65;
 
-  return { columns, renderCell, rowHeight };
+  return { columns, renderCell };
 };
