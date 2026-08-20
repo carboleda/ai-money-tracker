@@ -14,5 +14,36 @@
   "destinationAccount": "Cuenta de destino",
   "notes": "Notas",
   "transactionCreated": "¡Transacción creada!",
-  "transactionUpdated": "¡Transacción actualizada!"
+  "transactionUpdated": "¡Transacción actualizada!",
+  "aiDraft": {
+    "badge": "BORRADOR IA",
+    "save": "Guardar",
+    "escToClose": "Esc para cerrar",
+    "descriptionPlaceholder": "Agrega una descripción...",
+    "promptPlaceholder": "Escribe o toma una foto del recibo... ej. \"45 en el mercado con Chase\"",
+    "cameraTrigger": "Escanear recibo",
+    "parsing": "Leyendo tu transacción...",
+    "offlineBanner": "Estás sin conexión. La creación de transacciones está deshabilitada hasta que se restablezca la conexión.",
+    "type": {
+      "label": "Tipo de transacción",
+      "expense": "Gasto",
+      "income": "Ingreso",
+      "transfer": "Transferencia"
+    },
+    "category": {
+      "label": "Categoría",
+      "select": "Selecciona categoría"
+    },
+    "account": {
+      "select": "Selecciona cuenta",
+      "from": "De",
+      "to": "A"
+    },
+    "dateTime": {
+      "today": "Hoy",
+      "yesterday": "Ayer",
+      "customDate": "Fecha personalizada",
+      "time": "Hora"
+    }
+  }
 }

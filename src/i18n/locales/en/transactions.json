@@ -14,5 +14,36 @@
   "destinationAccount": "Destination account",
   "notes": "Notes",
   "transactionCreated": "Transaction created!",
-  "transactionUpdated": "Transaction updated!"
+  "transactionUpdated": "Transaction updated!",
+  "aiDraft": {
+    "badge": "AI DRAFT",
+    "save": "Save",
+    "escToClose": "Esc to close",
+    "descriptionPlaceholder": "Add a description...",
+    "promptPlaceholder": "Type or snap a receipt... e.g. \"45 groceries at Whole Foods with Chase\"",
+    "cameraTrigger": "Scan a receipt",
+    "parsing": "Reading your transaction...",
+    "offlineBanner": "You are currently offline. Transaction creation is disabled until connection is restored.",
+    "type": {
+      "label": "Transaction type",
+      "expense": "Expense",
+      "income": "Income",
+      "transfer": "Transfer"
+    },
+    "category": {
+      "label": "Category",
+      "select": "Select category"
+    },
+    "account": {
+      "select": "Select account",
+      "from": "From",
+      "to": "To"
+    },
+    "dateTime": {
+      "today": "Today",
+      "yesterday": "Yesterday",
+      "customDate": "Custom date",
+      "time": "Time"
+    }
+  }
 }
