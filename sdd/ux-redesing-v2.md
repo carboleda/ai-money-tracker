@@ -1,6 +1,8 @@
 # Zolvent V2 Specifications & Implementation Plan
 
-This document outlines the finalized product requirements, visual design specifications, and implementation roadmap for **Zolvent V2**—delivering a **Lightning-Fast Native PWA Experience** with a focused AI Draft Transaction pipeline, Shadcn UI redesign, and zero offline-sync conflict overhead.
+This document outlines the finalized product requirements, visual design specifications, and implementation roadmap for **Zolvent V2**—delivering a **Lightning-Fast Native PWA Experience** with a focused AI Draft Transaction pipeline, a HeroUI v3 redesign, and zero offline-sync conflict overhead.
+
+> **Status note:** The originally planned Shadcn UI migration has been descoped. The app has already migrated to **HeroUI v3** instead. Offline-first support with TanStack Query + IndexedDB caching is already implemented. This document has been updated to reflect that state.
 
 ---
 
@@ -24,16 +26,17 @@ Following `openspec/changes/ui-redesign/images/zolvent-design-reference.jpeg`:
 
 ### Data Fetching & Caching
 
-- **TanStack Query v5 (`@tanstack/react-query`)**:
+- **TanStack Query v5 (`@tanstack/react-query`)** — ✅ Already implemented:
   - Combined with `@tanstack/react-query-persist-client` + IndexedDB persister.
   - Hydrates cache synchronously on cold boot for instant sub-50ms rendering.
-  - Offline-aware write guards via `useOnlineStatus` hook.
+  - Offline-aware write guards driven by the Service Worker's real connectivity broadcast (not `navigator.onLine`).
 
 ### Component Library
 
-- **Shadcn UI + Tailwind CSS 4**:
-  - Replacing HeroUI v2 with lightweight, zero-dependency Shadcn primitives in `src/components/ui`.
-  - Built to match the exact aesthetic of `zolvent-design-reference.jpeg`.
+- **HeroUI v3 + Tailwind CSS 4**:
+  - The planned Shadcn UI migration is descoped. The app has already migrated from HeroUI v2 to **HeroUI v3**.
+  - v3 drops the `HeroUIProvider`; `href`-based components rely on a `RouterProvider` (from `react-aria-components`) wired to Next's router.
+  - Built to match the exact aesthetic of `zolvent-design-reference.jpeg` using HeroUI v3's compound components.
 
 ### Testing Separation
 
@@ -102,13 +105,7 @@ src/
 │   ├── api/
 │   │   └── drivers/genai/            # Genkit AI transaction parsing
 ├── components/
-│   ├── ui/                           # Shadcn primitive components [NEW]
-│   │   ├── button.tsx
-│   │   ├── card.tsx
-│   │   ├── dialog.tsx
-│   │   ├── badge.tsx
-│   │   ├── popover.tsx
-│   │   └── input.tsx
+│   ├── ui/                           # HeroUI v3 primitive wrappers [DONE]
 │   ├── features/
 │   │   └── draft-transaction/        # Draft Preview Card & Chips [NEW]
 │   └── shared/
@@ -117,8 +114,8 @@ src/
 │   ├── useAccounts.ts                # Converted to TanStack Query [MODIFY]
 │   └── useTransactions.ts            # Converted to TanStack Query [MODIFY]
 ├── lib/
-│   ├── query-client.ts               # TanStack Query + IndexedDB Persister [NEW]
-│   └── utils.ts                      # Shadcn `cn` utility helper [NEW]
+│   ├── query-client.ts               # TanStack Query + IndexedDB Persister [DONE]
+│   └── utils.ts                      # `cn` utility helper [DONE]
 └── stores/
     └── transaction-draft.store.ts    # Transient draft state store [NEW]
 ```
@@ -127,19 +124,20 @@ src/
 
 ## 5. Execution Roadmap
 
-### Milestone 1: Data Layer & Foundation
+### Milestone 1: Data Layer & Foundation — ✅ Done
 
-- Setup TanStack Query v5 with `@tanstack/react-query-persist-client` and IndexedDB persister in `src/app/(ui)/providers.tsx`.
-- Install Shadcn UI dependencies (`clsx`, `tailwind-merge`, `lucide-react`, `@radix-ui/*`).
-- Create `src/lib/utils.ts` and `src/hooks/useOnlineStatus.ts`.
+- TanStack Query v5 with `@tanstack/react-query-persist-client` and IndexedDB persister wired in `src/app/(ui)/providers.tsx`.
+- Offline-first caching in place, with connectivity sourced from the Service Worker's postMessage broadcast.
+- `src/lib/utils.ts` and connectivity hook implemented.
 
-### Milestone 2: Core React-Query Migration
+### Milestone 2: Core React-Query Migration — ✅ Done
 
 - Migrate `useAccountsLoader`, `useCategoriesLoader`, `useGetUser` to `useQuery`.
 - Migrate `useMutateTransaction`, `useMutateAccount`, `useMutateUser` to `useMutation` with online guards.
 
 ### Milestone 3: UI Redesign & Draft Preview Card
 
+- HeroUI v2 → v3 migration complete (Shadcn migration descoped).
 - Build dark matte UI with **Lime Green accents** matching `zolvent-design-reference.jpeg`.
 - Build `DraftPreviewCard.tsx` with interactive badged chips for `[Amount]`, `[Category]`, `[Account]`, `[Type]`, and `[DateTime]`.
 - Implement Playwright E2E test suite for UI workflows (`tests/e2e/`).

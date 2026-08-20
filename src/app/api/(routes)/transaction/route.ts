@@ -1,47 +1,34 @@
 import "reflect-metadata";
 import { NextRequest, NextResponse } from "next/server";
-import { GenerateTransactionService } from "@/app/api/domain/transaction/service/generate-transaction.service";
+import { CreateTransactionService } from "@/app/api/domain/transaction/service/create-transaction.service";
 import { UpdateTransactionService } from "@/app/api/domain/transaction/service/update-transaction.service";
 import { DeleteTransactionService } from "@/app/api/domain/transaction/service/delete-transaction.service";
 import { DomainError } from "@/app/api/domain/shared/errors/domain.error";
 import { api } from "@/app/api";
 import { withUserContext } from "@/app/api/context/initialize-context";
 import { UpdateTransactionInput } from "@/app/api/domain/transaction/ports/inbound/update-transaction.port";
+import { CreateTransactionPayload } from "@/app/api/domain/transaction/ports/inbound/create-transaction.port";
+import { TransactionStatus } from "@/app/api/domain/transaction/model/transaction.model";
 
 export async function POST(req: NextRequest) {
   return withUserContext(req, async () => {
-    const generateTransactionService = api.resolve(GenerateTransactionService);
-
-    const formData = await req.formData();
-    const text = formData.get("text")?.toString();
-    const picture = formData.get("picture")?.toString();
-    const createdAtManual = formData.get("createdAt")?.toString();
-    const sourceAccount = formData.get("sourceAccount")?.toString();
-
-    if (!text && !picture) {
-      return new NextResponse(null, {
-        status: 400,
-        statusText: "Either description or picture is required",
-      });
-    }
+    const createTransactionService = api.resolve(CreateTransactionService);
+    const body = (await req.json()) as CreateTransactionPayload;
 
     try {
-      const generateTransacton = {
-        text,
-        picture,
-        sourceAccount,
-        createdAtManual: createdAtManual ? new Date(createdAtManual) : null,
-      };
+      const id = await createTransactionService.execute({
+        ...body,
+        createdAt: body.createdAt ? new Date(body.createdAt) : new Date(),
+        status: body.status ?? TransactionStatus.COMPLETE,
+      });
 
-      const id = await generateTransactionService.execute(generateTransacton);
-
-      return NextResponse.json({ id });
+      return NextResponse.json({ id }, { status: 200 });
     } catch (error) {
       const domainError = error as DomainError<unknown>;
-      return new NextResponse(null, {
-        status: domainError.statusCode,
-        statusText: domainError.message,
-      });
+      return NextResponse.json(
+        { message: domainError.message, code: domainError.name },
+        { status: domainError.statusCode ?? 400 }
+      );
     }
   });
 }
