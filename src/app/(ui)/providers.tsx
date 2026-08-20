@@ -2,7 +2,8 @@
 
 import "@/firebase/client";
 import * as React from "react";
-import { Toast } from "@heroui/react";
+import { RouterProvider, Toast } from "@heroui/react";
+import { useRouter } from "next/navigation";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 import TranslationsProvider from "@/components/providers/TranslationsProvider";
 import { AccountsProvider } from "@/components/providers/AccountsProvider";
@@ -18,8 +19,10 @@ export interface ProvidersProps {
 }
 
 export function Providers({ children }: Readonly<ProvidersProps>) {
+  const router = useRouter();
+
   return (
-    <>
+    <RouterProvider navigate={router.push}>
       <Toast.Provider />
       <NextThemesProvider attribute="class" defaultTheme="dark">
         <ThemeCookieSync />
@@ -34,6 +37,6 @@ export function Providers({ children }: Readonly<ProvidersProps>) {
           </TranslationsProvider>
         </QueryProvider>
       </NextThemesProvider>
-    </>
+    </RouterProvider>
   );
 }
