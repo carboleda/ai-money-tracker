@@ -142,7 +142,7 @@ export const CustomDateRangePicker: React.FC<CustomDateRangePickerProps> = ({
     <Dropdown>
       <Button
         variant="secondary"
-        className={clsx("justify-start px-3 rounded-xl", {
+        className={clsx("justify-start px-3", {
           "py-6": showLabel,
         })}
       >

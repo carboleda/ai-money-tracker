@@ -12,16 +12,15 @@ import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
 import { useTableHeight } from "@/hooks/useTableHeight";
 import { TransactionOutput } from "@/app/api/domain/transaction/ports/outbound/filter-transactions.port";
+import { EmptyTableState } from "@/components/shared/EmptyTableState";
 
 interface TranactionTableProps {
   isLoading: boolean;
-  topContent?: React.ReactNode;
   transactions?: TransactionOutput[];
 }
 
 export const TransactionTable: React.FC<TranactionTableProps> = ({
   isLoading,
-  topContent,
   transactions,
 }) => {
   const { t } = useTranslation(LocaleNamespace.Transactions);
@@ -45,14 +44,16 @@ export const TransactionTable: React.FC<TranactionTableProps> = ({
 
   return (
     <>
-      {topContent}
       <Table>
         <Table.ScrollContainer
           className="overflow-y-auto"
           style={{ maxHeight: maxTableHeight }}
         >
           <Table.Content aria-label={t("subtitle")}>
-            <Table.Header columns={columns}>
+            <Table.Header
+              columns={columns}
+              className="hidden md:table-header-group"
+            >
               {(column) => (
                 <Table.Column
                   key={column.key}
@@ -66,7 +67,9 @@ export const TransactionTable: React.FC<TranactionTableProps> = ({
             </Table.Header>
             <Table.Body
               items={transactions}
-              renderEmptyState={() => <span>{t("emptyContent")}</span>}
+              renderEmptyState={() => (
+                <EmptyTableState message={t("emptyContent")} />
+              )}
             >
               {(item) => (
                 <Table.Row key={item.id} id={item.id}>
@@ -75,7 +78,7 @@ export const TransactionTable: React.FC<TranactionTableProps> = ({
                       if (column.key === "actions") {
                         return (
                           <Table.Cell>
-                            <div className="flex flex-col items-center md:flex-row md:justify-center">
+                            <div className="flex flex-col gap-1 items-center md:flex-row md:justify-center">
                               <Button
                                 isIconOnly
                                 variant="tertiary"

@@ -97,7 +97,7 @@ function PageContent() {
               />
               <Button
                 variant="primary"
-                className="rounded-sm bg-success text-success-foreground"
+                className="bg-success text-success-foreground"
                 isIconOnly
                 onPress={() => setIsOpen(true)}
               >

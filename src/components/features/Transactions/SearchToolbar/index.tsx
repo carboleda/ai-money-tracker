@@ -53,7 +53,7 @@ export const SearchToolbar: React.FC<SearchToolbarProps> = ({
         {isMobile && !isInputFocused && (
           <Button
             variant="tertiary"
-            className="w-fit md:w-fit justify-start px-3 rounded-xl"
+            className="w-fit md:w-fit justify-start px-3"
             onPress={setFocus}
             isIconOnly
           >

@@ -18,6 +18,7 @@ import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
 import { useTableHeight } from "@/hooks/useTableHeight";
 import { SearchToolbar } from "@/components/features/Transactions/SearchToolbar";
+import { EmptyTableState } from "@/components/shared/EmptyTableState";
 
 interface RecurringExpensesTableProps {
   isLoading: boolean;
@@ -94,7 +95,7 @@ export const RecurringExpensesTable: React.FC<RecurringExpensesTableProps> = ({
         <div className="flex w-fit justify-end">
           <Button
             variant="primary"
-            className="rounded-sm bg-success text-success-foreground"
+            className="bg-success text-success-foreground"
             isIconOnly
             onPress={() => setIsOpen(true)}
           >
@@ -116,7 +117,10 @@ export const RecurringExpensesTable: React.FC<RecurringExpensesTableProps> = ({
           style={{ maxHeight: maxTableHeight }}
         >
           <Table.Content aria-label={t("recurringExpenses")}>
-            <Table.Header columns={columns}>
+            <Table.Header
+              columns={columns}
+              className="hidden md:table-header-group"
+            >
               {(column) => (
                 <Table.Column
                   key={column.key}
@@ -130,7 +134,9 @@ export const RecurringExpensesTable: React.FC<RecurringExpensesTableProps> = ({
             </Table.Header>
             <Table.Body
               items={transactions}
-              renderEmptyState={() => <span>{t("emptyContent")}</span>}
+              renderEmptyState={() => (
+                <EmptyTableState message={t("emptyContent")} />
+              )}
             >
               {(item) => {
                 if (item.id === FrequencyGroup.OTHERS) {
@@ -148,7 +154,7 @@ export const RecurringExpensesTable: React.FC<RecurringExpensesTableProps> = ({
                         if (column.key === "actions") {
                           return (
                             <Table.Cell>
-                              <div className="text-center flex flex-row justify-center">
+                              <div className="flex flex-col gap-1 items-center md:flex-row md:justify-center">
                                 <Button
                                   isIconOnly
                                   variant="tertiary"

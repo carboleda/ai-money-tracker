@@ -48,7 +48,7 @@ export const CustomDropdown: React.FC<CustomDropdownProps> = ({
     <Dropdown>
       <Button
         variant="secondary"
-        className={clsx("justify-start px-3 rounded-xl", className, {
+        className={clsx("justify-start px-3", className, {
           "py-6": showLabel,
         })}
       >

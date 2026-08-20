@@ -6,6 +6,7 @@ import { formatCurrency } from "@/config/utils";
 import { TransactionTypeDecorator } from "@/components/TransactionTypeDecorator";
 import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
+import { EmptyTableState } from "@/components/shared/EmptyTableState";
 
 export type Color = ChipProps["color"];
 
@@ -35,7 +36,11 @@ export const TileTable: React.FC<TableTileProps> = ({ columns, data }) => {
               {columns[1]}
             </Table.Column>
           </Table.Header>
-          <Table.Body renderEmptyState={() => <span>{t("emptyContent")}</span>}>
+          <Table.Body
+            renderEmptyState={() => (
+              <EmptyTableState message={t("emptyContent")} />
+            )}
+          >
             {data.map((item) => (
               <Table.Row key={item.id} id={item.id}>
                 <Table.Cell className="capitalize">{item.name}</Table.Cell>

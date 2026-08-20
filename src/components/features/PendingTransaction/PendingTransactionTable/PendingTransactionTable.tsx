@@ -13,6 +13,7 @@ import { SearchToolbar } from "@/components/features/Transactions/SearchToolbar"
 import { useTableHeight } from "@/hooks/useTableHeight";
 import { FaRegCircleCheck } from "react-icons/fa6";
 import { TransactionOutput } from "@/app/api/domain/transaction/ports/outbound/filter-transactions.port";
+import { EmptyTableState } from "@/components/shared/EmptyTableState";
 
 interface PendingTransactionTableProps {
   isLoading: boolean;
@@ -87,7 +88,10 @@ export const PendingTransactionTable: React.FC<
           style={{ maxHeight: maxTableHeight }}
         >
           <Table.Content aria-label={t("pendingTransactions")}>
-            <Table.Header columns={columns}>
+            <Table.Header
+              columns={columns}
+              className="hidden md:table-header-group"
+            >
               {(column) => (
                 <Table.Column
                   key={column.key}
@@ -101,7 +105,9 @@ export const PendingTransactionTable: React.FC<
             </Table.Header>
             <Table.Body
               items={transactions}
-              renderEmptyState={() => <span>{t("management.emptyContent")}</span>}
+              renderEmptyState={() => (
+                <EmptyTableState message={t("management.emptyContent")} />
+              )}
             >
               {(item) => (
                 <Table.Row key={item.id} id={item.id}>
@@ -110,7 +116,7 @@ export const PendingTransactionTable: React.FC<
                       if (column.key === "actions") {
                         return (
                           <Table.Cell>
-                            <div className="flex flex-row justify-center">
+                            <div className="flex flex-col gap-1 items-center md:flex-row md:justify-center">
                               <Button
                                 isIconOnly
                                 variant="tertiary"
