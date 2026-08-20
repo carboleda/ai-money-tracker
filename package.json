@@ -4,7 +4,7 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "firebase:start": "firebase emulators:start --project ai-money-tracker",
+    "firebase:start": "firebase emulators:start --project ai-money-tracker --import=./.emulator-data --export-on-exit=./.emulator-data",
     "app:http": "node -r dotenv/config src/config/swEnvBuild.cjs dotenv_config_path=.env.local && next dev --turbopack",
     "app:https": "node -r dotenv/config src/config/swEnvBuild.cjs dotenv_config_path=.env.local && next dev --turbopack --experimental-https",
     "dev": "GENKIT_ENV=dev npm run app:http",
@@ -79,6 +79,7 @@
     "@types/react": "^19.2.2",
     "@types/react-dom": "^19.2.2",
     "@types/xxhashjs": "0.2.4",
+    "baseline-browser-mapping": "^2.11.15",
     "concurrently": "^9.2.1",
     "eslint": "^8.57.1",
     "globals": "16.4.0",
