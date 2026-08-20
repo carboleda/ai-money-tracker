@@ -112,7 +112,7 @@ export const SidebarMenuItems: React.FC<SidebarMenuItemsProps> = ({
       onAction={onAction}
       disabledKeys={disabledKeys}
     >
-      <ListBox.Section>
+      <ListBox.Section className="w-full">
         <ListBox.Item
           key={SidebarMenuItemKeys.Avatar}
           id={SidebarMenuItemKeys.Avatar}
@@ -132,7 +132,7 @@ export const SidebarMenuItems: React.FC<SidebarMenuItemsProps> = ({
         </ListBox.Item>
       </ListBox.Section>
       <Separator />
-      <ListBox.Section>
+      <ListBox.Section className="w-full">
         {siteConfig.pages
           .filter((page: any) => "href" in page)
           .map((page) => renderPageItem(page as Page, t, pathname))}
@@ -142,10 +142,10 @@ export const SidebarMenuItems: React.FC<SidebarMenuItemsProps> = ({
         .filter((page: any) => "groupLabel" in page)
         .map((page: any) => {
           return (
-            <ListBox.Section key={page.groupLabel}>
+            <ListBox.Section className="w-full" key={page.groupLabel}>
               <Header>{t(page.groupLabel)}</Header>
               {page.pages.map((groupPage: Page) =>
-                renderPageItem(groupPage, t, pathname)
+                renderPageItem(groupPage, t, pathname),
               )}
             </ListBox.Section>
           );
