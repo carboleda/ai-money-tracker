@@ -16,7 +16,7 @@
   "transactionCreated": "¡Transacción creada!",
   "transactionUpdated": "¡Transacción actualizada!",
   "aiDraft": {
-    "badge": "BORRADOR IA",
+    "badge": "PREVISUALIZACIÓN DE TRANSACCIÓN CON IA",
     "save": "Guardar",
     "escToClose": "Esc para cerrar",
     "descriptionPlaceholder": "Agrega una descripción...",

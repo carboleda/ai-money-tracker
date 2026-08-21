@@ -16,7 +16,7 @@
   "transactionCreated": "Transaction created!",
   "transactionUpdated": "Transaction updated!",
   "aiDraft": {
-    "badge": "AI DRAFT",
+    "badge": "AI TRANSACTION PREVIEW",
     "save": "Save",
     "escToClose": "Esc to close",
     "descriptionPlaceholder": "Add a description...",
