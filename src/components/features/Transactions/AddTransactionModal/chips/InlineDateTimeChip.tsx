@@ -4,6 +4,8 @@ import React, { useMemo, useState } from "react";
 import { Button, Popover } from "@heroui/react";
 import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
+import { CustomDateField } from "@/components/shared/CustomDateField";
+import { CustomTimeField } from "@/components/shared/CustomTimeField";
 import { CHIP_BASE_CLASS } from "../chipStyles";
 
 export interface InlineDateTimeChipProps {
@@ -17,25 +19,12 @@ const isSameDay = (a: Date, b: Date) =>
   a.getMonth() === b.getMonth() &&
   a.getDate() === b.getDate();
 
-const toTimeInputValue = (date: Date) =>
-  `${String(date.getHours()).padStart(2, "0")}:${String(
-    date.getMinutes()
-  ).padStart(2, "0")}`;
-
-const toDateInputValue = (date: Date) => {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
-};
-
 /**
- * Popover-based date & time chip. Deviation from the SDD's full `<Calendar>`
- * grid convention (§4.2 #6): implements the spec's own described affordance
- * — "Quick date pills (Today / Yesterday / Custom Date Input) + Time input" —
- * using a plain `<input type="date">`/`<input type="time">` pair instead of
- * the heavier `@internationalized/date` Calendar compound, since the spec
- * only calls for a lightweight custom date input, not a full month grid.
+ * Popover-based date & time chip implementing the spec's affordance —
+ * "Quick date pills (Today / Yesterday / Custom Date Input) + Time input".
+ * Date/time inputs delegate to `CustomDateField`/`CustomTimeField`, which
+ * pick HeroUI's compound `DatePicker`/`TimeField` on desktop and native
+ * `<input>` elements on mobile.
  * See sdd/ai-draft-transaction-pipeline.md §2.4 (Date & Time row) / §4.2 (#6).
  */
 export const InlineDateTimeChip: React.FC<InlineDateTimeChipProps> = ({
@@ -85,22 +74,6 @@ export const InlineDateTimeChip: React.FC<InlineDateTimeChipProps> = ({
     onDateChange(next);
   };
 
-  const onDateInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.value) return;
-    const [year, month, day] = e.target.value.split("-").map(Number);
-    const next = new Date(date);
-    next.setFullYear(year, month - 1, day);
-    onDateChange(next);
-  };
-
-  const onTimeInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.value) return;
-    const [hours, minutes] = e.target.value.split(":").map(Number);
-    const next = new Date(date);
-    next.setHours(hours, minutes, 0, 0);
-    onDateChange(next);
-  };
-
   return (
     <Popover isOpen={isOpen} onOpenChange={onOpenChange}>
       <Button variant="ghost" className={CHIP_BASE_CLASS}>
@@ -118,30 +91,18 @@ export const InlineDateTimeChip: React.FC<InlineDateTimeChipProps> = ({
                 {t("aiDraft.dateTime.yesterday")}
               </Button>
             </div>
-            <div className="flex flex-col gap-2">
-              <label className="text-xs text-muted" htmlFor="draft-date-input">
-                {t("aiDraft.dateTime.customDate")}
-              </label>
-              <input
-                id="draft-date-input"
-                type="date"
-                value={toDateInputValue(date)}
-                onChange={onDateInputChange}
-                className="bg-field-background border border-field-border rounded-lg px-2 py-1 text-sm text-field-foreground"
-              />
-            </div>
-            <div className="flex flex-col gap-2">
-              <label className="text-xs text-muted" htmlFor="draft-time-input">
-                {t("aiDraft.dateTime.time")}
-              </label>
-              <input
-                id="draft-time-input"
-                type="time"
-                value={toTimeInputValue(date)}
-                onChange={onTimeInputChange}
-                className="bg-field-background border border-field-border rounded-lg px-2 py-1 text-sm text-field-foreground"
-              />
-            </div>
+            <CustomDateField
+              id="draft-date-input"
+              label={t("aiDraft.dateTime.customDate")}
+              value={date}
+              onChange={onDateChange}
+            />
+            <CustomTimeField
+              id="draft-time-input"
+              label={t("aiDraft.dateTime.time")}
+              value={date}
+              onChange={onDateChange}
+            />
           </div>
         </Popover.Dialog>
       </Popover.Content>
