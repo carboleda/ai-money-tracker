@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import clsx from "clsx";
 import { Button, Dropdown, Label } from "@heroui/react";
 import { TransactionType } from "@/app/api/domain/transaction/model/transaction.model";
 import { useTranslation } from "react-i18next";

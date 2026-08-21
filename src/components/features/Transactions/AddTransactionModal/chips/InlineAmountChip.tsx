@@ -45,18 +45,16 @@ export const InlineAmountChip: React.FC<InlineAmountChipProps> = ({
     }
   }, [isEditing]);
 
-  const amountColorClass =
-    type === TransactionType.EXPENSE
-      ? CHIP_EXPENSE_AMOUNT_CLASS
-      : type === TransactionType.INCOME
-      ? CHIP_INCOME_AMOUNT_CLASS
-      : CHIP_TRANSFER_AMOUNT_CLASS;
-
+  const amountColorClass = clsx({
+    [CHIP_EXPENSE_AMOUNT_CLASS]: type === TransactionType.EXPENSE,
+    [CHIP_INCOME_AMOUNT_CLASS]: type === TransactionType.INCOME,
+    [CHIP_TRANSFER_AMOUNT_CLASS]: type === TransactionType.TRANSFER,
+  });
   const sign = type === TransactionType.EXPENSE ? "-" : "";
 
   const commit = () => {
     setIsEditing(false);
-    const parsed = parseFloat(value);
+    const parsed = Number.parseFloat(value);
     if (!Number.isNaN(parsed) && parsed !== amount) {
       onAmountChange(parsed);
     } else {
