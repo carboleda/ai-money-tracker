@@ -71,9 +71,11 @@ export const InlineCategoryChip: React.FC<InlineCategoryChipProps> = ({
       aria-label={t("aiDraft.category.label")}
     >
       <Autocomplete.Trigger className={CHIP_BASE_CLASS}>
-        <Autocomplete.Value className="text-xs" />
+        <Autocomplete.Value className="text-xs pr-0.5" />
         <Autocomplete.Indicator>
-          <span aria-hidden="true">▾</span>
+          <span aria-hidden="true" className="text-white!">
+            ▾
+          </span>
         </Autocomplete.Indicator>
       </Autocomplete.Trigger>
       <Autocomplete.Popover className="w-auto min-w-[200px] max-w-[300px]">

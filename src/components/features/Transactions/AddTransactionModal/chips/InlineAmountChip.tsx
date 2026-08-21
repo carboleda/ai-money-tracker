@@ -109,7 +109,7 @@ export const InlineAmountChip: React.FC<InlineAmountChipProps> = ({
         {sign}
         {formatCurrency(Math.abs(amount ?? 0))}
       </span>
-      <HiPencil className="text-[10px] opacity-70" />
+      <HiPencil className="text-[10px]" />
     </button>
   );
 };
