@@ -85,7 +85,7 @@ export const InlineDescriptionTitle: React.FC<InlineDescriptionTitleProps> = ({
       <span className={clsx(!description && "text-muted font-normal")}>
         {description || t("aiDraft.descriptionPlaceholder")}
       </span>
-      <HiPencil className="text-sm text-muted opacity-0 group-hover:opacity-100 transition-opacity" />
+      <HiPencil className="text-sm" />
     </button>
   );
 };
