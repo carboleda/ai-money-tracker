@@ -1,5 +1,5 @@
 import { Injectable, Inject } from "@/app/api/decorators/tsyringe.decorator";
-import type { GenAIService } from "@/app/api/domain/shared/interfaces/generated-transaction.interface";
+import type { GenAIService } from "@/app/api/domain/shared/interfaces/parsed-transaction.interface";
 import { DomainError } from "@/app/api/domain/shared/errors/domain.error";
 import { Service } from "@/app/api/domain/shared/ports/service.interface";
 import { GetAllCategoriesService } from "@/app/api/domain/category/service/get-all-categories.service";

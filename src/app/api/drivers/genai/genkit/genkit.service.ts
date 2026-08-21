@@ -9,7 +9,7 @@ import {
 import {
   GenAIService,
   ParsedTransactionResult,
-} from "@/app/api/domain/shared/interfaces/generated-transaction.interface";
+} from "@/app/api/domain/shared/interfaces/parsed-transaction.interface";
 import path from "node:path";
 import { CategoryModel } from "@/app/api/domain/category/model/category.model";
 import { AccountModel } from "@/app/api/domain/account/model/account.model";

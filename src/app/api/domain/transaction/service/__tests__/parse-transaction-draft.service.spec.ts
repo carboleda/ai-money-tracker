@@ -4,7 +4,7 @@ import { ParseTransactionDraftService } from "../parse-transaction-draft.service
 import { DomainError } from "@/app/api/domain/shared/errors/domain.error";
 import { GetAllCategoriesService } from "@/app/api/domain/category/service/get-all-categories.service";
 import { GetAllAccountsService } from "@/app/api/domain/account/service/get-all.service";
-import type { GenAIService } from "@/app/api/domain/shared/interfaces/generated-transaction.interface";
+import type { GenAIService } from "@/app/api/domain/shared/interfaces/parsed-transaction.interface";
 import { TransactionType } from "@/app/api/domain/transaction/model/transaction.model";
 
 describe("ParseTransactionDraftService", () => {
