@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Calendar, DateField, DatePicker, Label } from "@heroui/react";
+import { Calendar, DateField, DatePicker, DatePickerProps, Label } from "@heroui/react";
 import { CalendarDate } from "@internationalized/date";
 import clsx from "clsx";
 import { useIsMobile } from "@/hooks/useIsMobile";
@@ -9,17 +9,16 @@ import { useIsMobile } from "@/hooks/useIsMobile";
 const MOBILE_INPUT_CLASS =
   "bg-field border border-field-border rounded-lg px-2 py-1 text-sm text-field-foreground";
 
-export interface CustomDateFieldProps {
+export interface CustomDateFieldProps
+  extends Omit<
+    DatePickerProps<CalendarDate>,
+    "value" | "onChange" | "minValue" | "maxValue" | "children"
+  > {
   value: Date;
   onChange: (date: Date) => void;
   label?: string;
-  "aria-label"?: string;
-  isRequired?: boolean;
-  isDisabled?: boolean;
   minValue?: Date;
   maxValue?: Date;
-  className?: string;
-  id?: string;
 }
 
 const toCalendarDate = (date: Date): CalendarDate =>
@@ -55,6 +54,7 @@ export const CustomDateField: React.FC<CustomDateFieldProps> = ({
   maxValue,
   className,
   id,
+  ...rest
 }) => {
   const isMobile = useIsMobile();
 
@@ -103,6 +103,7 @@ export const CustomDateField: React.FC<CustomDateFieldProps> = ({
       isDisabled={isDisabled}
       aria-label={ariaLabel}
       className={className}
+      {...rest}
     >
       {label && <Label>{label}</Label>}
       <DateField.Group fullWidth>

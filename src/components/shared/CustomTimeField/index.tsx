@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Label, TimeField } from "@heroui/react";
+import { Label, TimeField, TimeFieldProps } from "@heroui/react";
 import { Time } from "@internationalized/date";
 import clsx from "clsx";
 import { useIsMobile } from "@/hooks/useIsMobile";
@@ -9,17 +9,16 @@ import { useIsMobile } from "@/hooks/useIsMobile";
 const MOBILE_INPUT_CLASS =
   "bg-field border border-field-border rounded-lg px-2 py-1 text-sm text-field-foreground";
 
-export interface CustomTimeFieldProps {
+export interface CustomTimeFieldProps
+  extends Omit<
+    TimeFieldProps<Time>,
+    "value" | "onChange" | "minValue" | "maxValue" | "children"
+  > {
   value: Date;
   onChange: (date: Date) => void;
   label?: string;
-  "aria-label"?: string;
-  isRequired?: boolean;
-  isDisabled?: boolean;
   minValue?: Date;
   maxValue?: Date;
-  className?: string;
-  id?: string;
 }
 
 const toTime = (date: Date): Time => new Time(date.getHours(), date.getMinutes());
@@ -51,6 +50,7 @@ export const CustomTimeField: React.FC<CustomTimeFieldProps> = ({
   maxValue,
   className,
   id,
+  ...rest
 }) => {
   const isMobile = useIsMobile();
 
@@ -98,6 +98,7 @@ export const CustomTimeField: React.FC<CustomTimeFieldProps> = ({
       isDisabled={isDisabled}
       aria-label={ariaLabel}
       className={className}
+      {...rest}
     >
       {label && <Label>{label}</Label>}
       <TimeField.Group fullWidth>
