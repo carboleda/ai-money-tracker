@@ -65,6 +65,7 @@ export const InlineDateTimeChip: React.FC<InlineDateTimeChipProps> = ({
     }
 
     const dateLabel = date.toLocaleDateString(undefined, {
+      year: "numeric",
       month: "short",
       day: "numeric",
     });
