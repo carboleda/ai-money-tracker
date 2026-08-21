@@ -5,6 +5,7 @@ import clsx from "clsx";
 import { HiPencil } from "react-icons/hi2";
 import { TransactionType } from "@/app/api/domain/transaction/model/transaction.model";
 import { formatCurrency } from "@/config/utils";
+import { NumericFormat } from "react-number-format";
 import {
   CHIP_ACTIVE_CLASS,
   CHIP_BASE_CLASS,
@@ -71,13 +72,15 @@ export const InlineAmountChip: React.FC<InlineAmountChipProps> = ({
     return (
       <span className={clsx(CHIP_BASE_CLASS, CHIP_ACTIVE_CLASS)}>
         <span className="text-muted">$</span>
-        <input
-          ref={inputRef}
-          type="number"
-          inputMode="decimal"
-          step="0.01"
+        <NumericFormat
+          getInputRef={inputRef}
+          thousandSeparator={true}
+          decimalSeparator="."
+          decimalScale={2}
+          fixedDecimalScale={false}
+          prefix="$"
           value={value}
-          onChange={(e) => setValue(e.target.value)}
+          onValueChange={(v) => setValue(v.floatValue?.toString() ?? "")}
           onBlur={commit}
           onKeyDown={(e) => {
             if (e.key === "Enter") {
