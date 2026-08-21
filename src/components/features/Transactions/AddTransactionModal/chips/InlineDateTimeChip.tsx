@@ -118,7 +118,7 @@ export const InlineDateTimeChip: React.FC<InlineDateTimeChipProps> = ({
               </Button>
             </div>
             <div className="flex flex-col gap-2">
-              <label className="text-xs text-zinc-400" htmlFor="draft-date-input">
+              <label className="text-xs text-muted" htmlFor="draft-date-input">
                 {t("aiDraft.dateTime.customDate")}
               </label>
               <input
@@ -126,11 +126,11 @@ export const InlineDateTimeChip: React.FC<InlineDateTimeChipProps> = ({
                 type="date"
                 value={toDateInputValue(date)}
                 onChange={onDateInputChange}
-                className="bg-zinc-800 border border-zinc-700 rounded-lg px-2 py-1 text-sm text-zinc-100"
+                className="bg-field-background border border-field-border rounded-lg px-2 py-1 text-sm text-field-foreground"
               />
             </div>
             <div className="flex flex-col gap-2">
-              <label className="text-xs text-zinc-400" htmlFor="draft-time-input">
+              <label className="text-xs text-muted" htmlFor="draft-time-input">
                 {t("aiDraft.dateTime.time")}
               </label>
               <input
@@ -138,7 +138,7 @@ export const InlineDateTimeChip: React.FC<InlineDateTimeChipProps> = ({
                 type="time"
                 value={toTimeInputValue(date)}
                 onChange={onTimeInputChange}
-                className="bg-zinc-800 border border-zinc-700 rounded-lg px-2 py-1 text-sm text-zinc-100"
+                className="bg-field-background border border-field-border rounded-lg px-2 py-1 text-sm text-field-foreground"
               />
             </div>
           </div>

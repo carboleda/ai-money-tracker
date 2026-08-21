@@ -1,11 +1,9 @@
 "use client";
 
 import React from "react";
-import clsx from "clsx";
 import { Button } from "@heroui/react";
 import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
-import { useIsMobile } from "@/hooks/useIsMobile";
 import {
   useTransactionDraftStore,
   AUTO_CONFIRM_SECONDS,
@@ -29,7 +27,6 @@ export const AutoConfirmSaveButton: React.FC<AutoConfirmSaveButtonProps> = ({
   onSave,
 }) => {
   const { t } = useTranslation(LocaleNamespace.Transactions);
-  const isMobile = useIsMobile();
   const isAutoConfirmActive = useTransactionDraftStore(
     (s) => s.isAutoConfirmActive,
   );
@@ -68,9 +65,6 @@ export const AutoConfirmSaveButton: React.FC<AutoConfirmSaveButtonProps> = ({
       <span className="relative z-10">
         {t("aiDraft.save")}
         {isAutoConfirmActive && ` (${autoConfirmCountdown}s)`}
-        {!isAutoConfirmActive && !isMobile && (
-          <span className="ml-1 text-xs opacity-70">(Cmd+&#8629;)</span>
-        )}
       </span>
     </Button>
   );

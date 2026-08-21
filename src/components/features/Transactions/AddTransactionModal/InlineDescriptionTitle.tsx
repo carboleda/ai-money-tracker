@@ -70,7 +70,7 @@ export const InlineDescriptionTitle: React.FC<InlineDescriptionTitleProps> = ({
             setIsEditing(false);
           }
         }}
-        className="w-full bg-transparent border-0 outline-none text-zinc-50 text-lg font-semibold placeholder:text-zinc-500"
+        className="w-full bg-transparent border-0 outline-none text-foreground text-lg font-semibold placeholder:text-muted"
         placeholder={t("aiDraft.descriptionPlaceholder")}
       />
     );
@@ -80,12 +80,12 @@ export const InlineDescriptionTitle: React.FC<InlineDescriptionTitleProps> = ({
     <button
       type="button"
       onClick={startEditing}
-      className="group flex items-center gap-1.5 text-left text-zinc-50 text-lg font-semibold cursor-text"
+      className="group flex items-center gap-1.5 text-left text-foreground text-lg font-semibold cursor-text"
     >
-      <span className={clsx(!description && "text-zinc-500 font-normal")}>
+      <span className={clsx(!description && "text-muted font-normal")}>
         {description || t("aiDraft.descriptionPlaceholder")}
       </span>
-      <HiPencil className="text-sm text-zinc-500 opacity-0 group-hover:opacity-100 transition-opacity" />
+      <HiPencil className="text-sm text-muted opacity-0 group-hover:opacity-100 transition-opacity" />
     </button>
   );
 };

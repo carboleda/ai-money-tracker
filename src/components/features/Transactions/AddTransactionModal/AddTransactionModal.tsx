@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useCallback } from "react";
-import { Button, Modal } from "@heroui/react";
-import { HiOutlineSparkles, HiOutlineWifi } from "react-icons/hi2";
+import { Alert, Button, Modal } from "@heroui/react";
+import { HiOutlineSparkles } from "react-icons/hi2";
 import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
 import { useIsMobile } from "@/hooks/useIsMobile";
@@ -43,7 +43,6 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
   const { showSuccessToast } = useToast();
 
   const {
-    prompt,
     description,
     amount,
     type,
@@ -101,7 +100,7 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
       status: TransactionStatus.COMPLETE,
       sourceAccount: sourceAccountRef,
       destinationAccount: isTransfer
-        ? destinationAccountRef ?? undefined
+        ? (destinationAccountRef ?? undefined)
         : undefined,
       category: !isTransfer ? categoryRef : undefined,
       createdAt: createdAt.toISOString(),
@@ -114,7 +113,7 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
     } catch (error) {
       updateDraftField(
         "errorMessage",
-        error instanceof Error ? error.message : String(error)
+        error instanceof Error ? error.message : String(error),
       );
       updateDraftField("pipelineStatus", "error");
     }
@@ -136,13 +135,6 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
   ]);
 
   useDraftAutoConfirm(handleSave);
-
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
-      e.preventDefault();
-      handleSave();
-    }
-  };
 
   const handleSubmitPrompt = ({
     text,
@@ -166,7 +158,7 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
           placement={isMobile ? "bottom" : "center"}
           className={isMobile ? "p-0 sm:p-0" : undefined}
         >
-          <Modal.Dialog className="bg-zinc-900/95 backdrop-blur-md border border-zinc-800/80 rounded-t-3xl md:rounded-2xl shadow-2xl">
+          <Modal.Dialog className="rounded-t-3xl md:rounded-2xl">
             {/*
               `ModalDialogProps extends DialogPrimitiveProps` from
               react-aria-components, whose `DialogProps` deliberately omits
@@ -175,70 +167,75 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
               elements"). So the Cmd/Ctrl+Enter-to-save trap is attached to a
               plain wrapping `<div>` instead of `<Modal.Dialog>` itself.
             */}
-            <div onKeyDown={handleKeyDown}>
-              {isMobile && (
-                <div className="w-full flex justify-center pt-2">
-                  <span className="h-1.5 w-10 rounded-full bg-zinc-700" />
+            {isMobile && (
+              <div className="w-full flex justify-center pt-2">
+                <span className="h-1.5 w-10 rounded-full bg-default" />
+              </div>
+            )}
+            <Modal.Header>
+              <Modal.Heading className="flex items-center justify-between w-full">
+                <span>
+                  {t("newTransaction")}
+                  {!isMobile && (
+                    <span className="ml-2 text-xs font-normal text-muted">
+                      ({t("aiDraft.escToClose")})
+                    </span>
+                  )}
+                </span>
+              </Modal.Heading>
+            </Modal.Header>
+            <Modal.Body className="flex flex-col gap-4">
+              {!isOnline && (
+                <Alert status="warning">
+                  <Alert.Indicator />
+                  <Alert.Content>
+                    <Alert.Description>
+                      {t("aiDraft.offlineBanner")}
+                    </Alert.Description>
+                  </Alert.Content>
+                </Alert>
+              )}
+
+              {errorMessage && (
+                <Alert status="danger">
+                  <Alert.Indicator />
+                  <Alert.Content>
+                    <Alert.Description>{errorMessage}</Alert.Description>
+                  </Alert.Content>
+                </Alert>
+              )}
+
+              <MultimodalDraftInput
+                isParsing={isParsing}
+                onSubmit={handleSubmitPrompt}
+                onInteraction={onInteraction}
+              />
+
+              {hasDraft && (
+                <div className="flex flex-col gap-2">
+                  <div className="flex items-center gap-1.5 text-xs font-semibold text-accent">
+                    <HiOutlineSparkles />
+                    <span>{t("aiDraft.badge")}</span>
+                  </div>
+                  <InlineDescriptionTitle
+                    description={description}
+                    onDescriptionChange={setDescription}
+                    onInteraction={onInteraction}
+                  />
+                  <DraftChipsGroup onInteraction={onInteraction} />
                 </div>
               )}
-              <Modal.Header>
-                <Modal.Heading className="flex items-center justify-between w-full text-zinc-50">
-                  <span>
-                    {t("newTransaction")}
-                    {!isMobile && (
-                      <span className="ml-2 text-xs font-normal text-zinc-500">
-                        ({t("aiDraft.escToClose")})
-                      </span>
-                    )}
-                  </span>
-                </Modal.Heading>
-              </Modal.Header>
-              <Modal.Body className="flex flex-col gap-4">
-                {!isOnline && (
-                  <div className="flex items-center gap-2 rounded-xl border border-amber-500/40 bg-amber-500/10 px-3 py-2 text-xs text-amber-300">
-                    <HiOutlineWifi className="text-base shrink-0" />
-                    <span>{t("aiDraft.offlineBanner")}</span>
-                  </div>
-                )}
-
-                {errorMessage && (
-                  <div className="rounded-xl border border-rose-500/40 bg-rose-500/10 px-3 py-2 text-xs text-rose-300">
-                    {errorMessage}
-                  </div>
-                )}
-
-                <MultimodalDraftInput
-                  isParsing={isParsing}
-                  onSubmit={handleSubmitPrompt}
-                  onInteraction={onInteraction}
-                />
-
-                {hasDraft && (
-                  <div className="flex flex-col gap-2">
-                    <div className="flex items-center gap-1.5 text-xs font-semibold text-lime-400">
-                      <HiOutlineSparkles />
-                      <span>{t("aiDraft.badge")}</span>
-                    </div>
-                    <InlineDescriptionTitle
-                      description={description}
-                      onDescriptionChange={setDescription}
-                      onInteraction={onInteraction}
-                    />
-                    <DraftChipsGroup onInteraction={onInteraction} />
-                  </div>
-                )}
-              </Modal.Body>
-              <Modal.Footer>
-                <Button variant="danger-soft" onPress={handleDismiss}>
-                  {t("cancel")}
-                </Button>
-                <AutoConfirmSaveButton
-                  isDisabled={isSaveDisabled}
-                  isSaving={isSaving}
-                  onSave={handleSave}
-                />
-              </Modal.Footer>
-            </div>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button variant="danger-soft" onPress={handleDismiss}>
+                {t("cancel")}
+              </Button>
+              <AutoConfirmSaveButton
+                isDisabled={isSaveDisabled}
+                isSaving={isSaving}
+                onSave={handleSave}
+              />
+            </Modal.Footer>
           </Modal.Dialog>
         </Modal.Container>
       </Modal.Backdrop>

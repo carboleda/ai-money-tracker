@@ -72,7 +72,7 @@ export const InlineAmountChip: React.FC<InlineAmountChipProps> = ({
   if (isEditing) {
     return (
       <span className={clsx(CHIP_BASE_CLASS, CHIP_ACTIVE_CLASS)}>
-        <span className="text-zinc-400">$</span>
+        <span className="text-muted">$</span>
         <input
           ref={inputRef}
           type="number"
@@ -92,7 +92,7 @@ export const InlineAmountChip: React.FC<InlineAmountChipProps> = ({
               setIsEditing(false);
             }
           }}
-          className="w-20 bg-transparent border-0 outline-none text-zinc-50"
+          className="w-20 bg-transparent border-0 outline-none text-foreground"
         />
       </span>
     );

@@ -3,6 +3,7 @@
 import React, { useRef, useState } from "react";
 import Image from "next/image";
 import clsx from "clsx";
+import { Button } from "@heroui/react";
 import { HiOutlineCamera, HiOutlineSparkles, HiXMark } from "react-icons/hi2";
 import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
@@ -81,8 +82,8 @@ export const MultimodalDraftInput: React.FC<MultimodalDraftInputProps> = ({
   return (
     <div
       className={clsx(
-        "flex flex-col gap-2 rounded-2xl border border-zinc-800/80 bg-zinc-900/60 p-3 transition-colors",
-        isDragOver && "border-lime-500/60 bg-zinc-900"
+        "flex flex-col gap-2 rounded-2xl border border-border bg-surface p-3 transition-colors",
+        isDragOver && "border-accent bg-surface-secondary"
       )}
       onDragOver={(e) => {
         e.preventDefault();
@@ -100,14 +101,16 @@ export const MultimodalDraftInput: React.FC<MultimodalDraftInputProps> = ({
             height={200}
             className="w-full max-h-40 object-cover rounded-xl"
           />
-          <button
-            type="button"
-            onClick={clearReceipt}
+          <Button
+            variant="ghost"
+            isIconOnly
+            size="sm"
+            onPress={clearReceipt}
             aria-label="Remove receipt"
-            className="absolute top-2 right-2 bg-zinc-950/80 hover:bg-zinc-800 text-zinc-100 rounded-full p-1"
+            className="absolute top-2 right-2 rounded-full bg-overlay text-overlay-foreground"
           >
             <HiXMark />
-          </button>
+          </Button>
         </div>
       ) : (
         <div className="flex items-start gap-2">
@@ -118,20 +121,21 @@ export const MultimodalDraftInput: React.FC<MultimodalDraftInputProps> = ({
             disabled={isDisabled}
             rows={2}
             placeholder={t("aiDraft.promptPlaceholder")}
-            className="flex-1 resize-none bg-transparent border-0 outline-none text-zinc-100 placeholder:text-zinc-500 text-sm disabled:opacity-50"
+            className="flex-1 resize-none bg-transparent border-0 outline-none text-foreground placeholder:text-muted text-sm disabled:opacity-50"
           />
-          <button
-            type="button"
+          <Button
+            variant="secondary"
+            isIconOnly
             aria-label={t("aiDraft.cameraTrigger")}
-            disabled={isDisabled}
-            onClick={() => {
+            isDisabled={isDisabled}
+            onPress={() => {
               onInteraction();
               fileInputRef.current?.click();
             }}
-            className="shrink-0 flex items-center justify-center rounded-xl bg-zinc-800/80 hover:bg-zinc-700/80 text-zinc-100 p-2 disabled:opacity-50"
+            className="shrink-0"
           >
             <HiOutlineCamera className="text-lg" />
-          </button>
+          </Button>
           <input
             ref={fileInputRef}
             type="file"
@@ -144,7 +148,7 @@ export const MultimodalDraftInput: React.FC<MultimodalDraftInputProps> = ({
       )}
 
       {isParsing && (
-        <div className="flex items-center gap-1.5 text-xs text-lime-400 animate-pulse">
+        <div className="flex items-center gap-1.5 text-xs text-accent animate-pulse">
           <HiOutlineSparkles />
           <span>{t("aiDraft.parsing")}</span>
         </div>
