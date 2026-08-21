@@ -32,7 +32,8 @@
     },
     "category": {
       "label": "Category",
-      "select": "Select category"
+      "select": "Select category",
+      "search": "Search categories..."
     },
     "account": {
       "select": "Select account",

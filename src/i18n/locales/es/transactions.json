@@ -32,7 +32,8 @@
     },
     "category": {
       "label": "Categoría",
-      "select": "Selecciona categoría"
+      "select": "Selecciona categoría",
+      "search": "Buscar categorías..."
     },
     "account": {
       "select": "Selecciona cuenta",

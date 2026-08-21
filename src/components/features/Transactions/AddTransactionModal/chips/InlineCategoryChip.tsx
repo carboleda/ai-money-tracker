@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useMemo } from "react";
-import { Button, Dropdown, Label } from "@heroui/react";
+import React, { useMemo, useRef } from "react";
+import { Autocomplete, ListBox, SearchField, useFilter } from "@heroui/react";
 import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
 import { useCategoryStore } from "@/stores/useCategoryStore";
@@ -35,6 +35,8 @@ export const InlineCategoryChip: React.FC<InlineCategoryChipProps> = ({
 }) => {
   const { t } = useTranslation(LocaleNamespace.Transactions);
   const { categories } = useCategoryStore();
+  const { contains } = useFilter({ sensitivity: "base" });
+  const searchInputRef = useRef<HTMLInputElement>(null);
 
   const filteredCategories = useMemo(
     () =>
@@ -44,45 +46,60 @@ export const InlineCategoryChip: React.FC<InlineCategoryChipProps> = ({
     [categories, type]
   );
 
-  const selectedCategory = categories.find((c) => c.ref === categoryRef);
-
   const onOpenChange = (isOpen: boolean) => {
-    if (isOpen) onInteraction();
+    if (isOpen) {
+      onInteraction();
+      // The Popover's own mount-focus logic (and the underlying Select's
+      // listbox focus-on-open behavior) can steal focus back from the
+      // search input after it mounts, so autoFocus alone isn't reliable
+      // for keyboard-only opens. Deferring to the next frame guarantees
+      // this call is the last one to run, after any internal focus shuffling.
+      requestAnimationFrame(() => searchInputRef.current?.focus());
+    }
   };
 
-  const onSelectionChange = (keys: any) => {
-    const selected = [...keys.keys()][0] as string | undefined;
-    if (selected) onCategoryChange(selected);
+  const onChange = (key: React.Key | null) => {
+    if (key) onCategoryChange(key as string);
   };
 
   return (
-    <Dropdown onOpenChange={onOpenChange}>
-      <Button variant="ghost" className={CHIP_BASE_CLASS}>
-        {selectedCategory
-          ? `${selectedCategory.icon} ${selectedCategory.name}`
-          : `🛒 ${t("aiDraft.category.select")}`}{" "}
-        ▾
-      </Button>
-      <Dropdown.Popover>
-        <Dropdown.Menu
-          aria-label={t("aiDraft.category.label")}
-          selectionMode="single"
-          selectedKeys={categoryRef ? new Set([categoryRef]) : new Set()}
-          onSelectionChange={onSelectionChange}
-        >
-          {filteredCategories.map((category) => (
-            <Dropdown.Item
-              key={category.ref}
-              id={category.ref}
-              textValue={category.name}
-            >
-              <Label>
+    <Autocomplete
+      value={categoryRef || null}
+      onChange={onChange}
+      onOpenChange={onOpenChange}
+      placeholder={`🛒 ${t("aiDraft.category.select")}`}
+      aria-label={t("aiDraft.category.label")}
+    >
+      <Autocomplete.Trigger className={CHIP_BASE_CLASS}>
+        <Autocomplete.Value className="text-xs" />
+        <Autocomplete.Indicator>
+          <span aria-hidden="true">▾</span>
+        </Autocomplete.Indicator>
+      </Autocomplete.Trigger>
+      <Autocomplete.Popover className="w-auto min-w-[200px] max-w-[300px]">
+        <Autocomplete.Filter filter={contains}>
+          <SearchField>
+            <SearchField.Group>
+              <SearchField.SearchIcon />
+              <SearchField.Input
+                ref={searchInputRef}
+                placeholder={t("aiDraft.category.search")}
+              />
+            </SearchField.Group>
+          </SearchField>
+          <ListBox>
+            {filteredCategories.map((category) => (
+              <ListBox.Item
+                key={category.ref}
+                id={category.ref}
+                textValue={`${category.icon} ${category.name}`}
+              >
                 {category.icon} {category.name}
-              </Label>
-            </Dropdown.Item>
-          ))}
-        </Dropdown.Menu>
-      </Dropdown.Popover>
-    </Dropdown>
+              </ListBox.Item>
+            ))}
+          </ListBox>
+        </Autocomplete.Filter>
+      </Autocomplete.Popover>
+    </Autocomplete>
   );
 };
