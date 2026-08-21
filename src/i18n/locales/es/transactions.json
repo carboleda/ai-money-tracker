@@ -5,7 +5,7 @@
   "descriptionIsInvalid": "¡Incluye los {{missinFields, list}} en tu mensaje!",
   "bankAndAccountAreRquired": "La cuenta bancaria y la imagen son obligatorias. Por favor complétalas.",
   "requiredFieldsMissing": "Faltan campos obligatorios. Por favor complétalos.",
-  "newTransaction": "Nueva Transacción",
+  "newTransaction": "Que hay de nuevo con tu dinero?",
   "updateTransaction": "Actualizar transacción",
   "freeTextMode": "Modo texto libre",
   "cameraMode": "Modo cámara",

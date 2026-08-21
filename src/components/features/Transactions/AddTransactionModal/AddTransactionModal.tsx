@@ -174,14 +174,12 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
             )}
             <Modal.Header>
               <Modal.Heading className="flex items-center justify-between w-full">
-                <span>
-                  {t("newTransaction")}
-                  {!isMobile && (
-                    <span className="ml-2 text-xs font-normal text-muted">
-                      ({t("aiDraft.escToClose")})
-                    </span>
-                  )}
-                </span>
+                <span>{t("newTransaction")}</span>
+                {!isMobile && (
+                  <span className="ml-2 text-xs font-normal text-muted">
+                    ({t("aiDraft.escToClose")})
+                  </span>
+                )}
               </Modal.Heading>
             </Modal.Header>
             <Modal.Body className="flex flex-col gap-4">

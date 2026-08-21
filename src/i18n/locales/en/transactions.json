@@ -5,7 +5,7 @@
   "descriptionIsInvalid": "Include the {{missinFields, list}} in your prompt!",
   "bankAndAccountAreRquired": "Back account and Picture are requited. Please fill them out.",
   "requiredFieldsMissing": "There are missing required fields. Please fill them out.",
-  "newTransaction": "New Transaction",
+  "newTransaction": "What is new with your money?",
   "updateTransaction": "Update transaction",
   "freeTextMode": "Free text mode",
   "cameraMode": "Camera mode",
