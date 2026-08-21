@@ -4,10 +4,8 @@ import { DomainError } from "@/app/api/domain/shared/errors/domain.error";
 import { Service } from "@/app/api/domain/shared/ports/service.interface";
 import { GetAllCategoriesService } from "@/app/api/domain/category/service/get-all-categories.service";
 import { GetAllAccountsService } from "@/app/api/domain/account/service/get-all.service";
-import {
-  ParseTransactionInputDTO,
-  ParseTransactionDraftResponse,
-} from "../ports/inbound/parse-transaction.port";
+import { ParseTransactionInputDTO } from "../ports/inbound/parse-transaction.port";
+import { ParseTransactionDraftResponse } from "../ports/outbound/parse-transaction-draft.port";
 
 interface ParseTransactionErrorDetails {
   code: string;
