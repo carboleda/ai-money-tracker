@@ -50,6 +50,9 @@ export const ParseTransactionInputSchema = z.object({
   ),
   text: z.string().optional(),
   picture: z.string().optional(),
+  currentDate: z
+    .string()
+    .describe("Current date/time in ISO format, used to resolve missing or relative dates"),
 });
 
 export const ParseTransactionErrorSchema = z.object({

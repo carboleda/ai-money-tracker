@@ -47,6 +47,12 @@ Guidelines:
 8. Only respond to the last request asked. Refrain from answering any other
    question or providing additional information not related to the
    transaction data extraction.
+9. The current date is {{currentDate}}. If the prompt or image does not
+   explicitly state a transaction date, set createdAt to this current date
+   (keep its year, month, and day). If a relative date is mentioned (e.g.
+   'yesterday', 'last Friday', 'on the 3rd'), resolve it relative to this
+   current date. Never infer a year other than the one in the current date
+   unless a full date with an explicit, different year is stated.
 
 {{role "user"}}
 {{#if text}}

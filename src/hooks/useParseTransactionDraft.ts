@@ -15,6 +15,9 @@ import { useOfflineWriteGuard } from "@/hooks/useOnlineStatus";
 
 const KEY = "/api/transaction/parse";
 
+const capitalizeFirstLetter = (value: string) =>
+  value ? value.charAt(0).toUpperCase() + value.slice(1) : value;
+
 /**
  * Stateless GenAI extraction mutation for the AI draft transaction pipeline.
  * POSTs the free-text prompt and/or base64 receipt image to
@@ -56,7 +59,7 @@ export const useParseTransactionDraft = () => {
 
       setParsedDraft(
         {
-          description: draft.description,
+          description: capitalizeFirstLetter(draft.description),
           amount: draft.amount,
           type: draft.type,
           categoryRef: draft.categoryRef,

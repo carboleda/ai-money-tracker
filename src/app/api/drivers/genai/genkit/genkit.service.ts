@@ -46,6 +46,7 @@ export class GenkitService implements GenAIService {
   async extractData(
     categories: CategoryModel[],
     accounts: AccountModel[],
+    currentDate: string,
     text?: string,
     picture?: string
   ): Promise<ParsedTransactionResult> {
@@ -63,6 +64,7 @@ export class GenkitService implements GenAIService {
       })),
       text: text,
       picture: picture,
+      currentDate: currentDate,
     } as ParseTransactionInputType;
 
     const { output } = await this.extractDataPrompt(input);

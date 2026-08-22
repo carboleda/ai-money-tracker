@@ -112,6 +112,7 @@ describe("ParseTransactionDraftService", () => {
     expect(genAIService.extractData).toHaveBeenCalledWith(
       mockCategories,
       mockAccounts,
+      expect.any(String),
       "Spent 45 on groceries at Whole Foods with Chase",
       undefined
     );
@@ -219,6 +220,7 @@ describe("ParseTransactionDraftService", () => {
     expect(genAIService.extractData).toHaveBeenCalledWith(
       mockCategories,
       mockAccounts,
+      expect.any(String),
       undefined,
       "base64-image-data"
     );

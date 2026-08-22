@@ -41,9 +41,12 @@ export class ParseTransactionDraftService
       this.getAllAccountsService.execute(),
     ]);
 
+    const currentDate = new Date().toISOString();
+
     const result = await this.genAIService.extractData(
       categories,
       accounts,
+      currentDate,
       text,
       picture
     );
@@ -64,7 +67,7 @@ export class ParseTransactionDraftService
       sourceAccountRef: result.sourceAccount,
       destinationAccountRef: result.destinationAccount,
       description: result.description,
-      createdAt: result.createdAt ?? new Date().toISOString(),
+      createdAt: result.createdAt ?? currentDate,
       confidence: result.confidence,
     };
   }

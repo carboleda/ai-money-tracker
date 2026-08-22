@@ -26,6 +26,7 @@ export interface GenAIService {
   extractData(
     categories: CategoryModel[],
     accounts: AccountModel[],
+    currentDate: string,
     text?: string,
     picture?: string
   ): Promise<ParsedTransactionResult>;

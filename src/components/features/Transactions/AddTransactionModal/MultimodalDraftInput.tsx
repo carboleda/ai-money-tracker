@@ -139,7 +139,8 @@ export const MultimodalDraftInput: React.FC<MultimodalDraftInputProps> = ({
     onInteraction();
     const dataUrl = await readFileAsDataUrl(file);
     setReceiptImage(dataUrl, dataUrl);
-    onSubmit({ picture: dataUrl, text: prompt });
+    setPrompt("");
+    onSubmit({ picture: dataUrl });
   };
 
   const clearReceipt = () => {
