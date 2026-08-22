@@ -1,19 +1,30 @@
 "use client";
 
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import clsx from "clsx";
 import { Button } from "@heroui/react";
-import { HiOutlineCamera, HiOutlineSparkles, HiXMark } from "react-icons/hi2";
+import {
+  HiArrowUp,
+  HiMicrophone,
+  HiOutlineCamera,
+  HiOutlineMicrophone,
+  HiOutlineSparkles,
+  HiXMark,
+} from "react-icons/hi2";
 import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
 import { useTransactionDraftStore } from "@/stores/useTransactionDraftStore";
 import { useOnlineStatus } from "@/hooks/useOnlineStatus";
+import { useIsMobile } from "@/hooks/useIsMobile";
+import { useSpeechRecognition } from "@/hooks/useSpeechRecognition";
+import { VoiceRecordingBar } from "./VoiceRecordingBar";
 
 export interface MultimodalDraftInputProps {
   isParsing: boolean;
   onSubmit: (input: { text?: string; picture?: string }) => void;
   onInteraction: () => void;
+  onMicPermissionDenied?: (isDenied: boolean) => void;
 }
 
 const readFileAsDataUrl = (file: File): Promise<string> =>
@@ -33,9 +44,11 @@ export const MultimodalDraftInput: React.FC<MultimodalDraftInputProps> = ({
   isParsing,
   onSubmit,
   onInteraction,
+  onMicPermissionDenied,
 }) => {
   const { t } = useTranslation(LocaleNamespace.Transactions);
   const { isOnline } = useOnlineStatus();
+  const isMobile = useIsMobile();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isDragOver, setIsDragOver] = useState(false);
 
@@ -47,6 +60,67 @@ export const MultimodalDraftInput: React.FC<MultimodalDraftInputProps> = ({
   const setReceiptImage = useTransactionDraftStore((s) => s.setReceiptImage);
 
   const isDisabled = !isOnline || isParsing;
+
+  const {
+    isSupported,
+    isListening,
+    permissionError,
+    startListening,
+    stopListening,
+  } = useSpeechRecognition({
+    onTranscriptChange: setPrompt,
+  });
+
+  useEffect(() => {
+    onMicPermissionDenied?.(permissionError !== null);
+  }, [permissionError, onMicPermissionDenied]);
+
+  const beginVoiceInput = () => {
+    onInteraction();
+    if (prompt) setPrompt("");
+    startListening();
+  };
+
+  // Mobile: press-and-hold. Holding a mouse button down is finicky, so
+  // desktop uses a click-to-start/click-to-stop toggle instead (see
+  // handleMicClick), and these pointer handlers are gated to touch/pen.
+  // Pointer capture keeps every subsequent event routed to this button for
+  // the duration of the gesture, even if the VoiceRecordingBar appearing
+  // shifts layout under the still-held finger — without it, a reflow can
+  // move the button out from under the touch point and the browser stops
+  // delivering pointerup/pointerleave to it, leaving the recording stuck on.
+  const handleMicPressStart = (e: React.PointerEvent<HTMLButtonElement>) => {
+    if (!isMobile || e.pointerType === "mouse") return;
+    e.preventDefault();
+    if (isDisabled || isListening) return;
+    e.currentTarget.setPointerCapture(e.pointerId);
+    navigator.vibrate?.(40);
+    beginVoiceInput();
+  };
+
+  const handleMicPressEnd = (e: React.PointerEvent<HTMLButtonElement>) => {
+    if (!isMobile || e.pointerType === "mouse" || !isListening) return;
+    if (e.currentTarget.hasPointerCapture(e.pointerId)) {
+      e.currentTarget.releasePointerCapture(e.pointerId);
+    }
+    navigator.vibrate?.(40);
+    stopListening();
+  };
+
+  const handleMicClick = () => {
+    if (isMobile || isDisabled) return;
+    if (isListening) {
+      stopListening();
+    } else {
+      beginVoiceInput();
+    }
+  };
+
+  const micAriaLabel = isMobile
+    ? t("aiDraft.voiceTrigger")
+    : isListening
+      ? t("aiDraft.voiceStopTrigger")
+      : t("aiDraft.voiceClickTrigger");
 
   const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     onInteraction();
@@ -113,29 +187,81 @@ export const MultimodalDraftInput: React.FC<MultimodalDraftInputProps> = ({
           </Button>
         </div>
       ) : (
-        <div className="flex items-start gap-2">
-          <textarea
-            value={prompt}
-            onChange={handleTextChange}
-            onKeyDown={handleKeyDown}
-            disabled={isDisabled}
-            rows={2}
-            placeholder={t("aiDraft.promptPlaceholder")}
-            className="flex-1 resize-none bg-transparent border-0 outline-none text-foreground placeholder:text-muted text-sm disabled:opacity-50"
-          />
-          <Button
-            variant="secondary"
-            isIconOnly
-            aria-label={t("aiDraft.cameraTrigger")}
-            isDisabled={isDisabled}
-            onPress={() => {
-              onInteraction();
-              fileInputRef.current?.click();
-            }}
-            className="shrink-0"
-          >
-            <HiOutlineCamera className="text-lg" />
-          </Button>
+        <div className="flex flex-col gap-2">
+          <div className="flex items-start gap-2">
+            <textarea
+              value={prompt}
+              onChange={handleTextChange}
+              onKeyDown={handleKeyDown}
+              disabled={isDisabled || isListening}
+              rows={2}
+              placeholder={t("aiDraft.promptPlaceholder")}
+              className="flex-1 h-full resize-none bg-transparent border-0 outline-none text-foreground placeholder:text-muted text-sm disabled:opacity-50"
+            />
+            {!isListening && prompt.trim() && (
+              <Button
+                variant="primary"
+                isIconOnly
+                size="sm"
+                aria-label={t("aiDraft.submitPrompt")}
+                isDisabled={isDisabled}
+                onPress={() => onSubmit({ text: prompt })}
+                className="shrink-0"
+              >
+                <HiArrowUp className="text-lg" />
+              </Button>
+            )}
+          </div>
+          <div className="flex items-center gap-2">
+            <VoiceRecordingBar
+              className={clsx(
+                "min-w-0 flex-1 transition-opacity duration-150",
+                isListening
+                  ? "opacity-100"
+                  : "invisible opacity-0 pointer-events-none"
+              )}
+            />
+            <div className="flex shrink-0 items-center gap-2">
+              {!isListening && (
+                <Button
+                  variant="secondary"
+                  isIconOnly
+                  aria-label={t("aiDraft.cameraTrigger")}
+                  isDisabled={isDisabled}
+                  onPress={() => {
+                    onInteraction();
+                    fileInputRef.current?.click();
+                  }}
+                >
+                  <HiOutlineCamera className="text-lg" />
+                </Button>
+              )}
+              {isSupported && (
+                <Button
+                  variant="secondary"
+                  isIconOnly
+                  aria-label={micAriaLabel}
+                  isDisabled={isDisabled}
+                  onPress={handleMicClick}
+                  onPointerDown={handleMicPressStart}
+                  onPointerUp={handleMicPressEnd}
+                  onPointerCancel={handleMicPressEnd}
+                  onPointerLeave={handleMicPressEnd}
+                  className={clsx(
+                    "touch-none transition-transform",
+                    isListening &&
+                      "scale-105 border-danger bg-danger/20 text-danger animate-pulse"
+                  )}
+                >
+                  {isListening ? (
+                    <HiMicrophone className="text-lg" />
+                  ) : (
+                    <HiOutlineMicrophone className="text-lg" />
+                  )}
+                </Button>
+              )}
+            </div>
+          </div>
           <input
             ref={fileInputRef}
             type="file"

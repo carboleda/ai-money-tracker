@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 import { Alert, Button, Modal } from "@heroui/react";
 import { HiOutlineSparkles } from "react-icons/hi2";
 import { useTranslation } from "react-i18next";
@@ -41,6 +41,7 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
   const isMobile = useIsMobile();
   const { isOnline } = useOnlineStatus();
   const { showSuccessToast } = useToast();
+  const [isMicPermissionDenied, setIsMicPermissionDenied] = useState(false);
 
   const {
     description,
@@ -203,10 +204,22 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
                 </Alert>
               )}
 
+              {isMicPermissionDenied && (
+                <Alert status="warning">
+                  <Alert.Indicator />
+                  <Alert.Content>
+                    <Alert.Description>
+                      {t("aiDraft.micPermissionDenied")}
+                    </Alert.Description>
+                  </Alert.Content>
+                </Alert>
+              )}
+
               <MultimodalDraftInput
                 isParsing={isParsing}
                 onSubmit={handleSubmitPrompt}
                 onInteraction={onInteraction}
+                onMicPermissionDenied={setIsMicPermissionDenied}
               />
 
               {hasDraft && (
