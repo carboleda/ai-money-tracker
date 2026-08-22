@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import clsx from "clsx";
 import { Button } from "@heroui/react";
@@ -116,11 +116,17 @@ export const MultimodalDraftInput: React.FC<MultimodalDraftInputProps> = ({
     }
   };
 
-  const micAriaLabel = isMobile
-    ? t("aiDraft.voiceTrigger")
-    : isListening
-      ? t("aiDraft.voiceStopTrigger")
-      : t("aiDraft.voiceClickTrigger");
+  const micAriaLabel = (() => {
+    if (isMobile) {
+      return t("aiDraft.voiceTrigger");
+    }
+
+    if (isListening) {
+      return t("aiDraft.voiceStopTrigger");
+    }
+
+    return t("aiDraft.voiceClickTrigger");
+  })();
 
   const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     onInteraction();
