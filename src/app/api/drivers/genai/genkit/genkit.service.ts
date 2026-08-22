@@ -2,23 +2,24 @@ import { Injectable } from "@/app/api/decorators/tsyringe.decorator";
 import { ExecutablePrompt, Genkit, genkit, z } from "genkit";
 import { googleAI, gemini20Flash } from "@genkit-ai/googleai";
 import {
-  CreateTransactionInputType,
-  CreateTransactionInputSchema,
-  CreateTransactionOutputSchema,
-} from "./schemas/create.transaction.schema";
+  ParseTransactionInputType,
+  ParseTransactionInputSchema,
+  ParseTransactionOutputSchema,
+} from "./schemas/parse.transaction.schema";
 import {
   GenAIService,
-  GeneratedTransaction,
-} from "@/app/api/domain/shared/interfaces/generated-transaction.interface";
+  ParsedTransactionResult,
+} from "@/app/api/domain/shared/interfaces/parsed-transaction.interface";
 import path from "node:path";
 import { CategoryModel } from "@/app/api/domain/category/model/category.model";
+import { AccountModel } from "@/app/api/domain/account/model/account.model";
 
 @Injectable()
 export class GenkitService implements GenAIService {
   private readonly ai: Genkit;
   private readonly extractDataPrompt: ExecutablePrompt<
-    CreateTransactionInputType,
-    typeof CreateTransactionOutputSchema,
+    ParseTransactionInputType,
+    typeof ParseTransactionOutputSchema,
     z.ZodTypeAny
   >;
 
@@ -32,34 +33,44 @@ export class GenkitService implements GenAIService {
       model: gemini20Flash,
     });
     this.ai.defineSchema(
-      "CreateTransactionInputSchema",
-      CreateTransactionInputSchema
+      "ParseTransactionInputSchema",
+      ParseTransactionInputSchema
     );
     this.ai.defineSchema(
-      "CreateTransactionOutputSchema",
-      CreateTransactionOutputSchema
+      "ParseTransactionOutputSchema",
+      ParseTransactionOutputSchema
     );
     this.extractDataPrompt = this.ai.prompt("extractTransactionData");
   }
 
   async extractData(
     categories: CategoryModel[],
+    accounts: AccountModel[],
+    currentDate: string,
     text?: string,
     picture?: string
-  ): Promise<GeneratedTransaction.GeneratedResponse> {
+  ): Promise<ParsedTransactionResult> {
     const input = {
       categories: categories.map((c) => ({
         ref: c.ref,
+        name: c.name,
         description: c.description || c.name,
+      })),
+      accounts: accounts.map((a) => ({
+        ref: a.ref,
+        name: a.name,
+        type: a.type,
+        description: a.description || a.name,
       })),
       text: text,
       picture: picture,
-    } as CreateTransactionInputType;
+      currentDate: currentDate,
+    } as ParseTransactionInputType;
 
     const { output } = await this.extractDataPrompt(input);
 
     return (
       output?.type === "error" ? output.error : output?.data
-    ) as GeneratedTransaction.GeneratedResponse;
+    ) as ParsedTransactionResult;
   }
 }

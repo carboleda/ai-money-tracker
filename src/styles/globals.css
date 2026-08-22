@@ -85,3 +85,17 @@
   --warning: oklch(82.03% 0.1416 62.82);
   --warning-foreground: oklch(21.03% 0.0059 62.82);
 }
+
+@keyframes wave-pulse {
+  0%,
+  100% {
+    transform: scaleY(0.3);
+  }
+  50% {
+    transform: scaleY(1);
+  }
+}
+
+.animate-wave-pulse {
+  animation: wave-pulse 1s ease-in-out infinite;
+}

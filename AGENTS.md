@@ -171,6 +171,31 @@ export class CreateTransactionService implements Service<CreateTransactionInput,
 
 ---
 
+## Theming (Light/Dark)
+
+- Theme tokens are defined as CSS variables in `src/styles/globals.css`, scoped under `:root, .light, .default, [data-theme="light"]` and `.dark, [data-theme="dark"]`. HeroUI's Tailwind v4 plugin exposes each variable as a utility class (`bg-*`, `text-*`, `border-*`).
+- **Never use hardcoded Tailwind palette colors** (`zinc-*`, `gray-*`, `rose-*`, `emerald-*`, `cyan-*`, `amber-*`, `lime-*`, etc.) and **never use the `dark:` variant prefix** — every other component in the app relies solely on semantic tokens, which auto-adapt to the active theme with zero conditional logic.
+- Available semantic tokens (use the bare name as the Tailwind class, e.g. `bg-surface`, `text-foreground`, `border-border`):
+
+  | Token | Use for |
+  |---|---|
+  | `background` / `foreground` | Page-level background / default text |
+  | `surface`, `surface-secondary`, `surface-tertiary` (+ `-foreground`) | Panels, cards, elevated containers |
+  | `overlay` / `overlay-foreground` | Modal/dialog surfaces (HeroUI `Modal.Dialog` already applies `bg-overlay` by default — don't override it) |
+  | `default` / `default-foreground` | Neutral chips, subtle buttons, dividers |
+  | `field-background` / `field-foreground` / `field-border` / `field-placeholder` | Text inputs, textareas, date/time inputs |
+  | `border` / `separator` | Borders, hairlines |
+  | `muted` | Secondary/placeholder text |
+  | `accent` / `accent-foreground` | Brand highlight (AI/sparkle affordances, active/selected state) |
+  | `success` / `warning` / `danger` (+ `-foreground`) | Semantic status — see below |
+  | `focus` | Focus rings (usually automatic via HeroUI) |
+
+- **Modals:** Don't set a custom background/border className on `Modal.Dialog` — it already themes itself via `bg-overlay`. Only add layout/shape classes (e.g. `rounded-t-3xl` for a bottom sheet) when customizing.
+- **Banners/inline messages:** Use HeroUI's `Alert` component instead of a hand-rolled `<div>`. Compound API: `<Alert status="warning|danger|success|accent|default"><Alert.Indicator /><Alert.Content><Alert.Title>…</Alert.Title><Alert.Description>…</Alert.Description></Alert.Content></Alert>`. `Alert.Indicator` renders a default icon per `status` if left empty; `Alert.Title` is optional for single-line messages.
+- **Transaction type color convention** (established in `src/components/TransactionTypeDecorator.tsx`, reuse everywhere a transaction type needs a color): `TransactionType.INCOME → success`, `TransactionType.EXPENSE → danger`, `TransactionType.TRANSFER → warning`. Apply via HeroUI `color`/status props (`Chip`, `Alert`) or the matching `text-success`/`text-danger`/`text-warning` utility — don't invent new colors (e.g. rose/emerald/cyan) for this semantic.
+
+---
+
 ## Error Handling
 
 - **Domain layer:** Throw `DomainError` (from `src/app/api/domain/shared/errors/`) with a `statusCode` and optional `details`. Never swallow errors silently.
@@ -203,3 +228,7 @@ try {
 - Use **Zod 4** for all runtime validation of external inputs (API request bodies, environment variables, AI responses).
 - Define schemas close to where they are used (e.g. alongside the inbound port DTO).
 - Infer TypeScript types from Zod schemas with `z.infer<typeof MySchema>` rather than duplicating type definitions.
+
+<!-- HEROUI-MIGRATION-AGENTS-MD-START -->
+[HeroUI Migration Docs Index]|root: ./.heroui-docs/migration|STOP. Always search migration docs before migrating components from HeroUI v2 to v3.|Start with: agent-index.mdx, then follow the workflow and component guides.|If docs missing, run this command first: heroui agents-md --migration --output AGENTS.md|.:{agent-index.mdx,hooks.mdx,styling.mdx}|(components):{accordion.mdx,alert.mdx,autocomplete.mdx,avatar.mdx,badge.mdx,breadcrumbs.mdx,button-group.mdx,button.mdx,calendar.mdx,card.mdx,checkbox-group.mdx,checkbox.mdx,chip.mdx,circular-progress.mdx,code.mdx,date-picker.mdx,date-range-picker.mdx,dateinput.mdx,divider.mdx,drawer.mdx,dropdown.mdx,form.mdx,image.mdx,input-otp.mdx,input.mdx,kbd.mdx,link.mdx,listbox.mdx,modal.mdx,navbar.mdx,numberinput.mdx,pagination.mdx,popover.mdx,progress.mdx,radio-group.mdx,radio.mdx,range-calendar.mdx,scroll-shadow.mdx,select.mdx,skeleton.mdx,slider.mdx,snippet.mdx,spacer.mdx,spinner.mdx,switch.mdx,table.mdx,tabs.mdx,timeinput.mdx,toast.mdx,tooltip.mdx,user.mdx}|(migration-for-agents):{agent-skills.mdx,agents-md.mdx,mcp-server.mdx}|(workflows):{agent-guide-full.mdx,agent-guide-incremental.mdx}
+<!-- HEROUI-MIGRATION-AGENTS-MD-END -->

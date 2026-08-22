@@ -29,6 +29,8 @@ export class Env {
   // Public environment variables
   static readonly NEXT_PUBLIC_FIXED_MONTH =
     process.env.NEXT_PUBLIC_FIXED_MONTH || "2024-10-15";
+  static readonly DEFAULT_SPEECH_LANGUAGE =
+    process.env.NEXT_PUBLIC_DEFAULT_SPEECH_LANGUAGE || "es-ES";
   static readonly NEXT_PUBLIC_FIREBASE_APP_CONFIG = JSON.parse(
     process.env.NEXT_PUBLIC_FIREBASE_APP_CONFIG || "{}"
   ) as Record<string, string>;

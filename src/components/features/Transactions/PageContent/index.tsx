@@ -4,10 +4,8 @@ import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { GetTransactionsResponse, Summary } from "@/interfaces/transaction";
 import { fetchJson } from "@/config/request";
-import {
-  CreateTransactionModalForm,
-  TransactionTable,
-} from "@/components/features/Transactions";
+import { TransactionTable } from "@/components/features/Transactions";
+import { useTransactionDraftStore } from "@/stores/useTransactionDraftStore";
 import { BankAccounDropdown } from "@/components/BankAccounsDropdown";
 import { parseAbsoluteToLocal, ZonedDateTime } from "@internationalized/date";
 import { RangeValue } from "@react-types/shared";
@@ -27,7 +25,7 @@ function PageContent() {
   const { t } = useTranslation(LocaleNamespace.Transactions);
   const { setPageTitle } = useAppStore();
   const isMobile = useIsMobile();
-  const [isOpen, setIsOpen] = useState(false);
+  const openDraftModal = useTransactionDraftStore((s) => s.openDraftModal);
   const [filterValue, setFilterValue] = useState("");
   const currentMonthBounds = getMonthBounds(new Date());
   const [selectedAccount, setSelectedAccount] = useState<string>("");
@@ -50,10 +48,6 @@ function PageContent() {
   useEffect(() => {
     setPageTitle(t("transactions"), t("subtitle"));
   }, [t, setPageTitle]);
-
-  const onDialogDismissed = () => {
-    setIsOpen(false);
-  };
 
   const transactions = useMemo(() => {
     if (!reesponse?.transactions) return reesponse?.transactions;
@@ -99,7 +93,7 @@ function PageContent() {
                 variant="primary"
                 className="bg-success text-success-foreground"
                 isIconOnly
-                onPress={() => setIsOpen(true)}
+                onPress={() => openDraftModal()}
               >
                 <HiOutlinePlusCircle className="text-xl" />
               </Button>
@@ -128,10 +122,6 @@ function PageContent() {
         {renderTopContent()}
         <TransactionTable transactions={transactions} isLoading={isLoading} />
       </section>
-      <CreateTransactionModalForm
-        isOpen={isOpen}
-        onDismiss={onDialogDismissed}
-      />
     </>
   );
 }
