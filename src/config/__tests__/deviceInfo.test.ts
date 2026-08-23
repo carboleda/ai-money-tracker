@@ -316,6 +316,58 @@ describe("DeviceInfo", () => {
     });
   });
 
+  describe("crypto.subtle unavailable (insecure context, e.g. iOS Safari over http://)", () => {
+    const originalCrypto = globalThis.crypto;
+
+    afterEach(() => {
+      Object.defineProperty(globalThis, "crypto", {
+        value: originalCrypto,
+        writable: true,
+        configurable: true,
+      });
+    });
+
+    it("should still resolve a deterministic deviceId when crypto.subtle is missing", async () => {
+      const userAgent =
+        "Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.6 Mobile/15E148 Safari/604.1";
+      mockNavigatorAndScreen(userAgent, "iPhone", 390, 844, 24, 6, 6);
+
+      Object.defineProperty(globalThis, "crypto", {
+        value: {},
+        writable: true,
+        configurable: true,
+      });
+
+      const device1 = await DeviceInfo.generate();
+      const device2 = await DeviceInfo.generate();
+
+      expect(device1.deviceId).toBeDefined();
+      expect(device1.deviceId.length).toBeGreaterThan(0);
+      expect(device1.deviceId).toBe(device2.deviceId);
+    });
+
+    it("should fall back when crypto.subtle.digest rejects", async () => {
+      const userAgent =
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36";
+      mockNavigatorAndScreen(userAgent, "MacIntel", 1440, 900, 24, 16, 8);
+
+      Object.defineProperty(globalThis, "crypto", {
+        value: {
+          subtle: {
+            digest: () => Promise.reject(new Error("digest unavailable")),
+          },
+        },
+        writable: true,
+        configurable: true,
+      });
+
+      const device = await DeviceInfo.generate();
+
+      expect(device.deviceId).toBeDefined();
+      expect(device.deviceId.length).toBeGreaterThan(0);
+    });
+  });
+
   describe("User-Agent edge cases", () => {
     it("should handle missing navigator properties gracefully", async () => {
       const userAgent =
