@@ -62,7 +62,7 @@ function PageContent() {
             .includes(filterValue.toLowerCase()) ||
           transaction.category?.name
             ?.toLowerCase()
-            .includes(filterValue.toLowerCase())
+            .includes(filterValue.toLowerCase()),
       );
     }
 
@@ -105,24 +105,22 @@ function PageContent() {
   };
 
   return (
-    <>
-      <section className="flex flex-col items-center justify-center gap-4">
-        <div className="flex flex-col w-full justify-start items-start gap-2">
-          <SummaryPanel
-            summary={reesponse?.summary}
-            shortNumber={isMobile}
-            includedKeys={[
-              "totalBalance",
-              ...(isMobile ? [] : ["totalIncomes" as keyof Summary]),
-              "totalExpenses",
-              "totalTransfers",
-            ]}
-          />
-        </div>
-        {renderTopContent()}
-        <TransactionTable transactions={transactions} isLoading={isLoading} />
-      </section>
-    </>
+    <section className="flex flex-col items-center justify-center gap-4">
+      <div className="flex flex-col w-full justify-start items-start gap-2">
+        <SummaryPanel
+          summary={reesponse?.summary}
+          shortNumber={isMobile}
+          includedKeys={[
+            "totalBalance",
+            ...(isMobile ? [] : ["totalIncomes" as keyof Summary]),
+            "totalExpenses",
+            "totalTransfers",
+          ]}
+        />
+      </div>
+      {renderTopContent()}
+      <TransactionTable transactions={transactions} isLoading={isLoading} />
+    </section>
   );
 }
 

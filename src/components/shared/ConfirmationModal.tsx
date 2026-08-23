@@ -1,5 +1,6 @@
 import { Modal, Button } from "@heroui/react";
 import { PropsWithChildren } from "react";
+import { ModalContainer } from "./ModalContainer";
 
 export enum Action {
   Yes,
@@ -27,7 +28,7 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
         onOpenChange={() => onAction(Action.Cancel)}
         isDismissable={false}
       >
-        <Modal.Container>
+        <ModalContainer>
           <Modal.Dialog>
             <Modal.Header>
               <Modal.Heading className="flex flex-col gap-1">
@@ -44,7 +45,7 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
               </Button>
             </Modal.Footer>
           </Modal.Dialog>
-        </Modal.Container>
+        </ModalContainer>
       </Modal.Backdrop>
     </Modal>
   );

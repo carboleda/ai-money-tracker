@@ -6,17 +6,9 @@ import { useTranslation } from "react-i18next";
 import { usePathname } from "next/navigation";
 import { UserAvatar } from "../../UserAvatar";
 import clsx from "clsx";
-import { HiBell } from "react-icons/hi";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { LocaleNamespace } from "@/i18n/namespace";
-import {
-  ListBox,
-  Label,
-  Header,
-  Separator,
-  Chip,
-  Typography,
-} from "@heroui/react";
+import { ListBox, Label, Header, Separator } from "@heroui/react";
 import { FaCircleArrowRight } from "react-icons/fa6";
 import { TFunction } from "i18next";
 

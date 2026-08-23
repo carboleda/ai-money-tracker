@@ -22,23 +22,21 @@ export const TransactionsSummaryHistoryChart: React.FC<
     });
 
   return (
-    <>
-      <div className="w-full flex flex-col p-5 rounded-xl shadow-md border-1 dark:shadow-none dark:border-0 dark:bg-zinc-900">
-        <Switch
-          size="sm"
-          className="mb-2 self-end"
-          isSelected={showLabels}
-          onChange={setShowLabels}
-        >
-          <Switch.Content>
-            <Switch.Control>
-              <Switch.Thumb />
-            </Switch.Control>
-            {t("showLabels")}
-          </Switch.Content>
-        </Switch>
-        <AgCharts options={options} />
-      </div>
-    </>
+    <div className="w-full flex flex-col p-5 rounded-xl shadow-md border dark:shadow-none dark:border-0 dark:bg-zinc-900">
+      <Switch
+        size="sm"
+        className="mb-2 self-end"
+        isSelected={showLabels}
+        onChange={setShowLabels}
+      >
+        <Switch.Content>
+          <Switch.Control>
+            <Switch.Thumb />
+          </Switch.Control>
+          {t("showLabels")}
+        </Switch.Content>
+      </Switch>
+      <AgCharts options={options} />
+    </div>
   );
 };
