@@ -18,6 +18,7 @@ import { useToast } from "@/hooks/useToast";
 import { TransactionStatus } from "@/app/api/domain/transaction/model/transaction.model";
 import { TransactionOutput } from "@/app/api/domain/transaction/ports/outbound/filter-transactions.port";
 import { UpdateTransactionInput } from "@/app/api/domain/transaction/ports/inbound/update-transaction.port";
+import { ModalContainer } from "@/components/shared/ModalContainer";
 
 interface CompleteTransactionModalFormProps {
   item?: TransactionOutput;
@@ -104,9 +105,9 @@ export const CompleteTransactionModalForm: React.FC<
         onOpenChange={onOpenChangeHandler}
         isDismissable={false}
       >
-        <Modal.Container>
+        <ModalContainer>
           <Modal.Dialog>
-            <Modal.Header>
+            <Modal.Header className="mb-4">
               <Modal.Heading className="flex flex-col gap-1">
                 <span>{t("completeTransaction")}</span>
                 <span className="text-sm font-normal subtitle">
@@ -114,7 +115,7 @@ export const CompleteTransactionModalForm: React.FC<
                 </span>
               </Modal.Heading>
             </Modal.Header>
-            <Modal.Body>
+            <Modal.Body className="flex flex-col gap-4">
               <div className="self-start w-full">
                 <BankAccounDropdown
                   label={t("bankAccount")}
@@ -161,7 +162,9 @@ export const CompleteTransactionModalForm: React.FC<
                     </Calendar.Header>
                     <Calendar.Grid>
                       <Calendar.GridHeader>
-                        {(day) => <Calendar.HeaderCell>{day}</Calendar.HeaderCell>}
+                        {(day) => (
+                          <Calendar.HeaderCell>{day}</Calendar.HeaderCell>
+                        )}
                       </Calendar.GridHeader>
                       <Calendar.GridBody>
                         {(date) => <Calendar.Cell date={date} />}
@@ -203,7 +206,7 @@ export const CompleteTransactionModalForm: React.FC<
               </Button>
             </Modal.Footer>
           </Modal.Dialog>
-        </Modal.Container>
+        </ModalContainer>
       </Modal.Backdrop>
     </Modal>
   );

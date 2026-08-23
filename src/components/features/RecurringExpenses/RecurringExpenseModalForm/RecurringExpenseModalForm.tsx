@@ -1,10 +1,7 @@
 import React, { useEffect, useState } from "react";
 import {
   Button,
-  Calendar,
   Chip,
-  DateField,
-  DatePicker,
   FieldError,
   Input,
   InputGroup,
@@ -16,7 +13,6 @@ import {
 } from "@heroui/react";
 import {
   parseAbsoluteToLocal,
-  ZonedDateTime,
   startOfMonth,
   endOfMonth,
   startOfYear,
@@ -26,6 +22,7 @@ import { Frequency } from "@/app/api/domain/recurring-expense/model/recurring-ex
 import type { RecurringExpenseOutput } from "@/app/api/domain/recurring-expense/ports/outbound/get-recurring-expenses.port";
 import type { CreateRecurringExpenseInput } from "@/app/api/domain/recurring-expense/ports/inbound/create-recurring-expense.port";
 import { FrequencyDropdown } from "@/components/FrequencyDropdown";
+import { CustomDateField } from "@/components/shared/CustomDateField";
 import { useMutateRecurringExpenses } from "@/hooks/useMutateRecurringExpense";
 import { IconComment, IconLink } from "@/components/shared/icons";
 import { CategoriesAutocomplete } from "@/components/CategoriesAutocomplete";
@@ -36,6 +33,7 @@ import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
 import { HiMinusSm, HiPlusSm } from "react-icons/hi";
 import { useToast } from "@/hooks/useToast";
+import { ModalContainer } from "@/components/shared/ModalContainer";
 
 const fixedMonth = parseAbsoluteToLocal(
   new Date(Env.NEXT_PUBLIC_FIXED_MONTH).toISOString()
@@ -64,11 +62,11 @@ export const RecurringExpenseModalForm: React.FC<
     Frequency.MONTHLY
   );
   const [amountInput, setAmountInput] = useState<number>();
-  const [dueDateInput, setDueDateInput] = useState<ZonedDateTime>();
+  const [dueDateInput, setDueDateInput] = useState<Date>();
   const [disabledInput, setDisabledInput] = useState<boolean>(false);
   const [dueDateMinMax, setDueDateMinMax] = useState<{
-    min: ZonedDateTime;
-    max: ZonedDateTime;
+    min: Date;
+    max: Date;
   }>();
 
   const areButtonsDisabled = isMutating || validationError !== "";
@@ -78,9 +76,7 @@ export const RecurringExpenseModalForm: React.FC<
       setDescriptionInput(item.description);
       setTransactonCategoryInput(item.category.ref);
       setFrequencyInput(item.frequency);
-      setDueDateInput(
-        item.dueDate ? parseAbsoluteToLocal(item.dueDate) : undefined
-      );
+      setDueDateInput(item.dueDate ? new Date(item.dueDate) : undefined);
       setDisabledInput(item.disabled);
       setAmountInput(item.amount);
       setPaymentLinkInput(item.paymentLink);
@@ -92,11 +88,11 @@ export const RecurringExpenseModalForm: React.FC<
     if (frequencyInput === Frequency.MONTHLY) {
       const min = startOfMonth(fixedMonth);
       const max = endOfMonth(fixedMonth);
-      setDueDateMinMax({ min, max });
+      setDueDateMinMax({ min: min.toDate(), max: max.toDate() });
     } else {
       const min = startOfYear(fixedMonth);
       const max = endOfYear(fixedMonth);
-      setDueDateMinMax({ min, max });
+      setDueDateMinMax({ min: min.toDate(), max: max.toDate() });
     }
   }, [frequencyInput]);
 
@@ -135,7 +131,7 @@ export const RecurringExpenseModalForm: React.FC<
     const payload: CreateRecurringExpenseInput = {
       description: descriptionInput,
       frequency: frequencyInput,
-      dueDate: dueDateInput.toDate(),
+      dueDate: dueDateInput,
       disabled: disabledInput,
       amount: amountInput!,
       category: transactonCategoryInput,
@@ -166,9 +162,9 @@ export const RecurringExpenseModalForm: React.FC<
         onOpenChange={onOpenChangeHandler}
         isDismissable={false}
       >
-        <Modal.Container>
+        <ModalContainer>
           <Modal.Dialog>
-            <Modal.Header className="flex flex-row justify-between pr-6 mt-4">
+            <Modal.Header className="flex flex-row justify-between mb-4">
               <Modal.Heading>{t("recurringExpenses")}</Modal.Heading>
               <Switch
                 aria-label={t("disabled")}
@@ -185,7 +181,7 @@ export const RecurringExpenseModalForm: React.FC<
                 </Switch.Content>
               </Switch>
             </Modal.Header>
-            <Modal.Body>
+            <Modal.Body className="flex flex-col gap-4">
               <TextField
                 autoFocus
                 isRequired
@@ -220,57 +216,19 @@ export const RecurringExpenseModalForm: React.FC<
                     onChange={setFrequencyInput}
                   />
                 </div>
-                <DatePicker
-                  granularity="day"
+                <CustomDateField
+                  label={t("dueDate")}
+                  isRequired
+                  value={dueDateInput ?? dueDateMinMax?.min ?? new Date()}
+                  onChange={setDueDateInput}
                   minValue={dueDateMinMax?.min}
                   maxValue={dueDateMinMax?.max}
-                  value={dueDateInput ?? null}
-                  onChange={(v) => setDueDateInput(v!)}
-                  isRequired
-                >
-                  <Label>{t("dueDate")}</Label>
-                  <DateField.Group fullWidth>
-                    <DateField.Input>
-                      {(segment) => <DateField.Segment segment={segment} />}
-                    </DateField.Input>
-                    <DateField.Suffix>
-                      <DatePicker.Trigger>
-                        <DatePicker.TriggerIndicator />
-                      </DatePicker.Trigger>
-                    </DateField.Suffix>
-                  </DateField.Group>
-                  <DatePicker.Popover>
-                    <Calendar aria-label={t("dueDate")}>
-                      <Calendar.Header>
-                        <Calendar.YearPickerTrigger>
-                          <Calendar.YearPickerTriggerHeading />
-                          <Calendar.YearPickerTriggerIndicator />
-                        </Calendar.YearPickerTrigger>
-                        <Calendar.NavButton slot="previous" />
-                        <Calendar.NavButton slot="next" />
-                      </Calendar.Header>
-                      <Calendar.Grid>
-                        <Calendar.GridHeader>
-                          {(day) => (
-                            <Calendar.HeaderCell>{day}</Calendar.HeaderCell>
-                          )}
-                        </Calendar.GridHeader>
-                        <Calendar.GridBody>
-                          {(date) => <Calendar.Cell date={date} />}
-                        </Calendar.GridBody>
-                      </Calendar.Grid>
-                      <Calendar.YearPickerGrid>
-                        <Calendar.YearPickerGridBody>
-                          {({ year }) => (
-                            <Calendar.YearPickerCell year={year} />
-                          )}
-                        </Calendar.YearPickerGridBody>
-                      </Calendar.YearPickerGrid>
-                    </Calendar>
-                  </DatePicker.Popover>
-                </DatePicker>
+                />
               </div>
-              <TextField value={paymentLinkInput} onChange={setPaymentLinkInput}>
+              <TextField
+                value={paymentLinkInput}
+                onChange={setPaymentLinkInput}
+              >
                 <Label>{t("paymentLink")}</Label>
                 <InputGroup variant="secondary">
                   <InputGroup.Prefix>
@@ -287,6 +245,7 @@ export const RecurringExpenseModalForm: React.FC<
                   </InputGroup.Prefix>
                   <TextArea
                     variant="secondary"
+                    className="w-full"
                     placeholder={t("notesPlaceholder")}
                   />
                 </InputGroup>
@@ -319,7 +278,7 @@ export const RecurringExpenseModalForm: React.FC<
               </Button>
             </Modal.Footer>
           </Modal.Dialog>
-        </Modal.Container>
+        </ModalContainer>
       </Modal.Backdrop>
     </Modal>
   );

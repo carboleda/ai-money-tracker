@@ -10,6 +10,7 @@
   "freeTextMode": "Modo texto libre",
   "cameraMode": "Modo cámara",
   "transactionDate": "Fecha de la transacción",
+  "transactionTime": "Hora de la transacción",
   "sourceAccount": "Cuenta de origen",
   "destinationAccount": "Cuenta de destino",
   "notes": "Notas",

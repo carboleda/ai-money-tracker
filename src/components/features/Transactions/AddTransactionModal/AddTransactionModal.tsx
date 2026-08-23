@@ -21,6 +21,7 @@ import { MultimodalDraftInput } from "./MultimodalDraftInput";
 import { InlineDescriptionTitle } from "./InlineDescriptionTitle";
 import { DraftChipsGroup } from "./DraftChipsGroup";
 import { AutoConfirmSaveButton } from "./AutoConfirmSaveButton";
+import { ModalContainer } from "@/components/shared/ModalContainer";
 
 export interface AddTransactionModalProps {
   isOpen: boolean;
@@ -155,10 +156,7 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
         onOpenChange={onOpenChangeHandler}
         isDismissable={false}
       >
-        <Modal.Container
-          placement={isMobile ? "bottom" : "center"}
-          className={isMobile ? "p-0 sm:p-0" : undefined}
-        >
+        <ModalContainer>
           <Modal.Dialog className="rounded-t-3xl md:rounded-2xl">
             {/*
               `ModalDialogProps extends DialogPrimitiveProps` from
@@ -248,7 +246,7 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
               />
             </Modal.Footer>
           </Modal.Dialog>
-        </Modal.Container>
+        </ModalContainer>
       </Modal.Backdrop>
     </Modal>
   );

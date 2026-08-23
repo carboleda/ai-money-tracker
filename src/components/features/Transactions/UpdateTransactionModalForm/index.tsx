@@ -1,19 +1,17 @@
 import React, { useEffect, useState } from "react";
 import {
   Button,
-  Calendar,
   Chip,
-  DateField,
-  DatePicker,
   FieldError,
   Input,
   Label,
   Modal,
   TextField,
 } from "@heroui/react";
-import { parseAbsoluteToLocal, ZonedDateTime } from "@internationalized/date";
 import { CategoriesAutocomplete } from "@/components/CategoriesAutocomplete";
 import { CategoryModel } from "@/app/api/domain/category/model/category.model";
+import { CustomDateField } from "@/components/shared/CustomDateField";
+import { CustomTimeField } from "@/components/shared/CustomTimeField";
 import { MaskedCurrencyInput } from "@/components/shared/MaskedCurrencyInput";
 import { useMutateTransaction } from "@/hooks/useMutateTransaction";
 import { BankAccounDropdown } from "@/components/BankAccounsDropdown";
@@ -25,6 +23,7 @@ import {
   TransactionType,
 } from "@/app/api/domain/transaction/model/transaction.model";
 import { UpdateTransactionInput } from "@/app/api/domain/transaction/ports/inbound/update-transaction.port";
+import { ModalContainer } from "@/components/shared/ModalContainer";
 
 interface UpdateTransactionModalFormProps {
   item?: TransactionOutput;
@@ -46,7 +45,7 @@ export const UpdateTransactionModalForm: React.FC<
   const [transactonCategoryInput, setTransactonCategoryInput] =
     useState<CategoryModel["ref"] | undefined>();
   const [amountInput, setAmountInput] = useState<number>();
-  const [createdAtInput, setCreatedAtInput] = useState<ZonedDateTime>();
+  const [createdAtInput, setCreatedAtInput] = useState<Date>();
 
   const areButtonsDisabled = isMutating || validationError !== "";
 
@@ -57,9 +56,7 @@ export const UpdateTransactionModalForm: React.FC<
       item.destinationAccount &&
         setDestinationAccountInput(item.destinationAccount.ref);
       setTransactonCategoryInput(item.category?.ref);
-      setCreatedAtInput(
-        item.createdAt ? parseAbsoluteToLocal(item.createdAt) : undefined
-      );
+      setCreatedAtInput(item.createdAt ? new Date(item.createdAt) : undefined);
       setAmountInput(item.amount);
     }
   }, [item]);
@@ -102,7 +99,7 @@ export const UpdateTransactionModalForm: React.FC<
         description: descriptionInput,
         sourceAccount: sourceAccountInput,
         destinationAccount: destinationAccountInput,
-        createdAt: createdAtInput!.toDate().toISOString(),
+        createdAt: createdAtInput!.toISOString(),
         amount: amountInput!,
         category: transactonCategoryInput,
       };
@@ -127,14 +124,14 @@ export const UpdateTransactionModalForm: React.FC<
         onOpenChange={onOpenChangeHandler}
         isDismissable={false}
       >
-        <Modal.Container>
+        <ModalContainer>
           <Modal.Dialog>
-            <Modal.Header>
+            <Modal.Header className="mb-4">
               <Modal.Heading className="flex flex-col gap-1">
                 {t("updateTransaction")}
               </Modal.Heading>
             </Modal.Header>
-            <Modal.Body>
+            <Modal.Body className="flex flex-col gap-4">
               <TextField
                 autoFocus
                 isRequired
@@ -165,7 +162,7 @@ export const UpdateTransactionModalForm: React.FC<
                   />
                 )}
               </div>
-              <div className="flex gap-2">
+              <div className="flex flex-col md:flex-row gap-2">
                 <CategoriesAutocomplete
                   label={t("category")}
                   value={transactonCategoryInput}
@@ -181,50 +178,22 @@ export const UpdateTransactionModalForm: React.FC<
                   onValueChange={(v) => setAmountInput(v.floatValue)}
                 />
               </div>
-              <DatePicker
-                granularity="minute"
-                value={createdAtInput ?? null}
-                onChange={(v) => setCreatedAtInput(v as ZonedDateTime)}
-                isRequired
-                hideTimeZone
-              >
-                <Label>{t("transactionDate")}</Label>
-                <DateField.Group fullWidth>
-                  <DateField.Input>
-                    {(segment) => <DateField.Segment segment={segment} />}
-                  </DateField.Input>
-                  <DateField.Suffix>
-                    <DatePicker.Trigger>
-                      <DatePicker.TriggerIndicator />
-                    </DatePicker.Trigger>
-                  </DateField.Suffix>
-                </DateField.Group>
-                <DatePicker.Popover>
-                  <Calendar aria-label={t("transactionDate")}>
-                    <Calendar.Header>
-                      <Calendar.YearPickerTrigger>
-                        <Calendar.YearPickerTriggerHeading />
-                        <Calendar.YearPickerTriggerIndicator />
-                      </Calendar.YearPickerTrigger>
-                      <Calendar.NavButton slot="previous" />
-                      <Calendar.NavButton slot="next" />
-                    </Calendar.Header>
-                    <Calendar.Grid>
-                      <Calendar.GridHeader>
-                        {(day) => <Calendar.HeaderCell>{day}</Calendar.HeaderCell>}
-                      </Calendar.GridHeader>
-                      <Calendar.GridBody>
-                        {(date) => <Calendar.Cell date={date} />}
-                      </Calendar.GridBody>
-                    </Calendar.Grid>
-                    <Calendar.YearPickerGrid>
-                      <Calendar.YearPickerGridBody>
-                        {({ year }) => <Calendar.YearPickerCell year={year} />}
-                      </Calendar.YearPickerGridBody>
-                    </Calendar.YearPickerGrid>
-                  </Calendar>
-                </DatePicker.Popover>
-              </DatePicker>
+              <div className="flex gap-2">
+                <CustomDateField
+                  label={t("transactionDate")}
+                  isRequired
+                  value={createdAtInput ?? new Date()}
+                  onChange={setCreatedAtInput}
+                  className="w-full"
+                />
+                <CustomTimeField
+                  label={t("transactionTime")}
+                  isRequired
+                  value={createdAtInput ?? new Date()}
+                  onChange={setCreatedAtInput}
+                  className="w-full"
+                />
+              </div>
               {validationError && (
                 <Chip
                   variant="soft"
@@ -253,7 +222,7 @@ export const UpdateTransactionModalForm: React.FC<
               </Button>
             </Modal.Footer>
           </Modal.Dialog>
-        </Modal.Container>
+        </ModalContainer>
       </Modal.Backdrop>
     </Modal>
   );

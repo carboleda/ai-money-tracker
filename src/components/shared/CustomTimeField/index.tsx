@@ -101,7 +101,7 @@ export const CustomTimeField: React.FC<CustomTimeFieldProps> = ({
       {...rest}
     >
       {label && <Label>{label}</Label>}
-      <TimeField.Group fullWidth>
+      <TimeField.Group variant="secondary" fullWidth>
         <TimeField.InputContainer>
           <TimeField.Input>
             {(segment) => <TimeField.Segment segment={segment} />}

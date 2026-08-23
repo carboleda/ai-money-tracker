@@ -97,7 +97,7 @@ export const CustomDateRangePicker: React.FC<CustomDateRangePickerProps> = ({
         </Button>
         <DateRangePicker {...props} onChange={onDateChange}>
           {showLabel && label ? <Label>{label}</Label> : null}
-          <DateField.Group>
+          <DateField.Group variant="secondary">
             <DateField.InputContainer>
               <DateField.Input slot="start">
                 {(segment) => <DateField.Segment segment={segment} />}
@@ -125,7 +125,9 @@ export const CustomDateRangePicker: React.FC<CustomDateRangePickerProps> = ({
               </RangeCalendar.Header>
               <RangeCalendar.Grid>
                 <RangeCalendar.GridHeader>
-                  {(day) => <RangeCalendar.HeaderCell>{day}</RangeCalendar.HeaderCell>}
+                  {(day) => (
+                    <RangeCalendar.HeaderCell>{day}</RangeCalendar.HeaderCell>
+                  )}
                 </RangeCalendar.GridHeader>
                 <RangeCalendar.GridBody>
                   {(date) => <RangeCalendar.Cell date={date} />}

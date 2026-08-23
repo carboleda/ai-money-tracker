@@ -92,6 +92,7 @@ export const CustomDateField: React.FC<CustomDateFieldProps> = ({
     <DatePicker
       id={id}
       granularity="day"
+      shouldForceLeadingZeros
       value={toCalendarDate(value)}
       onChange={(calendarDate) => {
         if (!calendarDate) return;
@@ -106,7 +107,7 @@ export const CustomDateField: React.FC<CustomDateFieldProps> = ({
       {...rest}
     >
       {label && <Label>{label}</Label>}
-      <DateField.Group fullWidth>
+      <DateField.Group variant="secondary" fullWidth>
         <DateField.Input>
           {(segment) => <DateField.Segment segment={segment} />}
         </DateField.Input>

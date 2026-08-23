@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import {
   Button,
+  Chip,
   FieldError,
   Input,
   Label,
@@ -18,6 +19,7 @@ import { AccountType } from "@/app/api/domain/account/model/account.model";
 import dynamic from "next/dynamic";
 import { Theme } from "emoji-picker-react";
 import { CustomDropdown } from "@/components/shared/CustomDropdown";
+import { ModalContainer } from "@/components/shared/ModalContainer";
 
 // Dynamically import to avoid SSR issues
 const EmojiPicker = dynamic(
@@ -175,21 +177,28 @@ export const AccountModalForm: React.FC<AccountModalFormProps> = ({
         onOpenChange={onOpenChangeHandler}
         isDismissable={false}
       >
-        <Modal.Container>
+        <ModalContainer>
           <Modal.Dialog>
-            <Modal.Header>
+            <Modal.Header className="mb-4">
               <Modal.Heading className="flex flex-col gap-1">
                 {t("accounts")}
               </Modal.Heading>
             </Modal.Header>
-            <Modal.Body>
+            <Modal.Body className="flex flex-col gap-4">
               {validationError && (
-                <div className="text-danger text-sm">{validationError}</div>
+                <Chip
+                  variant="soft"
+                  color="danger"
+                  className="text-wrap max-w-full w-full h-fit p-2 rounded-sm"
+                >
+                  {validationError}
+                </Chip>
               )}
-              <div className="flex gap-2">
+              <div className="flex gap-2 w-full">
                 {renderEmojiPickerPopover()}
                 <TextField
                   isRequired
+                  className="w-full"
                   isDisabled={!!item}
                   value={refInput}
                   onChange={createProxiedSetter(setRefInput)}
@@ -236,6 +245,7 @@ export const AccountModalForm: React.FC<AccountModalFormProps> = ({
               >
                 <Label>{t("description")}</Label>
                 <Input variant="secondary" placeholder={t("description")} />
+                <FieldError />
               </TextField>
             </Modal.Body>
             <Modal.Footer>
@@ -256,7 +266,7 @@ export const AccountModalForm: React.FC<AccountModalFormProps> = ({
               </Button>
             </Modal.Footer>
           </Modal.Dialog>
-        </Modal.Container>
+        </ModalContainer>
       </Modal.Backdrop>
     </Modal>
   );

@@ -26,12 +26,14 @@ export const CategoriesAutocomplete: React.FC<CategoriesAutocompleteProps> = ({
     <ComboBox
       isRequired={isRequired}
       className={className}
+      fullWidth
+      variant="secondary"
       selectedKey={value ?? null}
       onSelectionChange={(key) => onChange(key as CategoryModel["ref"])}
     >
       <Label>{label}</Label>
       <ComboBox.InputGroup>
-        <Input />
+        <Input fullWidth />
         <ComboBox.Trigger />
       </ComboBox.InputGroup>
       <ComboBox.Popover>
@@ -43,6 +45,7 @@ export const CategoriesAutocomplete: React.FC<CategoriesAutocompleteProps> = ({
               textValue={`${category.icon} ${category.name}`}
             >
               {`${category.icon} ${category.name}`}
+              <ListBox.ItemIndicator />
             </ListBox.Item>
           ))}
         </ListBox>

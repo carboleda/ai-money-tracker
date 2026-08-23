@@ -1,7 +1,6 @@
 "use client";
-
-import React, { useEffect, useMemo, useState } from "react";
-import { Dropdown, Button, Label } from "@heroui/react";
+import React, { useEffect, useState } from "react";
+import { Select, Label, ListBox, type Key } from "@heroui/react";
 import clsx from "clsx";
 
 export interface CustomDropdownProps {
@@ -23,62 +22,43 @@ export const CustomDropdown: React.FC<CustomDropdownProps> = ({
   className,
   onChange,
 }) => {
-  const [selectedKeys, setSelectedKeys] = useState(new Set<string>([]));
-
-  const selectedValue = useMemo(
-    () =>
-      Array.from(selectedKeys)
-        .map((key) => values.find((v) => v.key === key)?.label ?? "")
-        .join(", "),
-    [selectedKeys, values]
-  );
+  const [selectedKey, setSelectedKey] = useState<Key | null>(value ?? null);
 
   useEffect(() => {
     if (value) {
-      setSelectedKeys(new Set([value]));
+      setSelectedKey(value);
     }
   }, [value]);
 
-  const onSelectionChange = (keys: any) => {
-    setSelectedKeys(keys);
-    onChange([...keys.keys()][0] || "");
+  const onSelectionChange = (key: Key | null) => {
+    setSelectedKey(key);
+    onChange((key as string) ?? "");
   };
 
   return (
-    <Dropdown>
-      <Button
-        variant="secondary"
-        className={clsx("justify-start px-3", className, {
-          "py-6": showLabel,
-        })}
-      >
-        <div className="text-start mh-5">
-          {showLabel ? (
-            <>
-              <label className="text-xs text-default-600">
-                {label} {isRequired && <span className="text-red-600">*</span>}
-              </label>
-              <div className="text-default-600">{selectedValue}</div>
-            </>
-          ) : (
-            <div>{selectedValue || label}</div>
-          )}
-        </div>
-      </Button>
-      <Dropdown.Popover>
-        <Dropdown.Menu
-          aria-label={label}
-          selectionMode="single"
-          selectedKeys={selectedKeys}
-          onSelectionChange={onSelectionChange}
-        >
-          {values.map(({ key, label }) => (
-            <Dropdown.Item key={key} id={key} textValue={label}>
-              <Label>{label}</Label>
-            </Dropdown.Item>
+    <Select
+      variant="secondary"
+      className={className}
+      placeholder={label}
+      isRequired={isRequired}
+      value={selectedKey}
+      onChange={onSelectionChange}
+    >
+      <Label className={clsx({ "sr-only": !showLabel })}>{label}</Label>
+      <Select.Trigger>
+        <Select.Value />
+        <Select.Indicator />
+      </Select.Trigger>
+      <Select.Popover>
+        <ListBox aria-label={label}>
+          {values.map(({ key, label: itemLabel }) => (
+            <ListBox.Item key={key} id={key} textValue={itemLabel}>
+              {itemLabel}
+              <ListBox.ItemIndicator />
+            </ListBox.Item>
           ))}
-        </Dropdown.Menu>
-      </Dropdown.Popover>
-    </Dropdown>
+        </ListBox>
+      </Select.Popover>
+    </Select>
   );
 };
