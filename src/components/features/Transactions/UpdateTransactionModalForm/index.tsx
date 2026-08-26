@@ -146,7 +146,7 @@ export const UpdateTransactionModalForm: React.FC<
                 <BankAccounDropdown
                   label={t("sourceAccount")}
                   className="w-full"
-                  onChange={setSourceAccountInput}
+                  onChange={(key) => setSourceAccountInput(key ?? "")}
                   value={sourceAccountInput}
                   isRequired
                   showLabel
@@ -155,7 +155,7 @@ export const UpdateTransactionModalForm: React.FC<
                   <BankAccounDropdown
                     label={t("destinationAccount")}
                     className="w-full"
-                    onChange={setDestinationAccountInput}
+                    onChange={(key) => setDestinationAccountInput(key ?? "")}
                     value={destinationAccountInput}
                     isRequired
                     showLabel

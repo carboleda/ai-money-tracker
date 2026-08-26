@@ -122,7 +122,7 @@ export const CompleteTransactionModalForm: React.FC<
                   className="w-full"
                   showLabel
                   isRequired
-                  onChange={setSelectedAccount}
+                  onChange={(key) => setSelectedAccount(key ?? "")}
                 />
               </div>
               <MaskedCurrencyInput

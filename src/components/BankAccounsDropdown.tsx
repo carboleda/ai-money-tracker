@@ -18,6 +18,7 @@ export const BankAccounDropdown: React.FC<BankAccounDropdownProps> = ({
 
   return (
     <CustomDropdown
+      allowEmptySelection
       values={accounts.map((account) => ({
         key: account.ref,
         label: `${account.icon} ${account.name}`,

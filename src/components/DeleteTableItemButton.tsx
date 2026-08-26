@@ -2,9 +2,7 @@ import { Button, ButtonProps } from "@heroui/react";
 import { FaRegCircleXmark } from "react-icons/fa6";
 import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
-import { useToast } from "@/hooks/useToast";
-
-const CONFIRMATION_TIME = 6000;
+import { useDeleteTableItem } from "@/hooks/useDeleteTableItem";
 
 interface DeleteTableItemButtonProps extends ButtonProps {
   itemId: string;
@@ -15,25 +13,13 @@ interface DeleteTableItemButtonProps extends ButtonProps {
 export const DeleteTableItemButton: React.FC<DeleteTableItemButtonProps> = ({
   itemId,
   isDisabled = false,
-  deleteTableItem,
+  deleteTableItem: onConfirmDelete,
   ...props
 }) => {
   const { t } = useTranslation(LocaleNamespace.Common);
-  const { showConfirmDeleteToast, showSuccessToast } = useToast();
-
-  const onClick = () => {
-    showConfirmDeleteToast({
-      title: t("deleteConfirmation.title"),
-      description: t("deleteConfirmation.description"),
-      timeout: CONFIRMATION_TIME,
-      onConfirm: () => {
-        deleteTableItem(itemId);
-        showSuccessToast({
-          title: t("itemDeleted"),
-        });
-      },
-    });
-  };
+  const { onDelete } = useDeleteTableItem({
+    onConfirmDelete,
+  });
 
   return (
     <Button
@@ -43,7 +29,7 @@ export const DeleteTableItemButton: React.FC<DeleteTableItemButtonProps> = ({
       aria-label={t("delete")}
       size="sm"
       isDisabled={isDisabled}
-      onPress={onClick}
+      onPress={() => onDelete(itemId)}
       {...props}
     >
       <FaRegCircleXmark className="text-xl" />

@@ -1,18 +1,18 @@
 "use client";
 
-import { Button, Table } from "@heroui/react";
+import { Selection, Table } from "@heroui/react";
 import { TableSkeleton } from "@/components/shared/TableSkeleton";
 import { useMutateTransaction } from "@/hooks/useMutateTransaction";
-import { DeleteTableItemButton } from "@/components/DeleteTableItemButton";
 import { useRenderCell } from "./Columns";
-import { IconEdit } from "@/components/shared/icons";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { UpdateTransactionModalForm } from "@/components/features/Transactions/UpdateTransactionModalForm";
 import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
-import { useTableHeight } from "@/hooks/useTableHeight";
+import { useMeasuredTableHeight } from "@/hooks/useMeasuredTableHeight";
 import { TransactionOutput } from "@/app/api/domain/transaction/ports/outbound/filter-transactions.port";
 import { EmptyTableState } from "@/components/shared/EmptyTableState";
+import { useDeleteTableItem } from "@/hooks/useDeleteTableItem";
+import { TableToolbar } from "@/components/shared/TableToolbar/TableToolbar";
 
 interface TranactionTableProps {
   isLoading: boolean;
@@ -24,14 +24,27 @@ export const TransactionTable: React.FC<TranactionTableProps> = ({
   transactions,
 }) => {
   const { t } = useTranslation(LocaleNamespace.Transactions);
+  const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set());
   const [selectedItem, setSelectedItem] = useState<TransactionOutput>();
   const [isOpen, setIsOpen] = useState(false);
   const { isMutating, deleteTransaction } = useMutateTransaction();
   const { columns, renderCell } = useRenderCell();
-  const { maxTableHeight } = useTableHeight();
+  const { maxTableHeight, containerRef } = useMeasuredTableHeight();
+  const { onDelete } = useDeleteTableItem({
+    onConfirmDelete: deleteTransaction,
+  });
+
+  useEffect(() => {
+    clearSelection();
+  }, [isMutating, transactions]);
+
+  const clearSelection = () => {
+    setSelectedItem(undefined);
+    setSelectedKeys(new Set());
+  };
 
   const onDialogDismissed = () => {
-    setSelectedItem(undefined);
+    clearSelection();
     setIsOpen(false);
   };
 
@@ -40,16 +53,37 @@ export const TransactionTable: React.FC<TranactionTableProps> = ({
     setIsOpen(true);
   };
 
+  const onSelectionChange = (keys: Selection) => {
+    setSelectedKeys(keys);
+    setSelectedItem(
+      transactions?.find((transaction) => transaction.id === [...keys][0]),
+    );
+  };
+
   if (isLoading || !transactions) return <TableSkeleton />;
 
   return (
     <>
       <Table>
+        <TableToolbar
+          selectedItem={selectedItem}
+          isMutating={isMutating}
+          rowCount={transactions?.length}
+          onEdit={onEdit}
+          onDelete={onDelete}
+          t={t}
+        />
         <Table.ScrollContainer
+          ref={containerRef}
           className="overflow-y-auto"
           style={{ maxHeight: maxTableHeight }}
         >
-          <Table.Content aria-label={t("subtitle")}>
+          <Table.Content
+            aria-label={t("subtitle")}
+            selectionMode="single"
+            selectedKeys={selectedKeys}
+            onSelectionChange={onSelectionChange}
+          >
             <Table.Header
               columns={columns}
               className="hidden md:table-header-group"
@@ -75,29 +109,6 @@ export const TransactionTable: React.FC<TranactionTableProps> = ({
                 <Table.Row key={item.id} id={item.id}>
                   <Table.Collection items={columns}>
                     {(column) => {
-                      if (column.key === "actions") {
-                        return (
-                          <Table.Cell>
-                            <div className="flex flex-col gap-1 items-center md:flex-row md:justify-center">
-                              <Button
-                                isIconOnly
-                                variant="tertiary"
-                                className="self-center text-warning"
-                                aria-label={t("edit")}
-                                onPress={() => onEdit(item)}
-                              >
-                                <IconEdit />
-                              </Button>
-                              <DeleteTableItemButton
-                                itemId={item.id}
-                                isDisabled={isMutating}
-                                deleteTableItem={deleteTransaction}
-                              />
-                            </div>
-                          </Table.Cell>
-                        );
-                      }
-
                       return renderCell({
                         key: column.key,
                         item,

@@ -1,12 +1,10 @@
 import { formatCurrency } from "@/config/utils";
-import { Button, Chip, Table } from "@heroui/react";
+import { Chip, Table } from "@heroui/react";
 import { TransactionTypeDecorator } from "@/components/TransactionTypeDecorator";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { TableColumn, RenderCellProps } from "@/interfaces/global";
 import dayjs from "dayjs";
 import { JSX } from "react";
-import { IconEdit } from "@/components/shared/icons";
-import { DeleteTableItemButton } from "@/components/DeleteTableItemButton";
 import { TransactionOutput } from "@/app/api/domain/transaction/ports/outbound/filter-transactions.port";
 
 const columnsDesktop: TableColumn[] = [
@@ -23,10 +21,6 @@ const columnsDesktop: TableColumn[] = [
     key: "amount",
     className: "uppercase text-end",
   },
-  {
-    key: "actions",
-    className: "uppercase text-center",
-  },
 ];
 
 const columnsMobile: TableColumn[] = [
@@ -34,6 +28,12 @@ const columnsMobile: TableColumn[] = [
     key: "transaction",
     className: "uppercase",
     isRowHeader: true,
+  },
+  {
+    key: "empty1",
+  },
+  {
+    key: "empty2",
   },
 ];
 
@@ -90,67 +90,36 @@ const renderCellDesktop = ({
 const renderCellMobile = ({
   key,
   item,
-  onEdit,
-  onDelete,
-  isDeleteDisabled,
 }: RenderCellProps<TransactionOutput>): JSX.Element => {
-  switch (key) {
-    case "transaction":
-      return (
-        <Table.Cell>
-          <div className="flex flex-col gap-1 py-1">
-            <p className="text-xs font-normal">{item.description}</p>
-            <div className="flex flex-row w-full items-center justify-between">
-              <div className="flex items-center gap-1 justify-start">
-                <TransactionTypeDecorator type={item.type} size="sm">
-                  <span className="font-light">
-                    {formatCurrency(item.amount)}
-                  </span>
-                </TransactionTypeDecorator>
-                {item.category && (
-                  <Chip variant="tertiary" size="sm" className="rounded-sm">
-                    {`${item.category.icon} ${item.category.name}`}
-                  </Chip>
-                )}
-              </div>
-              <div className="flex flex-col items-end text-xs">
-                <span className="font-semibold">{item.sourceAccount.name}</span>
-                {item.destinationAccount?.ref && (
-                  <span className="font-light">
-                    {item.destinationAccount.name}
-                  </span>
-                )}
-              </div>
-            </div>
-            <div className="flex items-center justify-between w-full">
-              <span className="text-xs font-light">
-                {dayjs(new Date(item.createdAt)).format("MMM D, YY h:mm A")}
-              </span>
-              <div className="flex flex-row items-center">
-                <Button
-                  isIconOnly
-                  variant="tertiary"
-                  className="self-center text-warning"
-                  size="sm"
-                  aria-label="Edit"
-                  onPress={() => onEdit?.(item)}
-                >
-                  <IconEdit />
-                </Button>
-                <DeleteTableItemButton
-                  size="sm"
-                  itemId={item.id}
-                  isDisabled={isDeleteDisabled}
-                  deleteTableItem={onDelete!}
-                />
-              </div>
-            </div>
-          </div>
-        </Table.Cell>
-      );
-    default:
-      return <></>;
+  if (key !== "transaction") {
+    return <></>;
   }
+
+  return (
+    <Table.Cell colSpan={3}>
+      <div className="flex flex-col gap-1 py-1">
+        <p className="text-xs font-normal">{item.description}</p>
+        <div className="flex flex-row w-full items-center justify-between">
+          <div className="flex items-center gap-1 justify-start">
+            <TransactionTypeDecorator type={item.type} size="sm">
+              <span className="font-light">{formatCurrency(item.amount)}</span>
+            </TransactionTypeDecorator>
+            {item.category && (
+              <Chip variant="tertiary" size="sm" className="rounded-sm">
+                {`${item.category.icon} ${item.category.name}`}
+              </Chip>
+            )}
+          </div>
+          <div className="flex flex-col items-end text-xs">
+            <span className="font-semibold">{item.sourceAccount.name}</span>
+            {item.destinationAccount?.ref && (
+              <span className="font-light">{item.destinationAccount.name}</span>
+            )}
+          </div>
+        </div>
+      </div>
+    </Table.Cell>
+  );
 };
 
 export const useRenderCell = () => {

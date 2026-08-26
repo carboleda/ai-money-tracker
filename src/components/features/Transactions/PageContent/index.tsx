@@ -87,7 +87,7 @@ function PageContent() {
               />
               <BankAccounDropdown
                 label={t("accountFilter")}
-                onChange={setSelectedAccount}
+                onChange={(key) => setSelectedAccount(key ?? "")}
               />
               <Button
                 variant="primary"

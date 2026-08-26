@@ -6,16 +6,15 @@ import {
   DateField,
   RangeCalendar,
   Button,
-  Dropdown,
   Label,
 } from "@heroui/react";
 import { RangeValue } from "@react-types/shared";
 import { parseAbsoluteToLocal, ZonedDateTime } from "@internationalized/date";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { getMonthBounds } from "@/config/utils";
 import { HiArrowCircleLeft } from "react-icons/hi";
 import { useTranslation } from "react-i18next";
-import clsx from "clsx";
+import { CustomDropdown } from "../CustomDropdown";
 
 enum RangeList {
   this = "this",
@@ -42,8 +41,6 @@ export const CustomDateRangePicker: React.FC<CustomDateRangePickerProps> = ({
 }) => {
   const { t } = useTranslation();
   const [selectedKey, setSelectedKey] = useState<RangeList>(RangeList.this);
-
-  const selectedValue = useMemo(() => t(selectedKey), [selectedKey, t]);
 
   const onDateChange = useCallback(
     (value: RangeValue<ZonedDateTime> | null) => {
@@ -141,41 +138,16 @@ export const CustomDateRangePicker: React.FC<CustomDateRangePickerProps> = ({
   }
 
   return (
-    <Dropdown>
-      <Button
-        variant="secondary"
-        className={clsx("justify-start px-3", {
-          "py-6": showLabel,
-        })}
-      >
-        {showLabel ? (
-          <div className="text-start">
-            <label className="text-xs text-default-600">
-              {label}{" "}
-              {props.isRequired && <span className="text-red-600">*</span>}
-            </label>
-            <div className="text-default-800">{selectedValue}</div>
-          </div>
-        ) : (
-          selectedValue || label
-        )}
-      </Button>
-      <Dropdown.Popover>
-        <Dropdown.Menu
-          aria-label={t("dateRangeFilter")}
-          selectionMode="single"
-          selectedKeys={new Set([selectedKey])}
-          onSelectionChange={(keys: any) =>
-            setSelectedKey((keys.currentKey as RangeList)!)
-          }
-        >
-          {Object.entries(RangeList).map(([key, value]) => (
-            <Dropdown.Item key={key} id={key} textValue={t(value)}>
-              <Label>{t(value)}</Label>
-            </Dropdown.Item>
-          ))}
-        </Dropdown.Menu>
-      </Dropdown.Popover>
-    </Dropdown>
+    <CustomDropdown
+      values={Object.entries(RangeList).map(([key, value]) => ({
+        key,
+        label: t(value),
+      }))}
+      label={label}
+      value={selectedKey}
+      isRequired={props.isRequired}
+      showLabel={showLabel}
+      onChange={(key: unknown) => setSelectedKey((key as RangeList)!)}
+    />
   );
 };

@@ -7,6 +7,7 @@ type ToastConfig = {
   title?: string;
   description?: string;
   timeout?: number;
+  onClose?: () => void;
 };
 
 type ToastConfirmConfig = ToastConfig & {
@@ -32,12 +33,12 @@ export const useToast = (): UseToastReturn => {
 
   const showConfirmDeleteToast = useCallback(
     ({ onConfirm, title, ...rest }: ToastConfirmConfig) => {
-      const toastKey = toast.danger(title ?? "", {
+      const toastKey = toast.warning(title ?? "", {
         ...rest,
         actionProps: {
           children: t("deleteConfirmation.confirmButton"),
           "aria-label": t("deleteConfirmation.confirmButton"),
-          variant: "danger",
+          variant: "outline",
           onPress: () => {
             onConfirm();
             toast.close(toastKey);

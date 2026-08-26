@@ -41,6 +41,7 @@
   "monthly": "Monthly",
   "biannual": "Biannual",
   "yearly": "Yearly",
+  "rowCounter": "Showing {{count}} rows",
   "notificationsRequest": {
     "title": "Zolvent wants to keep you informed! 🔔",
     "description": "To provide you with real-time alerts and reminders about your spending, income, and financial goals, we need your permission to send push notifications. This will help you:",
@@ -52,6 +53,7 @@
   "deleteConfirmation": {
     "title": "Confirm deletion",
     "description": "This action cannot be undone.",
+    "descriptionWithLabel": "Do you want to delete \"{{label}}\"? This action cannot be undone.",
     "confirmButton": "Yes, delete it!"
   },
   "offline": {
