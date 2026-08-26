@@ -1,5 +1,5 @@
 import { formatCurrency } from "@/config/utils";
-import { Button, Chip, Table } from "@heroui/react";
+import { Chip, Table } from "@heroui/react";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { TableColumn, RenderCellProps } from "@/interfaces/global";
 import { Account } from "@/interfaces/account";
@@ -7,8 +7,6 @@ import { JSX } from "react";
 import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
 import { TransactionTypeDecorator } from "@/components/TransactionTypeDecorator";
-import { IconEdit } from "@/components/shared/icons";
-import { DeleteTableItemButton } from "@/components/DeleteTableItemButton";
 
 const columnsDesktop: TableColumn[] = [
   {
@@ -32,10 +30,6 @@ const columnsDesktop: TableColumn[] = [
     key: "balance",
     className: "uppercase text-end",
   },
-  {
-    key: "actions",
-    className: "uppercase text-center",
-  },
 ];
 
 const columnsMobile: TableColumn[] = [
@@ -43,6 +37,12 @@ const columnsMobile: TableColumn[] = [
     key: "account",
     className: "uppercase",
     isRowHeader: true,
+  },
+  {
+    key: "empty1",
+  },
+  {
+    key: "empty2",
   },
 ];
 
@@ -89,53 +89,30 @@ const renderCellMobile = ({
   key,
   item,
   t,
-  onEdit,
-  onDelete,
-  isDeleteDisabled,
 }: RenderCellProps<Account>): JSX.Element => {
-  if (key === "account") {
-    return (
-      <Table.Cell>
-        <div className="flex flex-row items-end justify-start gap-2">
-          <span className="text-4xl">{item.icon}</span>
-          <div className="flex flex-col gap-1">
-            <span className="font-bold">{item.name}</span>
-            <div className="flex gap-2 text-sm">
-              <TransactionTypeDecorator
-                size="sm"
-                color={item.balance >= 0 ? "success" : "danger"}
-              >
-                {formatCurrency(item.balance)}
-              </TransactionTypeDecorator>
-              <Chip variant="tertiary" size="sm" className="rounded-sm">
-                <span className="text-xs font-light">{t?.(item.type)}</span>
-              </Chip>
-            </div>
-          </div>
-          <div className="flex ml-auto gap-1">
-            <Button
-              isIconOnly
-              variant="tertiary"
-              className="self-center text-warning"
+  if (key !== "account") return <></>;
+
+  return (
+    <Table.Cell colSpan={3}>
+      <div className="flex flex-row items-end justify-start gap-2">
+        <span className="text-4xl">{item.icon}</span>
+        <div className="flex flex-col gap-1">
+          <span className="font-bold">{item.name}</span>
+          <div className="flex gap-2 text-sm">
+            <TransactionTypeDecorator
               size="sm"
-              aria-label="Edit"
-              onPress={() => onEdit?.(item)}
+              color={item.balance >= 0 ? "success" : "danger"}
             >
-              <IconEdit />
-            </Button>
-            <DeleteTableItemButton
-              size="sm"
-              itemId={item.id}
-              isDisabled={isDeleteDisabled}
-              deleteTableItem={onDelete!}
-            />
+              {formatCurrency(item.balance)}
+            </TransactionTypeDecorator>
+            <Chip variant="tertiary" size="sm" className="rounded-sm">
+              <span className="text-xs font-light">{t?.(item.type)}</span>
+            </Chip>
           </div>
         </div>
-      </Table.Cell>
-    );
-  } else {
-    return <></>;
-  }
+      </div>
+    </Table.Cell>
+  );
 };
 
 export const useRenderCell = () => {

@@ -1,5 +1,5 @@
 import { formatCurrency, formatDate } from "@/config/utils";
-import { Button, Chip, Table } from "@heroui/react";
+import { Chip, Table } from "@heroui/react";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { TableColumn, RenderCellProps } from "@/interfaces/global";
 import { TransactionTypeDecorator } from "@/components/TransactionTypeDecorator";
@@ -7,10 +7,8 @@ import Link from "next/link";
 import { NotePopover } from "@/components/NotePopover";
 import { DueDateIndicator } from "@/components/shared/DueDateIndicator";
 import { JSX } from "react";
-import { DeleteTableItemButton } from "@/components/DeleteTableItemButton";
 import { GoLinkExternal } from "react-icons/go";
 import { RiExternalLinkLine } from "react-icons/ri";
-import { FaRegCircleCheck } from "react-icons/fa6";
 import { TransactionOutput } from "@/app/api/domain/transaction/ports/outbound/filter-transactions.port";
 import { TransactionType } from "@/app/api/domain/transaction/model/transaction.model";
 
@@ -28,10 +26,6 @@ const columnsDesktop: TableColumn[] = [
     key: "amount",
     className: "uppercase text-end",
   },
-  {
-    key: "actions",
-    className: "uppercase text-center",
-  },
 ];
 
 const columnsMobile: TableColumn[] = [
@@ -39,6 +33,12 @@ const columnsMobile: TableColumn[] = [
     key: "transaction",
     className: "uppercase",
     isRowHeader: true,
+  },
+  {
+    key: "empty1",
+  },
+  {
+    key: "empty2",
   },
 ];
 
@@ -96,77 +96,49 @@ const renderCellDesktop = ({
 const renderCellMobile = ({
   key,
   item,
-  onEdit: onConfirm,
-  onDelete,
-  isDeleteDisabled,
 }: RenderCellProps<TransactionOutput>): JSX.Element => {
-  switch (key) {
-    case "transaction":
-      return (
-        <Table.Cell>
-          <div className="flex flex-col gap-1">
-            <div className="flex flex-row items-center justify-between gap-1">
-              <div className="flex items-center">
-                <DueDateIndicator dueDate={item.createdAt} />
-                <p className="text-xs font-normal">{item.description}</p>
-              </div>
-              <div className="flex flex-row gap-2">
-                {item.notes && <NotePopover content={item.notes} />}
-                {item.paymentLink && (
-                  <Link href={item.paymentLink} target="_blank">
-                    <RiExternalLinkLine className="text-xl" />
-                  </Link>
-                )}
-              </div>
-            </div>
-            <div className="flex flex-row w-full items-center justify-between">
-              <span className="text-end">
-                <TransactionTypeDecorator
-                  type={TransactionType.TRANSFER}
-                  size="sm"
-                >
-                  {formatCurrency(item.amount)}
-                </TransactionTypeDecorator>
-                {item.category && (
-                  <Chip
-                    variant="tertiary"
-                    size="sm"
-                    className="ml-2 rounded-sm"
-                  >
-                    {`${item.category.icon} ${item.category.name}`}
-                  </Chip>
-                )}
-              </span>
-            </div>
-            <div className="flex items-center justify-between w-full">
-              <span className="text-xs font-light">
-                {formatDate(new Date(item.createdAt))}
-              </span>
-              <div className="flex flex-row items-center">
-                <Button
-                  isIconOnly
-                  variant="tertiary"
-                  className="self-center text-success"
-                  size="sm"
-                  aria-label="Edit"
-                  onPress={() => onConfirm?.(item)}
-                >
-                  <FaRegCircleCheck className="text-xl" />
-                </Button>
-                <DeleteTableItemButton
-                  size="sm"
-                  itemId={item.id}
-                  isDisabled={isDeleteDisabled}
-                  deleteTableItem={onDelete!}
-                />
-              </div>
-            </div>
+  if (key !== "transaction") return <></>;
+
+  return (
+    <Table.Cell colSpan={3}>
+      <div className="flex flex-col gap-1">
+        <div className="flex flex-row items-center justify-between gap-1">
+          <div className="flex items-center">
+            <DueDateIndicator dueDate={item.createdAt} />
+            <p className="text-xs font-normal">{item.description}</p>
           </div>
-        </Table.Cell>
-      );
-    default:
-      return <></>;
-  }
+          <div className="flex flex-row gap-2">
+            {item.notes && <NotePopover content={item.notes} />}
+            {item.paymentLink && (
+              <Link href={item.paymentLink} target="_blank">
+                <RiExternalLinkLine className="text-xl" />
+              </Link>
+            )}
+          </div>
+        </div>
+        <div className="flex flex-row w-full items-center justify-between">
+          <span className="text-end">
+            <TransactionTypeDecorator
+              type={TransactionType.TRANSFER}
+              size="sm"
+            >
+              {formatCurrency(item.amount)}
+            </TransactionTypeDecorator>
+            {item.category && (
+              <Chip variant="tertiary" size="sm" className="ml-2 rounded-sm">
+                {`${item.category.icon} ${item.category.name}`}
+              </Chip>
+            )}
+          </span>
+        </div>
+        <div className="flex items-center justify-between w-full">
+          <span className="text-xs font-light">
+            {formatDate(new Date(item.createdAt))}
+          </span>
+        </div>
+      </div>
+    </Table.Cell>
+  );
 };
 
 export const useRenderCell = () => {

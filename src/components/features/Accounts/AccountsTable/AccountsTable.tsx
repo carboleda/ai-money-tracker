@@ -1,20 +1,20 @@
 "use client";
 
-import { Button, Table } from "@heroui/react";
+import { Button, Selection, Table } from "@heroui/react";
 import { Account } from "@/interfaces/account";
 import { TableSkeleton } from "@/components/shared/TableSkeleton";
-import { IconEdit } from "@/components/shared/icons";
 import { AccountModalForm } from "../AccountModalForm/AccountModalForm";
-import { useMemo, useState } from "react";
-import { DeleteTableItemButton } from "@/components/DeleteTableItemButton";
+import { useEffect, useMemo, useState } from "react";
 import { useMutateAccount } from "@/hooks/useMutateAccount";
 import { useRenderCell } from "./Columns";
 import { HiOutlinePlusCircle } from "react-icons/hi";
 import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
-import { useTableHeight } from "@/hooks/useTableHeight";
+import { useMeasuredTableHeight } from "@/hooks/useMeasuredTableHeight";
 import { SearchToolbar } from "@/components/features/Transactions/SearchToolbar";
 import { EmptyTableState } from "@/components/shared/EmptyTableState";
+import { useDeleteTableItem } from "@/hooks/useDeleteTableItem";
+import { TableToolbar } from "@/components/shared/TableToolbar/TableToolbar";
 
 interface AccountsTableProps {
   isLoading: boolean;
@@ -26,12 +26,14 @@ export const AccountsTable: React.FC<AccountsTableProps> = ({
   accounts,
 }) => {
   const { t } = useTranslation(LocaleNamespace.Accounts);
+  const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set());
   const [selectedItem, setSelectedItem] = useState<Account>();
   const [isOpen, setIsOpen] = useState(false);
   const [filterValue, setFilterValue] = useState("");
   const { isMutating, deleteAccount } = useMutateAccount();
   const { columns, renderCell } = useRenderCell();
-  const { maxTableHeight } = useTableHeight();
+  const { maxTableHeight, containerRef } = useMeasuredTableHeight();
+  const { onDelete } = useDeleteTableItem({ onConfirmDelete: deleteAccount });
 
   const filteredAccounts = useMemo(() => {
     if (!accounts) return accounts;
@@ -50,14 +52,30 @@ export const AccountsTable: React.FC<AccountsTableProps> = ({
     return filtered;
   }, [accounts, filterValue]);
 
-  const onDialogDismissed = () => {
+  useEffect(() => {
+    clearSelection();
+  }, [isMutating, filteredAccounts]);
+
+  const clearSelection = () => {
     setSelectedItem(undefined);
+    setSelectedKeys(new Set());
+  };
+
+  const onDialogDismissed = () => {
+    clearSelection();
     setIsOpen(false);
   };
 
   const onEdit = (item: Account) => {
     setSelectedItem(item);
     setIsOpen(true);
+  };
+
+  const onSelectionChange = (keys: Selection) => {
+    setSelectedKeys(keys);
+    setSelectedItem(
+      filteredAccounts?.find((account) => account.id === [...keys][0]),
+    );
   };
 
   const renderTopContent = () => (
@@ -87,11 +105,26 @@ export const AccountsTable: React.FC<AccountsTableProps> = ({
     <>
       {renderTopContent()}
       <Table>
+        <TableToolbar
+          selectedItem={selectedItem}
+          isMutating={isMutating}
+          rowCount={filteredAccounts?.length}
+          onEdit={onEdit}
+          onDelete={onDelete}
+          getItemLabel={(item: Account) => item.name}
+          t={t}
+        />
         <Table.ScrollContainer
+          ref={containerRef}
           className="overflow-y-auto"
           style={{ maxHeight: maxTableHeight }}
         >
-          <Table.Content aria-label={t("accounts")}>
+          <Table.Content
+            aria-label={t("accounts")}
+            selectionMode="single"
+            selectedKeys={selectedKeys}
+            onSelectionChange={onSelectionChange}
+          >
             <Table.Header
               columns={columns}
               className="hidden md:table-header-group"
@@ -117,35 +150,11 @@ export const AccountsTable: React.FC<AccountsTableProps> = ({
                 <Table.Row key={item.id} id={item.id}>
                   <Table.Collection items={columns}>
                     {(column) => {
-                      if (column.key === "actions") {
-                        return (
-                          <Table.Cell>
-                            <div className="flex flex-col gap-1 items-center md:flex-row md:justify-center">
-                              <Button
-                                isIconOnly
-                                variant="tertiary"
-                                className="self-center text-warning"
-                                aria-label="Edit"
-                                onPress={() => onEdit(item)}
-                              >
-                                <IconEdit />
-                              </Button>
-                              <DeleteTableItemButton
-                                itemId={item.id}
-                                isDisabled={isMutating}
-                                deleteTableItem={deleteAccount}
-                              />
-                            </div>
-                          </Table.Cell>
-                        );
-                      }
-
                       return renderCell({
                         key: column.key,
                         item,
                         onEdit,
                         onDelete: deleteAccount,
-                        isDeleteDisabled: isMutating,
                       });
                     }}
                   </Table.Collection>

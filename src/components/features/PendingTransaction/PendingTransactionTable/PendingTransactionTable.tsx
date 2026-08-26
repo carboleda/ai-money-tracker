@@ -1,19 +1,20 @@
 "use client";
 
-import { Button, Table } from "@heroui/react";
+import { Selection, Table } from "@heroui/react";
 import { TableSkeleton } from "@/components/shared/TableSkeleton";
 import { useMutateTransaction } from "@/hooks/useMutateTransaction";
-import { DeleteTableItemButton } from "@/components/DeleteTableItemButton";
 import { CompleteTransactionModalForm } from "../CompleteTransactionModalForm/CompleteTransactionModalForm";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRenderCell } from "./Columns";
 import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
 import { SearchToolbar } from "@/components/features/Transactions/SearchToolbar";
-import { useTableHeight } from "@/hooks/useTableHeight";
+import { useMeasuredTableHeight } from "@/hooks/useMeasuredTableHeight";
 import { FaRegCircleCheck } from "react-icons/fa6";
 import { TransactionOutput } from "@/app/api/domain/transaction/ports/outbound/filter-transactions.port";
 import { EmptyTableState } from "@/components/shared/EmptyTableState";
+import { useDeleteTableItem } from "@/hooks/useDeleteTableItem";
+import { TableToolbar } from "@/components/shared/TableToolbar/TableToolbar";
 
 interface PendingTransactionTableProps {
   isLoading: boolean;
@@ -24,12 +25,16 @@ export const PendingTransactionTable: React.FC<
   PendingTransactionTableProps
 > = ({ isLoading, pendingTransactions }) => {
   const { t } = useTranslation(LocaleNamespace.RecurringExpenses);
+  const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set());
   const [selectedItem, setSelectedItem] = useState<TransactionOutput>();
   const [isOpen, setIsOpen] = useState(false);
   const [filterValue, setFilterValue] = useState("");
   const { isMutating, deleteTransaction } = useMutateTransaction();
   const { columns, renderCell } = useRenderCell();
-  const { maxTableHeight } = useTableHeight();
+  const { maxTableHeight, containerRef } = useMeasuredTableHeight();
+  const { onDelete } = useDeleteTableItem({
+    onConfirmDelete: deleteTransaction,
+  });
 
   const transactions = useMemo(() => {
     if (!pendingTransactions) return pendingTransactions;
@@ -51,15 +56,31 @@ export const PendingTransactionTable: React.FC<
     return filteredPendingTransations;
   }, [pendingTransactions, filterValue]);
 
+  useEffect(() => {
+    clearSelection();
+  }, [isMutating, transactions]);
+
+  const clearSelection = () => {
+    setSelectedItem(undefined);
+    setSelectedKeys(new Set());
+  };
+
   const onConfirm = useCallback((item: TransactionOutput) => {
     setSelectedItem(item);
     setIsOpen(true);
   }, []);
 
   const onDialogDismissed = useCallback(() => {
-    setSelectedItem(undefined);
+    clearSelection();
     setIsOpen(false);
   }, []);
+
+  const onSelectionChange = (keys: Selection) => {
+    setSelectedKeys(keys);
+    setSelectedItem(
+      transactions?.find((transaction) => transaction.id === [...keys][0]),
+    );
+  };
 
   const renderTopContent = () => (
     <div className="flex w-full flex-row gap-4">
@@ -68,11 +89,6 @@ export const PendingTransactionTable: React.FC<
           filterValue={filterValue}
           onSearchChange={setFilterValue}
         />
-        <span className="w-fit text-end text-sm text-default-500">
-          {t("pendingTransactionCountMessage", {
-            count: transactions?.length || 0,
-          })}
-        </span>
       </div>
     </div>
   );
@@ -83,11 +99,27 @@ export const PendingTransactionTable: React.FC<
     <>
       {renderTopContent()}
       <Table>
+        <TableToolbar
+          selectedItem={selectedItem}
+          isMutating={isMutating}
+          rowCount={transactions?.length}
+          onEdit={onConfirm}
+          onDelete={onDelete}
+          editLabel={t("confirm")}
+          editIcon={<FaRegCircleCheck />}
+          t={t}
+        />
         <Table.ScrollContainer
+          ref={containerRef}
           className="overflow-y-auto"
           style={{ maxHeight: maxTableHeight }}
         >
-          <Table.Content aria-label={t("pendingTransactions")}>
+          <Table.Content
+            aria-label={t("pendingTransactions")}
+            selectionMode="single"
+            selectedKeys={selectedKeys}
+            onSelectionChange={onSelectionChange}
+          >
             <Table.Header
               columns={columns}
               className="hidden md:table-header-group"
@@ -113,28 +145,6 @@ export const PendingTransactionTable: React.FC<
                 <Table.Row key={item.id} id={item.id}>
                   <Table.Collection items={columns}>
                     {(column) => {
-                      if (column.key === "actions") {
-                        return (
-                          <Table.Cell>
-                            <div className="flex flex-col gap-1 items-center md:flex-row md:justify-center">
-                              <Button
-                                isIconOnly
-                                variant="tertiary"
-                                className="self-center text-success"
-                                aria-label={t("confirm")}
-                                onPress={() => onConfirm(item)}
-                              >
-                                <FaRegCircleCheck className="text-xl" />
-                              </Button>
-                              <DeleteTableItemButton
-                                itemId={item.id}
-                                isDisabled={isMutating}
-                                deleteTableItem={deleteTransaction}
-                              />
-                            </div>
-                          </Table.Cell>
-                        );
-                      }
                       return renderCell({
                         key: column.key,
                         item,
