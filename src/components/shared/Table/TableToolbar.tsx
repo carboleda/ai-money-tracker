@@ -11,6 +11,7 @@ import React, {
 } from "react";
 import { FaRegCircleCheck } from "react-icons/fa6";
 import { HiOutlinePlusCircle } from "react-icons/hi";
+import { useIsMobile } from "@/hooks/useIsMobile";
 
 interface TableToolbarProps extends PropsWithChildren {
   selectedItem?: { id: string } & Record<string, any>;
@@ -78,19 +79,21 @@ const BaseAction: React.FC<ActionProps> = ({
   ...buttonProps
 }) => {
   const { t, selectedItem, isMutating } = useTableToolbarContext();
+  const isMobile = useIsMobile();
   const label = labelKey && t(labelKey);
 
   return (
     <Button
       aria-label={label}
       variant="ghost"
+      isIconOnly={isMobile}
       isDisabled={isMutating || (!noItemRequired && !selectedItem)}
       onPress={() => onAction?.(selectedItem)}
       {...buttonProps}
     >
       {noSeparator || <ButtonGroup.Separator />}
       {icon}
-      {label}
+      {!isMobile && label}
     </Button>
   );
 };
