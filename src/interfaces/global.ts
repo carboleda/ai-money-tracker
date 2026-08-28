@@ -12,3 +12,7 @@ export interface RenderCellProps<T> {
   item: T;
   t?: TFunction;
 }
+
+export interface HasId {
+  id: string;
+}

@@ -1,9 +1,6 @@
+import { HasId } from "@/interfaces/global";
 import { Selection } from "@heroui/react";
 import { useCallback, useEffect, useState } from "react";
-
-interface HasId {
-  id: string | number;
-}
 
 interface UseTableSelectionProps<T extends HasId> {
   items: T[] | undefined;

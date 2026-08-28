@@ -8,12 +8,11 @@ import { useState } from "react";
 import { UpdateTransactionModalForm } from "@/components/features/Transactions/UpdateTransactionModalForm";
 import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
-import { useMeasuredTableHeight } from "@/hooks/useMeasuredTableHeight";
 import { TransactionOutput } from "@/app/api/domain/transaction/ports/outbound/filter-transactions.port";
-import { EmptyTableState } from "@/components/shared/Table/EmptyTableState";
 import { useDeleteTableItem } from "@/hooks/useDeleteTableItem";
 import { TableToolbar } from "@/components/shared/Table/TableToolbar";
 import { useTableSelection } from "@/hooks/useTableSelection";
+import { TableContainer } from "@/components/shared/Table/TableContainer";
 
 interface TranactionTableProps {
   isLoading: boolean;
@@ -28,7 +27,6 @@ export const TransactionTable: React.FC<TranactionTableProps> = ({
   const [isOpen, setIsOpen] = useState(false);
   const { isMutating, deleteTransaction } = useMutateTransaction();
   const { columns, renderCell } = useRenderCell();
-  const { maxTableHeight, containerRef } = useMeasuredTableHeight();
   const { onDelete } = useDeleteTableItem({
     onConfirmDelete: deleteTransaction,
   });
@@ -69,53 +67,15 @@ export const TransactionTable: React.FC<TranactionTableProps> = ({
             }
           />
         </TableToolbar>
-        <Table.ScrollContainer
-          ref={containerRef}
-          className="overflow-y-auto"
-          style={{ maxHeight: maxTableHeight }}
-        >
-          <Table.Content
-            aria-label={t("subtitle")}
-            selectionMode="single"
-            selectedKeys={selectedKeys}
-            onSelectionChange={onSelectionChange}
-          >
-            <Table.Header
-              columns={columns}
-              className="hidden md:table-header-group"
-            >
-              {(column) => (
-                <Table.Column
-                  key={column.key}
-                  id={column.key}
-                  className={column.className}
-                  isRowHeader={column.isRowHeader}
-                >
-                  {t(column.key)}
-                </Table.Column>
-              )}
-            </Table.Header>
-            <Table.Body
-              items={transactions}
-              renderEmptyState={() => (
-                <EmptyTableState message={t("emptyContent")} />
-              )}
-            >
-              {(item) => (
-                <Table.Row key={item.id} id={item.id}>
-                  <Table.Collection items={columns}>
-                    {(column) => {
-                      return renderCell({
-                        key: column.key,
-                        item,
-                      });
-                    }}
-                  </Table.Collection>
-                </Table.Row>
-              )}
-            </Table.Body>
-          </Table.Content>
-        </Table.ScrollContainer>
+        <TableContainer
+          t={t}
+          ariaLabelKey="subtitle"
+          renderCell={renderCell}
+          columns={columns}
+          items={transactions}
+          onSelectionChange={onSelectionChange}
+          selectedKeys={selectedKeys}
+        />
       </Table>
       <UpdateTransactionModalForm
         item={selectedItem}

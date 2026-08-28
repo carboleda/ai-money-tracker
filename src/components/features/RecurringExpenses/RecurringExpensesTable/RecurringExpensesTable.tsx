@@ -13,17 +13,18 @@ import { useMutateRecurringExpenses } from "@/hooks/useMutateRecurringExpense";
 import { useRenderCell } from "./Columns";
 import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
-import { useMeasuredTableHeight } from "@/hooks/useMeasuredTableHeight";
 import { SearchToolbar } from "@/components/features/Transactions/SearchToolbar";
-import { EmptyTableState } from "@/components/shared/Table/EmptyTableState";
 import { useDeleteTableItem } from "@/hooks/useDeleteTableItem";
 import { TableToolbar } from "@/components/shared/Table/TableToolbar";
 import { useTableSelection } from "@/hooks/useTableSelection";
+import { TableContainer } from "@/components/shared/Table/TableContainer";
 
 interface RecurringExpensesTableProps {
   isLoading: boolean;
   recurringExpenses?: RecurringExpenseOutput[];
 }
+
+const SEPARATORS = new Set([FrequencyGroup.OTHERS]);
 
 const groupByFrequency = (recurringExpenses: RecurringExpenseOutput[]) => {
   const { monthly = [], others = [] } = Object.groupBy(
@@ -54,7 +55,6 @@ export const RecurringExpensesTable: React.FC<RecurringExpensesTableProps> = ({
   const [filterValue, setFilterValue] = useState("");
   const { isMutating, deleteConfig } = useMutateRecurringExpenses();
   const { columns, renderCell, renderSeparator } = useRenderCell();
-  const { maxTableHeight, containerRef } = useMeasuredTableHeight();
   const { onDelete } = useDeleteTableItem({ onConfirmDelete: deleteConfig });
 
   const transactions = useMemo(() => {
@@ -130,64 +130,18 @@ export const RecurringExpensesTable: React.FC<RecurringExpensesTableProps> = ({
             }
           />
         </TableToolbar>
-        <Table.ScrollContainer
-          ref={containerRef}
-          className="overflow-y-auto"
-          style={{ maxHeight: maxTableHeight }}
-        >
-          <Table.Content
-            aria-label={t("recurringExpenses")}
-            selectionMode="single"
-            selectedKeys={selectedKeys}
-            onSelectionChange={onSelectionChange}
-            disabledKeys={new Set([FrequencyGroup.OTHERS])}
-          >
-            <Table.Header
-              columns={columns}
-              className="hidden md:table-header-group"
-            >
-              {(column) => (
-                <Table.Column
-                  key={column.key}
-                  id={column.key}
-                  className={column.className}
-                  isRowHeader={column.isRowHeader}
-                >
-                  {t(column.key)}
-                </Table.Column>
-              )}
-            </Table.Header>
-            <Table.Body
-              items={transactions}
-              renderEmptyState={() => (
-                <EmptyTableState message={t("emptyContent")} />
-              )}
-            >
-              {(item) => {
-                if (item.id === FrequencyGroup.OTHERS) {
-                  return renderSeparator(
-                    item.id,
-                    columns.length,
-                    t("separatorTitle"),
-                  );
-                }
-
-                return (
-                  <Table.Row key={item.id} id={item.id}>
-                    <Table.Collection items={columns}>
-                      {(column) => {
-                        return renderCell({
-                          key: column.key,
-                          item,
-                        });
-                      }}
-                    </Table.Collection>
-                  </Table.Row>
-                );
-              }}
-            </Table.Body>
-          </Table.Content>
-        </Table.ScrollContainer>
+        <TableContainer
+          t={t}
+          ariaLabelKey="recurringExpenses"
+          disabledKeys={SEPARATORS}
+          separators={SEPARATORS}
+          renderCell={renderCell}
+          renderSeparator={renderSeparator}
+          columns={columns}
+          items={transactions}
+          onSelectionChange={onSelectionChange}
+          selectedKeys={selectedKeys}
+        />
       </Table>
       <RecurringExpenseModalForm
         item={selectedItem}

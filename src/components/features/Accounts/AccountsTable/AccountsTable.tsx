@@ -9,12 +9,11 @@ import { useMutateAccount } from "@/hooks/useMutateAccount";
 import { useRenderCell } from "./Columns";
 import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
-import { useMeasuredTableHeight } from "@/hooks/useMeasuredTableHeight";
 import { SearchToolbar } from "@/components/features/Transactions/SearchToolbar";
-import { EmptyTableState } from "@/components/shared/Table/EmptyTableState";
 import { useDeleteTableItem } from "@/hooks/useDeleteTableItem";
 import { TableToolbar } from "@/components/shared/Table/TableToolbar";
 import { useTableSelection } from "@/hooks/useTableSelection";
+import { TableContainer } from "@/components/shared/Table/TableContainer";
 
 interface AccountsTableProps {
   isLoading: boolean;
@@ -30,7 +29,6 @@ export const AccountsTable: React.FC<AccountsTableProps> = ({
   const [filterValue, setFilterValue] = useState("");
   const { isMutating, deleteAccount } = useMutateAccount();
   const { columns, renderCell } = useRenderCell();
-  const { maxTableHeight, containerRef } = useMeasuredTableHeight();
   const { onDelete } = useDeleteTableItem({ onConfirmDelete: deleteAccount });
   const filteredAccounts = useMemo(() => {
     if (!accounts) return accounts;
@@ -100,53 +98,15 @@ export const AccountsTable: React.FC<AccountsTableProps> = ({
             onPress={(item: Account) => onDelete(item.id, item.name)}
           />
         </TableToolbar>
-        <Table.ScrollContainer
-          ref={containerRef}
-          className="overflow-y-auto"
-          style={{ maxHeight: maxTableHeight }}
-        >
-          <Table.Content
-            aria-label={t("accounts")}
-            selectionMode="single"
-            selectedKeys={selectedKeys}
-            onSelectionChange={onSelectionChange}
-          >
-            <Table.Header
-              columns={columns}
-              className="hidden md:table-header-group"
-            >
-              {(column) => (
-                <Table.Column
-                  key={column.key}
-                  id={column.key}
-                  className={column.className}
-                  isRowHeader={column.isRowHeader}
-                >
-                  {t(column.key)}
-                </Table.Column>
-              )}
-            </Table.Header>
-            <Table.Body
-              items={filteredAccounts}
-              renderEmptyState={() => (
-                <EmptyTableState message={t("emptyContent")} />
-              )}
-            >
-              {(item) => (
-                <Table.Row key={item.id} id={item.id}>
-                  <Table.Collection items={columns}>
-                    {(column) => {
-                      return renderCell({
-                        key: column.key,
-                        item,
-                      });
-                    }}
-                  </Table.Collection>
-                </Table.Row>
-              )}
-            </Table.Body>
-          </Table.Content>
-        </Table.ScrollContainer>
+        <TableContainer
+          t={t}
+          ariaLabelKey="accounts"
+          renderCell={renderCell}
+          columns={columns}
+          items={accounts}
+          onSelectionChange={onSelectionChange}
+          selectedKeys={selectedKeys}
+        />
       </Table>
       <AccountModalForm
         item={selectedItem}
