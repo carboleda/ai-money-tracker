@@ -34,7 +34,7 @@ export const TransactionTypeDecorator: React.FC<
 
   return (
     <Chip
-      className={clsx("rounded-sm", disabled && "opacity-50")}
+      className={clsx("rounded-sm", "p-0", disabled && "opacity-50")}
       variant="tertiary"
       size={size}
       color={color ?? colorMapper[type!]}

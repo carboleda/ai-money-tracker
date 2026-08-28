@@ -28,7 +28,7 @@ const keyValueMapping = {
   },
   totalBalance: {
     icon: <FaBalanceScaleLeft />,
-    color: "accent",
+    color: "default",
   },
 };
 
@@ -38,10 +38,12 @@ interface SummaryPanelProps {
   shortNumber?: boolean;
 }
 
-function renderNumber(value: number, short: boolean): string {
-  return short
-    ? `${formatCurrency(value / 1000, false)}k`
-    : formatCurrency(value);
+function renderFullNumber(value: number): string {
+  return formatCurrency(value);
+}
+
+function renderShortNumber(value: number): string {
+  return `${formatCurrency(value / 1000, false)}k`;
 }
 
 export const SummaryPanel: React.FC<SummaryPanelProps> = ({
@@ -52,6 +54,7 @@ export const SummaryPanel: React.FC<SummaryPanelProps> = ({
   const isMobile = useIsMobile();
   const keys = (includedKeys ??
     Object.keys(keyValueMapping)) as (keyof Summary)[];
+  const renderNumber = shortNumber ? renderShortNumber : renderFullNumber;
   // .filter((k) => k !== "totalTransfers");
 
   if (!summary) {
@@ -73,11 +76,11 @@ export const SummaryPanel: React.FC<SummaryPanelProps> = ({
             key={key}
             color={color as ChipProps["color"]}
             size={isMobile ? "sm" : "md"}
-            variant="tertiary"
+            variant="soft"
             className="rounded-sm"
           >
             {icon}
-            {renderNumber(summary[key], shortNumber)}
+            {renderNumber(summary[key])}
           </Chip>
         );
       })}
