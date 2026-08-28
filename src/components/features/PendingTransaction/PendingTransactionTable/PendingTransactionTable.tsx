@@ -1,10 +1,10 @@
 "use client";
 
-import { Selection, Table } from "@heroui/react";
+import { Table } from "@heroui/react";
 import { TableSkeleton } from "@/components/shared/TableSkeleton";
 import { useMutateTransaction } from "@/hooks/useMutateTransaction";
 import { CompleteTransactionModalForm } from "../CompleteTransactionModalForm/CompleteTransactionModalForm";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useRenderCell } from "./Columns";
 import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
@@ -14,6 +14,7 @@ import { TransactionOutput } from "@/app/api/domain/transaction/ports/outbound/f
 import { EmptyTableState } from "@/components/shared/EmptyTableState";
 import { useDeleteTableItem } from "@/hooks/useDeleteTableItem";
 import { TableToolbar } from "@/components/shared/TableToolbar/TableToolbar";
+import { useTableSelection } from "@/hooks/useTableSelection";
 
 interface PendingTransactionTableProps {
   isLoading: boolean;
@@ -24,8 +25,6 @@ export const PendingTransactionTable: React.FC<
   PendingTransactionTableProps
 > = ({ isLoading, pendingTransactions }) => {
   const { t } = useTranslation(LocaleNamespace.RecurringExpenses);
-  const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set());
-  const [selectedItem, setSelectedItem] = useState<TransactionOutput>();
   const [isOpen, setIsOpen] = useState(false);
   const [filterValue, setFilterValue] = useState("");
   const { isMutating, deleteTransaction } = useMutateTransaction();
@@ -48,38 +47,33 @@ export const PendingTransactionTable: React.FC<
             .includes(filterValue.toLowerCase()) ||
           transaction.category?.name
             ?.toLowerCase()
-            .includes(filterValue.toLowerCase())
+            .includes(filterValue.toLowerCase()),
       );
     }
 
     return filteredPendingTransations;
   }, [pendingTransactions, filterValue]);
 
-  useEffect(() => {
-    clearSelection();
-  }, [isMutating, transactions]);
+  const {
+    selectedItem,
+    setSelectedItem,
+    selectedKeys,
+    onSelectionChange,
+    clearSelection,
+  } = useTableSelection({ items: transactions, isMutating });
 
-  const clearSelection = () => {
-    setSelectedItem(undefined);
-    setSelectedKeys(new Set());
-  };
-
-  const onConfirm = useCallback((item: TransactionOutput) => {
-    setSelectedItem(item);
-    setIsOpen(true);
-  }, []);
+  const onConfirm = useCallback(
+    (item: TransactionOutput) => {
+      setSelectedItem(item);
+      setIsOpen(true);
+    },
+    [setSelectedItem],
+  );
 
   const onDialogDismissed = useCallback(() => {
     clearSelection();
     setIsOpen(false);
-  }, []);
-
-  const onSelectionChange = (keys: Selection) => {
-    setSelectedKeys(keys);
-    setSelectedItem(
-      transactions?.find((transaction) => transaction.id === [...keys][0]),
-    );
-  };
+  }, [clearSelection]);
 
   const renderTopContent = () => (
     <div className="flex w-full flex-row gap-4">

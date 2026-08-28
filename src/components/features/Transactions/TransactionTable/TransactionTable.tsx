@@ -1,10 +1,10 @@
 "use client";
 
-import { Selection, Table } from "@heroui/react";
+import { Table } from "@heroui/react";
 import { TableSkeleton } from "@/components/shared/TableSkeleton";
 import { useMutateTransaction } from "@/hooks/useMutateTransaction";
 import { useRenderCell } from "./Columns";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { UpdateTransactionModalForm } from "@/components/features/Transactions/UpdateTransactionModalForm";
 import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
@@ -13,6 +13,7 @@ import { TransactionOutput } from "@/app/api/domain/transaction/ports/outbound/f
 import { EmptyTableState } from "@/components/shared/EmptyTableState";
 import { useDeleteTableItem } from "@/hooks/useDeleteTableItem";
 import { TableToolbar } from "@/components/shared/TableToolbar/TableToolbar";
+import { useTableSelection } from "@/hooks/useTableSelection";
 
 interface TranactionTableProps {
   isLoading: boolean;
@@ -24,8 +25,6 @@ export const TransactionTable: React.FC<TranactionTableProps> = ({
   transactions,
 }) => {
   const { t } = useTranslation(LocaleNamespace.Transactions);
-  const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set());
-  const [selectedItem, setSelectedItem] = useState<TransactionOutput>();
   const [isOpen, setIsOpen] = useState(false);
   const { isMutating, deleteTransaction } = useMutateTransaction();
   const { columns, renderCell } = useRenderCell();
@@ -34,14 +33,13 @@ export const TransactionTable: React.FC<TranactionTableProps> = ({
     onConfirmDelete: deleteTransaction,
   });
 
-  useEffect(() => {
-    clearSelection();
-  }, [isMutating, transactions]);
-
-  const clearSelection = () => {
-    setSelectedItem(undefined);
-    setSelectedKeys(new Set());
-  };
+  const {
+    selectedItem,
+    setSelectedItem,
+    selectedKeys,
+    onSelectionChange,
+    clearSelection,
+  } = useTableSelection({ items: transactions, isMutating });
 
   const onDialogDismissed = () => {
     clearSelection();
@@ -51,13 +49,6 @@ export const TransactionTable: React.FC<TranactionTableProps> = ({
   const onEdit = (item: TransactionOutput) => {
     setSelectedItem(item);
     setIsOpen(true);
-  };
-
-  const onSelectionChange = (keys: Selection) => {
-    setSelectedKeys(keys);
-    setSelectedItem(
-      transactions?.find((transaction) => transaction.id === [...keys][0]),
-    );
   };
 
   if (isLoading || !transactions) return <TableSkeleton />;

@@ -1,6 +1,6 @@
 "use client";
 
-import { Selection, Table } from "@heroui/react";
+import { Table } from "@heroui/react";
 import {
   Frequency,
   FrequencyGroup,
@@ -8,7 +8,7 @@ import {
 import type { RecurringExpenseOutput } from "@/app/api/domain/recurring-expense/ports/outbound/get-recurring-expenses.port";
 import { TableSkeleton } from "@/components/shared/TableSkeleton";
 import { RecurringExpenseModalForm } from "../RecurringExpenseModalForm/RecurringExpenseModalForm";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useMutateRecurringExpenses } from "@/hooks/useMutateRecurringExpense";
 import { useRenderCell } from "./Columns";
 import { useTranslation } from "react-i18next";
@@ -18,6 +18,7 @@ import { SearchToolbar } from "@/components/features/Transactions/SearchToolbar"
 import { EmptyTableState } from "@/components/shared/EmptyTableState";
 import { useDeleteTableItem } from "@/hooks/useDeleteTableItem";
 import { TableToolbar } from "@/components/shared/TableToolbar/TableToolbar";
+import { useTableSelection } from "@/hooks/useTableSelection";
 
 interface RecurringExpensesTableProps {
   isLoading: boolean;
@@ -30,7 +31,7 @@ const groupByFrequency = (recurringExpenses: RecurringExpenseOutput[]) => {
     (expense) =>
       expense.frequency == Frequency.MONTHLY
         ? FrequencyGroup.MONTHLY
-        : FrequencyGroup.OTHERS
+        : FrequencyGroup.OTHERS,
   );
 
   const separator = {
@@ -49,8 +50,6 @@ export const RecurringExpensesTable: React.FC<RecurringExpensesTableProps> = ({
   recurringExpenses,
 }) => {
   const { t } = useTranslation(LocaleNamespace.RecurringExpenses);
-  const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set());
-  const [selectedItem, setSelectedItem] = useState<RecurringExpenseOutput>();
   const [isOpen, setIsOpen] = useState(false);
   const [filterValue, setFilterValue] = useState("");
   const { isMutating, deleteConfig } = useMutateRecurringExpenses();
@@ -69,21 +68,22 @@ export const RecurringExpensesTable: React.FC<RecurringExpensesTableProps> = ({
           expense.description
             .toLowerCase()
             .includes(filterValue.toLowerCase()) ||
-          expense.category.name.toLowerCase().includes(filterValue.toLowerCase())
+          expense.category.name
+            .toLowerCase()
+            .includes(filterValue.toLowerCase()),
       );
     }
 
     return groupByFrequency(filteredRecurringExpenses);
   }, [recurringExpenses, filterValue]);
 
-  useEffect(() => {
-    clearSelection();
-  }, [isMutating, transactions]);
-
-  const clearSelection = () => {
-    setSelectedItem(undefined);
-    setSelectedKeys(new Set());
-  };
+  const {
+    selectedItem,
+    setSelectedItem,
+    selectedKeys,
+    onSelectionChange,
+    clearSelection,
+  } = useTableSelection({ items: transactions, isMutating });
 
   const onDialogDismissed = () => {
     clearSelection();
@@ -93,13 +93,6 @@ export const RecurringExpensesTable: React.FC<RecurringExpensesTableProps> = ({
   const onEdit = (item: RecurringExpenseOutput) => {
     setSelectedItem(item);
     setIsOpen(true);
-  };
-
-  const onSelectionChange = (keys: Selection) => {
-    setSelectedKeys(keys);
-    setSelectedItem(
-      transactions?.find((expense) => expense.id === [...keys][0]),
-    );
   };
 
   const renderTopContent = () => (

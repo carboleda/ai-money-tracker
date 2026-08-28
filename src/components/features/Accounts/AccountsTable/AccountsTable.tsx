@@ -1,10 +1,10 @@
 "use client";
 
-import { Selection, Table } from "@heroui/react";
+import { Table } from "@heroui/react";
 import { Account } from "@/interfaces/account";
 import { TableSkeleton } from "@/components/shared/TableSkeleton";
 import { AccountModalForm } from "../AccountModalForm/AccountModalForm";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useMutateAccount } from "@/hooks/useMutateAccount";
 import { useRenderCell } from "./Columns";
 import { useTranslation } from "react-i18next";
@@ -14,6 +14,7 @@ import { SearchToolbar } from "@/components/features/Transactions/SearchToolbar"
 import { EmptyTableState } from "@/components/shared/EmptyTableState";
 import { useDeleteTableItem } from "@/hooks/useDeleteTableItem";
 import { TableToolbar } from "@/components/shared/TableToolbar/TableToolbar";
+import { useTableSelection } from "@/hooks/useTableSelection";
 
 interface AccountsTableProps {
   isLoading: boolean;
@@ -25,15 +26,12 @@ export const AccountsTable: React.FC<AccountsTableProps> = ({
   accounts,
 }) => {
   const { t } = useTranslation(LocaleNamespace.Accounts);
-  const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set());
-  const [selectedItem, setSelectedItem] = useState<Account>();
   const [isOpen, setIsOpen] = useState(false);
   const [filterValue, setFilterValue] = useState("");
   const { isMutating, deleteAccount } = useMutateAccount();
   const { columns, renderCell } = useRenderCell();
   const { maxTableHeight, containerRef } = useMeasuredTableHeight();
   const { onDelete } = useDeleteTableItem({ onConfirmDelete: deleteAccount });
-
   const filteredAccounts = useMemo(() => {
     if (!accounts) return accounts;
 
@@ -44,21 +42,20 @@ export const AccountsTable: React.FC<AccountsTableProps> = ({
         (account) =>
           account.name.toLowerCase().includes(filterValue.toLowerCase()) ||
           account.ref.toLowerCase().includes(filterValue.toLowerCase()) ||
-          account.type.toLowerCase().includes(filterValue.toLowerCase())
+          account.type.toLowerCase().includes(filterValue.toLowerCase()),
       );
     }
 
     return filtered;
   }, [accounts, filterValue]);
 
-  useEffect(() => {
-    clearSelection();
-  }, [isMutating, filteredAccounts]);
-
-  const clearSelection = () => {
-    setSelectedItem(undefined);
-    setSelectedKeys(new Set());
-  };
+  const {
+    selectedItem,
+    setSelectedItem,
+    selectedKeys,
+    onSelectionChange,
+    clearSelection,
+  } = useTableSelection({ items: filteredAccounts, isMutating });
 
   const onDialogDismissed = () => {
     clearSelection();
@@ -68,13 +65,6 @@ export const AccountsTable: React.FC<AccountsTableProps> = ({
   const onEdit = (item: Account) => {
     setSelectedItem(item);
     setIsOpen(true);
-  };
-
-  const onSelectionChange = (keys: Selection) => {
-    setSelectedKeys(keys);
-    setSelectedItem(
-      filteredAccounts?.find((account) => account.id === [...keys][0]),
-    );
   };
 
   const renderTopContent = () => (
