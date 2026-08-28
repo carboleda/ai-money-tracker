@@ -6,7 +6,7 @@ import {
   FrequencyGroup,
 } from "@/app/api/domain/recurring-expense/model/recurring-expense.model";
 import type { RecurringExpenseOutput } from "@/app/api/domain/recurring-expense/ports/outbound/get-recurring-expenses.port";
-import { TableSkeleton } from "@/components/shared/TableSkeleton";
+import { TableSkeleton } from "@/components/shared/Table/TableSkeleton";
 import { RecurringExpenseModalForm } from "../RecurringExpenseModalForm/RecurringExpenseModalForm";
 import { useMemo, useState } from "react";
 import { useMutateRecurringExpenses } from "@/hooks/useMutateRecurringExpense";
@@ -15,9 +15,9 @@ import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
 import { useMeasuredTableHeight } from "@/hooks/useMeasuredTableHeight";
 import { SearchToolbar } from "@/components/features/Transactions/SearchToolbar";
-import { EmptyTableState } from "@/components/shared/EmptyTableState";
+import { EmptyTableState } from "@/components/shared/Table/EmptyTableState";
 import { useDeleteTableItem } from "@/hooks/useDeleteTableItem";
-import { TableToolbar } from "@/components/shared/TableToolbar/TableToolbar";
+import { TableToolbar } from "@/components/shared/Table/TableToolbar";
 import { useTableSelection } from "@/hooks/useTableSelection";
 
 interface RecurringExpensesTableProps {

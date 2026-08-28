@@ -1,7 +1,7 @@
 "use client";
 
 import { Table } from "@heroui/react";
-import { TableSkeleton } from "@/components/shared/TableSkeleton";
+import { TableSkeleton } from "@/components/shared/Table/TableSkeleton";
 import { useMutateTransaction } from "@/hooks/useMutateTransaction";
 import { CompleteTransactionModalForm } from "../CompleteTransactionModalForm/CompleteTransactionModalForm";
 import { useCallback, useMemo, useState } from "react";
@@ -11,9 +11,9 @@ import { LocaleNamespace } from "@/i18n/namespace";
 import { SearchToolbar } from "@/components/features/Transactions/SearchToolbar";
 import { useMeasuredTableHeight } from "@/hooks/useMeasuredTableHeight";
 import { TransactionOutput } from "@/app/api/domain/transaction/ports/outbound/filter-transactions.port";
-import { EmptyTableState } from "@/components/shared/EmptyTableState";
+import { EmptyTableState } from "@/components/shared/Table/EmptyTableState";
 import { useDeleteTableItem } from "@/hooks/useDeleteTableItem";
-import { TableToolbar } from "@/components/shared/TableToolbar/TableToolbar";
+import { TableToolbar } from "@/components/shared/Table/TableToolbar";
 import { useTableSelection } from "@/hooks/useTableSelection";
 
 interface PendingTransactionTableProps {

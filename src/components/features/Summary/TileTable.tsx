@@ -6,7 +6,7 @@ import { formatCurrency } from "@/config/utils";
 import { TransactionTypeDecorator } from "@/components/TransactionTypeDecorator";
 import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
-import { EmptyTableState } from "@/components/shared/EmptyTableState";
+import { EmptyTableState } from "@/components/shared/Table/EmptyTableState";
 
 export type Color = ChipProps["color"];
 
