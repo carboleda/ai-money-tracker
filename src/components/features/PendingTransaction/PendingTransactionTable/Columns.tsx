@@ -67,7 +67,7 @@ const renderCellDesktop = ({
     case "date":
       return (
         <Table.Cell>
-          <div className="flex items-center gap-0">
+          <div className="flex items-center gap-2">
             <DueDateIndicator dueDate={item.createdAt} />
             {formatDate(new Date(item.createdAt))}
           </div>
@@ -103,7 +103,7 @@ const renderCellMobile = ({
     <Table.Cell colSpan={3}>
       <div className="flex flex-col gap-1">
         <div className="flex flex-row items-center justify-between gap-1">
-          <div className="flex items-center">
+          <div className="flex items-center gap-1">
             <DueDateIndicator dueDate={item.createdAt} />
             <p className="text-xs font-normal">{item.description}</p>
           </div>
@@ -118,10 +118,7 @@ const renderCellMobile = ({
         </div>
         <div className="flex flex-row w-full items-center justify-between">
           <span className="text-end">
-            <TransactionTypeDecorator
-              type={TransactionType.TRANSFER}
-              size="sm"
-            >
+            <TransactionTypeDecorator type={TransactionType.TRANSFER} size="sm">
               {formatCurrency(item.amount)}
             </TransactionTypeDecorator>
             {item.category && (
