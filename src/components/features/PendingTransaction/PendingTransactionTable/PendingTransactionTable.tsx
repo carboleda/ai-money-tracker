@@ -146,8 +146,6 @@ export const PendingTransactionTable: React.FC<
                       return renderCell({
                         key: column.key,
                         item,
-                        onEdit: onConfirm,
-                        onDelete: deleteTransaction,
                       });
                     }}
                   </Table.Collection>

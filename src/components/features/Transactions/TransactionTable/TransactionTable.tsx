@@ -108,8 +108,6 @@ export const TransactionTable: React.FC<TranactionTableProps> = ({
                       return renderCell({
                         key: column.key,
                         item,
-                        onEdit,
-                        onDelete: deleteTransaction,
                       });
                     }}
                   </Table.Collection>

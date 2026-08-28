@@ -139,8 +139,6 @@ export const AccountsTable: React.FC<AccountsTableProps> = ({
                       return renderCell({
                         key: column.key,
                         item,
-                        onEdit,
-                        onDelete: deleteAccount,
                       });
                     }}
                   </Table.Collection>
