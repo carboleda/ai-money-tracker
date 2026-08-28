@@ -69,10 +69,15 @@ export const TransactionTable: React.FC<TranactionTableProps> = ({
           selectedItem={selectedItem}
           isMutating={isMutating}
           rowCount={transactions?.length}
-          onEdit={onEdit}
-          onDelete={onDelete}
           t={t}
-        />
+        >
+          <TableToolbar.EditAction noSeparator onPress={onEdit} />
+          <TableToolbar.DeleteAction
+            onPress={(item: TransactionOutput) =>
+              onDelete(item.id, item.description)
+            }
+          />
+        </TableToolbar>
         <Table.ScrollContainer
           ref={containerRef}
           className="overflow-y-auto"

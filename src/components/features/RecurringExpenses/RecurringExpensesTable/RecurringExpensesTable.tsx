@@ -134,10 +134,15 @@ export const RecurringExpensesTable: React.FC<RecurringExpensesTableProps> = ({
           selectedItem={selectedItem}
           isMutating={isMutating}
           rowCount={recurringExpenses?.length}
-          onEdit={onEdit}
-          onDelete={onDelete}
           t={t}
-        />
+        >
+          <TableToolbar.EditAction noSeparator onPress={onEdit} />
+          <TableToolbar.DeleteAction
+            onPress={(item: RecurringExpenseOutput) =>
+              onDelete(item.id, item.description)
+            }
+          />
+        </TableToolbar>
         <Table.ScrollContainer
           ref={containerRef}
           className="overflow-y-auto"
@@ -176,7 +181,7 @@ export const RecurringExpensesTable: React.FC<RecurringExpensesTableProps> = ({
                   return renderSeparator(
                     item.id,
                     columns.length,
-                    t("separatorTitle")
+                    t("separatorTitle"),
                   );
                 }
 

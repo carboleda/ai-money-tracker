@@ -109,11 +109,13 @@ export const AccountsTable: React.FC<AccountsTableProps> = ({
           selectedItem={selectedItem}
           isMutating={isMutating}
           rowCount={filteredAccounts?.length}
-          onEdit={onEdit}
-          onDelete={onDelete}
-          getItemLabel={(item: Account) => item.name}
           t={t}
-        />
+        >
+          <TableToolbar.EditAction noSeparator onPress={onEdit} />
+          <TableToolbar.DeleteAction
+            onPress={(item: Account) => onDelete(item.id, item.name)}
+          />
+        </TableToolbar>
         <Table.ScrollContainer
           ref={containerRef}
           className="overflow-y-auto"

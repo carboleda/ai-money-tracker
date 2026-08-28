@@ -10,7 +10,6 @@ import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
 import { SearchToolbar } from "@/components/features/Transactions/SearchToolbar";
 import { useMeasuredTableHeight } from "@/hooks/useMeasuredTableHeight";
-import { FaRegCircleCheck } from "react-icons/fa6";
 import { TransactionOutput } from "@/app/api/domain/transaction/ports/outbound/filter-transactions.port";
 import { EmptyTableState } from "@/components/shared/EmptyTableState";
 import { useDeleteTableItem } from "@/hooks/useDeleteTableItem";
@@ -103,12 +102,17 @@ export const PendingTransactionTable: React.FC<
           selectedItem={selectedItem}
           isMutating={isMutating}
           rowCount={transactions?.length}
-          onEdit={onConfirm}
-          onDelete={onDelete}
-          editLabel={t("confirm")}
-          editIcon={<FaRegCircleCheck />}
           t={t}
-        />
+        >
+          <TableToolbar.ConfirmAction
+            noSeparator
+            onPress={onConfirm}
+            labelKey="completeTransationButton"
+          />
+          <TableToolbar.DeleteAction
+            onPress={(item) => onDelete(item.id, item.description)}
+          />
+        </TableToolbar>
         <Table.ScrollContainer
           ref={containerRef}
           className="overflow-y-auto"

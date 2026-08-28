@@ -1,69 +1,125 @@
-import { ButtonGroup, Button, Typography } from "@heroui/react";
+import { ButtonGroup, Button, Typography, ButtonProps } from "@heroui/react";
 import { IoTrashBin } from "react-icons/io5";
 import { IconEdit } from "../icons";
 import clsx from "clsx";
 import { TFunction } from "i18next";
+import React, {
+  createContext,
+  PropsWithChildren,
+  ReactNode,
+  useContext,
+  useMemo,
+} from "react";
+import { FaRegCircleCheck } from "react-icons/fa6";
 
-interface TableToolbarProps {
+interface TableToolbarProps extends PropsWithChildren {
   selectedItem?: { id: string } & Record<string, any>;
   isMutating: boolean;
   rowCount?: number;
-  onEdit: (item: any) => void;
-  onDelete: (id: string, label?: string) => void;
   t: TFunction;
-  getItemLabel?: (item: any) => string | undefined;
-  editLabel?: string;
-  editIcon?: React.ReactNode;
 }
 
-export const TableToolbar: React.FC<TableToolbarProps> = ({
+interface ActionProps extends ButtonProps {
+  onPress: (item: any) => void;
+  noSeparator?: boolean;
+  labelKey?: string;
+  icon?: ReactNode;
+}
+
+const TableToolbarContext = createContext<TableToolbarProps | undefined>(
+  undefined,
+);
+
+// Helper hook to consume context safely
+function useTableToolbarContext() {
+  const context = useContext(TableToolbarContext);
+  if (!context) {
+    throw new Error(
+      "TableToolbar Actions must be rendered within a <TableToolbar /> wrapper.",
+    );
+  }
+  return context;
+}
+
+const TableToolbarRoot: React.FC<TableToolbarProps> = ({
   selectedItem,
-  onEdit,
-  onDelete,
   isMutating,
   rowCount,
+  children,
   t,
-  getItemLabel,
-  editLabel,
-  editIcon,
 }) => {
-  const itemLabel = selectedItem
-    ? getItemLabel?.(selectedItem) ?? selectedItem.description
-    : undefined;
+  const contextValue = useMemo(
+    () => ({ selectedItem, isMutating, t }),
+    [selectedItem, isMutating, t],
+  );
 
   return (
-    <div className="flex flex-row gap-1 items-center py-2 justify-between">
-      <div
-        className={clsx({
-          visible: selectedItem,
-          invisible: !selectedItem,
-        })}
-      >
-        <ButtonGroup variant="ghost">
-          <Button
-            aria-label={editLabel ?? t("edit")}
-            {...(selectedItem && { onPress: () => onEdit(selectedItem) })}
-          >
-            {editIcon ?? <IconEdit />}
-            {editLabel ?? t("edit")}
-          </Button>
-          <Button
-            isDisabled={isMutating}
-            {...(selectedItem && {
-              onPress: () => onDelete(selectedItem.id, itemLabel),
-            })}
-          >
-            <ButtonGroup.Separator />
-            <IoTrashBin className="text-danger-soft-foreground" />
-            {t("delete")}
-          </Button>
-        </ButtonGroup>
+    <TableToolbarContext.Provider value={contextValue}>
+      <div className="flex flex-row gap-1 items-center py-2 justify-between">
+        <div
+          className={clsx({
+            visible: selectedItem,
+            invisible: !selectedItem,
+          })}
+        >
+          <ButtonGroup variant="ghost">{children}</ButtonGroup>
+        </div>
+        <div className="pr-3">
+          <Typography color="muted" type="body-xs">
+            {t("rowCounter", { count: rowCount || 0 })}
+          </Typography>
+        </div>
       </div>
-      <div className="pr-3">
-        <Typography color="muted" type="body-xs">
-          {t("rowCounter", { count: rowCount || 0 })}
-        </Typography>
-      </div>
-    </div>
+    </TableToolbarContext.Provider>
   );
 };
+
+const BaseAction: React.FC<ActionProps> = ({
+  onPress: onAction,
+  noSeparator = false,
+  labelKey,
+  icon,
+  ...buttonProps
+}) => {
+  const { t, selectedItem, isMutating } = useTableToolbarContext();
+  const label = labelKey && t(labelKey);
+  return (
+    <Button
+      aria-label={label}
+      variant="ghost"
+      isDisabled={isMutating}
+      {...(selectedItem && { onPress: () => onAction?.(selectedItem) })}
+      {...buttonProps}
+    >
+      {noSeparator || <ButtonGroup.Separator />}
+      {icon}
+      {label}
+    </Button>
+  );
+};
+
+const EditAction: React.FC<ActionProps> = (props) => {
+  return <BaseAction icon={<IconEdit />} labelKey={"edit"} {...props} />;
+};
+
+const DeleteAction: React.FC<ActionProps> = (props) => {
+  return (
+    <BaseAction
+      icon={<IoTrashBin className="text-danger-soft-foreground" />}
+      labelKey={"delete"}
+      {...props}
+    />
+  );
+};
+
+const ConfirmAction: React.FC<ActionProps> = (props) => {
+  return (
+    <BaseAction icon={<FaRegCircleCheck />} labelKey={"confirm"} {...props} />
+  );
+};
+
+export const TableToolbar = Object.assign(TableToolbarRoot, {
+  EditAction,
+  DeleteAction,
+  ConfirmAction,
+});

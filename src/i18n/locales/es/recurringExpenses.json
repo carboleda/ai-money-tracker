@@ -14,7 +14,7 @@
   "pendingTransactions": "Transacciones pendientes",
   "completeTransaction": "Completar transacción",
   "paidOn": "Pagado el",
-  "completeTransationButton": "Completar",
+  "completeTransationButton": "Pagado",
   "transactionCompleted": "¡Transacción completada correctamente!",
   "recurringExpenseCreated": "¡Gasto recurrente creado!",
   "recurringExpenseUpdated": "¡Gasto recurrente actualizado!"
