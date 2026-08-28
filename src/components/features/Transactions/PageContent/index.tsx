@@ -5,14 +5,11 @@ import { useQuery } from "@tanstack/react-query";
 import { GetTransactionsResponse, Summary } from "@/interfaces/transaction";
 import { fetchJson } from "@/config/request";
 import { TransactionTable } from "@/components/features/Transactions";
-import { useTransactionDraftStore } from "@/stores/useTransactionDraftStore";
 import { BankAccounDropdown } from "@/components/BankAccounsDropdown";
 import { parseAbsoluteToLocal, ZonedDateTime } from "@internationalized/date";
 import { RangeValue } from "@react-types/shared";
 import { getMonthBounds } from "@/config/utils";
 import { SummaryPanel } from "@/components/SummaryPanel";
-import { HiOutlinePlusCircle } from "react-icons/hi";
-import { Button } from "@heroui/react";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { CustomDateRangePicker } from "@/components/shared/CustomDateRangePicker";
 import { useTranslation } from "react-i18next";
@@ -25,7 +22,6 @@ function PageContent() {
   const { t } = useTranslation(LocaleNamespace.Transactions);
   const { setPageTitle } = useAppStore();
   const isMobile = useIsMobile();
-  const openDraftModal = useTransactionDraftStore((s) => s.openDraftModal);
   const [filterValue, setFilterValue] = useState("");
   const currentMonthBounds = getMonthBounds(new Date());
   const [selectedAccount, setSelectedAccount] = useState<string>("");
@@ -89,14 +85,6 @@ function PageContent() {
                 label={t("accountFilter")}
                 onChange={(key) => setSelectedAccount(key ?? "")}
               />
-              <Button
-                variant="primary"
-                className="bg-success text-success-foreground"
-                isIconOnly
-                onPress={() => openDraftModal()}
-              >
-                <HiOutlinePlusCircle className="text-xl" />
-              </Button>
             </div>
           </SearchToolbar>
         </div>
