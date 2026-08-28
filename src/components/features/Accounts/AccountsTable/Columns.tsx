@@ -44,6 +44,12 @@ const columnsMobile: TableColumn[] = [
   {
     key: "empty2",
   },
+  {
+    key: "empty3",
+  },
+  {
+    key: "empty4",
+  },
 ];
 
 const renderCellDesktop = ({
@@ -93,22 +99,22 @@ const renderCellMobile = ({
   if (key !== "account") return <></>;
 
   return (
-    <Table.Cell colSpan={3}>
-      <div className="flex flex-row items-end justify-start gap-2">
-        <span className="text-4xl">{item.icon}</span>
+    <Table.Cell colSpan={5}>
+      <div className="flex flex-row items-center justify-start gap-4">
+        <span className="text-2xl">{item.icon}</span>
         <div className="flex flex-col gap-1">
-          <span className="font-bold">{item.name}</span>
           <div className="flex gap-2 text-sm">
-            <TransactionTypeDecorator
-              size="sm"
-              color={item.balance >= 0 ? "success" : "danger"}
-            >
-              {formatCurrency(item.balance)}
-            </TransactionTypeDecorator>
-            <Chip variant="tertiary" size="sm" className="rounded-sm">
+            <span className="font-bold">{item.name}</span>
+            <Chip variant="soft" size="sm" className="rounded-sm">
               <span className="text-xs font-light">{t?.(item.type)}</span>
             </Chip>
           </div>
+          <TransactionTypeDecorator
+            size="sm"
+            color={item.balance >= 0 ? "success" : "danger"}
+          >
+            {formatCurrency(item.balance)}
+          </TransactionTypeDecorator>
         </div>
       </div>
     </Table.Cell>
