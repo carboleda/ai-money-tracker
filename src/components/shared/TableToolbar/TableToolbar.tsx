@@ -1,7 +1,6 @@
 import { ButtonGroup, Button, Typography, ButtonProps } from "@heroui/react";
 import { IoTrashBin } from "react-icons/io5";
 import { IconEdit } from "../icons";
-import clsx from "clsx";
 import { TFunction } from "i18next";
 import React, {
   createContext,
@@ -11,6 +10,7 @@ import React, {
   useMemo,
 } from "react";
 import { FaRegCircleCheck } from "react-icons/fa6";
+import { HiOutlinePlusCircle } from "react-icons/hi";
 
 interface TableToolbarProps extends PropsWithChildren {
   selectedItem?: { id: string } & Record<string, any>;
@@ -21,6 +21,7 @@ interface TableToolbarProps extends PropsWithChildren {
 
 interface ActionProps extends ButtonProps {
   onPress: (item: any) => void;
+  noItemRequired?: boolean;
   noSeparator?: boolean;
   labelKey?: string;
   icon?: ReactNode;
@@ -56,14 +57,7 @@ const TableToolbarRoot: React.FC<TableToolbarProps> = ({
   return (
     <TableToolbarContext.Provider value={contextValue}>
       <div className="flex flex-row gap-1 items-center py-2 justify-between">
-        <div
-          className={clsx({
-            visible: selectedItem,
-            invisible: !selectedItem,
-          })}
-        >
-          <ButtonGroup variant="ghost">{children}</ButtonGroup>
-        </div>
+        <ButtonGroup variant="ghost">{children}</ButtonGroup>
         <div className="pr-3">
           <Typography color="muted" type="body-xs">
             {t("rowCounter", { count: rowCount || 0 })}
@@ -76,25 +70,34 @@ const TableToolbarRoot: React.FC<TableToolbarProps> = ({
 
 const BaseAction: React.FC<ActionProps> = ({
   onPress: onAction,
+  noItemRequired = false,
   noSeparator = false,
   labelKey,
   icon,
+  isDisabled,
   ...buttonProps
 }) => {
   const { t, selectedItem, isMutating } = useTableToolbarContext();
   const label = labelKey && t(labelKey);
+
   return (
     <Button
       aria-label={label}
       variant="ghost"
-      isDisabled={isMutating}
-      {...(selectedItem && { onPress: () => onAction?.(selectedItem) })}
+      isDisabled={isMutating || (!noItemRequired && !selectedItem)}
+      onPress={() => onAction?.(selectedItem)}
       {...buttonProps}
     >
       {noSeparator || <ButtonGroup.Separator />}
       {icon}
       {label}
     </Button>
+  );
+};
+
+const NewAction: React.FC<ActionProps> = (props) => {
+  return (
+    <BaseAction icon={<HiOutlinePlusCircle />} labelKey={"new"} {...props} />
   );
 };
 
@@ -119,6 +122,7 @@ const ConfirmAction: React.FC<ActionProps> = (props) => {
 };
 
 export const TableToolbar = Object.assign(TableToolbarRoot, {
+  NewAction,
   EditAction,
   DeleteAction,
   ConfirmAction,

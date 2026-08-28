@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, Selection, Table } from "@heroui/react";
+import { Selection, Table } from "@heroui/react";
 import {
   Frequency,
   FrequencyGroup,
@@ -11,7 +11,6 @@ import { RecurringExpenseModalForm } from "../RecurringExpenseModalForm/Recurrin
 import { useEffect, useMemo, useState } from "react";
 import { useMutateRecurringExpenses } from "@/hooks/useMutateRecurringExpense";
 import { useRenderCell } from "./Columns";
-import { HiOutlinePlusCircle } from "react-icons/hi";
 import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
 import { useMeasuredTableHeight } from "@/hooks/useMeasuredTableHeight";
@@ -110,16 +109,6 @@ export const RecurringExpensesTable: React.FC<RecurringExpensesTableProps> = ({
           filterValue={filterValue}
           onSearchChange={setFilterValue}
         />
-        <div className="flex w-fit justify-end">
-          <Button
-            variant="primary"
-            className="bg-success text-success-foreground"
-            isIconOnly
-            onPress={() => setIsOpen(true)}
-          >
-            <HiOutlinePlusCircle className="text-lg" />
-          </Button>
-        </div>
       </div>
     </div>
   );
@@ -136,7 +125,12 @@ export const RecurringExpensesTable: React.FC<RecurringExpensesTableProps> = ({
           rowCount={recurringExpenses?.length}
           t={t}
         >
-          <TableToolbar.EditAction noSeparator onPress={onEdit} />
+          <TableToolbar.NewAction
+            noItemRequired
+            noSeparator
+            onPress={() => setIsOpen(true)}
+          />
+          <TableToolbar.EditAction onPress={onEdit} />
           <TableToolbar.DeleteAction
             onPress={(item: RecurringExpenseOutput) =>
               onDelete(item.id, item.description)

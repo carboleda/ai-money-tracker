@@ -1,13 +1,12 @@
 "use client";
 
-import { Button, Selection, Table } from "@heroui/react";
+import { Selection, Table } from "@heroui/react";
 import { Account } from "@/interfaces/account";
 import { TableSkeleton } from "@/components/shared/TableSkeleton";
 import { AccountModalForm } from "../AccountModalForm/AccountModalForm";
 import { useEffect, useMemo, useState } from "react";
 import { useMutateAccount } from "@/hooks/useMutateAccount";
 import { useRenderCell } from "./Columns";
-import { HiOutlinePlusCircle } from "react-icons/hi";
 import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
 import { useMeasuredTableHeight } from "@/hooks/useMeasuredTableHeight";
@@ -85,16 +84,6 @@ export const AccountsTable: React.FC<AccountsTableProps> = ({
           filterValue={filterValue}
           onSearchChange={setFilterValue}
         />
-        <div className="flex w-fit justify-end">
-          <Button
-            variant="primary"
-            className="bg-success text-success-foreground"
-            isIconOnly
-            onPress={() => setIsOpen(true)}
-          >
-            <HiOutlinePlusCircle className="text-lg" />
-          </Button>
-        </div>
       </div>
     </div>
   );
@@ -111,7 +100,12 @@ export const AccountsTable: React.FC<AccountsTableProps> = ({
           rowCount={filteredAccounts?.length}
           t={t}
         >
-          <TableToolbar.EditAction noSeparator onPress={onEdit} />
+          <TableToolbar.NewAction
+            noItemRequired
+            noSeparator
+            onPress={() => setIsOpen(true)}
+          />
+          <TableToolbar.EditAction onPress={onEdit} />
           <TableToolbar.DeleteAction
             onPress={(item: Account) => onDelete(item.id, item.name)}
           />
