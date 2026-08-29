@@ -158,19 +158,6 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
       >
         <ModalContainer>
           <Modal.Dialog className="rounded-t-3xl md:rounded-2xl">
-            {/*
-              `ModalDialogProps extends DialogPrimitiveProps` from
-              react-aria-components, whose `DialogProps` deliberately omits
-              keyboard/focus event props (see `GlobalDOMEvents` comment:
-              "Keyboard and focus events are supported directly on focusable
-              elements"). So the Cmd/Ctrl+Enter-to-save trap is attached to a
-              plain wrapping `<div>` instead of `<Modal.Dialog>` itself.
-            */}
-            {isMobile && (
-              <div className="w-full flex justify-center pt-2">
-                <span className="h-1.5 w-10 rounded-full bg-default" />
-              </div>
-            )}
             <Modal.Header>
               <Modal.Heading className="flex items-center justify-between w-full">
                 <span>{t("newTransaction")}</span>
