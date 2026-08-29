@@ -24,7 +24,13 @@ interface RecurringExpensesTableProps {
   recurringExpenses?: RecurringExpenseOutput[];
 }
 
-const SEPARATORS = new Set([FrequencyGroup.OTHERS]);
+const SEPARATORS = new Set([FrequencyGroup.MONTHLY, FrequencyGroup.OTHERS]);
+const monthlySeparator = {
+  id: FrequencyGroup.MONTHLY,
+} as unknown as RecurringExpenseOutput;
+const othersSeparator = {
+  id: FrequencyGroup.OTHERS,
+} as unknown as RecurringExpenseOutput;
 
 const groupByFrequency = (recurringExpenses: RecurringExpenseOutput[]) => {
   const { monthly = [], others = [] } = Object.groupBy(
@@ -35,13 +41,10 @@ const groupByFrequency = (recurringExpenses: RecurringExpenseOutput[]) => {
         : FrequencyGroup.OTHERS,
   );
 
-  const separator = {
-    id: FrequencyGroup.OTHERS,
-  } as unknown as RecurringExpenseOutput;
-
   return [
+    ...(monthly.length ? [monthlySeparator] : []),
     ...monthly,
-    ...(monthly.length && others.length ? [separator] : []),
+    ...(monthly.length && others.length ? [othersSeparator] : []),
     ...others,
   ];
 };

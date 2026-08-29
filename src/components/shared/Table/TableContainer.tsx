@@ -75,7 +75,7 @@ export const TableContainer = <T extends HasId>({
               return renderSeparator?.(
                 item.id,
                 columns.length,
-                t("separatorTitle"),
+                t(`separators.${item.id}`, item.id),
               );
             }
 

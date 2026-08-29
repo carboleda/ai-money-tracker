@@ -4,7 +4,10 @@
   "subtitle": "Tus gastos recurrentes",
   "emptyContent": "No hay gastos recurrentes para mostrar.",
   "biannualAndYearly": "Bianual y Anual",
-  "separatorTitle": "GASTOS BIANUALES Y ANUALES",
+  "separators": {
+    "monthly": "MENSUAL",
+    "others": "GASTOS BIANUALES Y ANUALES"
+  },
   "allFieldAreRequired": "Completa todos los campos requeridos. Por favor complétalos.",
   "recurringExpenses": "Gasto recurrente",
   "paymentLink": "Enlace de pago",

@@ -7,6 +7,7 @@ import { JSX } from "react";
 import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
 import { TransactionTypeDecorator } from "@/components/TransactionTypeDecorator";
+import { CustomIcon } from "@/components/shared/CustomIcon";
 
 const columnsDesktop: TableColumn[] = [
   {
@@ -61,7 +62,7 @@ const renderCellDesktop = ({
     case "icon":
       return (
         <Table.Cell>
-          <div className="text-2xl">{item.icon}</div>
+          <CustomIcon icon={item.icon} />
         </Table.Cell>
       );
     case "ref":
@@ -101,7 +102,7 @@ const renderCellMobile = ({
   return (
     <Table.Cell colSpan={5}>
       <div className="flex flex-row items-center justify-start gap-4">
-        <span className="text-2xl">{item.icon}</span>
+        <CustomIcon icon={item.icon} />
         <div className="flex flex-col gap-1">
           <div className="flex gap-2 text-sm">
             <span className="font-bold">{item.name}</span>
