@@ -41,6 +41,7 @@ export const TableContainer = <T extends HasId>({
       style={{ maxHeight: maxTableHeight }}
     >
       <Table.Content
+        className="table-fixed md:table-auto"
         aria-label={t(ariaLabelKey)}
         selectionMode="single"
         selectedKeys={selectedKeys}
