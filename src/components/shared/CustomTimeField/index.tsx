@@ -88,6 +88,7 @@ export const CustomTimeField: React.FC<CustomTimeFieldProps> = ({
   return (
     <TimeField
       id={id}
+      shouldForceLeadingZeros
       value={toTime(value)}
       onChange={(time) => {
         if (!time) return;
