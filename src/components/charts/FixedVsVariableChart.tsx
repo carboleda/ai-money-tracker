@@ -15,10 +15,8 @@ export const FixedVsVariableChart: React.FC<FixedVsVariableChartProps> = ({
   const { options } = useFixedVsVariableChart({ data });
 
   return (
-    <>
-      <div className="w-full p-5 rounded-xl shadow-md border-1 dark:shadow-none dark:border-0 dark:bg-zinc-900">
-        <AgCharts options={options} />
-      </div>
-    </>
+    <div className="w-full p-5 rounded-xl shadow-md border dark:shadow-none dark:border-0 dark:bg-zinc-900">
+      <AgCharts options={options} />
+    </div>
   );
 };

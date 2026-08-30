@@ -1,36 +1,36 @@
 "use client";
 
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableColumn,
-  TableHeader,
-  TableRow,
-} from "@heroui/table";
+import { Table } from "@heroui/react";
 import {
   Frequency,
   FrequencyGroup,
 } from "@/app/api/domain/recurring-expense/model/recurring-expense.model";
 import type { RecurringExpenseOutput } from "@/app/api/domain/recurring-expense/ports/outbound/get-recurring-expenses.port";
-import { TableSkeleton } from "@/components/shared/TableSkeleton";
-import { Button } from "@heroui/button";
-import { IconEdit } from "@/components/shared/icons";
+import { TableSkeleton } from "@/components/shared/Table/TableSkeleton";
 import { RecurringExpenseModalForm } from "../RecurringExpenseModalForm/RecurringExpenseModalForm";
 import { useMemo, useState } from "react";
-import { DeleteTableItemButton } from "@/components/DeleteTableItemButton";
 import { useMutateRecurringExpenses } from "@/hooks/useMutateRecurringExpense";
 import { useRenderCell } from "./Columns";
-import { HiOutlinePlusCircle } from "react-icons/hi";
 import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
-import { useTableHeight } from "@/hooks/useTableHeight";
 import { SearchToolbar } from "@/components/features/Transactions/SearchToolbar";
+import { useDeleteTableItem } from "@/hooks/useDeleteTableItem";
+import { TableToolbar } from "@/components/shared/Table/TableToolbar";
+import { useTableSelection } from "@/hooks/useTableSelection";
+import { TableContainer } from "@/components/shared/Table/TableContainer";
 
 interface RecurringExpensesTableProps {
   isLoading: boolean;
   recurringExpenses?: RecurringExpenseOutput[];
 }
+
+const SEPARATORS = new Set([FrequencyGroup.MONTHLY, FrequencyGroup.OTHERS]);
+const monthlySeparator = {
+  id: FrequencyGroup.MONTHLY,
+} as unknown as RecurringExpenseOutput;
+const othersSeparator = {
+  id: FrequencyGroup.OTHERS,
+} as unknown as RecurringExpenseOutput;
 
 const groupByFrequency = (recurringExpenses: RecurringExpenseOutput[]) => {
   const { monthly = [], others = [] } = Object.groupBy(
@@ -38,16 +38,13 @@ const groupByFrequency = (recurringExpenses: RecurringExpenseOutput[]) => {
     (expense) =>
       expense.frequency == Frequency.MONTHLY
         ? FrequencyGroup.MONTHLY
-        : FrequencyGroup.OTHERS
+        : FrequencyGroup.OTHERS,
   );
 
-  const separator = {
-    id: FrequencyGroup.OTHERS,
-  } as unknown as RecurringExpenseOutput;
-
   return [
+    ...(monthly.length ? [monthlySeparator] : []),
     ...monthly,
-    ...(monthly.length && others.length ? [separator] : []),
+    ...(monthly.length && others.length ? [othersSeparator] : []),
     ...others,
   ];
 };
@@ -57,12 +54,11 @@ export const RecurringExpensesTable: React.FC<RecurringExpensesTableProps> = ({
   recurringExpenses,
 }) => {
   const { t } = useTranslation(LocaleNamespace.RecurringExpenses);
-  const [selectedItem, setSelectedItem] = useState<RecurringExpenseOutput>();
   const [isOpen, setIsOpen] = useState(false);
   const [filterValue, setFilterValue] = useState("");
   const { isMutating, deleteConfig } = useMutateRecurringExpenses();
-  const { columns, renderCell, rowHeight, renderSeparator } = useRenderCell();
-  const { maxTableHeight } = useTableHeight();
+  const { columns, renderCell, renderSeparator } = useRenderCell();
+  const { onDelete } = useDeleteTableItem({ onConfirmDelete: deleteConfig });
 
   const transactions = useMemo(() => {
     if (!recurringExpenses) return recurringExpenses;
@@ -75,15 +71,25 @@ export const RecurringExpensesTable: React.FC<RecurringExpensesTableProps> = ({
           expense.description
             .toLowerCase()
             .includes(filterValue.toLowerCase()) ||
-          expense.category.name.toLowerCase().includes(filterValue.toLowerCase())
+          expense.category.name
+            .toLowerCase()
+            .includes(filterValue.toLowerCase()),
       );
     }
 
     return groupByFrequency(filteredRecurringExpenses);
   }, [recurringExpenses, filterValue]);
 
+  const {
+    selectedItem,
+    setSelectedItem,
+    selectedKeys,
+    onSelectionChange,
+    clearSelection,
+  } = useTableSelection({ items: transactions, isMutating });
+
   const onDialogDismissed = () => {
-    setSelectedItem(undefined);
+    clearSelection();
     setIsOpen(false);
   };
 
@@ -93,23 +99,12 @@ export const RecurringExpensesTable: React.FC<RecurringExpensesTableProps> = ({
   };
 
   const renderTopContent = () => (
-    <div className="flex flex-col gap-4">
+    <div className="flex w-full flex-col gap-4">
       <div className="flex justify-between gap-3 items-center w-full">
         <SearchToolbar
           filterValue={filterValue}
           onSearchChange={setFilterValue}
         />
-        <div className="flex w-fit justify-end">
-          <Button
-            color="success"
-            radius="sm"
-            variant="solid"
-            isIconOnly
-            onPress={() => setIsOpen(true)}
-          >
-            <HiOutlinePlusCircle className="text-lg" />
-          </Button>
-        </div>
       </div>
     </div>
   );
@@ -118,72 +113,38 @@ export const RecurringExpensesTable: React.FC<RecurringExpensesTableProps> = ({
 
   return (
     <>
-      <Table
-        isStriped
-        isCompact
-        isVirtualized
-        maxTableHeight={maxTableHeight}
-        rowHeight={rowHeight}
-        aria-label={t("recurringExpenses")}
-        disabledKeys={[FrequencyGroup.OTHERS]}
-        topContentPlacement="outside"
-        topContent={renderTopContent()}
-      >
-        <TableHeader columns={columns}>
-          {(column) => (
-            <TableColumn key={column.key} className={`${column.className}`}>
-              {t(column.key)}
-            </TableColumn>
-          )}
-        </TableHeader>
-        <TableBody items={transactions} emptyContent={t("emptyContent")}>
-          {(item) => {
-            if (item.id === FrequencyGroup.OTHERS) {
-              return renderSeparator(
-                item.id,
-                columns.length,
-                t("separatorTitle")
-              );
+      {renderTopContent()}
+      <Table>
+        <TableToolbar
+          selectedItem={selectedItem}
+          isMutating={isMutating}
+          rowCount={recurringExpenses?.length}
+          t={t}
+        >
+          <TableToolbar.NewAction
+            noItemRequired
+            noSeparator
+            onPress={() => setIsOpen(true)}
+          />
+          <TableToolbar.EditAction onPress={onEdit} />
+          <TableToolbar.DeleteAction
+            onPress={(item: RecurringExpenseOutput) =>
+              onDelete(item.id, item.description)
             }
-
-            return (
-              <TableRow key={item.id}>
-                {(columnKey) => {
-                  if (columnKey === "actions") {
-                    return (
-                      <TableCell>
-                        <div className="text-center flex flex-row justify-center">
-                          <Button
-                            isIconOnly
-                            color="warning"
-                            variant="light"
-                            className="self-center"
-                            aria-label="Edit"
-                            onPress={() => onEdit(item)}
-                          >
-                            <IconEdit />
-                          </Button>
-                          <DeleteTableItemButton
-                            itemId={item.id}
-                            isDisabled={isMutating}
-                            deleteTableItem={deleteConfig}
-                          />
-                        </div>
-                      </TableCell>
-                    );
-                  }
-
-                  return renderCell({
-                    key: columnKey,
-                    item,
-                    onEdit,
-                    onDelete: deleteConfig,
-                  });
-                }}
-              </TableRow>
-            );
-          }}
-        </TableBody>
+          />
+        </TableToolbar>
+        <TableContainer
+          t={t}
+          ariaLabelKey="recurringExpenses"
+          disabledKeys={SEPARATORS}
+          separators={SEPARATORS}
+          renderCell={renderCell}
+          renderSeparator={renderSeparator}
+          columns={columns}
+          items={transactions}
+          onSelectionChange={onSelectionChange}
+          selectedKeys={selectedKeys}
+        />
       </Table>
       <RecurringExpenseModalForm
         item={selectedItem}

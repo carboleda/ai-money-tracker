@@ -1,13 +1,16 @@
 import { useEffect, useState } from "react";
 
+const FALLBACK_HEIGHT_PX = 300;
+
 export const useTableHeight = () => {
-  const [maxTableHeight, setMaxTableHeight] = useState(300);
+  const [maxTableHeight, setMaxTableHeight] = useState(FALLBACK_HEIGHT_PX);
 
   useEffect(() => {
     const updateTableHeight = () => {
-      // const availableHeight = window.innerHeight - 220; // Adjust 220px as needed for margins, headers, etc.
-      const availableHeight = window.innerHeight - 170; // Adjust 220px as needed for margins, headers, etc.
-      setMaxTableHeight(availableHeight > 0 ? availableHeight : 300);
+      const availableHeight = window.innerHeight - 170;
+      setMaxTableHeight(
+        availableHeight > 0 ? availableHeight : FALLBACK_HEIGHT_PX
+      );
     };
 
     updateTableHeight();

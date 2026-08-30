@@ -84,7 +84,6 @@ function PageContent() {
       <div className="flex flex-row justify-items-stretch gap-2 w-full md:w-fit">
         <CustomDateRangePicker
           label={t("dateRangeFilter")}
-          variant="bordered"
           granularity="day"
           isRequired
           showLabel

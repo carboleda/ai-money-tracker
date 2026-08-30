@@ -2,14 +2,13 @@
 
 import "@/firebase/client/";
 import React, { useTransition } from "react";
-import { Button } from "@heroui/button";
+import { Button } from "@heroui/react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { auth, provider } from "@/firebase/client/auth";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { FcGoogle } from "react-icons/fc";
 import { FirebaseError } from "firebase/app";
-import { Code } from "@heroui/code";
-import { Image } from "@heroui/image";
 import { siteConfig } from "@/config/site";
 import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
@@ -85,7 +84,12 @@ function LoginPage() {
     <div className="flex flex-col h-full justify-center items-center">
       <div className="flex flex-col items-center w-full max-w-md p-8 dark:bg-zinc-900 shadow-lg rounded-lg">
         <div className="flex justify-center items-center gap-3 pb-4">
-          <Image width={40} alt="App logo" src={siteConfig.icons.logo} />
+          <Image
+            width={40}
+            height={40}
+            alt="App logo"
+            src={siteConfig.icons.logo}
+          />
           <h1 className="text-2xl font-bold text-center">{t("title")}</h1>
         </div>
         <h4 className="text-zinc-400">{t("subtitle")}</h4>
@@ -93,10 +97,9 @@ function LoginPage() {
         <div className="flex flex-col gap-5 justify-center items-center mt-20">
           <Button
             onPress={onGoogleLogin}
-            isLoading={isLoading}
-            disabled={isLoading}
-            variant="flat"
-            color="primary"
+            isPending={isLoading}
+            isDisabled={isLoading}
+            variant="tertiary"
             className="w-fit"
           >
             {!isLoading && <FcGoogle size={20} />}
@@ -104,9 +107,9 @@ function LoginPage() {
           </Button>
 
           {errorMessage && (
-            <Code color="danger" className="text-center">
+            <code className="rounded-md bg-danger/10 px-2 py-1 text-center text-sm text-danger">
               {errorMessage}
-            </Code>
+            </code>
           )}
         </div>
       </div>

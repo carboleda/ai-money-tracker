@@ -5,14 +5,56 @@
   "descriptionIsInvalid": "Include the {{missinFields, list}} in your prompt!",
   "bankAndAccountAreRquired": "Back account and Picture are requited. Please fill them out.",
   "requiredFieldsMissing": "There are missing required fields. Please fill them out.",
-  "newTransaction": "New Transaction",
+  "newTransaction": "What is new with your money?",
   "updateTransaction": "Update transaction",
   "freeTextMode": "Free text mode",
   "cameraMode": "Camera mode",
-  "transactionDate": "Transaction date",
+  "transactionDate": "Date",
+  "transactionTime": "Time",
   "sourceAccount": "Source account",
   "destinationAccount": "Destination account",
   "notes": "Notes",
   "transactionCreated": "Transaction created!",
-  "transactionUpdated": "Transaction updated!"
+  "transactionUpdated": "Transaction updated!",
+  "aiDraft": {
+    "badge": "AI TRANSACTION PREVIEW",
+    "save": "Save",
+    "escToClose": "Esc to close",
+    "descriptionPlaceholder": "Add a description...",
+    "promptPlaceholder": "Type or snap a receipt... e.g. \"45 groceries at Whole Foods with Chase\"",
+    "cameraTrigger": "Scan a receipt",
+    "parsing": "Reading your transaction...",
+    "offlineBanner": "You are currently offline. Transaction creation is disabled until connection is restored.",
+    "voiceTrigger": "Hold to speak transaction details",
+    "voiceClickTrigger": "Click to speak transaction details",
+    "voiceStopTrigger": "Click to stop recording",
+    "voiceListening": "Listening...",
+    "voiceListeningDesktop": "Listening...",
+    "voiceReleaseToFinish": "Release to finish",
+    "voiceClickToStop": "Click to stop",
+    "micPermissionDenied": "Microphone access was denied. Please allow microphone permissions in your browser settings to use voice input.",
+    "submitPrompt": "Parse transaction details",
+    "type": {
+      "label": "Transaction type",
+      "expense": "Expense",
+      "income": "Income",
+      "transfer": "Transfer"
+    },
+    "category": {
+      "label": "Category",
+      "select": "Select category",
+      "search": "Search categories..."
+    },
+    "account": {
+      "select": "Select account",
+      "from": "From",
+      "to": "To"
+    },
+    "dateTime": {
+      "today": "Today",
+      "yesterday": "Yesterday",
+      "customDate": "Custom date",
+      "time": "Time"
+    }
+  }
 }

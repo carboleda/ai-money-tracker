@@ -1,17 +1,18 @@
 import React, { useEffect, useState } from "react";
 import {
+  Button,
+  Chip,
+  FieldError,
+  Input,
+  InputGroup,
+  Label,
   Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-} from "@heroui/modal";
-import { Input, Textarea } from "@heroui/input";
-import { Button } from "@heroui/button";
-import { DatePicker } from "@heroui/date-picker";
+  Switch,
+  TextArea,
+  TextField,
+} from "@heroui/react";
 import {
   parseAbsoluteToLocal,
-  ZonedDateTime,
   startOfMonth,
   endOfMonth,
   startOfYear,
@@ -21,6 +22,7 @@ import { Frequency } from "@/app/api/domain/recurring-expense/model/recurring-ex
 import type { RecurringExpenseOutput } from "@/app/api/domain/recurring-expense/ports/outbound/get-recurring-expenses.port";
 import type { CreateRecurringExpenseInput } from "@/app/api/domain/recurring-expense/ports/inbound/create-recurring-expense.port";
 import { FrequencyDropdown } from "@/components/FrequencyDropdown";
+import { CustomDateField } from "@/components/shared/CustomDateField";
 import { useMutateRecurringExpenses } from "@/hooks/useMutateRecurringExpense";
 import { IconComment, IconLink } from "@/components/shared/icons";
 import { CategoriesAutocomplete } from "@/components/CategoriesAutocomplete";
@@ -29,9 +31,9 @@ import { Env } from "@/config/env";
 import { MaskedCurrencyInput } from "@/components/shared/MaskedCurrencyInput";
 import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
-import { Switch } from "@heroui/switch";
 import { HiMinusSm, HiPlusSm } from "react-icons/hi";
 import { useToast } from "@/hooks/useToast";
+import { ModalContainer } from "@/components/shared/ModalContainer";
 
 const fixedMonth = parseAbsoluteToLocal(
   new Date(Env.NEXT_PUBLIC_FIXED_MONTH).toISOString()
@@ -60,11 +62,11 @@ export const RecurringExpenseModalForm: React.FC<
     Frequency.MONTHLY
   );
   const [amountInput, setAmountInput] = useState<number>();
-  const [dueDateInput, setDueDateInput] = useState<ZonedDateTime>();
+  const [dueDateInput, setDueDateInput] = useState<Date>();
   const [disabledInput, setDisabledInput] = useState<boolean>(false);
   const [dueDateMinMax, setDueDateMinMax] = useState<{
-    min: ZonedDateTime;
-    max: ZonedDateTime;
+    min: Date;
+    max: Date;
   }>();
 
   const areButtonsDisabled = isMutating || validationError !== "";
@@ -74,9 +76,7 @@ export const RecurringExpenseModalForm: React.FC<
       setDescriptionInput(item.description);
       setTransactonCategoryInput(item.category.ref);
       setFrequencyInput(item.frequency);
-      setDueDateInput(
-        item.dueDate ? parseAbsoluteToLocal(item.dueDate) : undefined
-      );
+      setDueDateInput(item.dueDate ? new Date(item.dueDate) : undefined);
       setDisabledInput(item.disabled);
       setAmountInput(item.amount);
       setPaymentLinkInput(item.paymentLink);
@@ -88,11 +88,11 @@ export const RecurringExpenseModalForm: React.FC<
     if (frequencyInput === Frequency.MONTHLY) {
       const min = startOfMonth(fixedMonth);
       const max = endOfMonth(fixedMonth);
-      setDueDateMinMax({ min, max });
+      setDueDateMinMax({ min: min.toDate(), max: max.toDate() });
     } else {
       const min = startOfYear(fixedMonth);
       const max = endOfYear(fixedMonth);
-      setDueDateMinMax({ min, max });
+      setDueDateMinMax({ min: min.toDate(), max: max.toDate() });
     }
   }, [frequencyInput]);
 
@@ -131,7 +131,7 @@ export const RecurringExpenseModalForm: React.FC<
     const payload: CreateRecurringExpenseInput = {
       description: descriptionInput,
       frequency: frequencyInput,
-      dueDate: dueDateInput.toDate(),
+      dueDate: dueDateInput,
       disabled: disabledInput,
       amount: amountInput!,
       category: transactonCategoryInput,
@@ -155,36 +155,43 @@ export const RecurringExpenseModalForm: React.FC<
   };
 
   return (
-    <Modal
-      placement="top-center"
-      backdrop="blur"
-      isOpen={isOpen}
-      onOpenChange={onOpenChangeHandler}
-      isDismissable={false}
-    >
-      <ModalContent>
-        {(onClose) => (
-          <>
-            <ModalHeader className="flex flex-row justify-between pr-6 mt-4">
-              <span>{t("recurringExpenses")}</span>
+    <Modal>
+      <Modal.Backdrop
+        variant="blur"
+        isOpen={isOpen}
+        onOpenChange={onOpenChangeHandler}
+        isDismissable={false}
+      >
+        <ModalContainer>
+          <Modal.Dialog>
+            <Modal.Header className="flex flex-row justify-between mb-4">
+              <Modal.Heading>{t("recurringExpenses")}</Modal.Heading>
               <Switch
                 aria-label={t("disabled")}
                 size="sm"
-                endContent={<HiMinusSm />}
-                startContent={<HiPlusSm />}
                 isSelected={!disabledInput}
-                onValueChange={(v) => setDisabledInput(!v)}
-              />
-            </ModalHeader>
-            <ModalBody>
-              <Input
+                onChange={(v) => setDisabledInput(!v)}
+              >
+                <Switch.Content>
+                  <Switch.Control className="flex items-center gap-2">
+                    <HiPlusSm />
+                    <Switch.Thumb />
+                    <HiMinusSm />
+                  </Switch.Control>
+                </Switch.Content>
+              </Switch>
+            </Modal.Header>
+            <Modal.Body className="flex flex-col gap-4">
+              <TextField
                 autoFocus
-                label={t("description")}
-                variant="bordered"
                 isRequired
                 value={descriptionInput}
-                onValueChange={setDescriptionInput}
-              />
+                onChange={setDescriptionInput}
+              >
+                <Label>{t("description")}</Label>
+                <Input variant="secondary" />
+                <FieldError />
+              </TextField>
               <div className="flex gap-2">
                 <CategoriesAutocomplete
                   label={t("category")}
@@ -195,7 +202,7 @@ export const RecurringExpenseModalForm: React.FC<
 
                 <MaskedCurrencyInput
                   label={t("amount")}
-                  variant="bordered"
+                  variant="secondary"
                   type="text"
                   isRequired
                   value={amountInput?.toString()}
@@ -209,54 +216,70 @@ export const RecurringExpenseModalForm: React.FC<
                     onChange={setFrequencyInput}
                   />
                 </div>
-                <DatePicker
+                <CustomDateField
                   label={t("dueDate")}
-                  variant="bordered"
-                  granularity="day"
+                  isRequired
+                  value={dueDateInput ?? dueDateMinMax?.min ?? new Date()}
+                  onChange={setDueDateInput}
                   minValue={dueDateMinMax?.min}
                   maxValue={dueDateMinMax?.max}
-                  value={dueDateInput}
-                  onChange={(v) => setDueDateInput(v!)}
-                  isRequired
                 />
               </div>
-              <Input
-                label={t("paymentLink")}
-                variant="bordered"
-                startContent={<IconLink />}
+              <TextField
                 value={paymentLinkInput}
-                onValueChange={setPaymentLinkInput}
-              />
-              <Textarea
-                label={t("notes")}
-                placeholder={t("notesPlaceholder")}
-                variant="bordered"
-                startContent={<IconComment size={20} />}
-                value={notesInput}
-                onValueChange={setNotesInput}
-              />
-            </ModalBody>
-            <ModalFooter>
+                onChange={setPaymentLinkInput}
+              >
+                <Label>{t("paymentLink")}</Label>
+                <InputGroup variant="secondary">
+                  <InputGroup.Prefix>
+                    <IconLink />
+                  </InputGroup.Prefix>
+                  <InputGroup.Input />
+                </InputGroup>
+              </TextField>
+              <TextField value={notesInput} onChange={setNotesInput}>
+                <Label>{t("notes")}</Label>
+                <InputGroup>
+                  <InputGroup.Prefix>
+                    <IconComment size={20} />
+                  </InputGroup.Prefix>
+                  <TextArea
+                    variant="secondary"
+                    className="w-full"
+                    placeholder={t("notesPlaceholder")}
+                  />
+                </InputGroup>
+              </TextField>
+              {validationError && (
+                <Chip
+                  variant="soft"
+                  color="danger"
+                  className="text-wrap max-w-full w-full h-fit p-2 rounded-sm"
+                >
+                  {validationError}
+                </Chip>
+              )}
+            </Modal.Body>
+            <Modal.Footer>
               <Button
-                color="danger"
-                variant="flat"
-                disabled={areButtonsDisabled}
-                onPress={onClose}
+                variant="danger-soft"
+                isDisabled={areButtonsDisabled}
+                onPress={() => onOpenChangeHandler(false)}
               >
                 {t("cancel")}
               </Button>
               <Button
-                color="primary"
-                isLoading={isMutating}
-                disabled={areButtonsDisabled}
+                variant="primary"
+                isPending={isMutating}
+                isDisabled={areButtonsDisabled}
                 onPress={onSave}
               >
                 {t("save")}
               </Button>
-            </ModalFooter>
-          </>
-        )}
-      </ModalContent>
+            </Modal.Footer>
+          </Modal.Dialog>
+        </ModalContainer>
+      </Modal.Backdrop>
     </Modal>
   );
 };

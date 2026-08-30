@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Autocomplete, AutocompleteItem } from "@heroui/autocomplete";
+import { ComboBox, Input, Label, ListBox } from "@heroui/react";
 import { useCategoryStore } from "@/stores/useCategoryStore";
 import { CategoryModel } from "@/app/api/domain/category/model/category.model";
 
@@ -23,19 +23,33 @@ export const CategoriesAutocomplete: React.FC<CategoriesAutocompleteProps> = ({
   const { categories } = useCategoryStore();
 
   return (
-    <Autocomplete
-      label={label}
-      variant="bordered"
+    <ComboBox
       isRequired={isRequired}
       className={className}
+      fullWidth
+      variant="secondary"
       selectedKey={value ?? null}
-      onSelectionChange={(v) => onChange(v as CategoryModel["ref"])}
+      onSelectionChange={(key) => onChange(key as CategoryModel["ref"])}
     >
-      {categories.map((category) => (
-        <AutocompleteItem key={category.ref}>
-          {`${category.icon} ${category.name}`}
-        </AutocompleteItem>
-      ))}
-    </Autocomplete>
+      <Label>{label}</Label>
+      <ComboBox.InputGroup>
+        <Input fullWidth />
+        <ComboBox.Trigger />
+      </ComboBox.InputGroup>
+      <ComboBox.Popover>
+        <ListBox>
+          {categories.map((category) => (
+            <ListBox.Item
+              key={category.ref}
+              id={category.ref}
+              textValue={`${category.icon} ${category.name}`}
+            >
+              {`${category.icon} ${category.name}`}
+              <ListBox.ItemIndicator />
+            </ListBox.Item>
+          ))}
+        </ListBox>
+      </ComboBox.Popover>
+    </ComboBox>
   );
 };

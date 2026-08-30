@@ -1,24 +1,17 @@
 import React, { useEffect, useState } from "react";
-import {
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-} from "@heroui/modal";
-import { Button } from "@heroui/button";
-import { DatePicker } from "@heroui/date-picker";
-import { getLocalTimeZone, now, ZonedDateTime } from "@internationalized/date";
+import { Button, Chip, Modal } from "@heroui/react";
 import { BankAccounDropdown } from "@/components/BankAccounsDropdown";
 import { useMutateTransaction } from "@/hooks/useMutateTransaction";
+import { CustomDateField } from "@/components/shared/CustomDateField";
+import { CustomTimeField } from "@/components/shared/CustomTimeField";
 import { MaskedCurrencyInput } from "@/components/shared/MaskedCurrencyInput";
-import { Chip } from "@heroui/chip";
 import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
 import { useToast } from "@/hooks/useToast";
 import { TransactionStatus } from "@/app/api/domain/transaction/model/transaction.model";
 import { TransactionOutput } from "@/app/api/domain/transaction/ports/outbound/filter-transactions.port";
 import { UpdateTransactionInput } from "@/app/api/domain/transaction/ports/inbound/update-transaction.port";
+import { ModalContainer } from "@/components/shared/ModalContainer";
 
 interface CompleteTransactionModalFormProps {
   item?: TransactionOutput;
@@ -34,47 +27,36 @@ export const CompleteTransactionModalForm: React.FC<
   const { isMutating, updateTransaction } = useMutateTransaction();
   const [validationError, setValidationError] = useState<string>("");
   const [selectedAccount, setSelectedAccount] = useState<string>("");
-  const [paymentDateInput, setPaymentDateInput] =
-    useState<ZonedDateTime | null>();
+  const [createdAtInput, setCreatedAtInput] = useState<Date>();
   const [amountInput, setAmountInput] = useState<number>();
 
   const areButtonsDisabled = isMutating || validationError !== "";
 
   useEffect(() => {
-    setPaymentDateInput(now(getLocalTimeZone()));
+    setCreatedAtInput(new Date());
     setAmountInput(item?.amount);
   }, [item]);
 
-  const onOpenChangeHandler = (_open: boolean) => {
+  const onOpenChangeHandler = () => {
     onDismiss();
     clearInputs();
   };
 
   const clearInputs = () => {
     setSelectedAccount("");
-    setPaymentDateInput(undefined);
+    setCreatedAtInput(undefined);
     setAmountInput(0);
   };
 
   const clearError = () => setValidationError("");
 
   const onSave = () => {
-    if (selectedAccount === "" || !paymentDateInput || amountInput === 0) {
+    if (selectedAccount === "" || !createdAtInput || amountInput === 0) {
       setValidationError(t("allFieldAreRequired"));
       return;
     }
 
     clearError();
-
-    const now = new Date();
-    const createdAt = paymentDateInput
-      .set({
-        hour: now.getHours(),
-        minute: now.getMinutes(),
-        second: now.getSeconds(),
-      })
-      .toDate()
-      .toISOString();
 
     const payload: UpdateTransactionInput = {
       ...item!,
@@ -82,7 +64,7 @@ export const CompleteTransactionModalForm: React.FC<
       sourceAccount: selectedAccount,
       destinationAccount: item?.destinationAccount?.ref || "",
       amount: amountInput!,
-      createdAt,
+      createdAt: createdAtInput.toISOString(),
       status: TransactionStatus.COMPLETE,
     };
 
@@ -98,80 +80,87 @@ export const CompleteTransactionModalForm: React.FC<
   };
 
   return (
-    <Modal
-      placement="top-center"
-      backdrop="blur"
-      isOpen={isOpen}
-      onOpenChange={onOpenChangeHandler}
-      isDismissable={false}
-    >
-      <ModalContent>
-        {(onClose) => (
-          <>
-            <ModalHeader className="flex flex-col gap-1">
-              <span>{t("completeTransaction")}</span>
-              <span className="text-sm font-normal subtitle">
-                {item?.description}
-              </span>
-            </ModalHeader>
-            <ModalBody>
+    <Modal>
+      <Modal.Backdrop
+        variant="blur"
+        isOpen={isOpen}
+        onOpenChange={onOpenChangeHandler}
+        isDismissable={false}
+      >
+        <ModalContainer>
+          <Modal.Dialog>
+            <Modal.Header className="mb-4">
+              <Modal.Heading className="flex flex-col gap-1">
+                <span>{t("completeTransaction")}</span>
+                <span className="text-sm font-normal subtitle">
+                  {item?.description}
+                </span>
+              </Modal.Heading>
+            </Modal.Header>
+            <Modal.Body className="flex flex-col gap-4">
               <div className="self-start w-full">
                 <BankAccounDropdown
                   label={t("bankAccount")}
                   className="w-full"
                   showLabel
                   isRequired
-                  onChange={setSelectedAccount}
+                  onChange={(key) => setSelectedAccount(key ?? "")}
                 />
               </div>
               <MaskedCurrencyInput
                 label={t("amount")}
-                variant="bordered"
+                variant="secondary"
                 type="text"
                 isRequired
                 value={amountInput?.toString()}
                 onValueChange={(v) => setAmountInput(v.floatValue)}
               />
-              <DatePicker
-                label={t("paidOn")}
-                variant="bordered"
-                granularity="day"
-                isRequired
-                value={paymentDateInput}
-                onChange={setPaymentDateInput}
-              />
+              <div className="flex gap-2">
+                <CustomDateField
+                  label={t("paidOn")}
+                  isRequired
+                  value={createdAtInput ?? new Date()}
+                  onChange={setCreatedAtInput}
+                  className="w-full"
+                />
+                <CustomTimeField
+                  label={t("paidOnTime")}
+                  isRequired
+                  value={createdAtInput ?? new Date()}
+                  onChange={setCreatedAtInput}
+                  className="w-full"
+                />
+              </div>
               {validationError && (
                 <Chip
-                  variant="flat"
+                  variant="soft"
                   color="danger"
-                  radius="sm"
-                  className="text-wrap max-w-full w-full h-fit p-2"
+                  className="text-wrap max-w-full w-full h-fit p-2 rounded-sm"
                 >
                   {validationError}
                 </Chip>
               )}
-            </ModalBody>
-            <ModalFooter>
+            </Modal.Body>
+            <Modal.Footer>
               <Button
-                color="danger"
-                variant="flat"
-                disabled={areButtonsDisabled}
-                onPress={onClose}
+                variant="danger-soft"
+                isDisabled={areButtonsDisabled}
+                onPress={onOpenChangeHandler}
               >
                 {t("cancel")}
               </Button>
               <Button
-                color="success"
-                isLoading={isMutating}
-                disabled={areButtonsDisabled}
+                variant="primary"
+                isPending={isMutating}
+                isDisabled={areButtonsDisabled}
                 onPress={onSave}
               >
                 {t("completeTransationButton")}
               </Button>
-            </ModalFooter>
-          </>
-        )}
-      </ModalContent>
+            </Modal.Footer>
+          </Modal.Dialog>
+        </ModalContainer>
+      </Modal.Backdrop>
     </Modal>
   );
 };

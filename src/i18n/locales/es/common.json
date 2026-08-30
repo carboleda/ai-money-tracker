@@ -17,6 +17,7 @@
   "actions": "Acciones",
   "edit": "Editar",
   "confirm": "Confirmar",
+  "new": "Nuevo",
   "delete": "Eliminar",
   "dateRangeFilter": "Fecha dentro de",
   "accountFilter": "Filtrar por cuenta",
@@ -41,17 +42,23 @@
   "monthly": "Mensual",
   "biannual": "Semestral",
   "yearly": "Anual",
+  "rowCounter_one": "{{count}} registros",
+  "rowCounter_other": "{{count}} registros",
+  "doNotAskAgain": "No preguntar de nuevo",
+  "yes": "Si",
+  "no": "No",
   "notificationsRequest": {
     "title": "¡Zolvent quiere mantenerte informado! 🔔",
     "description": "Para proporcionarte alertas y recordatorios en tiempo real sobre tus gastos, ingresos y metas financieras, necesitamos tu permiso para enviar notificaciones push. Esto te ayudará a:",
     "reminderOverduePayments": "Recibir recordatorios de pagos vencidos.",
     "reminderBillsPayments": "Recibir recordatorios oportunos para facturas y pagos.",
     "neverMissPayment": "¡Nunca más pierdas un pago o una oportunidad de ahorrar!",
-    "doNotAskAgain": "No preguntar de nuevo"
+    "requestDenied": "Debes aceptar la solicitud para recibir notificaciones."
   },
   "deleteConfirmation": {
     "title": "Confirmar eliminación",
     "description": "Esta acción no se puede deshacer.",
+    "descriptionWithLabel": "Quieres eliminar \"{{label}}\"? Esta acción no se puede deshacer.",
     "confirmButton": "Sí, eliminar!"
   },
   "offline": {

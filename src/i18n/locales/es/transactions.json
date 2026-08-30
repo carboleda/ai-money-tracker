@@ -5,14 +5,56 @@
   "descriptionIsInvalid": "¡Incluye los {{missinFields, list}} en tu mensaje!",
   "bankAndAccountAreRquired": "La cuenta bancaria y la imagen son obligatorias. Por favor complétalas.",
   "requiredFieldsMissing": "Faltan campos obligatorios. Por favor complétalos.",
-  "newTransaction": "Nueva Transacción",
+  "newTransaction": "Que hay de nuevo con tu dinero?",
   "updateTransaction": "Actualizar transacción",
   "freeTextMode": "Modo texto libre",
   "cameraMode": "Modo cámara",
-  "transactionDate": "Fecha de la transacción",
+  "transactionDate": "Fecha",
+  "transactionTime": "Hora",
   "sourceAccount": "Cuenta de origen",
   "destinationAccount": "Cuenta de destino",
   "notes": "Notas",
   "transactionCreated": "¡Transacción creada!",
-  "transactionUpdated": "¡Transacción actualizada!"
+  "transactionUpdated": "¡Transacción actualizada!",
+  "aiDraft": {
+    "badge": "PREVISUALIZACIÓN DE TRANSACCIÓN CON IA",
+    "save": "Guardar",
+    "escToClose": "Esc para cerrar",
+    "descriptionPlaceholder": "Agrega una descripción...",
+    "promptPlaceholder": "Escribe o toma una foto del recibo... ej. \"45 en el mercado con Chase\"",
+    "cameraTrigger": "Escanear recibo",
+    "parsing": "Leyendo tu transacción...",
+    "offlineBanner": "Estás sin conexión. La creación de transacciones está deshabilitada hasta que se restablezca la conexión.",
+    "voiceTrigger": "Mantén presionado para hablar",
+    "voiceClickTrigger": "Haz clic para hablar los detalles de la transacción",
+    "voiceStopTrigger": "Haz clic para detener la grabación",
+    "voiceListening": "Escuchando... Mantén presionado mientras hablas",
+    "voiceListeningDesktop": "Escuchando...",
+    "voiceReleaseToFinish": "Suelta para terminar",
+    "voiceClickToStop": "Haz clic para detener",
+    "micPermissionDenied": "El acceso al micrófono fue denegado. Habilita los permisos de micrófono en la configuración de tu navegador para usar la entrada por voz.",
+    "submitPrompt": "Procesar detalles de la transacción",
+    "type": {
+      "label": "Tipo de transacción",
+      "expense": "Gasto",
+      "income": "Ingreso",
+      "transfer": "Transferencia"
+    },
+    "category": {
+      "label": "Categoría",
+      "select": "Selecciona categoría",
+      "search": "Buscar categorías..."
+    },
+    "account": {
+      "select": "Selecciona cuenta",
+      "from": "De",
+      "to": "A"
+    },
+    "dateTime": {
+      "today": "Hoy",
+      "yesterday": "Ayer",
+      "customDate": "Fecha personalizada",
+      "time": "Hora"
+    }
+  }
 }

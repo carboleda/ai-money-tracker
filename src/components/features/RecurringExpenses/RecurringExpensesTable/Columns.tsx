@@ -1,20 +1,18 @@
 import { formatCurrency, formatFrequency } from "@/config/utils";
-import { Chip } from "@heroui/chip";
-import { Button } from "@heroui/button";
-import { TableCell, TableRow } from "@heroui/table";
+import { Chip, Table } from "@heroui/react";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { TableColumn, RenderCellProps } from "@/interfaces/global";
 import { TransactionTypeDecorator } from "@/components/TransactionTypeDecorator";
 import { Frequency } from "@/app/api/domain/recurring-expense/model/recurring-expense.model";
 import type { RecurringExpenseOutput } from "@/app/api/domain/recurring-expense/ports/outbound/get-recurring-expenses.port";
+import { CustomIcon } from "@/components/shared/CustomIcon";
 import { JSX } from "react";
-import { IconEdit } from "@/components/shared/icons";
-import { DeleteTableItemButton } from "@/components/DeleteTableItemButton";
 
 const columnsDesktop: TableColumn[] = [
   {
     key: "description",
     className: "uppercase",
+    isRowHeader: true,
   },
   {
     key: "frequency",
@@ -24,21 +22,20 @@ const columnsDesktop: TableColumn[] = [
     key: "amount",
     className: "uppercase text-end",
   },
-  {
-    key: "actions",
-    className: "uppercase text-center",
-  },
 ];
 
 const columnsMobile: TableColumn[] = [
   {
     key: "expense",
     className: "uppercase",
+    isRowHeader: true,
   },
-  // {
-  //   key: "actions",
-  //   className: "uppercase text-center",
-  // },
+  {
+    key: "empty1",
+  },
+  {
+    key: "empty2",
+  },
 ];
 
 const renderCellDesktop = ({
@@ -48,33 +45,36 @@ const renderCellDesktop = ({
   switch (key) {
     case "description":
       return (
-        <TableCell>
-          <div className="flex flex-row items-center gap-2">
-            <span>{item.description}</span>
-            {item.category && (
-              <Chip radius="sm" variant="flat" size="sm">
-                {`${item.category.icon} ${item.category.name}`}
-              </Chip>
-            )}
+        <Table.Cell>
+          <div className="flex items-center gap-2">
+            <CustomIcon icon={item.category?.icon} />
+            <div className="flex flex-col items-start gap-1">
+              <span>{item.description}</span>
+              {item.category && (
+                <Chip variant="tertiary" size="sm" className="rounded-sm p-0">
+                  {item.category.name}
+                </Chip>
+              )}
+            </div>
           </div>
-        </TableCell>
+        </Table.Cell>
       );
     case "frequency":
       return (
-        <TableCell>{formatFrequency(item.frequency, item.dueDate)}</TableCell>
+        <Table.Cell>{formatFrequency(item.frequency, item.dueDate)}</Table.Cell>
       );
     case "amount":
       return (
-        <TableCell className="text-end">
+        <Table.Cell className="text-end">
           <TransactionTypeDecorator
             color={
-              item.frequency === Frequency.MONTHLY ? "primary" : "secondary"
+              item.frequency === Frequency.MONTHLY ? "accent" : "default"
             }
             disabled={item.disabled}
           >
             {formatCurrency(item.amount)}
           </TransactionTypeDecorator>
-        </TableCell>
+        </Table.Cell>
       );
     default:
       return <></>;
@@ -87,79 +87,51 @@ const renderSeparatorDesktop = (
   title: string
 ): JSX.Element => {
   return (
-    <TableRow key={id}>
-      <TableCell colSpan={colSpan} className="text-center px-3">
-        <div className="py-3 my-3 font-bold text-zinc-200 bg-blue-600 rounded-md">
-          {title}
-        </div>
-      </TableCell>
-    </TableRow>
+    <Table.Row key={id} id={id}>
+      <Table.Cell colSpan={colSpan} className="text-justify px-3">
+        <div className="py-1 font-bold text-zinc-200 rounded-md">{title}</div>
+      </Table.Cell>
+    </Table.Row>
   );
 };
 
 const renderCellMobile = ({
   key,
   item,
-  onEdit,
-  onDelete,
-  isDeleteDisabled,
 }: RenderCellProps<RecurringExpenseOutput>): JSX.Element => {
-  switch (key) {
-    case "expense":
-      return (
-        <TableCell>
-          <div className="flex flex-col items-start gap-2">
-            <p className="text-xs font-normal">{item.description}</p>
-            <div className="flex flex-row w-full items-center justify-between">
-              <span>
-                <TransactionTypeDecorator
-                  color={
-                    item.frequency === Frequency.MONTHLY
-                      ? "primary"
-                      : "secondary"
-                  }
-                  size="sm"
-                  disabled={item.disabled}
-                >
-                  {formatCurrency(item.amount)}
-                </TransactionTypeDecorator>
-                {item.category && (
-                  <Chip radius="sm" variant="flat" size="sm" className="ml-2">
-                    {`${item.category.icon} ${item.category.name}`}
-                  </Chip>
-                )}
+  if (key !== "expense") return <></>;
+
+  return (
+    <Table.Cell colSpan={3}>
+      <div className="flex flex-col gap-1.5 py-1.5 w-full">
+        <p className="text-sm font-semibold truncate">{item.description}</p>
+        <div className="flex items-center justify-between gap-3 w-full">
+          <div className="flex items-center gap-2 min-w-0">
+            <CustomIcon icon={item.category?.icon} />
+            {item.category && (
+              <span className="text-xs font-light text-default-500 truncate">
+                {item.category.name}
               </span>
-            </div>
-            <div className="flex items-center justify-between w-full">
-              <span className="text-xs font-light">
-                {formatFrequency(item.frequency, item.dueDate)}
-              </span>
-              <div className="flex flex-row items-center">
-                <Button
-                  isIconOnly
-                  color="warning"
-                  variant="light"
-                  className="self-center"
-                  size="sm"
-                  aria-label="Edit"
-                  onPress={() => onEdit?.(item)}
-                >
-                  <IconEdit />
-                </Button>
-                <DeleteTableItemButton
-                  size="sm"
-                  itemId={item.id}
-                  isDisabled={isDeleteDisabled}
-                  deleteTableItem={onDelete!}
-                />
-              </div>
-            </div>
+            )}
           </div>
-        </TableCell>
-      );
-    default:
-      return <></>;
-  }
+          <div className="flex flex-col items-end shrink-0 gap-0.5">
+            <TransactionTypeDecorator
+              color={
+                item.frequency === Frequency.MONTHLY ? "accent" : "default"
+              }
+              size="sm"
+              disabled={item.disabled}
+            >
+              {formatCurrency(item.amount)}
+            </TransactionTypeDecorator>
+            <span className="text-xs font-light text-default-500">
+              {formatFrequency(item.frequency, item.dueDate)}
+            </span>
+          </div>
+        </div>
+      </div>
+    </Table.Cell>
+  );
 };
 
 const renderSeparatorMobile = (
@@ -168,13 +140,11 @@ const renderSeparatorMobile = (
   title: string
 ): JSX.Element => {
   return (
-    <TableRow key={id}>
-      <TableCell colSpan={colSpan} className="text-center px-3">
-        <div className="py-3 my-3 mx-3 font-bold text-zinc-200 bg-blue-600 rounded-md">
-          {title}
-        </div>
-      </TableCell>
-    </TableRow>
+    <Table.Row key={id} id={id}>
+      <Table.Cell colSpan={colSpan} className="text-justify px-3">
+        <div className="py-1 font-bold text-zinc-200 rounded-md">{title}</div>
+      </Table.Cell>
+    </Table.Row>
   );
 };
 
@@ -186,7 +156,6 @@ export const useRenderCell = () => {
   const renderSeparator = isMobile
     ? renderSeparatorMobile
     : renderSeparatorDesktop;
-  const rowHeight = isMobile ? 110 : 50;
 
-  return { columns, renderCell, rowHeight, renderSeparator };
+  return { columns, renderCell, renderSeparator };
 };

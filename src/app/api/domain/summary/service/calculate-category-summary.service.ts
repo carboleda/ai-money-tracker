@@ -1,4 +1,4 @@
-import _ from "lodash";
+import { groupBy } from "lodash";
 import { Injectable } from "@/app/api/decorators/tsyringe.decorator";
 import {
   TransactionModel,
@@ -9,13 +9,13 @@ import { CategorySummaryDto } from "../model/category-summary.dto";
 @Injectable()
 export class CalculateCategorySummaryService {
   async execute(
-    transactions: TransactionModel[]
+    transactions: TransactionModel[],
   ): Promise<CategorySummaryDto[]> {
     const filteredTransactions = transactions.filter(
-      (t) => t.type !== TransactionType.TRANSFER
+      (t) => t.type !== TransactionType.TRANSFER,
     );
-    const categoryGroups = _.groupBy(filteredTransactions, (t) =>
-      typeof t.category === "string" ? t.category : t.category?.name
+    const categoryGroups = groupBy(filteredTransactions, (t) =>
+      typeof t.category === "string" ? t.category : t.category?.name,
     );
     return Object.entries(categoryGroups).map(([category, transactions]) => {
       const total =
@@ -25,7 +25,7 @@ export class CalculateCategorySummaryService {
             (transaction.type === TransactionType.INCOME
               ? transaction.amount
               : transaction.amount * -1),
-          0
+          0,
         ) ?? 0;
 
       return { category, total };

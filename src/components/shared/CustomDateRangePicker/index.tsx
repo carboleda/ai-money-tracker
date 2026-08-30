@@ -1,20 +1,20 @@
 "use client";
 
-import { DateRangePicker, DateRangePickerProps } from "@heroui/date-picker";
-import { Button } from "@heroui/button";
+import {
+  DateRangePicker,
+  DateRangePickerProps,
+  DateField,
+  RangeCalendar,
+  Button,
+  Label,
+} from "@heroui/react";
 import { RangeValue } from "@react-types/shared";
 import { parseAbsoluteToLocal, ZonedDateTime } from "@internationalized/date";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { getMonthBounds } from "@/config/utils";
-import {
-  Dropdown,
-  DropdownItem,
-  DropdownMenu,
-  DropdownTrigger,
-} from "@heroui/dropdown";
 import { HiArrowCircleLeft } from "react-icons/hi";
 import { useTranslation } from "react-i18next";
-import { cn } from "@heroui/theme";
+import { CustomDropdown } from "../CustomDropdown";
 
 enum RangeList {
   this = "this",
@@ -27,6 +27,7 @@ enum RangeList {
 export interface CustomDateRangePickerProps
   extends Omit<DateRangePickerProps<ZonedDateTime>, "value" | "onChange"> {
   value: RangeValue<ZonedDateTime>;
+  label?: string;
   showLabel?: boolean;
   onChange: (value: RangeValue<ZonedDateTime>) => void;
 }
@@ -40,8 +41,6 @@ export const CustomDateRangePicker: React.FC<CustomDateRangePickerProps> = ({
 }) => {
   const { t } = useTranslation();
   const [selectedKey, setSelectedKey] = useState<RangeList>(RangeList.this);
-
-  const selectedValue = useMemo(() => t(selectedKey), [selectedKey, t]);
 
   const onDateChange = useCallback(
     (value: RangeValue<ZonedDateTime> | null) => {
@@ -81,66 +80,74 @@ export const CustomDateRangePicker: React.FC<CustomDateRangePickerProps> = ({
 
   if (selectedKey === RangeList.custom) {
     return (
-      <DateRangePicker
-        {...props}
-        label={showLabel ? label : undefined}
-        onChange={onDateChange}
-        startContent={
-          <Button
-            className="min-w-0 min-h-0 w-fit h-fit"
-            variant="light"
-            color="default"
-            radius="full"
-            onPress={() => setSelectedKey(RangeList.this)}
-            isIconOnly
-          >
-            <HiArrowCircleLeft
-              className="text-5xl p-0 m-0 min-h-0 h-fit"
-              color="gray"
-            />
-          </Button>
-        }
-      />
+      <div className="flex items-center gap-1">
+        <Button
+          className="min-w-0 min-h-0 w-fit h-fit"
+          variant="ghost"
+          onPress={() => setSelectedKey(RangeList.this)}
+          isIconOnly
+        >
+          <HiArrowCircleLeft
+            className="text-5xl p-0 m-0 min-h-0 h-fit"
+            color="gray"
+          />
+        </Button>
+        <DateRangePicker {...props} onChange={onDateChange}>
+          {showLabel && label ? <Label>{label}</Label> : null}
+          <DateField.Group variant="secondary">
+            <DateField.InputContainer>
+              <DateField.Input slot="start">
+                {(segment) => <DateField.Segment segment={segment} />}
+              </DateField.Input>
+              <DateRangePicker.RangeSeparator />
+              <DateField.Input slot="end">
+                {(segment) => <DateField.Segment segment={segment} />}
+              </DateField.Input>
+            </DateField.InputContainer>
+            <DateField.Suffix>
+              <DateRangePicker.Trigger>
+                <DateRangePicker.TriggerIndicator />
+              </DateRangePicker.Trigger>
+            </DateField.Suffix>
+          </DateField.Group>
+          <DateRangePicker.Popover>
+            <RangeCalendar>
+              <RangeCalendar.Header>
+                <RangeCalendar.NavButton slot="previous" />
+                <RangeCalendar.YearPickerTrigger>
+                  <RangeCalendar.YearPickerTriggerHeading />
+                  <RangeCalendar.YearPickerTriggerIndicator />
+                </RangeCalendar.YearPickerTrigger>
+                <RangeCalendar.NavButton slot="next" />
+              </RangeCalendar.Header>
+              <RangeCalendar.Grid>
+                <RangeCalendar.GridHeader>
+                  {(day) => (
+                    <RangeCalendar.HeaderCell>{day}</RangeCalendar.HeaderCell>
+                  )}
+                </RangeCalendar.GridHeader>
+                <RangeCalendar.GridBody>
+                  {(date) => <RangeCalendar.Cell date={date} />}
+                </RangeCalendar.GridBody>
+              </RangeCalendar.Grid>
+            </RangeCalendar>
+          </DateRangePicker.Popover>
+        </DateRangePicker>
+      </div>
     );
   }
 
   return (
-    <Dropdown>
-      <DropdownTrigger>
-        <Button
-          variant="bordered"
-          size="md"
-          className={cn("justify-start px-3 rounded-xl", {
-            "py-6": showLabel,
-          })}
-        >
-          {showLabel ? (
-            <div className="text-start">
-              <label className="text-xs text-default-600">
-                {label}{" "}
-                {props.isRequired && <span className="text-red-600">*</span>}
-              </label>
-              <div className="text-default-800">{selectedValue}</div>
-            </div>
-          ) : (
-            selectedValue || label
-          )}
-        </Button>
-      </DropdownTrigger>
-      <DropdownMenu
-        aria-label={t("dateRangeFilter")}
-        variant="flat"
-        closeOnSelect={true}
-        selectionMode="single"
-        selectedKeys={selectedKey}
-        onSelectionChange={(keys) =>
-          setSelectedKey((keys.currentKey as RangeList)!)
-        }
-      >
-        {Object.entries(RangeList).map(([key, value]) => (
-          <DropdownItem key={key}>{t(value)}</DropdownItem>
-        ))}
-      </DropdownMenu>
-    </Dropdown>
+    <CustomDropdown
+      values={Object.entries(RangeList).map(([key, value]) => ({
+        key,
+        label: t(value),
+      }))}
+      label={label}
+      value={selectedKey}
+      isRequired={props.isRequired}
+      showLabel={showLabel}
+      onChange={(key: unknown) => setSelectedKey((key as RangeList)!)}
+    />
   );
 };

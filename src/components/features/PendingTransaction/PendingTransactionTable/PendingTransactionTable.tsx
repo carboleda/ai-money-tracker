@@ -1,26 +1,19 @@
 "use client";
 
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableColumn,
-  TableHeader,
-  TableRow,
-} from "@heroui/table";
-import { TableSkeleton } from "@/components/shared/TableSkeleton";
+import { Table } from "@heroui/react";
+import { TableSkeleton } from "@/components/shared/Table/TableSkeleton";
 import { useMutateTransaction } from "@/hooks/useMutateTransaction";
-import { DeleteTableItemButton } from "@/components/DeleteTableItemButton";
-import { Button } from "@heroui/button";
 import { CompleteTransactionModalForm } from "../CompleteTransactionModalForm/CompleteTransactionModalForm";
 import { useCallback, useMemo, useState } from "react";
 import { useRenderCell } from "./Columns";
 import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
 import { SearchToolbar } from "@/components/features/Transactions/SearchToolbar";
-import { useTableHeight } from "@/hooks/useTableHeight";
-import { FaRegCircleCheck } from "react-icons/fa6";
 import { TransactionOutput } from "@/app/api/domain/transaction/ports/outbound/filter-transactions.port";
+import { useDeleteTableItem } from "@/hooks/useDeleteTableItem";
+import { TableToolbar } from "@/components/shared/Table/TableToolbar";
+import { useTableSelection } from "@/hooks/useTableSelection";
+import { TableContainer } from "@/components/shared/Table/TableContainer";
 
 interface PendingTransactionTableProps {
   isLoading: boolean;
@@ -31,12 +24,13 @@ export const PendingTransactionTable: React.FC<
   PendingTransactionTableProps
 > = ({ isLoading, pendingTransactions }) => {
   const { t } = useTranslation(LocaleNamespace.RecurringExpenses);
-  const [selectedItem, setSelectedItem] = useState<TransactionOutput>();
   const [isOpen, setIsOpen] = useState(false);
   const [filterValue, setFilterValue] = useState("");
   const { isMutating, deleteTransaction } = useMutateTransaction();
-  const { columns, renderCell, rowHeight } = useRenderCell();
-  const { maxTableHeight } = useTableHeight();
+  const { columns, renderCell } = useRenderCell();
+  const { onDelete } = useDeleteTableItem({
+    onConfirmDelete: deleteTransaction,
+  });
 
   const transactions = useMemo(() => {
     if (!pendingTransactions) return pendingTransactions;
@@ -51,35 +45,41 @@ export const PendingTransactionTable: React.FC<
             .includes(filterValue.toLowerCase()) ||
           transaction.category?.name
             ?.toLowerCase()
-            .includes(filterValue.toLowerCase())
+            .includes(filterValue.toLowerCase()),
       );
     }
 
     return filteredPendingTransations;
   }, [pendingTransactions, filterValue]);
 
-  const onConfirm = useCallback((item: TransactionOutput) => {
-    setSelectedItem(item);
-    setIsOpen(true);
-  }, []);
+  const {
+    selectedItem,
+    setSelectedItem,
+    selectedKeys,
+    onSelectionChange,
+    clearSelection,
+  } = useTableSelection({ items: transactions, isMutating });
+
+  const onConfirm = useCallback(
+    (item: TransactionOutput) => {
+      setSelectedItem(item);
+      setIsOpen(true);
+    },
+    [setSelectedItem],
+  );
 
   const onDialogDismissed = useCallback(() => {
-    setSelectedItem(undefined);
+    clearSelection();
     setIsOpen(false);
-  }, []);
+  }, [clearSelection]);
 
   const renderTopContent = () => (
-    <div className="flex flex-row gap-4">
+    <div className="flex w-full flex-row gap-4">
       <div className="flex justify-between gap-3 items-center w-full">
         <SearchToolbar
           filterValue={filterValue}
           onSearchChange={setFilterValue}
         />
-        <span className="w-fit text-end text-sm text-default-500">
-          {t("pendingTransactionCountMessage", {
-            count: transactions?.length || 0,
-          })}
-        </span>
       </div>
     </div>
   );
@@ -88,63 +88,33 @@ export const PendingTransactionTable: React.FC<
 
   return (
     <>
-      <Table
-        isStriped
-        isCompact
-        isVirtualized
-        maxTableHeight={maxTableHeight}
-        rowHeight={rowHeight}
-        aria-label={t("pendingTransactions")}
-        topContentPlacement="outside"
-        topContent={renderTopContent()}
-      >
-        <TableHeader columns={columns}>
-          {(column) => (
-            <TableColumn key={column.key} className={`${column.className}`}>
-              {t(column.key)}
-            </TableColumn>
-          )}
-        </TableHeader>
-        <TableBody
-          items={transactions}
-          emptyContent={t("management.emptyContent")}
+      {renderTopContent()}
+      <Table>
+        <TableToolbar
+          selectedItem={selectedItem}
+          isMutating={isMutating}
+          rowCount={transactions?.length}
+          t={t}
         >
-          {(item) => (
-            <TableRow key={item.id}>
-              {(columnKey) => {
-                if (columnKey === "actions") {
-                  return (
-                    <TableCell>
-                      <div className="flex flex-row justify-center">
-                        <Button
-                          isIconOnly
-                          color="success"
-                          variant="light"
-                          className="self-center"
-                          aria-label={t("confirm")}
-                          onPress={() => onConfirm(item)}
-                        >
-                          <FaRegCircleCheck className="text-xl" />
-                        </Button>
-                        <DeleteTableItemButton
-                          itemId={item.id}
-                          isDisabled={isMutating}
-                          deleteTableItem={deleteTransaction}
-                        />
-                      </div>
-                    </TableCell>
-                  );
-                }
-                return renderCell({
-                  key: columnKey,
-                  item,
-                  onEdit: onConfirm,
-                  onDelete: deleteTransaction,
-                });
-              }}
-            </TableRow>
-          )}
-        </TableBody>
+          <TableToolbar.ConfirmAction
+            noSeparator
+            onPress={onConfirm}
+            labelKey="completeTransationButton"
+          />
+          <TableToolbar.DeleteAction
+            onPress={(item) => onDelete(item.id, item.description)}
+          />
+        </TableToolbar>
+        <TableContainer
+          t={t}
+          ariaLabelKey="pendingTransactions"
+          emptyContentLabelKey="management.emptyContent"
+          renderCell={renderCell}
+          columns={columns}
+          items={transactions}
+          onSelectionChange={onSelectionChange}
+          selectedKeys={selectedKeys}
+        />
       </Table>
       <CompleteTransactionModalForm
         item={selectedItem}

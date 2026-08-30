@@ -2,8 +2,7 @@
 
 import { formatCurrency } from "@/config/utils";
 import { Summary } from "@/interfaces/transaction";
-import { Chip, ChipProps } from "@heroui/chip";
-import { Skeleton } from "@heroui/skeleton";
+import { Chip, ChipProps, Skeleton } from "@heroui/react";
 
 import { FaBalanceScaleLeft } from "react-icons/fa";
 import { HiMiniPlusCircle, HiMinusCircle, HiBell } from "react-icons/hi2";
@@ -29,7 +28,7 @@ const keyValueMapping = {
   },
   totalBalance: {
     icon: <FaBalanceScaleLeft />,
-    color: "primary",
+    color: "default",
   },
 };
 
@@ -39,10 +38,12 @@ interface SummaryPanelProps {
   shortNumber?: boolean;
 }
 
-function renderNumber(value: number, short: boolean): string {
-  return short
-    ? `${formatCurrency(value / 1000, false)}k`
-    : formatCurrency(value);
+function renderFullNumber(value: number): string {
+  return formatCurrency(value);
+}
+
+function renderShortNumber(value: number): string {
+  return `${formatCurrency(value / 1000, false)}k`;
 }
 
 export const SummaryPanel: React.FC<SummaryPanelProps> = ({
@@ -53,6 +54,7 @@ export const SummaryPanel: React.FC<SummaryPanelProps> = ({
   const isMobile = useIsMobile();
   const keys = (includedKeys ??
     Object.keys(keyValueMapping)) as (keyof Summary)[];
+  const renderNumber = shortNumber ? renderShortNumber : renderFullNumber;
   // .filter((k) => k !== "totalTransfers");
 
   if (!summary) {
@@ -74,11 +76,11 @@ export const SummaryPanel: React.FC<SummaryPanelProps> = ({
             key={key}
             color={color as ChipProps["color"]}
             size={isMobile ? "sm" : "md"}
-            variant="flat"
-            radius="sm"
-            avatar={icon}
+            variant="soft"
+            className="rounded-sm"
           >
-            {renderNumber(summary[key], shortNumber)}
+            {icon}
+            {renderNumber(summary[key])}
           </Chip>
         );
       })}

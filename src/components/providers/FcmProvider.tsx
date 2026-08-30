@@ -33,6 +33,10 @@ const FcmProviderFrontend: React.FC<FcmProviderProps> = ({
   // ensures the stored token in Firestore always stays current without ever
   // prompting the user again.
   useEffect(() => {
+    // Safari in iOS only expose Notification in the window object, after PWA is installed and launch from home screen.
+    if (!("Notification" in window)) {
+      return;
+    }
     // Wait until the query has resolved the user profile before comparing tokens.
     // Bail out if the refresh has already run this mount.
     if (isLoading || tokenRefreshed.current) return;
@@ -56,7 +60,7 @@ const FcmProviderFrontend: React.FC<FcmProviderProps> = ({
 
         // Only write to Firestore when the token has actually changed.
         const storedDevice = user?.devices?.find(
-          (d) => d.deviceId === deviceId
+          (d) => d.deviceId === deviceId,
         );
 
         if (storedDevice?.fcmToken === freshToken) return;
@@ -71,9 +75,9 @@ const FcmProviderFrontend: React.FC<FcmProviderProps> = ({
     };
 
     refreshToken();
-  // `user` is intentionally included so we have the resolved data available
-  // for comparison, but `tokenRefreshed` guards against re-running.
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // `user` is intentionally included so we have the resolved data available
+    // for comparison, but `tokenRefreshed` guards against re-running.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoading, firebaseApp, user]);
 
   const onPermissionGranted = () => {

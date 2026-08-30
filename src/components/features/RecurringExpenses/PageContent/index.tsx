@@ -34,7 +34,7 @@ function PageContent() {
       <div className="flex flex-col w-full justify-start items-start gap-2">
         <div className="flex flex-wrap gap-2">
           <TransactionTypeDecorator
-            color="primary"
+            color="accent"
             size={isMobile ? "sm" : "md"}
             avatar={<HiFire />}
           >
@@ -49,7 +49,7 @@ function PageContent() {
           </TransactionTypeDecorator>
 
           <TransactionTypeDecorator
-            color="secondary"
+            color="default"
             size={isMobile ? "sm" : "md"}
             avatar={<HiOutlineCalendar />}
           >

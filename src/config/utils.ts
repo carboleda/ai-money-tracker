@@ -70,19 +70,27 @@ export const getMissingFieldsInPrompt = (inputText: string) => {
  */
 export const computeBiannualDates = (date: Date): [Date, Date] => {
   return [date, new Date(date.getTime() + 15778800000)].sort(
-    (a, b) => a.getMonth() - b.getMonth()
+    (a, b) => a.getMonth() - b.getMonth(),
   ) as [Date, Date];
 };
 
 export const getEnglishOrdinalSuffix = (date: Date) => {
   // Return the day of the month with its ordinal suffix (e.g., 1st, 2nd, 3rd, 4th)
-  return date.getDate() % 10 == 1 && date.getDate() != 11
-    ? "st"
-    : date.getDate() % 10 == 2 && date.getDate() != 12
-    ? "nd"
-    : date.getDate() % 10 == 3 && date.getDate() != 13
-    ? "rd"
-    : "th";
+  const day = date.getDate();
+
+  if (day % 10 === 1 && day !== 11) {
+    return "st";
+  }
+
+  if (day % 10 === 2 && day !== 12) {
+    return "nd";
+  }
+
+  if (day % 10 === 3 && day !== 13) {
+    return "rd";
+  }
+
+  return "th";
 };
 
 export const formatFrequency = (frequency: Frequency, dueDate: string) => {
@@ -95,7 +103,7 @@ export const formatFrequency = (frequency: Frequency, dueDate: string) => {
 
   if (frequency === Frequency.YEARLY) {
     return `Every year on ${monthFormatter.format(
-      date
+      date,
     )} ${date.getDate()}${daySuffix}`;
   }
 
@@ -121,7 +129,7 @@ export const getPreviousMonth = (date?: Date) => {
 };
 
 export const getTransactionOverdueStatus = (
-  date: string
+  date: string,
 ): TransactionOverdueStatus => {
   const now = new Date();
   const dayDiff = dateDiffInDays(now, new Date(date));

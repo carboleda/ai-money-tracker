@@ -1,8 +1,7 @@
 "use client";
 
-import { useDisclosure } from "@heroui/modal";
-import { Checkbox } from "@heroui/checkbox";
-import { useEffect, useRef } from "react";
+import { useOverlayState } from "@heroui/react";
+import { useEffect } from "react";
 import { Env } from "@/config/env";
 import { getMessaging, getToken } from "firebase/messaging";
 import { FirebaseApp } from "firebase/app";
@@ -21,9 +20,8 @@ export const NotificationRequestModal: React.FC<
   NotificationRequestModalProps
 > = ({ firebaseApp, onPermissionGranted }) => {
   const { t } = useTranslation();
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isOpen, open, close } = useOverlayState();
   const { updateUser } = useMutateUser();
-  const doNotAskAgainCheckox = useRef<HTMLInputElement>(null);
   const [doNotAskAgain, setDoNotAskAgain] = useLocalStorage(
     "doNotAskAgain",
     false,
@@ -32,17 +30,17 @@ export const NotificationRequestModal: React.FC<
 
   useEffect(() => {
     if (permission !== "granted" && !doNotAskAgain) {
-      onOpen();
+      open();
     }
-  }, [permission, doNotAskAgain, onOpen]);
+  }, [permission, doNotAskAgain, open]);
 
-  const onAction = async (action: Action) => {
+  const onAction = async (action: Action, doNotAskAgainChecked: boolean) => {
     try {
-      onClose();
+      close();
 
       if (action !== Action.Yes) {
-        setDoNotAskAgain(doNotAskAgainCheckox.current?.checked!);
-        if (doNotAskAgainCheckox.current?.checked) {
+        setDoNotAskAgain(doNotAskAgainChecked);
+        if (doNotAskAgainChecked) {
           location.reload();
         }
         return;
@@ -66,7 +64,7 @@ export const NotificationRequestModal: React.FC<
 
         onPermissionGranted();
       } else {
-        alert("You need to accept the request to receive notifications.");
+        alert(t("requestDenied"));
       }
     } catch (error) {
       console.error("Error getting token:", error);
@@ -82,14 +80,10 @@ export const NotificationRequestModal: React.FC<
     >
       <p>{t("notificationsRequest.description")}</p>
       <ul>
-        <li>◦ {t("notificationsRequest.reminderOverduePayments")}</li>
-        <li>◦ {t("notificationsRequest.reminderBillsPayments")}</li>
-        <li>◦ {t("notificationsRequest.neverMissPayment")}</li>
+        <li>⚠️ {t("notificationsRequest.reminderOverduePayments")}</li>
+        <li>🔔 {t("notificationsRequest.reminderBillsPayments")}</li>
+        <li>📅 {t("notificationsRequest.neverMissPayment")}</li>
       </ul>
-
-      <Checkbox ref={doNotAskAgainCheckox}>
-        {t("notificationsRequest.doNotAskAgain")}
-      </Checkbox>
     </ConfirmationModal>
   );
 };

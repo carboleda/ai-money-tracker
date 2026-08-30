@@ -1,19 +1,19 @@
 import { LocaleNamespace } from "@/i18n/namespace";
-import { Button } from "@heroui/button";
-import { addToast, closeToast, ToastProps } from "@heroui/toast";
+import { toast } from "@heroui/react";
 import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
+import { FaCheckCircle } from "react-icons/fa";
+import { IoTrashBin } from "react-icons/io5";
 
-type ToastConfig = Partial<ToastProps>;
-
-type ToastConfirmConfig = ToastConfig & {
+type ToastConfig = {
+  title?: string;
+  description?: string;
   timeout?: number;
-  onConfirm: () => void;
+  onClose?: () => void;
 };
 
-const DEFAULT_TOAST_CONFIG: Partial<ToastProps> = {
-  radius: "lg",
-  variant: "bordered",
+type ToastConfirmConfig = ToastConfig & {
+  onConfirm: () => void;
 };
 
 interface UseToastReturn {
@@ -25,44 +25,34 @@ interface UseToastReturn {
 export const useToast = (): UseToastReturn => {
   const { t } = useTranslation(LocaleNamespace.Common);
 
-  const showSuccessToast = useCallback((config: ToastConfig) => {
-    addToast({
-      ...DEFAULT_TOAST_CONFIG,
-      color: "success",
-      ...config,
+  const showSuccessToast = useCallback(({ title, ...rest }: ToastConfig) => {
+    toast.success(title ?? "", {
+      indicator: <FaCheckCircle />,
+      ...rest,
     });
   }, []);
 
-  const showErrorToast = useCallback((config: ToastConfig) => {
-    addToast({
-      ...DEFAULT_TOAST_CONFIG,
-      color: "danger",
-      ...config,
+  const showErrorToast = useCallback(({ title, ...rest }: ToastConfig) => {
+    toast.danger(title ?? "", {
+      indicator: <IoTrashBin />,
+      ...rest,
     });
   }, []);
 
   const showConfirmDeleteToast = useCallback(
-    ({ onConfirm, ...config }: ToastConfirmConfig) => {
-      const toastKey = addToast({
-        ...DEFAULT_TOAST_CONFIG,
-        ...config,
-        color: "danger",
-        radius: "lg",
-        shouldShowTimeoutProgress: true,
-        endContent: (
-          <Button
-            size="sm"
-            variant="solid"
-            color="danger"
-            aria-label={t("deleteConfirmation.confirmButton")}
-            onPress={() => {
-              onConfirm();
-              closeToast(toastKey!);
-            }}
-          >
-            {t("deleteConfirmation.confirmButton")}
-          </Button>
-        ),
+    ({ onConfirm, title, ...rest }: ToastConfirmConfig) => {
+      const toastKey = toast.danger(title ?? "", {
+        ...rest,
+        indicator: <IoTrashBin />,
+        actionProps: {
+          children: t("deleteConfirmation.confirmButton"),
+          "aria-label": t("deleteConfirmation.confirmButton"),
+          variant: "danger-soft",
+          onPress: () => {
+            onConfirm();
+            toast.close(toastKey);
+          },
+        },
       });
     },
     [t]

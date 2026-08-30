@@ -1,11 +1,6 @@
-import React, { useEffect, useMemo, useState } from "react";
-import {
-  Dropdown,
-  DropdownTrigger,
-  DropdownMenu,
-  DropdownItem,
-} from "@heroui/dropdown";
-import { Button } from "@heroui/button";
+"use client";
+import React from "react";
+import { CustomDropdown } from "@/components/shared/CustomDropdown";
 import { Frequency } from "@/app/api/domain/recurring-expense/model/recurring-expense.model";
 import { frequencyOptions } from "@/interfaces/recurringExpense";
 import { useTranslation } from "react-i18next";
@@ -21,53 +16,18 @@ export const FrequencyDropdown: React.FC<FrequencyDropdownProps> = ({
   onChange,
 }) => {
   const { t } = useTranslation(LocaleNamespace.Common);
-  const [selectedKeys, setSelectedKeys] = useState(new Set<Frequency>([]));
-
-  const selectedValue = useMemo(
-    () =>
-      Array.from(selectedKeys)
-        .map((key) => key ?? "")
-        .join(", "),
-    [selectedKeys],
-  );
-
-  useEffect(() => {
-    if (selectedFrequency) {
-      setSelectedKeys(new Set([selectedFrequency]));
-    }
-  }, [selectedFrequency]);
-
-  const onSelectionChange = (keys: any) => {
-    setSelectedKeys(keys);
-    onChange([...keys.keys()][0] || "");
-  };
+  const values = Object.keys(frequencyOptions).map((key) => ({
+    key,
+    label: t(key),
+  }));
 
   return (
-    <Dropdown placement="bottom-start">
-      <DropdownTrigger>
-        <Button
-          variant="bordered"
-          className="h-14 w-full"
-          style={{ justifyContent: "flex-start" }}
-        >
-          <div className="text-start mh-5">
-            <label className="text-xs text-default-600">{t("frequency")}</label>
-            <div>{t(selectedValue)}</div>
-          </div>
-        </Button>
-      </DropdownTrigger>
-      <DropdownMenu
-        aria-label="Frequency"
-        variant="flat"
-        closeOnSelect={true}
-        selectionMode="single"
-        selectedKeys={selectedKeys}
-        onSelectionChange={onSelectionChange}
-      >
-        {Object.keys(frequencyOptions).map((key) => {
-          return <DropdownItem key={key}>{t(key)}</DropdownItem>;
-        })}
-      </DropdownMenu>
-    </Dropdown>
+    <CustomDropdown
+      values={values}
+      label={t("frequency")}
+      value={selectedFrequency}
+      showLabel
+      onChange={(key) => onChange(key as Frequency)}
+    />
   );
 };

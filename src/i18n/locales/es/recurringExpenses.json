@@ -4,7 +4,10 @@
   "subtitle": "Tus gastos recurrentes",
   "emptyContent": "No hay gastos recurrentes para mostrar.",
   "biannualAndYearly": "Bianual y Anual",
-  "separatorTitle": "GASTOS BIANUALES Y ANUALES",
+  "separators": {
+    "monthly": "MENSUAL",
+    "others": "GASTOS BIANUALES Y ANUALES"
+  },
   "allFieldAreRequired": "Completa todos los campos requeridos. Por favor complétalos.",
   "recurringExpenses": "Gasto recurrente",
   "paymentLink": "Enlace de pago",
@@ -14,7 +17,8 @@
   "pendingTransactions": "Transacciones pendientes",
   "completeTransaction": "Completar transacción",
   "paidOn": "Pagado el",
-  "completeTransationButton": "Completar",
+  "paidOnTime": "Hora",
+  "completeTransationButton": "Pagado",
   "transactionCompleted": "¡Transacción completada correctamente!",
   "recurringExpenseCreated": "¡Gasto recurrente creado!",
   "recurringExpenseUpdated": "¡Gasto recurrente actualizado!"
