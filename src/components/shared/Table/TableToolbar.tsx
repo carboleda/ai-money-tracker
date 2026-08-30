@@ -1,4 +1,4 @@
-import { ButtonGroup, Button, Typography, ButtonProps } from "@heroui/react";
+import { ButtonGroup, Button, ButtonProps, Chip } from "@heroui/react";
 import { IoTrashBin } from "react-icons/io5";
 import { IconEdit } from "../icons";
 import { TFunction } from "i18next";
@@ -46,7 +46,7 @@ function useTableToolbarContext() {
 const TableToolbarRoot: React.FC<TableToolbarProps> = ({
   selectedItem,
   isMutating,
-  rowCount,
+  rowCount = 0,
   children,
   t,
 }) => {
@@ -60,9 +60,9 @@ const TableToolbarRoot: React.FC<TableToolbarProps> = ({
       <div className="flex flex-row gap-1 items-center py-2 justify-between">
         <ButtonGroup variant="ghost">{children}</ButtonGroup>
         <div className="pr-3">
-          <Typography color="muted" type="body-xs">
+          <Chip className="mr-0" variant="soft" color="accent">
             {t("rowCounter", { count: rowCount || 0 })}
-          </Typography>
+          </Chip>
         </div>
       </div>
     </TableToolbarContext.Provider>

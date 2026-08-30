@@ -42,7 +42,8 @@
   "monthly": "Monthly",
   "biannual": "Biannual",
   "yearly": "Yearly",
-  "rowCounter": "Showing {{count}} rows",
+  "rowCounter_one": "{{count}} item",
+  "rowCounter_other": "{{count}} items",
   "notificationsRequest": {
     "title": "Zolvent wants to keep you informed! 🔔",
     "description": "To provide you with real-time alerts and reminders about your spending, income, and financial goals, we need your permission to send push notifications. This will help you:",
