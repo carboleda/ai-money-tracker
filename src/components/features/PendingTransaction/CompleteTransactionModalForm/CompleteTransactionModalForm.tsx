@@ -1,16 +1,9 @@
 import React, { useEffect, useState } from "react";
-import {
-  Button,
-  Calendar,
-  Chip,
-  DateField,
-  DatePicker,
-  Label,
-  Modal,
-} from "@heroui/react";
-import { getLocalTimeZone, now, ZonedDateTime } from "@internationalized/date";
+import { Button, Chip, Modal } from "@heroui/react";
 import { BankAccounDropdown } from "@/components/BankAccounsDropdown";
 import { useMutateTransaction } from "@/hooks/useMutateTransaction";
+import { CustomDateField } from "@/components/shared/CustomDateField";
+import { CustomTimeField } from "@/components/shared/CustomTimeField";
 import { MaskedCurrencyInput } from "@/components/shared/MaskedCurrencyInput";
 import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
@@ -34,14 +27,13 @@ export const CompleteTransactionModalForm: React.FC<
   const { isMutating, updateTransaction } = useMutateTransaction();
   const [validationError, setValidationError] = useState<string>("");
   const [selectedAccount, setSelectedAccount] = useState<string>("");
-  const [paymentDateInput, setPaymentDateInput] =
-    useState<ZonedDateTime | null>();
+  const [createdAtInput, setCreatedAtInput] = useState<Date>();
   const [amountInput, setAmountInput] = useState<number>();
 
   const areButtonsDisabled = isMutating || validationError !== "";
 
   useEffect(() => {
-    setPaymentDateInput(now(getLocalTimeZone()));
+    setCreatedAtInput(new Date());
     setAmountInput(item?.amount);
   }, [item]);
 
@@ -52,29 +44,19 @@ export const CompleteTransactionModalForm: React.FC<
 
   const clearInputs = () => {
     setSelectedAccount("");
-    setPaymentDateInput(undefined);
+    setCreatedAtInput(undefined);
     setAmountInput(0);
   };
 
   const clearError = () => setValidationError("");
 
   const onSave = () => {
-    if (selectedAccount === "" || !paymentDateInput || amountInput === 0) {
+    if (selectedAccount === "" || !createdAtInput || amountInput === 0) {
       setValidationError(t("allFieldAreRequired"));
       return;
     }
 
     clearError();
-
-    const now = new Date();
-    const createdAt = paymentDateInput
-      .set({
-        hour: now.getHours(),
-        minute: now.getMinutes(),
-        second: now.getSeconds(),
-      })
-      .toDate()
-      .toISOString();
 
     const payload: UpdateTransactionInput = {
       ...item!,
@@ -82,7 +64,7 @@ export const CompleteTransactionModalForm: React.FC<
       sourceAccount: selectedAccount,
       destinationAccount: item?.destinationAccount?.ref || "",
       amount: amountInput!,
-      createdAt,
+      createdAt: createdAtInput.toISOString(),
       status: TransactionStatus.COMPLETE,
     };
 
@@ -133,51 +115,22 @@ export const CompleteTransactionModalForm: React.FC<
                 value={amountInput?.toString()}
                 onValueChange={(v) => setAmountInput(v.floatValue)}
               />
-              <DatePicker
-                granularity="day"
-                isRequired
-                value={paymentDateInput ?? null}
-                onChange={setPaymentDateInput}
-              >
-                <Label>{t("paidOn")}</Label>
-                <DateField.Group fullWidth>
-                  <DateField.Input>
-                    {(segment) => <DateField.Segment segment={segment} />}
-                  </DateField.Input>
-                  <DateField.Suffix>
-                    <DatePicker.Trigger>
-                      <DatePicker.TriggerIndicator />
-                    </DatePicker.Trigger>
-                  </DateField.Suffix>
-                </DateField.Group>
-                <DatePicker.Popover>
-                  <Calendar aria-label={t("paidOn")}>
-                    <Calendar.Header>
-                      <Calendar.YearPickerTrigger>
-                        <Calendar.YearPickerTriggerHeading />
-                        <Calendar.YearPickerTriggerIndicator />
-                      </Calendar.YearPickerTrigger>
-                      <Calendar.NavButton slot="previous" />
-                      <Calendar.NavButton slot="next" />
-                    </Calendar.Header>
-                    <Calendar.Grid>
-                      <Calendar.GridHeader>
-                        {(day) => (
-                          <Calendar.HeaderCell>{day}</Calendar.HeaderCell>
-                        )}
-                      </Calendar.GridHeader>
-                      <Calendar.GridBody>
-                        {(date) => <Calendar.Cell date={date} />}
-                      </Calendar.GridBody>
-                    </Calendar.Grid>
-                    <Calendar.YearPickerGrid>
-                      <Calendar.YearPickerGridBody>
-                        {({ year }) => <Calendar.YearPickerCell year={year} />}
-                      </Calendar.YearPickerGridBody>
-                    </Calendar.YearPickerGrid>
-                  </Calendar>
-                </DatePicker.Popover>
-              </DatePicker>
+              <div className="flex gap-2">
+                <CustomDateField
+                  label={t("paidOn")}
+                  isRequired
+                  value={createdAtInput ?? new Date()}
+                  onChange={setCreatedAtInput}
+                  className="w-full"
+                />
+                <CustomTimeField
+                  label={t("paidOnTime")}
+                  isRequired
+                  value={createdAtInput ?? new Date()}
+                  onChange={setCreatedAtInput}
+                  className="w-full"
+                />
+              </div>
               {validationError && (
                 <Chip
                   variant="soft"
