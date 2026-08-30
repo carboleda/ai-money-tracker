@@ -6,8 +6,13 @@ import { CalendarDate } from "@internationalized/date";
 import clsx from "clsx";
 import { useIsMobile } from "@/hooks/useIsMobile";
 
-const MOBILE_INPUT_CLASS =
-  "bg-field border border-field-border rounded-lg px-2 py-1 text-sm text-field-foreground";
+const MOBILE_INPUT_CLASS = clsx(
+  "flex w-full bg-default rounded-field border-0 px-3 py-2 text-base text-field-foreground sm:text-sm",
+  "outline-none",
+  "focus:ring-2 focus:ring-focus focus:ring-offset-0 focus:outline-none",
+  "disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none",
+  "[&::-webkit-calendar-picker-indicator]:hidden"
+);
 
 export interface CustomDateFieldProps
   extends Omit<
@@ -60,12 +65,8 @@ export const CustomDateField: React.FC<CustomDateFieldProps> = ({
 
   if (isMobile) {
     return (
-      <div className="flex flex-col gap-2">
-        {label && (
-          <label className="text-xs text-muted" htmlFor={id}>
-            {label}
-          </label>
-        )}
+      <div className="flex w-full flex-col gap-1" data-required={isRequired || undefined}>
+        {label && <Label htmlFor={id}>{label}</Label>}
         <input
           id={id}
           type="date"
