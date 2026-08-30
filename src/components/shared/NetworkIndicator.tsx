@@ -1,4 +1,4 @@
-import { Chip } from "@heroui/chip";
+import { Chip } from "@heroui/react";
 import { MdWifiOff } from "react-icons/md";
 import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
@@ -11,7 +11,8 @@ export const NetworkIndicator = () => {
   if (isOnline) return null;
 
   return (
-    <Chip color="default" size="sm" variant="flat" avatar={<MdWifiOff />}>
+    <Chip color="default" size="sm" variant="tertiary">
+      <MdWifiOff />
       {t("offline.indicator")}
     </Chip>
   );

@@ -3,7 +3,7 @@
 import React from "react";
 import { Color, TileTable } from "@/components/features/Summary/TileTable";
 
-import { Skeleton } from "@heroui/skeleton";
+import { Skeleton } from "@heroui/react";
 import { TypeSummary } from "@/interfaces/summary";
 import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
@@ -20,9 +20,7 @@ export const TransactionsByTypeTitle: React.FC<
 
   if (!byType) {
     return (
-      <Skeleton className="rounded-lg w-full">
-        <div className="h-40 rounded-lg bg-default-200"></div>
-      </Skeleton>
+      <Skeleton className="h-40 rounded-lg w-full" />
     );
   }
 

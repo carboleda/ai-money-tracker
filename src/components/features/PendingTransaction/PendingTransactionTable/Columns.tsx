@@ -1,37 +1,35 @@
-import { formatCurrency, formatDate } from "@/config/utils";
-import { Chip } from "@heroui/chip";
-import { Button } from "@heroui/button";
-import { TableCell } from "@heroui/table";
+import {
+  formatCurrency,
+  formatDate,
+  getTransactionOverdueStatus,
+} from "@/config/utils";
+import { AvatarVariants, Chip, Table } from "@heroui/react";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { TableColumn, RenderCellProps } from "@/interfaces/global";
 import { TransactionTypeDecorator } from "@/components/TransactionTypeDecorator";
 import Link from "next/link";
 import { NotePopover } from "@/components/NotePopover";
-import { DueDateIndicator } from "@/components/shared/DueDateIndicator";
+import { CustomIcon } from "@/components/shared/CustomIcon";
 import { JSX } from "react";
-import { DeleteTableItemButton } from "@/components/DeleteTableItemButton";
 import { GoLinkExternal } from "react-icons/go";
 import { RiExternalLinkLine } from "react-icons/ri";
-import { FaRegCircleCheck } from "react-icons/fa6";
 import { TransactionOutput } from "@/app/api/domain/transaction/ports/outbound/filter-transactions.port";
 import { TransactionType } from "@/app/api/domain/transaction/model/transaction.model";
+import { TransactionOverdueStatus } from "@/interfaces/transaction";
 
 const columnsDesktop: TableColumn[] = [
+  {
+    key: "description",
+    className: "uppercase text-start",
+    isRowHeader: true,
+  },
   {
     key: "date",
     className: "uppercase",
   },
   {
-    key: "description",
-    className: "uppercase text-start",
-  },
-  {
     key: "amount",
     className: "uppercase text-end",
-  },
-  {
-    key: "actions",
-    className: "uppercase text-center",
   },
 ];
 
@@ -39,43 +37,65 @@ const columnsMobile: TableColumn[] = [
   {
     key: "transaction",
     className: "uppercase",
+    isRowHeader: true,
+  },
+  {
+    key: "empty1",
+  },
+  {
+    key: "empty2",
   },
 ];
+
+const statusDotColorMap: Record<
+  TransactionOverdueStatus,
+  AvatarVariants["color"]
+> = {
+  [TransactionOverdueStatus.OVERDUE]: "danger",
+  [TransactionOverdueStatus.SOON]: "warning",
+  [TransactionOverdueStatus.UPCOMING]: "accent",
+};
 
 const renderCellDesktop = ({
   key,
   item,
 }: RenderCellProps<TransactionOutput>): JSX.Element => {
+  const status = getTransactionOverdueStatus(item.createdAt);
+
   switch (key) {
     case "description":
       return (
-        <TableCell>
-          <div className="flex flex-row items-start gap-2">
-            <span className="text-gray-400">
+        <Table.Cell>
+          <div className="flex items-center gap-2">
+            <CustomIcon
+              icon={item.category?.icon}
+              color={statusDotColorMap[status]}
+            />
+            <div className="flex flex-col items-start gap-1">
+              <div className="flex flex-row items-center gap-2">
+                <span className="text-gray-400">{item.description}</span>
+                {item.notes && <NotePopover content={item.notes} />}
+              </div>
               {item.category && (
-                <Chip radius="sm" variant="flat" size="sm">
-                  {`${item.category.icon} ${item.category.name}`}
+                <Chip variant="tertiary" size="sm" className="rounded-sm p-0">
+                  {item.category.name}
                 </Chip>
               )}
-            </span>
-
-            <span className="text-gray-400">{item.description}</span>
-            {item.notes && <NotePopover content={item.notes} />}
+            </div>
           </div>
-        </TableCell>
+        </Table.Cell>
       );
     case "date":
       return (
-        <TableCell>
-          <div className="flex items-center gap-0">
-            <DueDateIndicator dueDate={item.createdAt} />
+        <Table.Cell>
+          <div className="flex items-center gap-2">
             {formatDate(new Date(item.createdAt))}
           </div>
-        </TableCell>
+        </Table.Cell>
       );
     case "amount":
       return (
-        <TableCell>
+        <Table.Cell>
           <div className="flex flex-row items-center gap-2 justify-end">
             {item.paymentLink && (
               <Link href={item.paymentLink} target="_blank">
@@ -86,7 +106,7 @@ const renderCellDesktop = ({
               {formatCurrency(item.amount)}
             </TransactionTypeDecorator>
           </div>
-        </TableCell>
+        </Table.Cell>
       );
     default:
       return <></>;
@@ -96,21 +116,34 @@ const renderCellDesktop = ({
 const renderCellMobile = ({
   key,
   item,
-  onEdit: onConfirm,
-  onDelete,
-  isDeleteDisabled,
 }: RenderCellProps<TransactionOutput>): JSX.Element => {
-  switch (key) {
-    case "transaction":
-      return (
-        <TableCell>
-          <div className="flex flex-col gap-1">
-            <div className="flex flex-row items-center justify-between gap-1">
-              <div className="flex items-center">
-                <DueDateIndicator dueDate={item.createdAt} />
-                <p className="text-xs font-normal">{item.description}</p>
-              </div>
-              <div className="flex flex-row gap-2">
+  if (key !== "transaction") return <></>;
+
+  const status = getTransactionOverdueStatus(item.createdAt);
+
+  return (
+    <Table.Cell colSpan={3}>
+      <div className="flex flex-col gap-1.5 py-1.5 w-full">
+        <div className="flex items-center justify-between gap-2 w-full">
+          <div className="flex items-center gap-1 min-w-0">
+            <p className="text-sm font-semibold truncate">{item.description}</p>
+          </div>
+        </div>
+        <div className="flex items-center justify-between gap-3 w-full">
+          <div className="flex items-center gap-2 min-w-0">
+            <CustomIcon
+              icon={item.category?.icon}
+              variant="soft"
+              color={statusDotColorMap[status]}
+            />
+            <div className="flex flex-row gap-2 items-center">
+              {item.category && (
+                <span className="text-xs font-light text-default-500 truncate">
+                  {item.category.name}
+                </span>
+              )}
+
+              <div className="flex flex-row gap-2 shrink-0">
                 {item.notes && <NotePopover content={item.notes} />}
                 {item.paymentLink && (
                   <Link href={item.paymentLink} target="_blank">
@@ -119,51 +152,19 @@ const renderCellMobile = ({
                 )}
               </div>
             </div>
-            <div className="flex flex-row w-full items-center justify-between">
-              <span className="text-end">
-                <TransactionTypeDecorator
-                  type={TransactionType.TRANSFER}
-                  size="sm"
-                >
-                  {formatCurrency(item.amount)}
-                </TransactionTypeDecorator>
-                {item.category && (
-                  <Chip radius="sm" variant="flat" size="sm" className="ml-2">
-                    {`${item.category.icon} ${item.category.name}`}
-                  </Chip>
-                )}
-              </span>
-            </div>
-            <div className="flex items-center justify-between w-full">
-              <span className="text-xs font-light">
-                {formatDate(new Date(item.createdAt))}
-              </span>
-              <div className="flex flex-row items-center">
-                <Button
-                  isIconOnly
-                  color="success"
-                  variant="light"
-                  className="self-center"
-                  size="sm"
-                  aria-label="Edit"
-                  onPress={() => onConfirm?.(item)}
-                >
-                  <FaRegCircleCheck className="text-xl" />
-                </Button>
-                <DeleteTableItemButton
-                  size="sm"
-                  itemId={item.id}
-                  isDisabled={isDeleteDisabled}
-                  deleteTableItem={onDelete!}
-                />
-              </div>
-            </div>
           </div>
-        </TableCell>
-      );
-    default:
-      return <></>;
-  }
+          <div className="flex flex-col items-end shrink-0 gap-0.5">
+            <TransactionTypeDecorator type={TransactionType.TRANSFER} size="sm">
+              {formatCurrency(item.amount)}
+            </TransactionTypeDecorator>
+            <span className="text-xs font-light text-default-500">
+              {formatDate(new Date(item.createdAt))}
+            </span>
+          </div>
+        </div>
+      </div>
+    </Table.Cell>
+  );
 };
 
 export const useRenderCell = () => {
@@ -171,7 +172,6 @@ export const useRenderCell = () => {
 
   const columns = isMobile ? columnsMobile : columnsDesktop;
   const renderCell = isMobile ? renderCellMobile : renderCellDesktop;
-  const rowHeight = isMobile ? 90 : 50;
 
-  return { columns, renderCell, rowHeight };
+  return { columns, renderCell };
 };

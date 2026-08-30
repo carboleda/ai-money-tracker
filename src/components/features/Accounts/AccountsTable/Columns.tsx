@@ -1,7 +1,5 @@
 import { formatCurrency } from "@/config/utils";
-import { Chip } from "@heroui/chip";
-import { Button } from "@heroui/button";
-import { TableCell } from "@heroui/table";
+import { Chip, Table } from "@heroui/react";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { TableColumn, RenderCellProps } from "@/interfaces/global";
 import { Account } from "@/interfaces/account";
@@ -9,8 +7,7 @@ import { JSX } from "react";
 import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
 import { TransactionTypeDecorator } from "@/components/TransactionTypeDecorator";
-import { IconEdit } from "@/components/shared/icons";
-import { DeleteTableItemButton } from "@/components/DeleteTableItemButton";
+import { CustomIcon } from "@/components/shared/CustomIcon";
 
 const columnsDesktop: TableColumn[] = [
   {
@@ -24,6 +21,7 @@ const columnsDesktop: TableColumn[] = [
   {
     key: "name",
     className: "uppercase",
+    isRowHeader: true,
   },
   {
     key: "type",
@@ -33,16 +31,25 @@ const columnsDesktop: TableColumn[] = [
     key: "balance",
     className: "uppercase text-end",
   },
-  {
-    key: "actions",
-    className: "uppercase text-center",
-  },
 ];
 
 const columnsMobile: TableColumn[] = [
   {
     key: "account",
     className: "uppercase",
+    isRowHeader: true,
+  },
+  {
+    key: "empty1",
+  },
+  {
+    key: "empty2",
+  },
+  {
+    key: "empty3",
+  },
+  {
+    key: "empty4",
   },
 ];
 
@@ -54,31 +61,31 @@ const renderCellDesktop = ({
   switch (key) {
     case "icon":
       return (
-        <TableCell>
-          <div className="text-2xl">{item.icon}</div>
-        </TableCell>
+        <Table.Cell>
+          <CustomIcon icon={item.icon} />
+        </Table.Cell>
       );
     case "ref":
       return (
-        <TableCell>
-          <Chip radius="sm" variant="flat" className="font-bold">
+        <Table.Cell>
+          <Chip variant="tertiary" className="rounded-sm font-bold">
             {item.ref}
           </Chip>
-        </TableCell>
+        </Table.Cell>
       );
     case "name":
-      return <TableCell>{item.name}</TableCell>;
+      return <Table.Cell>{item.name}</Table.Cell>;
     case "type":
-      return <TableCell>{t?.(item.type)}</TableCell>;
+      return <Table.Cell>{t?.(item.type)}</Table.Cell>;
     case "balance":
       return (
-        <TableCell className="text-end font-bold">
+        <Table.Cell className="text-end font-bold">
           <TransactionTypeDecorator
             color={item.balance >= 0 ? "success" : "danger"}
           >
             {formatCurrency(item.balance)}
           </TransactionTypeDecorator>
-        </TableCell>
+        </Table.Cell>
       );
     default:
       return <></>;
@@ -89,54 +96,30 @@ const renderCellMobile = ({
   key,
   item,
   t,
-  onEdit,
-  onDelete,
-  isDeleteDisabled,
 }: RenderCellProps<Account>): JSX.Element => {
-  if (key === "account") {
-    return (
-      <TableCell>
-        <div className="flex flex-row items-end justify-start gap-2">
-          <span className="text-4xl">{item.icon}</span>
-          <div className="flex flex-col gap-1">
+  if (key !== "account") return <></>;
+
+  return (
+    <Table.Cell colSpan={5}>
+      <div className="flex flex-row items-center justify-start gap-4">
+        <CustomIcon icon={item.icon} />
+        <div className="flex flex-col gap-1">
+          <div className="flex gap-2 text-sm">
             <span className="font-bold">{item.name}</span>
-            <div className="flex gap-2 text-sm">
-              <TransactionTypeDecorator
-                size="sm"
-                color={item.balance >= 0 ? "success" : "danger"}
-              >
-                {formatCurrency(item.balance)}
-              </TransactionTypeDecorator>
-              <Chip radius="sm" variant="flat" size="sm">
-                <span className="text-xs font-light">{t?.(item.type)}</span>
-              </Chip>
-            </div>
+            <Chip variant="soft" size="sm" className="rounded-sm">
+              <span className="text-xs font-light">{t?.(item.type)}</span>
+            </Chip>
           </div>
-          <div className="flex ml-auto gap-1">
-            <Button
-              isIconOnly
-              color="warning"
-              variant="light"
-              className="self-center"
-              size="sm"
-              aria-label="Edit"
-              onPress={() => onEdit?.(item)}
-            >
-              <IconEdit />
-            </Button>
-            <DeleteTableItemButton
-              size="sm"
-              itemId={item.id}
-              isDisabled={isDeleteDisabled}
-              deleteTableItem={onDelete!}
-            />
-          </div>
+          <TransactionTypeDecorator
+            size="sm"
+            color={item.balance >= 0 ? "success" : "danger"}
+          >
+            {formatCurrency(item.balance)}
+          </TransactionTypeDecorator>
         </div>
-      </TableCell>
-    );
-  } else {
-    return <></>;
-  }
+      </div>
+    </Table.Cell>
+  );
 };
 
 export const useRenderCell = () => {
@@ -156,6 +139,5 @@ export const useRenderCell = () => {
   return {
     columns,
     renderCell,
-    rowHeight: isMobile ? 70 : 52,
   };
 };

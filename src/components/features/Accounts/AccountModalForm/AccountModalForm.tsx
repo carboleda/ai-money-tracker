@@ -1,14 +1,14 @@
 import React, { useCallback, useEffect, useState } from "react";
 import {
+  Button,
+  Chip,
+  FieldError,
+  Input,
+  Label,
   Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-} from "@heroui/modal";
-import { Input } from "@heroui/input";
-import { Button } from "@heroui/button";
-import { Popover, PopoverTrigger, PopoverContent } from "@heroui/popover";
+  Popover,
+  TextField,
+} from "@heroui/react";
 import { Account, ACCOUNT_TYPES, DEFAULT_ICON } from "@/interfaces/account";
 import { useMutateAccount } from "@/hooks/useMutateAccount";
 import { useTranslation } from "react-i18next";
@@ -19,6 +19,7 @@ import { AccountType } from "@/app/api/domain/account/model/account.model";
 import dynamic from "next/dynamic";
 import { Theme } from "emoji-picker-react";
 import { CustomDropdown } from "@/components/shared/CustomDropdown";
+import { ModalContainer } from "@/components/shared/ModalContainer";
 
 // Dynamically import to avoid SSR issues
 const EmojiPicker = dynamic(
@@ -65,7 +66,7 @@ export const AccountModalForm: React.FC<AccountModalFormProps> = ({
     }
   }, [item, isOpen]);
 
-  const onOpenChangeHandler = (open: boolean) => {
+  const onOpenChangeHandler = () => {
     clearInputs();
     clearError();
     onDismiss();
@@ -135,81 +136,88 @@ export const AccountModalForm: React.FC<AccountModalFormProps> = ({
 
   const renderEmojiPickerPopover = () => {
     return (
-      <Popover
-        isOpen={isEmojiPickerOpen}
-        onOpenChange={setIsEmojiPickerOpen}
-        placement="bottom"
-      >
-        <PopoverTrigger>
-          <Button
-            isIconOnly
-            variant="bordered"
-            className="text-2xl h-14 w-16"
-            title={t("icon")}
-          >
-            {iconInput || DEFAULT_ICON}
-          </Button>
-        </PopoverTrigger>
-        <PopoverContent className="w-80">
-          <div className="px-1 py-2">
-            <EmojiPicker
-              onEmojiClick={(emojiData) => {
-                createProxiedSetter(setIconInput)(emojiData.emoji);
-                setIsEmojiPickerOpen(false);
-              }}
-              theme={Theme.AUTO}
-              width="100%"
-              height={400}
-              previewConfig={{
-                showPreview: false,
-              }}
-              searchDisabled={false}
-              lazyLoadEmojis={true}
-            />
-          </div>
-        </PopoverContent>
+      <Popover isOpen={isEmojiPickerOpen} onOpenChange={setIsEmojiPickerOpen}>
+        <Button
+          isIconOnly
+          variant="outline"
+          className="text-2xl h-14 w-16"
+          aria-label={t("icon")}
+        >
+          {iconInput || DEFAULT_ICON}
+        </Button>
+        <Popover.Content placement="bottom" className="w-80">
+          <Popover.Dialog>
+            <div className="px-1 py-2">
+              <EmojiPicker
+                onEmojiClick={(emojiData) => {
+                  createProxiedSetter(setIconInput)(emojiData.emoji);
+                  setIsEmojiPickerOpen(false);
+                }}
+                theme={Theme.AUTO}
+                width="100%"
+                height={400}
+                previewConfig={{
+                  showPreview: false,
+                }}
+                searchDisabled={false}
+                lazyLoadEmojis={true}
+              />
+            </div>
+          </Popover.Dialog>
+        </Popover.Content>
       </Popover>
     );
   };
 
   return (
-    <Modal
-      placement="top-center"
-      backdrop="blur"
-      isOpen={isOpen}
-      onOpenChange={onOpenChangeHandler}
-      isDismissable={false}
-    >
-      <ModalContent>
-        {(onClose) => (
-          <>
-            <ModalHeader className="flex flex-col gap-1">
-              {t("accounts")}
-            </ModalHeader>
-            <ModalBody>
+    <Modal>
+      <Modal.Backdrop
+        variant="blur"
+        isOpen={isOpen}
+        onOpenChange={onOpenChangeHandler}
+        isDismissable={false}
+      >
+        <ModalContainer>
+          <Modal.Dialog>
+            <Modal.Header className="mb-4">
+              <Modal.Heading className="flex flex-col gap-1">
+                {t("accounts")}
+              </Modal.Heading>
+            </Modal.Header>
+            <Modal.Body className="flex flex-col gap-4">
               {validationError && (
-                <div className="text-red-500 text-sm">{validationError}</div>
+                <Chip
+                  variant="soft"
+                  color="danger"
+                  className="text-wrap max-w-full w-full h-fit p-2 rounded-sm"
+                >
+                  {validationError}
+                </Chip>
               )}
-              <div className="flex gap-2">
+              <div className="flex gap-2 w-full">
                 {renderEmojiPickerPopover()}
-                <Input
-                  label={t("ref")}
-                  variant="bordered"
+                <TextField
                   isRequired
+                  className="w-full"
+                  isDisabled={!!item}
                   value={refInput}
-                  onValueChange={createProxiedSetter(setRefInput)}
-                  disabled={!!item}
-                  placeholder="e.g., C1408"
-                />
+                  onChange={createProxiedSetter(setRefInput)}
+                >
+                  <Label>{t("ref")}</Label>
+                  <Input variant="secondary" placeholder="e.g., C1408" />
+                  <FieldError />
+                </TextField>
               </div>
-              <Input
+              <TextField
                 autoFocus
-                label={t("name")}
-                variant="bordered"
                 isRequired
                 value={nameInput}
-                onValueChange={createProxiedSetter(setNameInput)}
-              />
+                onChange={createProxiedSetter(setNameInput)}
+              >
+                <Label>{t("name")}</Label>
+                <Input variant="secondary" />
+                <FieldError />
+              </TextField>
               <CustomDropdown
                 values={ACCOUNT_TYPES.map((type) => ({
                   key: type.key,
@@ -223,7 +231,7 @@ export const AccountModalForm: React.FC<AccountModalFormProps> = ({
               />
               <MaskedCurrencyInput
                 label={t("balance")}
-                variant="bordered"
+                variant="secondary"
                 type="text"
                 isRequired
                 value={balanceInput?.toString()}
@@ -231,35 +239,35 @@ export const AccountModalForm: React.FC<AccountModalFormProps> = ({
                   createProxiedSetter(setBalanceInput)(v.floatValue || 0)
                 }
               />
-              <Input
-                label={t("description")}
-                variant="bordered"
+              <TextField
                 value={descriptionInput}
-                onValueChange={setDescriptionInput}
-                placeholder={t("description")}
-              />
-            </ModalBody>
-            <ModalFooter>
+                onChange={setDescriptionInput}
+              >
+                <Label>{t("description")}</Label>
+                <Input variant="secondary" placeholder={t("description")} />
+                <FieldError />
+              </TextField>
+            </Modal.Body>
+            <Modal.Footer>
               <Button
-                color="danger"
-                variant="flat"
-                disabled={areButtonsDisabled}
-                onPress={onClose}
+                variant="danger-soft"
+                isDisabled={areButtonsDisabled}
+                onPress={onOpenChangeHandler}
               >
                 {t("cancel")}
               </Button>
               <Button
-                color="primary"
-                isLoading={isMutating}
-                disabled={areButtonsDisabled}
+                variant="primary"
+                isPending={isMutating}
+                isDisabled={areButtonsDisabled}
                 onPress={onSave}
               >
                 {t("save")}
               </Button>
-            </ModalFooter>
-          </>
-        )}
-      </ModalContent>
+            </Modal.Footer>
+          </Modal.Dialog>
+        </ModalContainer>
+      </Modal.Backdrop>
     </Modal>
   );
 };

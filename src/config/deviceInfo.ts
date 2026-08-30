@@ -58,18 +58,54 @@ export class DeviceInfo {
   }
 
   /**
-   * Generates a SHA-256 hash from a string
-   * Uses SubtleCrypto API for secure hashing
+   * Generates a hash from a string, preferring SHA-256 via SubtleCrypto.
+   * SubtleCrypto is only available in secure contexts (HTTPS/localhost), so
+   * on iOS Safari it's undefined when testing over plain http:// on a LAN
+   * IP - fall back to a deterministic non-cryptographic hash instead of
+   * throwing, since this ID is only used for device identification.
    */
   private static async sha256(str: string): Promise<string> {
-    const encoder = new TextEncoder();
-    const data = encoder.encode(str);
-    const hashBuffer = await crypto.subtle.digest("SHA-256", data);
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    const hashHex = hashArray
-      .map((b) => b.toString(16).padStart(2, "0"))
-      .join("");
-    return hashHex; //.substring(0, 16); // Take first 16 characters (64-bit)
+    if (typeof crypto !== "undefined" && crypto.subtle) {
+      try {
+        const encoder = new TextEncoder();
+        const data = encoder.encode(str);
+        const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+        return Array.from(new Uint8Array(hashBuffer))
+          .map((b) => b.toString(16).padStart(2, "0"))
+          .join("");
+      } catch (error) {
+        console.warn(
+          "crypto.subtle.digest failed, falling back to non-cryptographic hash:",
+          error
+        );
+      }
+    }
+    return this.fallbackHash(str);
+  }
+
+  /**
+   * Deterministic non-cryptographic hash (two 32-bit rolling hashes
+   * combined into a 16-char hex string, "cyrb53"-style) used only when
+   * SubtleCrypto is unavailable.
+   */
+  private static fallbackHash(str: string): string {
+    let h1 = 0xdeadbeef;
+    let h2 = 0x41c6ce57;
+    for (let i = 0; i < str.length; i++) {
+      const ch = str.charCodeAt(i);
+      h1 = Math.imul(h1 ^ ch, 2654435761);
+      h2 = Math.imul(h2 ^ ch, 1597334677);
+    }
+    h1 =
+      Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^
+      Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+    h2 =
+      Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^
+      Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+    return (
+      (h1 >>> 0).toString(16).padStart(8, "0") +
+      (h2 >>> 0).toString(16).padStart(8, "0")
+    );
   }
 
   /**

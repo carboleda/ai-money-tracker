@@ -5,7 +5,7 @@ import { HiFire } from "react-icons/hi";
 import { Color, TileTable } from "@/components/features/Summary/TileTable";
 
 import { Account } from "@/interfaces/account";
-import { Skeleton } from "@heroui/skeleton";
+import { Skeleton } from "@heroui/react";
 import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
 
@@ -24,9 +24,7 @@ export const AccountsBalanceTitle: React.FC<AccountsBalanceTitleProps> = ({
 
   if (!accountsBalance || !totalBalance) {
     return (
-      <Skeleton className="rounded-lg w-full">
-        <div className="h-60 rounded-lg bg-default-200"></div>
-      </Skeleton>
+      <Skeleton className="h-60 rounded-lg w-full" />
     );
   }
 

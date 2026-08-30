@@ -1,16 +1,16 @@
 import { getTransactionOverdueStatus } from "@/config/utils";
 import { TransactionOverdueStatus } from "@/interfaces/transaction";
-import { Chip, ChipProps } from "@heroui/chip";
+import clsx from "clsx";
 import React, { PropsWithChildren } from "react";
 
 interface DueDateIndicatorProps extends PropsWithChildren {
   dueDate: string;
 }
 
-const statusColorMap: Record<TransactionOverdueStatus, ChipProps["color"]> = {
-  [TransactionOverdueStatus.OVERDUE]: "danger",
-  [TransactionOverdueStatus.SOON]: "warning",
-  [TransactionOverdueStatus.UPCOMING]: "success",
+const statusDotColorMap: Record<TransactionOverdueStatus, string> = {
+  [TransactionOverdueStatus.OVERDUE]: "bg-danger",
+  [TransactionOverdueStatus.SOON]: "bg-warning",
+  [TransactionOverdueStatus.UPCOMING]: "bg-success",
 };
 
 export const DueDateIndicator: React.FC<DueDateIndicatorProps> = ({
@@ -19,13 +19,14 @@ export const DueDateIndicator: React.FC<DueDateIndicatorProps> = ({
 }) => {
   const status = getTransactionOverdueStatus(dueDate);
   return (
-    <Chip
-      className="border-none p-0"
-      color={statusColorMap[status]}
-      size="sm"
-      variant="dot"
-    >
+    <span className="inline-flex items-center gap-1.5 text-sm">
+      <span
+        className={clsx(
+          "inline-block h-2 w-2 rounded-full",
+          statusDotColorMap[status]
+        )}
+      />
       {children}
-    </Chip>
+    </span>
   );
 };

@@ -1,10 +1,4 @@
-import {
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-} from "@heroui/modal";
+import { Modal } from "@heroui/react";
 import { PropsWithChildren } from "react";
 
 interface ChartDetailsModalProps extends PropsWithChildren {
@@ -20,25 +14,22 @@ export const ChartDetailsModal: React.FC<ChartDetailsModalProps> = ({
   children,
 }) => {
   return (
-    <>
-      <Modal
-        id="cart-details-modal"
-        backdrop="blur"
-        placement="top"
-        size="2xl"
+    <Modal>
+      <Modal.Backdrop
+        variant="blur"
         isOpen={isOpen}
         onOpenChange={(open) => !open && onClose()}
       >
-        <ModalContent>
-          {() => (
-            <>
-              <ModalHeader className="flex flex-col gap-1">{title}</ModalHeader>
-              <ModalBody>{children}</ModalBody>
-              <ModalFooter></ModalFooter>
-            </>
-          )}
-        </ModalContent>
-      </Modal>
-    </>
+        <Modal.Container placement="top" size="lg">
+          <Modal.Dialog>
+            <Modal.Header className="flex flex-col gap-1">
+              <Modal.Heading>{title}</Modal.Heading>
+            </Modal.Header>
+            <Modal.Body>{children}</Modal.Body>
+            <Modal.Footer></Modal.Footer>
+          </Modal.Dialog>
+        </Modal.Container>
+      </Modal.Backdrop>
+    </Modal>
   );
 };

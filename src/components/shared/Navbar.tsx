@@ -1,7 +1,7 @@
 "use client";
 
 import { useAppStore } from "@/stores/useAppStore";
-import { Button } from "@heroui/button";
+import { Button } from "@heroui/react";
 import { CiMenuBurger } from "react-icons/ci";
 import { NetworkIndicator } from "@/components/shared/NetworkIndicator";
 
@@ -13,10 +13,8 @@ export const Navbar = () => {
       <Button
         isIconOnly
         aria-label="Menu"
-        color="default"
-        variant="light"
-        radius="sm"
-        className="sm:hidden"
+        variant="ghost"
+        className="sm:hidden rounded-sm"
         onPress={() => toggleSidebar()}
       >
         <CiMenuBurger className="size-6" />
@@ -25,7 +23,7 @@ export const Navbar = () => {
       <div className="flex flex-col w-full">
         <h1 className="lg:hidden">{pageTitle}</h1>
         <div className="flex items-center justify-between gap-2 min-h-6">
-          <h3 className="text-small lg:font-normal font-light dark:text-zinc-400">
+          <h3 className="text-sm lg:font-normal font-light dark:text-zinc-400">
             {pageSubtitle}
           </h3>
           <NetworkIndicator />

@@ -18,7 +18,7 @@ export default async function proxy(request: NextRequest) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
-  for await (const chain of middlewareChain) {
+  for (const chain of middlewareChain) {
     const response = await chain(request);
 
     if (response) {

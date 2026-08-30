@@ -4,17 +4,12 @@ import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { GetTransactionsResponse, Summary } from "@/interfaces/transaction";
 import { fetchJson } from "@/config/request";
-import {
-  CreateTransactionModalForm,
-  TransactionTable,
-} from "@/components/features/Transactions";
+import { TransactionTable } from "@/components/features/Transactions";
 import { BankAccounDropdown } from "@/components/BankAccounsDropdown";
 import { parseAbsoluteToLocal, ZonedDateTime } from "@internationalized/date";
 import { RangeValue } from "@react-types/shared";
 import { getMonthBounds } from "@/config/utils";
 import { SummaryPanel } from "@/components/SummaryPanel";
-import { HiOutlinePlusCircle } from "react-icons/hi";
-import { Button } from "@heroui/button";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { CustomDateRangePicker } from "@/components/shared/CustomDateRangePicker";
 import { useTranslation } from "react-i18next";
@@ -27,7 +22,6 @@ function PageContent() {
   const { t } = useTranslation(LocaleNamespace.Transactions);
   const { setPageTitle } = useAppStore();
   const isMobile = useIsMobile();
-  const [isOpen, setIsOpen] = useState(false);
   const [filterValue, setFilterValue] = useState("");
   const currentMonthBounds = getMonthBounds(new Date());
   const [selectedAccount, setSelectedAccount] = useState<string>("");
@@ -51,10 +45,6 @@ function PageContent() {
     setPageTitle(t("transactions"), t("subtitle"));
   }, [t, setPageTitle]);
 
-  const onDialogDismissed = () => {
-    setIsOpen(false);
-  };
-
   const transactions = useMemo(() => {
     if (!reesponse?.transactions) return reesponse?.transactions;
 
@@ -68,7 +58,7 @@ function PageContent() {
             .includes(filterValue.toLowerCase()) ||
           transaction.category?.name
             ?.toLowerCase()
-            .includes(filterValue.toLowerCase())
+            .includes(filterValue.toLowerCase()),
       );
     }
 
@@ -86,7 +76,6 @@ function PageContent() {
             <div className="flex flex-row gap-2">
               <CustomDateRangePicker
                 label={t("dateRangeFilter")}
-                variant="bordered"
                 granularity="day"
                 isRequired
                 value={dateWithin}
@@ -94,17 +83,8 @@ function PageContent() {
               />
               <BankAccounDropdown
                 label={t("accountFilter")}
-                onChange={setSelectedAccount}
+                onChange={(key) => setSelectedAccount(key ?? "")}
               />
-              <Button
-                color="success"
-                radius="sm"
-                variant="solid"
-                isIconOnly
-                onPress={() => setIsOpen(true)}
-              >
-                <HiOutlinePlusCircle className="text-xl" />
-              </Button>
             </div>
           </SearchToolbar>
         </div>
@@ -113,28 +93,22 @@ function PageContent() {
   };
 
   return (
-    <>
-      <section className="flex flex-col items-center justify-center gap-4">
-        <div className="flex flex-col w-full justify-start items-start gap-2">
-          <SummaryPanel
-            summary={reesponse?.summary}
-            shortNumber={isMobile}
-            includedKeys={[
-              "totalBalance",
-              ...(isMobile ? [] : ["totalIncomes" as keyof Summary]),
-              "totalExpenses",
-              "totalTransfers",
-            ]}
-          />
-        </div>
-        {renderTopContent()}
-        <TransactionTable transactions={transactions} isLoading={isLoading} />
-      </section>
-      <CreateTransactionModalForm
-        isOpen={isOpen}
-        onDismiss={onDialogDismissed}
-      />
-    </>
+    <section className="flex flex-col items-center justify-center gap-4">
+      <div className="flex flex-col w-full justify-start items-start gap-2">
+        <SummaryPanel
+          summary={reesponse?.summary}
+          shortNumber={isMobile}
+          includedKeys={[
+            "totalBalance",
+            ...(isMobile ? [] : ["totalIncomes" as keyof Summary]),
+            "totalExpenses",
+            "totalTransfers",
+          ]}
+        />
+      </div>
+      {renderTopContent()}
+      <TransactionTable transactions={transactions} isLoading={isLoading} />
+    </section>
   );
 }
 

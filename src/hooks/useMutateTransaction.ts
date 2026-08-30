@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { CreateTranaction } from "@/interfaces/transaction";
+import { CreateTransactionPayload } from "@/interfaces/transaction";
 import { sendRequest, invalidateResource, MutationRequest } from "@/config/request";
 import { UpdateTransactionInput } from "@/app/api/domain/transaction/ports/inbound/update-transaction.port";
 import { useOfflineWriteGuard } from "@/hooks/useOnlineStatus";
@@ -16,19 +16,12 @@ export const useMutateTransaction = () => {
     onSuccess: () => invalidateResource(queryClient, dependentQueries),
   });
 
-  const createTransaction = async (payload: CreateTranaction) => {
+  const createTransaction = async (payload: CreateTransactionPayload) => {
     if (!guardOnline()) throw new Error("Offline");
-
-    const formData = new FormData();
-    payload.text && formData.append("text", payload.text);
-    payload.picture && formData.append("picture", payload.picture);
-    payload.sourceAccount &&
-      formData.append("sourceAccount", payload.sourceAccount);
-    payload.createdAt && formData.append("createdAt", payload.createdAt);
 
     return mutateAsync({
       method: "POST",
-      body: formData,
+      body: JSON.stringify(payload),
     }).then((res) => {
       if (res.status !== 200) {
         throw new Error(res.statusText);

@@ -7,6 +7,7 @@ import { firebaseApp } from "@/firebase/client";
 import { Navbar } from "@/components/shared/Navbar";
 import { PropsWithChildren } from "react";
 import { AuthGuard } from "@/components/shared/AuthGuard";
+import { AddTransactionEntryPoints } from "@/components/features/Transactions/AddTransactionModal/AddTransactionEntryPoints";
 
 export default function PrivateLayout({
   children,
@@ -18,6 +19,7 @@ export default function PrivateLayout({
         <Navbar />
         <AuthGuard>{children}</AuthGuard>
       </Sidebar>
+      <AddTransactionEntryPoints />
     </section>
   );
 }

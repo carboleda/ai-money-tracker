@@ -5,17 +5,9 @@ import { AgCharts } from "ag-charts-react";
 import { CategorySummary } from "@/interfaces/summary";
 import { useCategoryChart } from "@/hooks/charts/useCategoryChart";
 import { ChartDetailsModal } from "./ChartDetailsModal";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableColumn,
-  TableHeader,
-  TableRow,
-} from "@heroui/table";
+import { Chip, Table } from "@heroui/react";
 import { formatCurrency, formatTimeDate } from "@/config/utils";
 import { TransactionTypeDecorator } from "../TransactionTypeDecorator";
-import { Chip } from "@heroui/chip";
 import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
 import { TransactionOutput } from "@/app/api/domain/transaction/ports/outbound/filter-transactions.port";
@@ -52,44 +44,49 @@ export const CategoriesChart: React.FC<CategoriesChartProps> = ({
           title={
             <span>
               {t("transactionsForCategory")}&nbsp;
-              <Chip radius="sm" variant="flat" className="ml-2">
+              <Chip variant="tertiary" className="ml-2 rounded-sm">
                 <span className="font-bold">{selectedCategory.category}</span>
               </Chip>
             </span>
           }
         >
           <>
-            <Table
-              isCompact
-              isStriped
-              removeWrapper
-              aria-label="Category detail"
-            >
-              <TableHeader>
-                <TableColumn>{t("description")}</TableColumn>
-                <TableColumn>{t("date")}</TableColumn>
-                <TableColumn className="text-end">{t("amount")}</TableColumn>
-              </TableHeader>
-              <TableBody>
-                {detail
-                  .filter((t) => t.category?.name === selectedCategory.category)
-                  .map((transaction) => (
-                    <TableRow key={transaction.id}>
-                      <TableCell>{transaction.description}</TableCell>
-                      <TableCell>
-                        {formatTimeDate(new Date(transaction.createdAt))}
-                      </TableCell>
-                      <TableCell className="text-end">
-                        <TransactionTypeDecorator type={transaction.type}>
-                          {formatCurrency(transaction.amount)}
-                        </TransactionTypeDecorator>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-              </TableBody>
+            <Table>
+              <Table.ScrollContainer>
+                <Table.Content aria-label="Category detail">
+                  <Table.Header>
+                    <Table.Column id="description" isRowHeader>
+                      {t("description")}
+                    </Table.Column>
+                    <Table.Column id="date">{t("date")}</Table.Column>
+                    <Table.Column id="amount" className="text-end">
+                      {t("amount")}
+                    </Table.Column>
+                  </Table.Header>
+                  <Table.Body>
+                    {detail
+                      .filter(
+                        (t) => t.category?.name === selectedCategory.category
+                      )
+                      .map((transaction) => (
+                        <Table.Row key={transaction.id} id={transaction.id}>
+                          <Table.Cell>{transaction.description}</Table.Cell>
+                          <Table.Cell>
+                            {formatTimeDate(new Date(transaction.createdAt))}
+                          </Table.Cell>
+                          <Table.Cell className="text-end">
+                            <TransactionTypeDecorator type={transaction.type}>
+                              {formatCurrency(transaction.amount)}
+                            </TransactionTypeDecorator>
+                          </Table.Cell>
+                        </Table.Row>
+                      ))}
+                  </Table.Body>
+                </Table.Content>
+              </Table.ScrollContainer>
             </Table>
             <div className="text-end">
-              <TransactionTypeDecorator color="primary">
+              <TransactionTypeDecorator color="accent">
                 <span className="font-bold">
                   {t("total")}:&nbsp;
                   {formatCurrency(selectedCategory.total)}

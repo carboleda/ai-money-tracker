@@ -1,20 +1,19 @@
 import React, { useEffect, useState } from "react";
 import {
+  Button,
+  Chip,
+  FieldError,
+  Input,
+  Label,
   Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-} from "@heroui/modal";
-import { Input } from "@heroui/input";
-import { Button } from "@heroui/button";
-import { DatePicker } from "@heroui/date-picker";
-import { parseAbsoluteToLocal, ZonedDateTime } from "@internationalized/date";
+  TextField,
+} from "@heroui/react";
 import { CategoriesAutocomplete } from "@/components/CategoriesAutocomplete";
 import { CategoryModel } from "@/app/api/domain/category/model/category.model";
+import { CustomDateField } from "@/components/shared/CustomDateField";
+import { CustomTimeField } from "@/components/shared/CustomTimeField";
 import { MaskedCurrencyInput } from "@/components/shared/MaskedCurrencyInput";
 import { useMutateTransaction } from "@/hooks/useMutateTransaction";
-import { Chip } from "@heroui/chip";
 import { BankAccounDropdown } from "@/components/BankAccounsDropdown";
 import { useToast } from "@/hooks/useToast";
 import { useTranslation } from "react-i18next";
@@ -24,6 +23,7 @@ import {
   TransactionType,
 } from "@/app/api/domain/transaction/model/transaction.model";
 import { UpdateTransactionInput } from "@/app/api/domain/transaction/ports/inbound/update-transaction.port";
+import { ModalContainer } from "@/components/shared/ModalContainer";
 
 interface UpdateTransactionModalFormProps {
   item?: TransactionOutput;
@@ -45,7 +45,7 @@ export const UpdateTransactionModalForm: React.FC<
   const [transactonCategoryInput, setTransactonCategoryInput] =
     useState<CategoryModel["ref"] | undefined>();
   const [amountInput, setAmountInput] = useState<number>();
-  const [createdAtInput, setCreatedAtInput] = useState<ZonedDateTime>();
+  const [createdAtInput, setCreatedAtInput] = useState<Date>();
 
   const areButtonsDisabled = isMutating || validationError !== "";
 
@@ -56,9 +56,7 @@ export const UpdateTransactionModalForm: React.FC<
       item.destinationAccount &&
         setDestinationAccountInput(item.destinationAccount.ref);
       setTransactonCategoryInput(item.category?.ref);
-      setCreatedAtInput(
-        item.createdAt ? parseAbsoluteToLocal(item.createdAt) : undefined
-      );
+      setCreatedAtInput(item.createdAt ? new Date(item.createdAt) : undefined);
       setAmountInput(item.amount);
     }
   }, [item]);
@@ -101,7 +99,7 @@ export const UpdateTransactionModalForm: React.FC<
         description: descriptionInput,
         sourceAccount: sourceAccountInput,
         destinationAccount: destinationAccountInput,
-        createdAt: createdAtInput!.toDate().toISOString(),
+        createdAt: createdAtInput!.toISOString(),
         amount: amountInput!,
         category: transactonCategoryInput,
       };
@@ -119,33 +117,36 @@ export const UpdateTransactionModalForm: React.FC<
   };
 
   return (
-    <Modal
-      placement="top-center"
-      backdrop="blur"
-      isOpen={isOpen}
-      onOpenChange={onOpenChangeHandler}
-      isDismissable={false}
-    >
-      <ModalContent>
-        {(onClose) => (
-          <>
-            <ModalHeader className="flex flex-col gap-1">
-              {t("updateTransaction")}
-            </ModalHeader>
-            <ModalBody>
-              <Input
+    <Modal>
+      <Modal.Backdrop
+        variant="blur"
+        isOpen={isOpen}
+        onOpenChange={onOpenChangeHandler}
+        isDismissable={false}
+      >
+        <ModalContainer>
+          <Modal.Dialog>
+            <Modal.Header className="mb-4">
+              <Modal.Heading className="flex flex-col gap-1">
+                {t("updateTransaction")}
+              </Modal.Heading>
+            </Modal.Header>
+            <Modal.Body className="flex flex-col gap-4">
+              <TextField
                 autoFocus
-                label={t("description")}
-                variant="bordered"
                 isRequired
                 value={descriptionInput}
-                onValueChange={setDescriptionInput}
-              />
+                onChange={setDescriptionInput}
+              >
+                <Label>{t("description")}</Label>
+                <Input variant="secondary" />
+                <FieldError />
+              </TextField>
               <div className="flex gap-2">
                 <BankAccounDropdown
                   label={t("sourceAccount")}
                   className="w-full"
-                  onChange={setSourceAccountInput}
+                  onChange={(key) => setSourceAccountInput(key ?? "")}
                   value={sourceAccountInput}
                   isRequired
                   showLabel
@@ -154,14 +155,14 @@ export const UpdateTransactionModalForm: React.FC<
                   <BankAccounDropdown
                     label={t("destinationAccount")}
                     className="w-full"
-                    onChange={setDestinationAccountInput}
+                    onChange={(key) => setDestinationAccountInput(key ?? "")}
                     value={destinationAccountInput}
                     isRequired
                     showLabel
                   />
                 )}
               </div>
-              <div className="flex gap-2">
+              <div className="flex flex-col md:flex-row gap-2">
                 <CategoriesAutocomplete
                   label={t("category")}
                   value={transactonCategoryInput}
@@ -170,54 +171,59 @@ export const UpdateTransactionModalForm: React.FC<
 
                 <MaskedCurrencyInput
                   label={t("amount")}
-                  variant="bordered"
+                  variant="secondary"
                   type="text"
                   isRequired
                   value={amountInput?.toString()}
                   onValueChange={(v) => setAmountInput(v.floatValue)}
                 />
               </div>
-              <DatePicker
-                label={t("transactionDate")}
-                variant="bordered"
-                granularity="minute"
-                value={createdAtInput}
-                onChange={(v) => setCreatedAtInput(v!)}
-                isRequired
-                hideTimeZone
-              />
+              <div className="flex gap-2">
+                <CustomDateField
+                  label={t("transactionDate")}
+                  isRequired
+                  value={createdAtInput ?? new Date()}
+                  onChange={setCreatedAtInput}
+                  className="w-full"
+                />
+                <CustomTimeField
+                  label={t("transactionTime")}
+                  isRequired
+                  value={createdAtInput ?? new Date()}
+                  onChange={setCreatedAtInput}
+                  className="w-full"
+                />
+              </div>
               {validationError && (
                 <Chip
-                  variant="flat"
+                  variant="soft"
                   color="danger"
-                  radius="sm"
-                  className="text-wrap max-w-full w-full h-fit p-2"
+                  className="text-wrap max-w-full w-full h-fit p-2 rounded-sm"
                 >
                   {validationError}
                 </Chip>
               )}
-            </ModalBody>
-            <ModalFooter>
+            </Modal.Body>
+            <Modal.Footer>
               <Button
-                color="danger"
-                variant="flat"
-                disabled={areButtonsDisabled}
-                onPress={onClose}
+                variant="danger-soft"
+                isDisabled={areButtonsDisabled}
+                onPress={() => onOpenChangeHandler(false)}
               >
                 {t("cancel")}
               </Button>
               <Button
-                color="primary"
-                isLoading={isMutating}
-                disabled={areButtonsDisabled}
+                variant="primary"
+                isPending={isMutating}
+                isDisabled={areButtonsDisabled}
                 onPress={onSave}
               >
                 {t("save")}
               </Button>
-            </ModalFooter>
-          </>
-        )}
-      </ModalContent>
+            </Modal.Footer>
+          </Modal.Dialog>
+        </ModalContainer>
+      </Modal.Backdrop>
     </Modal>
   );
 };

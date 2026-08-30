@@ -1,27 +1,19 @@
 "use client";
 
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableColumn,
-  TableHeader,
-  TableRow,
-} from "@heroui/table";
+import { Table } from "@heroui/react";
 import { Account } from "@/interfaces/account";
-import { TableSkeleton } from "@/components/shared/TableSkeleton";
-import { Button } from "@heroui/button";
-import { IconEdit } from "@/components/shared/icons";
+import { TableSkeleton } from "@/components/shared/Table/TableSkeleton";
 import { AccountModalForm } from "../AccountModalForm/AccountModalForm";
 import { useMemo, useState } from "react";
-import { DeleteTableItemButton } from "@/components/DeleteTableItemButton";
 import { useMutateAccount } from "@/hooks/useMutateAccount";
 import { useRenderCell } from "./Columns";
-import { HiOutlinePlusCircle } from "react-icons/hi";
 import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
-import { useTableHeight } from "@/hooks/useTableHeight";
 import { SearchToolbar } from "@/components/features/Transactions/SearchToolbar";
+import { useDeleteTableItem } from "@/hooks/useDeleteTableItem";
+import { TableToolbar } from "@/components/shared/Table/TableToolbar";
+import { useTableSelection } from "@/hooks/useTableSelection";
+import { TableContainer } from "@/components/shared/Table/TableContainer";
 
 interface AccountsTableProps {
   isLoading: boolean;
@@ -33,13 +25,11 @@ export const AccountsTable: React.FC<AccountsTableProps> = ({
   accounts,
 }) => {
   const { t } = useTranslation(LocaleNamespace.Accounts);
-  const [selectedItem, setSelectedItem] = useState<Account>();
   const [isOpen, setIsOpen] = useState(false);
   const [filterValue, setFilterValue] = useState("");
   const { isMutating, deleteAccount } = useMutateAccount();
-  const { columns, renderCell, rowHeight } = useRenderCell();
-  const { maxTableHeight } = useTableHeight();
-
+  const { columns, renderCell } = useRenderCell();
+  const { onDelete } = useDeleteTableItem({ onConfirmDelete: deleteAccount });
   const filteredAccounts = useMemo(() => {
     if (!accounts) return accounts;
 
@@ -50,15 +40,23 @@ export const AccountsTable: React.FC<AccountsTableProps> = ({
         (account) =>
           account.name.toLowerCase().includes(filterValue.toLowerCase()) ||
           account.ref.toLowerCase().includes(filterValue.toLowerCase()) ||
-          account.type.toLowerCase().includes(filterValue.toLowerCase())
+          account.type.toLowerCase().includes(filterValue.toLowerCase()),
       );
     }
 
     return filtered;
   }, [accounts, filterValue]);
 
+  const {
+    selectedItem,
+    setSelectedItem,
+    selectedKeys,
+    onSelectionChange,
+    clearSelection,
+  } = useTableSelection({ items: filteredAccounts, isMutating });
+
   const onDialogDismissed = () => {
-    setSelectedItem(undefined);
+    clearSelection();
     setIsOpen(false);
   };
 
@@ -68,23 +66,12 @@ export const AccountsTable: React.FC<AccountsTableProps> = ({
   };
 
   const renderTopContent = () => (
-    <div className="flex flex-col gap-4">
+    <div className="flex w-full flex-col gap-4">
       <div className="flex justify-between gap-3 items-center w-full">
         <SearchToolbar
           filterValue={filterValue}
           onSearchChange={setFilterValue}
         />
-        <div className="flex w-fit justify-end">
-          <Button
-            color="success"
-            radius="sm"
-            variant="solid"
-            isIconOnly
-            onPress={() => setIsOpen(true)}
-          >
-            <HiOutlinePlusCircle className="text-lg" />
-          </Button>
-        </div>
       </div>
     </div>
   );
@@ -93,62 +80,33 @@ export const AccountsTable: React.FC<AccountsTableProps> = ({
 
   return (
     <>
-      <Table
-        isStriped
-        isCompact
-        isVirtualized
-        maxTableHeight={maxTableHeight}
-        rowHeight={rowHeight}
-        aria-label={t("accounts")}
-        topContentPlacement="outside"
-        topContent={renderTopContent()}
-      >
-        <TableHeader columns={columns}>
-          {(column) => (
-            <TableColumn key={column.key} className={`${column.className}`}>
-              {t(column.key)}
-            </TableColumn>
-          )}
-        </TableHeader>
-        <TableBody items={filteredAccounts} emptyContent={t("emptyContent")}>
-          {(item) => (
-            <TableRow key={item.id}>
-              {(columnKey) => {
-                if (columnKey === "actions") {
-                  return (
-                    <TableCell>
-                      <div className="text-center flex flex-row justify-center">
-                        <Button
-                          isIconOnly
-                          color="warning"
-                          variant="light"
-                          className="self-center"
-                          aria-label="Edit"
-                          onPress={() => onEdit(item)}
-                        >
-                          <IconEdit />
-                        </Button>
-                        <DeleteTableItemButton
-                          itemId={item.id}
-                          isDisabled={isMutating}
-                          deleteTableItem={deleteAccount}
-                        />
-                      </div>
-                    </TableCell>
-                  );
-                }
-
-                return renderCell({
-                  key: columnKey,
-                  item,
-                  onEdit,
-                  onDelete: deleteAccount,
-                  isDeleteDisabled: isMutating,
-                });
-              }}
-            </TableRow>
-          )}
-        </TableBody>
+      {renderTopContent()}
+      <Table>
+        <TableToolbar
+          selectedItem={selectedItem}
+          isMutating={isMutating}
+          rowCount={filteredAccounts?.length}
+          t={t}
+        >
+          <TableToolbar.NewAction
+            noItemRequired
+            noSeparator
+            onPress={() => setIsOpen(true)}
+          />
+          <TableToolbar.EditAction onPress={onEdit} />
+          <TableToolbar.DeleteAction
+            onPress={(item: Account) => onDelete(item.id, item.name)}
+          />
+        </TableToolbar>
+        <TableContainer
+          t={t}
+          ariaLabelKey="accounts"
+          renderCell={renderCell}
+          columns={columns}
+          items={accounts}
+          onSelectionChange={onSelectionChange}
+          selectedKeys={selectedKeys}
+        />
       </Table>
       <AccountModalForm
         item={selectedItem}

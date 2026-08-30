@@ -22,13 +22,13 @@ export const pages: (Page | PageGroup)[] = [
     label: "summary",
     href: "/private",
     icon: HiChartPie,
-    className: "bg-primary/10 text-primary",
+    className: "bg-accent/10 text-cyan-600",
   },
   {
     label: "transactions",
     href: "/private/transactions",
     icon: HiCollection,
-    className: "bg-secondary/10 text-secondary",
+    className: "bg-accent/10 text-indigo-600",
   },
   {
     label: "pending",
@@ -43,7 +43,7 @@ export const pages: (Page | PageGroup)[] = [
         label: "recurring",
         href: "/private/recurring-expenses",
         icon: HiMiniArrowPathRoundedSquare,
-        className: "bg-info/10 text-info",
+        className: "bg-accent/10 text-info",
       },
       {
         label: "accounts",

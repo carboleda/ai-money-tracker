@@ -19,6 +19,7 @@ import { CreateTransactionInput } from "../ports/inbound/create-transaction.port
 import { Service } from "@/app/api/domain/shared/ports/service.interface";
 import { TransactionMapper } from "../mapper/transaction.mapper";
 import { GetAllCategoriesService } from "@/app/api/domain/category/service/get-all-categories.service";
+import { DomainError } from "@/app/api/domain/shared/errors/domain.error";
 
 @Injectable()
 export class CreateTransactionService
@@ -38,7 +39,10 @@ export class CreateTransactionService
       transaction.type === TransactionType.TRANSFER &&
       !transaction.destinationAccount
     ) {
-      throw new Error("Transfer transactions must have a destinationAccount");
+      throw new DomainError(
+        "Transfer transactions must have a destinationAccount",
+        400
+      );
     }
 
     // Validate accounts exist and are not deleted

@@ -6,12 +6,10 @@ import { useTranslation } from "react-i18next";
 import { usePathname } from "next/navigation";
 import { UserAvatar } from "../../UserAvatar";
 import clsx from "clsx";
-import { HiBell } from "react-icons/hi";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { LocaleNamespace } from "@/i18n/namespace";
-import { Listbox, ListboxSection, ListboxItem } from "@heroui/listbox";
+import { ListBox, Label, Header, Separator } from "@heroui/react";
 import { FaCircleArrowRight } from "react-icons/fa6";
-import { Chip } from "@heroui/chip";
 import { TFunction } from "i18next";
 
 const keyLabel = new Map(
@@ -45,7 +43,7 @@ export const IconWrapper = ({ children, className }: IconWrapperProps) => (
   <div
     className={clsx(
       className,
-      "flex items-center rounded-small justify-center w-7 h-7"
+      "flex items-center rounded-sm justify-center w-7 h-7"
     )}
   >
     {children}
@@ -54,26 +52,24 @@ export const IconWrapper = ({ children, className }: IconWrapperProps) => (
 
 const renderPageItem = (page: Page, t: TFunction, pathname: string) => {
   return (
-    <ListboxItem
+    <ListBox.Item
       key={page.label}
+      id={page.label}
       href={page.href}
       textValue={page.label}
-      title={t(page.label)}
-      startContent={
-        <IconWrapper className={page.className}>
-          <page.icon className="text-lg md:text-medium" />
-        </IconWrapper>
-      }
-      endContent={
-        page.label === keyLabel.get(pathname) && (
-          <Chip variant="light" color="success">
-            <FaCircleArrowRight />
-          </Chip>
-        )
-      }
     >
-      {t(page.label)}
-    </ListboxItem>
+      <IconWrapper className={page.className}>
+        <page.icon className="text-lg md:text-base" />
+      </IconWrapper>
+      <Label>{t(page.label)}</Label>
+      <ListBox.ItemIndicator>
+        {() =>
+          page.label === keyLabel.get(pathname) ? (
+            <FaCircleArrowRight className="size-4 text-accent" />
+          ) : null
+        }
+      </ListBox.ItemIndicator>
+    </ListBox.Item>
   );
 };
 
@@ -109,50 +105,52 @@ export const SidebarMenuItems: React.FC<SidebarMenuItemsProps> = ({
   };
 
   return (
-    <Listbox
+    <ListBox
       className="flex w-full flex-col justify-start items-start"
       aria-label="User Menu"
       selectionMode="none"
-      variant="flat"
-      color="default"
+      variant="default"
       onAction={onAction}
       disabledKeys={disabledKeys}
     >
-      <ListboxSection showDivider>
-        <ListboxItem key={SidebarMenuItemKeys.Avatar} textValue="User Avatar">
-          <UserAvatar />
-        </ListboxItem>
-        <ListboxItem
-          key={SidebarMenuItemKeys.Notifications}
-          textValue={t("enablePushNotifications")}
-          title={t("enablePushNotifications")}
-          startContent={
-            <IconWrapper className="bg-success/10 text-success">
-              <HiBell className="text-lg md:text-medium" />
-            </IconWrapper>
-          }
+      <ListBox.Section className="w-full">
+        <ListBox.Item
+          key={SidebarMenuItemKeys.Avatar}
+          id={SidebarMenuItemKeys.Avatar}
+          textValue="User Avatar"
         >
-          {t("enablePushNotifications")}
-        </ListboxItem>
-      </ListboxSection>
-      <ListboxSection showDivider>
+          <UserAvatar />
+        </ListBox.Item>
+        {/* <ListBox.Item
+          key={SidebarMenuItemKeys.Notifications}
+          id={SidebarMenuItemKeys.Notifications}
+          textValue={t("enablePushNotifications")}
+        >
+          <IconWrapper className="bg-success/10 text-success">
+            <HiBell className="text-lg md:text-base" />
+          </IconWrapper>
+          <Typography type="body-xs">{t("enablePushNotifications")}</Typography>
+        </ListBox.Item> */}
+      </ListBox.Section>
+      <Separator />
+      <ListBox.Section className="w-full">
         {siteConfig.pages
           .filter((page: any) => "href" in page)
           .map((page) => renderPageItem(page as Page, t, pathname))}
-      </ListboxSection>
-      <>
-        {siteConfig.pages
-          .filter((page: any) => "groupLabel" in page)
-          .map((page: any) => {
-            return (
-              <ListboxSection key={page.groupLabel} title={t(page.groupLabel)}>
-                {page.pages.map((groupPage: Page) =>
-                  renderPageItem(groupPage, t, pathname)
-                )}
-              </ListboxSection>
-            );
-          })}
-      </>
-    </Listbox>
+      </ListBox.Section>
+      <Separator />
+      {siteConfig.pages
+        .filter((page: any) => "groupLabel" in page)
+        .map((page: any) => {
+          return (
+            <ListBox.Section className="w-full" key={page.groupLabel}>
+              <Header>{t(page.groupLabel)}</Header>
+              {page.pages.map((groupPage: Page) =>
+                renderPageItem(groupPage, t, pathname),
+              )}
+            </ListBox.Section>
+          );
+        })}
+    </ListBox>
   );
 };

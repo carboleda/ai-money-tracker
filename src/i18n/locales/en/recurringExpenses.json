@@ -4,7 +4,10 @@
   "subtitle": "Your recurring expenses",
   "emptyContent": "No recurring expenses to display.",
   "biannualAndYearly": "Biannual and Yearly",
-  "separatorTitle": "BIANNUAL AND YEARLY EXPENSES",
+  "separators": {
+    "monthly": "MONTHLY",
+    "others": "BIANNUAL AND YEARLY EXPENSES"
+  },
   "allFieldAreRequired": "Filled all the required fields. Please fill them out.",
   "recurringExpenses": "Recurring Expense",
   "paymentLink": "Payment Link",
@@ -14,7 +17,8 @@
   "pendingTransactions": "Pending Transactions",
   "completeTransaction": "Complete transaction",
   "paidOn": "Paid on",
-  "completeTransationButton": "Complete",
+  "paidOnTime": "Time",
+  "completeTransationButton": "Paid",
   "transactionCompleted": "Transaction completed successfully!",
   "recurringExpenseCreated": "Recurring expense created!",
   "recurringExpenseUpdated": "Recurring expense updated!"
