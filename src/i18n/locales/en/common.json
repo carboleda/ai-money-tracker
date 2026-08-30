@@ -44,13 +44,16 @@
   "yearly": "Yearly",
   "rowCounter_one": "{{count}} item",
   "rowCounter_other": "{{count}} items",
+  "doNotAskAgain": "Don't ask again",
+  "yes": "Yes",
+  "no": "No",
   "notificationsRequest": {
     "title": "Zolvent wants to keep you informed! 🔔",
     "description": "To provide you with real-time alerts and reminders about your spending, income, and financial goals, we need your permission to send push notifications. This will help you:",
     "reminderOverduePayments": "Receive reminders of overdue payments.",
     "reminderBillsPayments": "Receive timely reminders for bills and payments.",
     "neverMissPayment": "Never miss a payment or an opportunity to save again!",
-    "doNotAskAgain": "Don't ask again"
+    "requestDenied": "You need to accept the request to receive notifications."
   },
   "deleteConfirmation": {
     "title": "Confirm deletion",

@@ -1,6 +1,8 @@
-import { Modal, Button } from "@heroui/react";
-import { PropsWithChildren } from "react";
+import { Modal, Button, Checkbox } from "@heroui/react";
+import { PropsWithChildren, useState } from "react";
 import { ModalContainer } from "./ModalContainer";
+import { useTranslation } from "react-i18next";
+import { LocaleNamespace } from "@/i18n/namespace";
 
 export enum Action {
   Yes,
@@ -11,7 +13,7 @@ export enum Action {
 interface ConfirmationModalProps extends PropsWithChildren {
   isOpen: boolean;
   title: string | React.ReactNode;
-  onAction: (action: Action) => void;
+  onAction: (action: Action, doNotAskAgainChecked: boolean) => void;
 }
 
 export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
@@ -20,12 +22,15 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   children,
   onAction,
 }) => {
+  const { t } = useTranslation(LocaleNamespace.Common);
+  const [doNotAskAgainChecked, setDoNotAskAgainChecked] = useState(false);
+
   return (
     <Modal>
       <Modal.Backdrop
         variant="blur"
         isOpen={isOpen}
-        onOpenChange={() => onAction(Action.Cancel)}
+        onOpenChange={() => onAction(Action.Cancel, doNotAskAgainChecked)}
         isDismissable={false}
       >
         <ModalContainer>
@@ -37,12 +42,35 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
             </Modal.Header>
             <Modal.Body>{children}</Modal.Body>
             <Modal.Footer>
-              <Button variant="danger-soft" onPress={() => onAction(Action.No)}>
-                No
-              </Button>
-              <Button variant="primary" onPress={() => onAction(Action.Yes)}>
-                Yes
-              </Button>
+              <div className="flex flex-row w-full justify-between items-center">
+                <Checkbox
+                  id="do-not-ask-again"
+                  variant="secondary"
+                  isSelected={doNotAskAgainChecked}
+                  onChange={setDoNotAskAgainChecked}
+                >
+                  <Checkbox.Content>
+                    <Checkbox.Control>
+                      <Checkbox.Indicator />
+                    </Checkbox.Control>
+                    {t("doNotAskAgain")}
+                  </Checkbox.Content>
+                </Checkbox>
+                <div className="flex gap-2">
+                  <Button
+                    variant="tertiary"
+                    onPress={() => onAction(Action.No, doNotAskAgainChecked)}
+                  >
+                    {t("no")}
+                  </Button>
+                  <Button
+                    variant="primary"
+                    onPress={() => onAction(Action.Yes, doNotAskAgainChecked)}
+                  >
+                    {t("yes")}
+                  </Button>
+                </div>
+              </div>
             </Modal.Footer>
           </Modal.Dialog>
         </ModalContainer>

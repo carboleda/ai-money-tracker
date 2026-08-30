@@ -1,7 +1,7 @@
 "use client";
 
-import { Checkbox, useOverlayState } from "@heroui/react";
-import { useEffect, useState } from "react";
+import { useOverlayState } from "@heroui/react";
+import { useEffect } from "react";
 import { Env } from "@/config/env";
 import { getMessaging, getToken } from "firebase/messaging";
 import { FirebaseApp } from "firebase/app";
@@ -22,7 +22,6 @@ export const NotificationRequestModal: React.FC<
   const { t } = useTranslation();
   const { isOpen, open, close } = useOverlayState();
   const { updateUser } = useMutateUser();
-  const [doNotAskAgainChecked, setDoNotAskAgainChecked] = useState(false);
   const [doNotAskAgain, setDoNotAskAgain] = useLocalStorage(
     "doNotAskAgain",
     false,
@@ -35,7 +34,7 @@ export const NotificationRequestModal: React.FC<
     }
   }, [permission, doNotAskAgain, open]);
 
-  const onAction = async (action: Action) => {
+  const onAction = async (action: Action, doNotAskAgainChecked: boolean) => {
     try {
       close();
 
@@ -65,7 +64,7 @@ export const NotificationRequestModal: React.FC<
 
         onPermissionGranted();
       } else {
-        alert("You need to accept the request to receive notifications.");
+        alert(t("requestDenied"));
       }
     } catch (error) {
       console.error("Error getting token:", error);
@@ -81,23 +80,10 @@ export const NotificationRequestModal: React.FC<
     >
       <p>{t("notificationsRequest.description")}</p>
       <ul>
-        <li>◦ {t("notificationsRequest.reminderOverduePayments")}</li>
-        <li>◦ {t("notificationsRequest.reminderBillsPayments")}</li>
-        <li>◦ {t("notificationsRequest.neverMissPayment")}</li>
+        <li>⚠️ {t("notificationsRequest.reminderOverduePayments")}</li>
+        <li>🔔 {t("notificationsRequest.reminderBillsPayments")}</li>
+        <li>📅 {t("notificationsRequest.neverMissPayment")}</li>
       </ul>
-
-      <Checkbox
-        id="do-not-ask-again"
-        isSelected={doNotAskAgainChecked}
-        onChange={setDoNotAskAgainChecked}
-      >
-        <Checkbox.Content>
-          <Checkbox.Control>
-            <Checkbox.Indicator />
-          </Checkbox.Control>
-          {t("notificationsRequest.doNotAskAgain")}
-        </Checkbox.Content>
-      </Checkbox>
     </ConfirmationModal>
   );
 };
