@@ -83,7 +83,7 @@ export class CategoryFirestoreRepository
       ref,
       name: data.name,
       icon: data.icon,
-      type: data.type,
+      restrictedTypes: data.restrictedTypes,
       color: data.color,
       description: data.description,
       budget: data.budget,

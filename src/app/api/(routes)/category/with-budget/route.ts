@@ -16,7 +16,7 @@ export async function GET(req: NextRequest) {
       name: cat.name,
       icon: cat.icon,
       color: cat.color,
-      type: cat.type,
+      restrictedTypes: cat.restrictedTypes,
       description: cat.description,
       budget: cat.budget,
       isCustom: cat.isCustom,

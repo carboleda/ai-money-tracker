@@ -4,7 +4,7 @@
     "name": "Groceries",
     "icon": "🛒",
     "color": "#10B981",
-    "type": "expense",
+    "restrictedTypes": ["expense"],
     "description": "Grocery shopping and food items"
   },
   {
@@ -12,7 +12,7 @@
     "name": "Salary",
     "icon": "💰",
     "color": "#059669",
-    "type": "income",
+    "restrictedTypes": ["income"],
     "description": "Regular salary or wages"
   },
   {
@@ -20,7 +20,7 @@
     "name": "Food & Dining",
     "icon": "🍽️",
     "color": "#F59E0B",
-    "type": "expense",
+    "restrictedTypes": ["expense"],
     "description": "Restaurants and dining out"
   },
   {
@@ -28,7 +28,7 @@
     "name": "Education",
     "icon": "📚",
     "color": "#3B82F6",
-    "type": "expense",
+    "restrictedTypes": ["expense"],
     "description": "Tuition, books, courses"
   },
   {
@@ -36,7 +36,7 @@
     "name": "Investment",
     "icon": "📈",
     "color": "#6366F1",
-    "type": "income",
+    "restrictedTypes": [],
     "description": "Investment returns and gains"
   },
   {
@@ -44,7 +44,7 @@
     "name": "Health & Medical",
     "icon": "⚕️",
     "color": "#EF4444",
-    "type": "expense",
+    "restrictedTypes": ["expense"],
     "description": "Medical expenses and healthcare"
   },
   {
@@ -52,7 +52,7 @@
     "name": "Utilities",
     "icon": "⚡",
     "color": "#FBBF24",
-    "type": "expense",
+    "restrictedTypes": ["expense"],
     "description": "Electricity, water, gas"
   },
   {
@@ -60,7 +60,7 @@
     "name": "Transportation",
     "icon": "🚗",
     "color": "#8B5CF6",
-    "type": "expense",
+    "restrictedTypes": ["expense"],
     "description": "Gas, public transport, maintenance"
   },
   {
@@ -68,7 +68,7 @@
     "name": "Entertainment",
     "icon": "🎬",
     "color": "#EC4899",
-    "type": "expense",
+    "restrictedTypes": ["expense"],
     "description": "Movies, games, subscriptions"
   },
   {
@@ -76,7 +76,7 @@
     "name": "Housing",
     "icon": "🏠",
     "color": "#A16207",
-    "type": "expense",
+    "restrictedTypes": ["expense"],
     "description": "Rent or mortgage payments"
   },
   {
@@ -84,7 +84,7 @@
     "name": "Insurance",
     "icon": "🛡️",
     "color": "#1E40AF",
-    "type": "expense",
+    "restrictedTypes": ["expense"],
     "description": "Insurance payments"
   },
   {
@@ -92,7 +92,7 @@
     "name": "Clothing",
     "icon": "👕",
     "color": "#BE185D",
-    "type": "expense",
+    "restrictedTypes": ["expense"],
     "description": "Apparel and fashion"
   },
   {
@@ -100,7 +100,7 @@
     "name": "Childcare",
     "icon": "👶",
     "color": "#F43F5E",
-    "type": "expense",
+    "restrictedTypes": ["expense"],
     "description": "Baby and child expenses"
   },
   {
@@ -108,7 +108,7 @@
     "name": "Pets",
     "icon": "🐶",
     "color": "#78350F",
-    "type": "expense",
+    "restrictedTypes": ["expense"],
     "description": "Pet food and care"
   },
   {
@@ -116,7 +116,7 @@
     "name": "Personal Care",
     "icon": "💇",
     "color": "#7C3AED",
-    "type": "expense",
+    "restrictedTypes": ["expense"],
     "description": "Haircuts, salon, grooming"
   },
   {
@@ -124,7 +124,7 @@
     "name": "Gifts & Donations",
     "icon": "🎁",
     "color": "#D946EF",
-    "type": "expense",
+    "restrictedTypes": ["expense", "income"],
     "description": "Gifts and charitable donations"
   },
   {
@@ -132,7 +132,7 @@
     "name": "Hobbies",
     "icon": "🎨",
     "color": "#F97316",
-    "type": "expense",
+    "restrictedTypes": ["expense"],
     "description": "Hobbies and recreational activities"
   },
   {
@@ -140,7 +140,7 @@
     "name": "Vacation & Travel",
     "icon": "✈️",
     "color": "#0891B2",
-    "type": "expense",
+    "restrictedTypes": ["expense"],
     "description": "Travel and vacation expenses"
   },
   {
@@ -148,7 +148,7 @@
     "name": "Freelance Income",
     "icon": "💻",
     "color": "#15803D",
-    "type": "income",
+    "restrictedTypes": ["income"],
     "description": "Freelance and side gig income"
   },
   {
@@ -156,7 +156,7 @@
     "name": "Refund",
     "icon": "↩️",
     "color": "#1F2937",
-    "type": "income",
+    "restrictedTypes": ["income"],
     "description": "Refunds and returns"
   },
   {
@@ -164,7 +164,7 @@
     "name": "Transfer Out",
     "icon": "➡️",
     "color": "#6B7280",
-    "type": "transfer",
+    "restrictedTypes": ["transfer"],
     "description": "Money transfer to another account"
   },
   {
@@ -172,7 +172,7 @@
     "name": "Transfer In",
     "icon": "⬅️",
     "color": "#4B5563",
-    "type": "transfer",
+    "restrictedTypes": ["transfer"],
     "description": "Money transfer from another account"
   },
   {
@@ -180,7 +180,7 @@
     "name": "Credit Card Payment",
     "icon": "💳",
     "color": "#1E40AF",
-    "type": "expense",
+    "restrictedTypes": ["expense", "transfer"],
     "description": "Credit card payment"
   },
   {
@@ -188,7 +188,7 @@
     "name": "Taxes",
     "icon": "📋",
     "color": "#7C3AED",
-    "type": "expense",
+    "restrictedTypes": ["expense"],
     "description": "Taxes and declarations"
   },
   {
@@ -196,7 +196,7 @@
     "name": "Withdrawals",
     "icon": "💸",
     "color": "#EC4899",
-    "type": "expense",
+    "restrictedTypes": ["expense"],
     "description": "Cash withdrawals"
   },
   {
@@ -204,7 +204,7 @@
     "name": "Other",
     "icon": "📌",
     "color": "#6B7280",
-    "type": "expense",
+    "restrictedTypes": [],
     "description": "Other expenses"
   }
 ]

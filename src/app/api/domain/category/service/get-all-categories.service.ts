@@ -29,7 +29,7 @@ export class GetAllCategoriesService implements Service<void, CategoryModel[]> {
           name: cat.name,
           icon: cat.icon,
           color: cat.color,
-          type: cat.type,
+          restrictedTypes: cat.restrictedTypes,
           description: cat.description,
           isCustom: false,
           isDeleted: false,

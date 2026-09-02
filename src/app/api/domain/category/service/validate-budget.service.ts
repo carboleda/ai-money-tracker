@@ -1,11 +1,15 @@
 import { Service } from "@/app/api/domain/shared/ports/service.interface";
 import { Injectable } from "@/app/api/decorators/tsyringe.decorator";
 import { DomainError } from "@/app/api/domain/shared/errors/domain.error";
-import { CategoryBudget, CategoryType } from "../model/category.model";
+import {
+  CategoryBudget,
+  CategoryType,
+  categoryAppliesToType,
+} from "../model/category.model";
 
 interface ValidateBudgetParams {
   budget?: CategoryBudget;
-  categoryType?: CategoryType;
+  restrictedTypes?: CategoryType[];
 }
 
 @Injectable()
@@ -13,14 +17,17 @@ export class ValidateBudgetService
   implements Service<ValidateBudgetParams, void>
 {
   async execute(params: ValidateBudgetParams): Promise<void> {
-    const { budget, categoryType } = params;
+    const { budget, restrictedTypes } = params;
 
     if (!budget) {
       return; // Budget is optional
     }
 
     // Budget only applies to expense categories
-    if (categoryType && categoryType !== "expense") {
+    if (
+      restrictedTypes &&
+      !categoryAppliesToType(restrictedTypes, CategoryType.EXPENSE)
+    ) {
       throw new DomainError(
         `Budget can only be applied to expense categories`,
         400

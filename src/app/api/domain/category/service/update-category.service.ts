@@ -1,5 +1,9 @@
 import type { CategoryRepository } from "../repository/category.repository";
-import { CategoryModel } from "../model/category.model";
+import {
+  CategoryModel,
+  CategoryType,
+  categoryAppliesToType,
+} from "../model/category.model";
 import { Service } from "@/app/api/domain/shared/ports/service.interface";
 import {
   InjectRepository,
@@ -30,7 +34,10 @@ export class UpdateCategoryService
       }
 
       // Validate budget constraints
-      if (input.budget !== undefined && category.type !== "expense") {
+      if (
+        input.budget !== undefined &&
+        !categoryAppliesToType(category.restrictedTypes, CategoryType.EXPENSE)
+      ) {
         throw new DomainError(
           `Budget can only be applied to expense categories`,
           400

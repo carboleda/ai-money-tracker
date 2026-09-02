@@ -14,8 +14,19 @@ export interface PredefinedCategory {
   name: string;
   icon: string;
   color: string;
-  type: CategoryType;
+  restrictedTypes: CategoryType[];
   description: string;
+}
+
+/**
+ * A category is valid for a given transaction type when restrictedTypes is
+ * empty (no restriction) or explicitly includes that type.
+ */
+export function categoryAppliesToType(
+  restrictedTypes: CategoryType[],
+  type: CategoryType
+): boolean {
+  return restrictedTypes.length === 0 || restrictedTypes.includes(type);
 }
 
 export class CategoryModel {
@@ -24,7 +35,7 @@ export class CategoryModel {
   name: string;
   icon: string; // Emoji
   color?: string; // Hex color
-  type: CategoryType;
+  restrictedTypes: CategoryType[];
   description?: string;
   budget?: CategoryBudget;
   isCustom: boolean;
@@ -38,7 +49,7 @@ export class CategoryModel {
     name: string;
     icon: string;
     color?: string;
-    type: CategoryType;
+    restrictedTypes?: CategoryType[];
     description?: string;
     budget?: CategoryBudget;
     isCustom: boolean;
@@ -51,7 +62,7 @@ export class CategoryModel {
     this.name = params.name;
     this.icon = params.icon;
     this.color = params.color;
-    this.type = params.type;
+    this.restrictedTypes = params.restrictedTypes ?? [];
     this.description = params.description;
     this.budget = params.budget;
     this.isCustom = params.isCustom;

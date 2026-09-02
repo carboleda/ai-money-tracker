@@ -14,7 +14,7 @@ export const CreateCategorySchema = z.object({
     .min(1, "Name is required")
     .max(50, "Name must be 50 characters or less"),
   icon: z.string().min(1, "Icon is required"), // Accept any emoji or icon string
-  type: CategoryTypeSchema,
+  restrictedTypes: z.array(CategoryTypeSchema).default([]),
   description: z
     .string()
     .max(200, "Description must be 200 characters or less")
@@ -27,7 +27,7 @@ export const CreateCategorySchema = z.object({
 });
 
 export const UpdateCategorySchema = CreateCategorySchema.omit({
-  type: true,
+  restrictedTypes: true,
 })
   .partial()
   .extend({
@@ -44,7 +44,7 @@ export const CategoryOutputSchema = z.object({
   name: z.string(),
   icon: z.string(),
   color: z.string().optional(),
-  type: CategoryTypeSchema,
+  restrictedTypes: z.array(CategoryTypeSchema),
   description: z.string().optional(),
   budget: BudgetSchema.optional(),
   isCustom: z.boolean(),
