@@ -13,6 +13,10 @@ import { useDeleteTableItem } from "@/hooks/useDeleteTableItem";
 import { TableToolbar } from "@/components/shared/Table/TableToolbar";
 import { useTableSelection } from "@/hooks/useTableSelection";
 import { TableContainer } from "@/components/shared/Table/TableContainer";
+import {
+  useZolventFilterContext,
+  ZolventFilter,
+} from "@/components/shared/ZolventFilter/ZolventFilter";
 
 interface TranactionTableProps {
   isLoading: boolean;
@@ -25,6 +29,7 @@ export const TransactionTable: React.FC<TranactionTableProps> = ({
 }) => {
   const { t } = useTranslation(LocaleNamespace.Transactions);
   const [isOpen, setIsOpen] = useState(false);
+  const { setIsFilterOpen, activeFilterValues } = useZolventFilterContext();
   const { isMutating, deleteTransaction } = useMutateTransaction();
   const { columns, renderCell } = useRenderCell();
   const { onDelete } = useDeleteTableItem({
@@ -55,10 +60,12 @@ export const TransactionTable: React.FC<TranactionTableProps> = ({
     <>
       <Table>
         <TableToolbar
+          t={t}
           selectedItem={selectedItem}
           isMutating={isMutating}
           rowCount={transactions?.length}
-          t={t}
+          onOpenFilter={() => setIsFilterOpen(true)}
+          activeFiltersCount={Object.keys(activeFilterValues).length}
         >
           <TableToolbar.EditAction noSeparator onPress={onEdit} />
           <TableToolbar.DeleteAction
@@ -82,6 +89,11 @@ export const TransactionTable: React.FC<TranactionTableProps> = ({
         isOpen={isOpen}
         onDismiss={onDialogDismissed}
       />
+      <ZolventFilter.Container>
+        <ZolventFilter.FreeTextFilter />
+        <ZolventFilter.AccountFilter />
+        <ZolventFilter.DateRangeFilter />
+      </ZolventFilter.Container>
     </>
   );
 };
