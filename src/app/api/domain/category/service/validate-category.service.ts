@@ -2,7 +2,11 @@ import { Service } from "@/app/api/domain/shared/ports/service.interface";
 import { Injectable } from "@/app/api/decorators/tsyringe.decorator";
 import { DomainError } from "@/app/api/domain/shared/errors/domain.error";
 import { TransactionType } from "@/app/api/domain/transaction/model/transaction.model";
-import { CategoryModel } from "../model/category.model";
+import {
+  CategoryModel,
+  CategoryType,
+  categoryAppliesToType,
+} from "../model/category.model";
 
 interface ValidateCategoryParams {
   categories: CategoryModel[];
@@ -30,12 +34,14 @@ export class ValidateCategoryService
         );
       }
 
-      // Validate category type matches transaction type
+      // Validate category restrictedTypes allows this transaction type
       // Both CategoryType and TransactionType use the same string values
-      const categoryTypeStr = category.type as string;
-      const transactionTypeStr = transactionType as string;
+      const isAllowed = categoryAppliesToType(
+        category.restrictedTypes,
+        transactionType as unknown as CategoryType
+      );
 
-      if (categoryTypeStr !== transactionTypeStr) {
+      if (!isAllowed) {
         throw new DomainError(
           `Category '${categoryRef}' does not exist, is deleted, or is not valid for transaction type`,
           400

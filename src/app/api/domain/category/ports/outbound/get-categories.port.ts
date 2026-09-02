@@ -10,7 +10,7 @@ export interface CategoryOutput {
   name: string;
   icon: string;
   color?: string;
-  type: CategoryType;
+  restrictedTypes: CategoryType[];
   description?: string;
   budget?: CategoryBudget;
   isCustom: boolean;

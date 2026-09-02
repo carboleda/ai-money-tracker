@@ -9,7 +9,7 @@ export interface CategoryEntity extends FirebaseFirestore.DocumentData {
   name: string;
   icon: string; // Emoji
   color?: string; // Hex color
-  type: CategoryType; // "income" | "expense" | "transfer"
+  restrictedTypes?: CategoryType[]; // "income" | "expense" | "transfer"; empty/missing = unrestricted
   description?: string;
   budget?: CategoryBudget; // Nested document
   isCustom: boolean;

@@ -6,7 +6,7 @@ import {
 export interface CreateCategoryInput {
   name: string;
   icon: string; // Emoji
-  type: CategoryType; // "income" | "expense" | "transfer"
+  restrictedTypes: CategoryType[]; // "income" | "expense" | "transfer"; empty = unrestricted
   description?: string;
   color?: string; // Hex color
   budget?: CategoryBudget;

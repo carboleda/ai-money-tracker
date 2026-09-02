@@ -6,7 +6,10 @@ import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
 import { useCategoryStore } from "@/stores/useCategoryStore";
 import { TransactionType } from "@/app/api/domain/transaction/model/transaction.model";
-import { CategoryType } from "@/app/api/domain/category/model/category.model";
+import {
+  CategoryType,
+  categoryAppliesToType,
+} from "@/app/api/domain/category/model/category.model";
 import { CHIP_BASE_CLASS } from "../chipStyles";
 
 export interface InlineCategoryChipProps {
@@ -40,8 +43,11 @@ export const InlineCategoryChip: React.FC<InlineCategoryChipProps> = ({
 
   const filteredCategories = useMemo(
     () =>
-      categories.filter(
-        (category) => category.type === (type as unknown as CategoryType)
+      categories.filter((category) =>
+        categoryAppliesToType(
+          category.restrictedTypes,
+          type as unknown as CategoryType
+        )
       ),
     [categories, type]
   );
