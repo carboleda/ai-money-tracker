@@ -68,12 +68,14 @@ const renderCellDesktop = ({
         <Table.Cell>
           <div className="flex items-center gap-2">
             <CustomIcon
+              withBadge
               icon={item.category?.icon}
               color={statusDotColorMap[status]}
+              variant="soft"
             />
             <div className="flex flex-col items-start gap-1">
               <div className="flex flex-row items-center gap-2">
-                <span className="text-gray-400">{item.description}</span>
+                <span className="text-muted">{item.description}</span>
                 {item.notes && <NotePopover content={item.notes} />}
               </div>
               {item.category && (
@@ -132,9 +134,10 @@ const renderCellMobile = ({
         <div className="flex items-center justify-between gap-3 w-full">
           <div className="flex items-center gap-2 min-w-0">
             <CustomIcon
+              withBadge
               icon={item.category?.icon}
-              variant="soft"
               color={statusDotColorMap[status]}
+              variant="soft"
             />
             <div className="flex flex-row gap-2 items-center">
               {item.category && (

@@ -49,7 +49,7 @@ const renderCellDesktop = ({
           <div className="flex items-center gap-2">
             <CustomIcon icon={item.category?.icon} />
             <div className="flex flex-col items-start gap-1">
-              <span>{item.description}</span>
+              <span className="text-muted">{item.description}</span>
               {item.category && (
                 <Chip variant="tertiary" size="sm" className="rounded-sm p-0">
                   {item.category.name}
@@ -81,15 +81,15 @@ const renderCellDesktop = ({
   }
 };
 
-const renderSeparatorDesktop = (
+const renderSeparator = (
   id: string,
   colSpan: number,
-  title: string
+  title: string,
 ): JSX.Element => {
   return (
     <Table.Row key={id} id={id}>
       <Table.Cell colSpan={colSpan} className="text-justify px-3">
-        <div className="py-1 font-bold text-zinc-200 rounded-md">{title}</div>
+        <div className="py-1 font-bold text-muted rounded-md">{title}</div>
       </Table.Cell>
     </Table.Row>
   );
@@ -134,28 +134,11 @@ const renderCellMobile = ({
   );
 };
 
-const renderSeparatorMobile = (
-  id: string,
-  colSpan: number,
-  title: string
-): JSX.Element => {
-  return (
-    <Table.Row key={id} id={id}>
-      <Table.Cell colSpan={colSpan} className="text-justify px-3">
-        <div className="py-1 font-bold text-zinc-200 rounded-md">{title}</div>
-      </Table.Cell>
-    </Table.Row>
-  );
-};
-
 export const useRenderCell = () => {
   const isMobile = useIsMobile();
 
   const columns = isMobile ? columnsMobile : columnsDesktop;
   const renderCell = isMobile ? renderCellMobile : renderCellDesktop;
-  const renderSeparator = isMobile
-    ? renderSeparatorMobile
-    : renderSeparatorDesktop;
 
   return { columns, renderCell, renderSeparator };
 };
