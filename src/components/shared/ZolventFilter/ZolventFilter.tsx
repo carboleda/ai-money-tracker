@@ -5,32 +5,73 @@ import React, {
   PropsWithChildren,
   useContext,
   useMemo,
+  useEffect,
+  useRef,
+  useCallback,
   SyntheticEvent,
   lazy,
   Suspense,
   useState,
 } from "react";
 import { useIsMobile } from "@/hooks/useIsMobile";
+import { useZolventFilterStore } from "@/stores/useZolventFilterStore";
 
 const ZolventFilterModalContainer = lazy(() => import("./ModalContainer"));
 const ZolventFilterDrawerContainer = lazy(() => import("./DrawerContainer"));
-
-interface ZolventFilterProps extends PropsWithChildren {
-  t: TFunction;
-  activeFilterValues: ZolventFilters;
-  onFilter: (filters: ZolventFilters) => void;
-}
-
-interface ZolventFilterContextValue extends ZolventFilterProps {
-  isFilterOpen: boolean;
-  setIsFilterOpen: (isOpen: boolean) => void;
-}
 
 export interface ZolventFilters {
   freeText?: string;
   account?: string;
   startDate?: string;
   endDate?: string;
+  dateRangeKey?: string;
+}
+
+export interface ZolventFilterGroup {
+  id: string;
+  keys: (keyof ZolventFilters)[];
+  isActive: (values: ZolventFilters, defaults: ZolventFilters) => boolean;
+}
+
+// Groups are keyed to how each filter type works, not to a specific page,
+// so they live here instead of being supplied per-page.
+const FILTER_GROUPS: ZolventFilterGroup[] = [
+  {
+    id: "freeText",
+    keys: ["freeText"],
+    isActive: (values) => Boolean(values.freeText),
+  },
+  {
+    id: "account",
+    keys: ["account"],
+    isActive: (values) => Boolean(values.account),
+  },
+  {
+    id: "dateRange",
+    keys: ["startDate", "endDate", "dateRangeKey"],
+    isActive: (values, defaults) =>
+      values.startDate !== defaults.startDate ||
+      values.endDate !== defaults.endDate,
+  },
+];
+
+interface ZolventFilterProps extends PropsWithChildren {
+  t: TFunction;
+  storageKey: string;
+  defaultFilterValues?: ZolventFilters;
+  onFilter: (filters: ZolventFilters) => void;
+}
+
+interface ZolventFilterContextValue {
+  t: TFunction;
+  isFilterOpen: boolean;
+  setIsFilterOpen: (isOpen: boolean) => void;
+  draftFilters: ZolventFilters;
+  setDraftFilters: (patch: Partial<ZolventFilters>) => void;
+  appliedFilters: ZolventFilters;
+  applyFilters: () => void;
+  resetFilters: () => void;
+  activeFilterCount: number;
 }
 
 const ZolventFilterContext = createContext<
@@ -50,15 +91,112 @@ export function useZolventFilterContext() {
 
 const ZolventFilterRoot: React.FC<ZolventFilterProps> = ({
   t,
+  storageKey,
+  defaultFilterValues,
   onFilter,
   children,
-  activeFilterValues,
 }) => {
-  console.log("ZolventFilterRoot:filters", activeFilterValues);
+  const persistedFilters = useZolventFilterStore(
+    (state) => state.filtersByKey[storageKey],
+  );
+  const setPersistedFilters = useZolventFilterStore(
+    (state) => state.setFilters,
+  );
+
   const [isFilterOpen, setIsFilterOpen] = useState(false);
-  const contextValue = useMemo(
-    () => ({ isFilterOpen, setIsFilterOpen, onFilter, t, activeFilterValues }),
-    [isFilterOpen, setIsFilterOpen, onFilter, t, activeFilterValues],
+  const [appliedFilters, setAppliedFilters] = useState<ZolventFilters>(
+    () => defaultFilterValues ?? {},
+  );
+  const [draftFiltersState, setDraftFiltersState] = useState<ZolventFilters>(
+    () => defaultFilterValues ?? {},
+  );
+
+  // Fire once immediately so parents get real values (defaults or persisted)
+  // instead of waiting for the user's first submit.
+  const didFireInitialRef = useRef(false);
+  useEffect(() => {
+    if (didFireInitialRef.current) return;
+    didFireInitialRef.current = true;
+    onFilter(appliedFilters);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Zustand's persist middleware rehydrates from localStorage after the
+  // initial render; when it lands, adopt it as the source of truth.
+  const didHydrateRef = useRef(false);
+  useEffect(() => {
+    if (didHydrateRef.current || persistedFilters === undefined) return;
+    didHydrateRef.current = true;
+    setAppliedFilters(persistedFilters);
+    setDraftFiltersState(persistedFilters);
+    onFilter(persistedFilters);
+  }, [persistedFilters, onFilter]);
+
+  // Discard unapplied edits whenever the panel is (re)opened, so it always
+  // reflects what's actually filtering the data.
+  const wasOpenRef = useRef(false);
+  useEffect(() => {
+    if (isFilterOpen && !wasOpenRef.current) {
+      setDraftFiltersState(appliedFilters);
+    }
+    wasOpenRef.current = isFilterOpen;
+  }, [isFilterOpen, appliedFilters]);
+
+  const draftFilters = draftFiltersState;
+
+  const setDraftFilters = useCallback((patch: Partial<ZolventFilters>) => {
+    setDraftFiltersState((prev) => ({ ...prev, ...patch }));
+  }, []);
+
+  const commitFilters = useCallback(
+    (values: ZolventFilters) => {
+      setAppliedFilters(values);
+      setPersistedFilters(storageKey, values);
+      onFilter(values);
+      setIsFilterOpen(false);
+    },
+    [onFilter, setPersistedFilters, storageKey],
+  );
+
+  const applyFilters = useCallback(() => {
+    commitFilters(draftFilters);
+  }, [commitFilters, draftFilters]);
+
+  const resetFilters = useCallback(() => {
+    const defaults = defaultFilterValues ?? {};
+    setDraftFiltersState(defaults);
+    commitFilters(defaults);
+  }, [commitFilters, defaultFilterValues]);
+
+  const activeFilterCount = useMemo(() => {
+    const defaults = defaultFilterValues ?? {};
+    return FILTER_GROUPS.filter((group) =>
+      group.isActive(appliedFilters, defaults),
+    ).length;
+  }, [appliedFilters, defaultFilterValues]);
+
+  const contextValue = useMemo<ZolventFilterContextValue>(
+    () => ({
+      t,
+      isFilterOpen,
+      setIsFilterOpen,
+      draftFilters,
+      setDraftFilters,
+      appliedFilters,
+      applyFilters,
+      resetFilters,
+      activeFilterCount,
+    }),
+    [
+      t,
+      isFilterOpen,
+      draftFilters,
+      setDraftFilters,
+      appliedFilters,
+      applyFilters,
+      resetFilters,
+      activeFilterCount,
+    ],
   );
 
   return (
@@ -69,7 +207,7 @@ const ZolventFilterRoot: React.FC<ZolventFilterProps> = ({
 };
 
 const ZolventFilterContainer: React.FC<PropsWithChildren> = ({ children }) => {
-  const { t, onFilter, setIsFilterOpen } = useZolventFilterContext();
+  const { t, applyFilters, resetFilters } = useZolventFilterContext();
   const isMobile = useIsMobile();
   const Container = isMobile
     ? ZolventFilterDrawerContainer
@@ -77,16 +215,7 @@ const ZolventFilterContainer: React.FC<PropsWithChildren> = ({ children }) => {
 
   const onSubmit = (e: SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    const data: Record<string, string> = {};
-    // Convert FormData to plain object
-    formData.forEach((value, key) => {
-      data[key] =
-        typeof value === "object" ? JSON.stringify(value) : value.toString();
-    });
-    // alert(`Form submitted with: ${JSON.stringify(data, null, 2)}`);
-    onFilter(data);
-    setIsFilterOpen(false);
+    applyFilters();
   };
 
   return (
@@ -96,7 +225,7 @@ const ZolventFilterContainer: React.FC<PropsWithChildren> = ({ children }) => {
           <Suspense fallback={<div>Loading...</div>}>{children}</Suspense>
 
           <div className="flex flex-row w-full items-center justify-end gap-2 pt-4">
-            <Button type="reset" variant="secondary">
+            <Button type="button" variant="secondary" onPress={resetFilters}>
               {t("reset")}
             </Button>
             <Button type="submit">{t("filter")}</Button>

@@ -5,7 +5,10 @@ import { useQuery } from "@tanstack/react-query";
 import { GetSummaryResponse } from "@/interfaces/summary";
 import { fetchJson } from "@/config/request";
 import { getMonthBounds } from "@/config/utils";
-import { CustomDateRangePicker } from "@/components/shared/CustomDateRangePicker";
+import {
+  CustomDateRangePicker,
+  RangeList,
+} from "@/components/shared/CustomDateRangePicker";
 import { parseAbsoluteToLocal, ZonedDateTime } from "@internationalized/date";
 import { RangeValue } from "@react-types/shared";
 import { CategoriesChart } from "@/components/charts/CategoriesChart";
@@ -27,6 +30,7 @@ function PageContent() {
     start: parseAbsoluteToLocal(currentMonthBounds.start.toISOString()),
     end: parseAbsoluteToLocal(currentMonthBounds.end.toISOString()),
   });
+  const [selectedKey, setSelectedKey] = useState<RangeList>(RangeList.this);
   const dateWithinStart = dateWithin.start.toDate().toISOString();
   const dateWithinEnd = dateWithin.end.toDate().toISOString();
   const url = `/api/summary?start=${dateWithinStart}&end=${dateWithinEnd}`;
@@ -89,6 +93,8 @@ function PageContent() {
           showLabel
           value={dateWithin}
           onChange={setDateWithin}
+          selectedKey={selectedKey}
+          onSelectedKeyChange={setSelectedKey}
         />
       </div>
 

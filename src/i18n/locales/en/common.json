@@ -28,6 +28,8 @@
   "save": "Save",
   "new": "New",
   "delete": "Delete",
+  "reset": "Reset",
+  "filter": "Filter",
   "searchByDescription": "Search by description...",
   "month": "Month",
   "expense": "Expense",

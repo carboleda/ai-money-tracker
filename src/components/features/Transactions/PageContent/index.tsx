@@ -11,10 +11,17 @@ import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
 import { useAppStore } from "@/stores/useAppStore";
 import { TransactionStatus } from "@/app/api/domain/transaction/model/transaction.model";
+import { getMonthBounds } from "@/config/utils";
 import {
   ZolventFilter,
   ZolventFilters,
 } from "@/components/shared/ZolventFilter/ZolventFilter";
+
+const currentMonthBounds = getMonthBounds(new Date());
+const defaultFilterValues: ZolventFilters = {
+  startDate: currentMonthBounds.start.toISOString(),
+  endDate: currentMonthBounds.end.toISOString(),
+};
 
 function PageContent() {
   const { t } = useTranslation(LocaleNamespace.Transactions);
@@ -27,7 +34,6 @@ function PageContent() {
     startDate: dateWithinStart = "",
     endDate: dateWithinEnd = "",
   } = filters;
-  console.log("PageContent:filters", filters);
   const url = `/api/transaction/${TransactionStatus.COMPLETE}/?acc=${selectedAccount}&start=${dateWithinStart}&end=${dateWithinEnd}`;
   const { isLoading, data: reesponse } = useQuery<GetTransactionsResponse>({
     queryKey: [
@@ -63,7 +69,12 @@ function PageContent() {
   }, [reesponse?.transactions, filterValue]);
 
   return (
-    <ZolventFilter t={t} activeFilterValues={filters} onFilter={setFilters}>
+    <ZolventFilter
+      t={t}
+      storageKey="transactions-filters"
+      defaultFilterValues={defaultFilterValues}
+      onFilter={setFilters}
+    >
       <section className="flex flex-col items-center justify-center gap-4">
         <div className="flex flex-col w-full justify-start items-start gap-2">
           <SummaryPanel

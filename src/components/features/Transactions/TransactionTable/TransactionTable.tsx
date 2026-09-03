@@ -29,7 +29,7 @@ export const TransactionTable: React.FC<TranactionTableProps> = ({
 }) => {
   const { t } = useTranslation(LocaleNamespace.Transactions);
   const [isOpen, setIsOpen] = useState(false);
-  const { setIsFilterOpen, activeFilterValues } = useZolventFilterContext();
+  const { setIsFilterOpen, activeFilterCount } = useZolventFilterContext();
   const { isMutating, deleteTransaction } = useMutateTransaction();
   const { columns, renderCell } = useRenderCell();
   const { onDelete } = useDeleteTableItem({
@@ -65,7 +65,7 @@ export const TransactionTable: React.FC<TranactionTableProps> = ({
           isMutating={isMutating}
           rowCount={transactions?.length}
           onOpenFilter={() => setIsFilterOpen(true)}
-          activeFiltersCount={Object.keys(activeFilterValues).length}
+          activeFiltersCount={activeFilterCount}
         >
           <TableToolbar.EditAction noSeparator onPress={onEdit} />
           <TableToolbar.DeleteAction

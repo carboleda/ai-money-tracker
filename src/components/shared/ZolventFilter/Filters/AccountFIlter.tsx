@@ -1,26 +1,15 @@
 import { BankAccounDropdown } from "@/components/BankAccounsDropdown";
-import { useState } from "react";
 import { useZolventFilterContext } from "../ZolventFilter";
 
 export const AccountFilter: React.FC = () => {
-  const { t, activeFilterValues } = useZolventFilterContext();
-  const [value, setValue] = useState<string>(
-    activeFilterValues["account"] ?? "",
-  );
+  const { t, draftFilters, setDraftFilters } = useZolventFilterContext();
+  const value = draftFilters.account ?? "";
 
   return (
-    <>
-      <input
-        type="hidden"
-        name="account"
-        value={value}
-        onChange={(e) => setValue(e.target.value ?? "")}
-      />
-      <BankAccounDropdown
-        label={t("accountFilter")}
-        value={value}
-        onChange={(key) => setValue(key ?? "")}
-      />
-    </>
+    <BankAccounDropdown
+      label={t("accountFilter")}
+      value={value}
+      onChange={(key) => setDraftFilters({ account: key ?? "" })}
+    />
   );
 };

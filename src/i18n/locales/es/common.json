@@ -28,6 +28,8 @@
   "custom": "Rango personalizado",
   "cancel": "Cancelar",
   "save": "Guardar",
+  "reset": "Restablecer",
+  "filter": "Filtrar",
   "searchByDescription": "Buscar por descripción...",
   "month": "Mes",
   "expense": "Gasto",

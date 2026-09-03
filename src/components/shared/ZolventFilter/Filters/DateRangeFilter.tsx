@@ -1,36 +1,51 @@
-import { useState } from "react";
-import { CustomDateRangePicker } from "../../CustomDateRangePicker";
+import { useCallback } from "react";
+import { CustomDateRangePicker, RangeList } from "../../CustomDateRangePicker";
 import { getMonthBounds } from "@/config/utils";
 import { parseAbsoluteToLocal, ZonedDateTime } from "@internationalized/date";
 import { RangeValue } from "@heroui/react";
 import { useZolventFilterContext } from "../ZolventFilter";
 
 export const DateRangeFilter: React.FC = () => {
-  const { t, activeFilterValues } = useZolventFilterContext();
+  const { t, draftFilters, setDraftFilters } = useZolventFilterContext();
   const currentMonthBounds = getMonthBounds(new Date());
-  const [dateWithin, setDateWithin] = useState<RangeValue<ZonedDateTime>>({
+  const selectedKey =
+    (draftFilters.dateRangeKey as RangeList) || RangeList.this;
+  const dateWithin: RangeValue<ZonedDateTime> = {
     start: parseAbsoluteToLocal(
-      activeFilterValues["startDate"] || currentMonthBounds.start.toISOString(),
+      draftFilters.startDate || currentMonthBounds.start.toISOString(),
     ),
     end: parseAbsoluteToLocal(
-      activeFilterValues["endDate"] || currentMonthBounds.end.toISOString(),
+      draftFilters.endDate || currentMonthBounds.end.toISOString(),
     ),
-  });
-  const dateWithinStart = dateWithin.start.toDate().toISOString();
-  const dateWithinEnd = dateWithin.end.toDate().toISOString();
+  };
+
+  const onChange = useCallback(
+    (value: RangeValue<ZonedDateTime>) => {
+      setDraftFilters({
+        startDate: value.start.toDate().toISOString(),
+        endDate: value.end.toDate().toISOString(),
+      });
+    },
+    [setDraftFilters],
+  );
+
+  const onSelectedKeyChange = useCallback(
+    (key: RangeList) => {
+      setDraftFilters({ dateRangeKey: key });
+    },
+    [setDraftFilters],
+  );
 
   return (
-    <>
-      <input type="hidden" name="startDate" value={dateWithinStart} />
-      <input type="hidden" name="endDate" value={dateWithinEnd} />
-      <CustomDateRangePicker
-        label={t("dateRangeFilter")}
-        granularity="day"
-        className="w-full"
-        isRequired
-        value={dateWithin}
-        onChange={setDateWithin}
-      />
-    </>
+    <CustomDateRangePicker
+      label={t("dateRangeFilter")}
+      granularity="day"
+      className="w-full"
+      isRequired
+      value={dateWithin}
+      onChange={onChange}
+      selectedKey={selectedKey}
+      onSelectedKeyChange={onSelectedKeyChange}
+    />
   );
 };
