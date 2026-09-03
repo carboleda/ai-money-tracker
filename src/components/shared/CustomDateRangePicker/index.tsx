@@ -10,13 +10,13 @@ import {
 } from "@heroui/react";
 import { RangeValue } from "@react-types/shared";
 import { parseAbsoluteToLocal, ZonedDateTime } from "@internationalized/date";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback } from "react";
 import { getMonthBounds } from "@/config/utils";
 import { HiArrowCircleLeft } from "react-icons/hi";
 import { useTranslation } from "react-i18next";
 import { CustomDropdown } from "../CustomDropdown";
 
-enum RangeList {
+export enum RangeList {
   this = "this",
   last = "last",
   two = "two",
@@ -24,59 +24,71 @@ enum RangeList {
   custom = "custom",
 }
 
-export interface CustomDateRangePickerProps
-  extends Omit<DateRangePickerProps<ZonedDateTime>, "value" | "onChange"> {
+export interface CustomDateRangePickerProps extends Omit<
+  DateRangePickerProps<ZonedDateTime>,
+  "value" | "onChange"
+> {
   value: RangeValue<ZonedDateTime>;
   label?: string;
   showLabel?: boolean;
   onChange: (value: RangeValue<ZonedDateTime>) => void;
+  selectedKey: RangeList;
+  onSelectedKeyChange: (key: RangeList) => void;
 }
 
 const currentMonthBounds = getMonthBounds(new Date());
 
+const getBoundsForKey = (key: RangeList): { start: Date; end: Date } => {
+  if (key === RangeList.last) {
+    return getMonthBounds(
+      new Date(new Date().getFullYear(), new Date().getMonth() - 1, 1),
+    );
+  }
+  if (key === RangeList.two) {
+    return getMonthBounds(
+      new Date(new Date().getFullYear(), new Date().getMonth() - 2, 1),
+    );
+  }
+  if (key === RangeList.quarter) {
+    const quarterBounds = getMonthBounds(
+      new Date(new Date().getFullYear(), new Date().getMonth() - 3, 1),
+    );
+    return { start: quarterBounds.start, end: currentMonthBounds.end };
+  }
+
+  return currentMonthBounds;
+};
+
 export const CustomDateRangePicker: React.FC<CustomDateRangePickerProps> = ({
   label,
   showLabel = false,
+  selectedKey,
+  onSelectedKeyChange,
   ...props
 }) => {
   const { t } = useTranslation();
-  const [selectedKey, setSelectedKey] = useState<RangeList>(RangeList.this);
 
   const onDateChange = useCallback(
     (value: RangeValue<ZonedDateTime> | null) => {
       props.onChange(value!); // FIXME: remove the ! operator
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [props.onChange]
+    [props.onChange],
   );
 
-  useEffect(() => {
-    let bounds: { start: Date; end: Date };
-    if (selectedKey === RangeList.last) {
-      bounds = getMonthBounds(
-        new Date(new Date().getFullYear(), new Date().getMonth() - 1, 1)
-      );
-    } else if (selectedKey === RangeList.two) {
-      bounds = getMonthBounds(
-        new Date(new Date().getFullYear(), new Date().getMonth() - 2, 1)
-      );
-    } else if (selectedKey === RangeList.quarter) {
-      const querterBounds = getMonthBounds(
-        new Date(new Date().getFullYear(), new Date().getMonth() - 3, 1)
-      );
-      bounds = {
-        start: querterBounds.start,
-        end: currentMonthBounds.end,
-      };
-    } else {
-      bounds = currentMonthBounds;
-    }
+  const onPresetChange = useCallback(
+    (key: RangeList) => {
+      onSelectedKeyChange(key);
+      if (key === RangeList.custom) return;
 
-    onDateChange({
-      start: parseAbsoluteToLocal(bounds.start.toISOString()),
-      end: parseAbsoluteToLocal(bounds.end.toISOString()),
-    });
-  }, [onDateChange, selectedKey]);
+      const bounds = getBoundsForKey(key);
+      onDateChange({
+        start: parseAbsoluteToLocal(bounds.start.toISOString()),
+        end: parseAbsoluteToLocal(bounds.end.toISOString()),
+      });
+    },
+    [onSelectedKeyChange, onDateChange],
+  );
 
   if (selectedKey === RangeList.custom) {
     return (
@@ -84,7 +96,7 @@ export const CustomDateRangePicker: React.FC<CustomDateRangePickerProps> = ({
         <Button
           className="min-w-0 min-h-0 w-fit h-fit"
           variant="ghost"
-          onPress={() => setSelectedKey(RangeList.this)}
+          onPress={() => onPresetChange(RangeList.this)}
           isIconOnly
         >
           <HiArrowCircleLeft
@@ -147,7 +159,7 @@ export const CustomDateRangePicker: React.FC<CustomDateRangePickerProps> = ({
       value={selectedKey}
       isRequired={props.isRequired}
       showLabel={showLabel}
-      onChange={(key: unknown) => setSelectedKey((key as RangeList)!)}
+      onChange={(key: unknown) => onPresetChange((key as RangeList)!)}
     />
   );
 };

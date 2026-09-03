@@ -13,11 +13,14 @@ import { useMutateRecurringExpenses } from "@/hooks/useMutateRecurringExpense";
 import { useRenderCell } from "./Columns";
 import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
-import { SearchToolbar } from "@/components/features/Transactions/SearchToolbar";
 import { useDeleteTableItem } from "@/hooks/useDeleteTableItem";
 import { TableToolbar } from "@/components/shared/Table/TableToolbar";
 import { useTableSelection } from "@/hooks/useTableSelection";
 import { TableContainer } from "@/components/shared/Table/TableContainer";
+import {
+  useZolventFilterContext,
+  ZolventFilter,
+} from "@/components/shared/ZolventFilter/ZolventFilter";
 
 interface RecurringExpensesTableProps {
   isLoading: boolean;
@@ -55,7 +58,8 @@ export const RecurringExpensesTable: React.FC<RecurringExpensesTableProps> = ({
 }) => {
   const { t } = useTranslation(LocaleNamespace.RecurringExpenses);
   const [isOpen, setIsOpen] = useState(false);
-  const [filterValue, setFilterValue] = useState("");
+  const { appliedFilters } = useZolventFilterContext();
+  const filterValue = appliedFilters.freeText ?? "";
   const { isMutating, deleteConfig } = useMutateRecurringExpenses();
   const { columns, renderCell, renderSeparator } = useRenderCell();
   const { onDelete } = useDeleteTableItem({ onConfirmDelete: deleteConfig });
@@ -98,22 +102,11 @@ export const RecurringExpensesTable: React.FC<RecurringExpensesTableProps> = ({
     setIsOpen(true);
   };
 
-  const renderTopContent = () => (
-    <div className="flex w-full flex-col gap-4">
-      <div className="flex justify-between gap-3 items-center w-full">
-        <SearchToolbar
-          filterValue={filterValue}
-          onSearchChange={setFilterValue}
-        />
-      </div>
-    </div>
-  );
-
   if (isLoading || !recurringExpenses) return <TableSkeleton />;
 
   return (
     <>
-      {renderTopContent()}
+      <ZolventFilter.FreeTextFilter applyOnChange />
       <Table>
         <TableToolbar
           selectedItem={selectedItem}

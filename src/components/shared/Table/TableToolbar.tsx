@@ -1,5 +1,12 @@
-import { ButtonGroup, Button, ButtonProps, Chip } from "@heroui/react";
-import { IoTrashBin } from "react-icons/io5";
+import {
+  ButtonGroup,
+  Button,
+  ButtonProps,
+  Chip,
+  PressEvent,
+  Badge,
+} from "@heroui/react";
+import { IoFilterSharp, IoTrashBin } from "react-icons/io5";
 import { IconEdit } from "../icons";
 import { TFunction } from "i18next";
 import React, {
@@ -14,10 +21,12 @@ import { HiOutlinePlusCircle } from "react-icons/hi";
 import { useIsMobile } from "@/hooks/useIsMobile";
 
 interface TableToolbarProps extends PropsWithChildren {
-  selectedItem?: { id: string } & Record<string, any>;
-  isMutating: boolean;
-  rowCount?: number;
   t: TFunction;
+  isMutating: boolean;
+  onOpenFilter?: (e: PressEvent) => void;
+  activeFiltersCount?: number;
+  selectedItem?: { id: string } & Record<string, any>;
+  rowCount?: number;
 }
 
 interface ActionProps extends ButtonProps {
@@ -46,6 +55,8 @@ function useTableToolbarContext() {
 const TableToolbarRoot: React.FC<TableToolbarProps> = ({
   selectedItem,
   isMutating,
+  onOpenFilter,
+  activeFiltersCount = 0,
   rowCount = 0,
   children,
   t,
@@ -59,10 +70,27 @@ const TableToolbarRoot: React.FC<TableToolbarProps> = ({
     <TableToolbarContext.Provider value={contextValue}>
       <div className="flex flex-row gap-1 items-center py-2 justify-between">
         <ButtonGroup variant="ghost">{children}</ButtonGroup>
-        <div className="pr-3">
-          <Chip className="mr-0" variant="soft" color="accent">
+        <div className="flex gap-1 items-center pr-3">
+          <Chip size="sm" color="accent" variant="soft">
             {t("rowCounter", { count: rowCount || 0 })}
           </Chip>
+          {onOpenFilter && (
+            <Badge.Anchor>
+              <Button
+                variant="ghost"
+                aria-label={t("filter")}
+                isIconOnly
+                onPress={onOpenFilter}
+              >
+                <IoFilterSharp className="text-6xl" />
+              </Button>
+              {activeFiltersCount > 0 && (
+                <Badge color="danger" size="sm">
+                  {activeFiltersCount}
+                </Badge>
+              )}
+            </Badge.Anchor>
+          )}
         </div>
       </div>
     </TableToolbarContext.Provider>

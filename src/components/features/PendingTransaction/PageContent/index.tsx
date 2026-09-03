@@ -10,6 +10,7 @@ import { LocaleNamespace } from "@/i18n/namespace";
 import { useAppStore } from "@/stores/useAppStore";
 import { TransactionStatus } from "@/app/api/domain/transaction/model/transaction.model";
 import { fetchJson } from "@/config/request";
+import { ZolventFilter } from "@/components/shared/ZolventFilter/ZolventFilter";
 
 function PageContent() {
   const { t } = useTranslation(LocaleNamespace.RecurringExpenses);
@@ -25,19 +26,21 @@ function PageContent() {
   }, [t, setPageTitle]);
 
   return (
-    <section className="flex flex-col items-center justify-center gap-4">
-      <div className="flex flex-col w-full justify-start items-start gap-2">
-        <SummaryPanel
-          summary={reesponse?.summary}
-          includedKeys={["totalPending"]}
-        />
-      </div>
+    <ZolventFilter t={t} storageKey="pending-filters" onFilter={() => {}}>
+      <section className="flex flex-col items-center justify-center gap-2">
+        <div className="flex flex-col w-full justify-start items-start gap-2 mb-2">
+          <SummaryPanel
+            summary={reesponse?.summary}
+            includedKeys={["totalPending"]}
+          />
+        </div>
 
-      <PendingTransactionTable
-        pendingTransactions={reesponse?.transactions}
-        isLoading={isLoading}
-      />
-    </section>
+        <PendingTransactionTable
+          pendingTransactions={reesponse?.transactions}
+          isLoading={isLoading}
+        />
+      </section>
+    </ZolventFilter>
   );
 }
 export default PageContent;

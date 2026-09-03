@@ -5,32 +5,35 @@ import { useQuery } from "@tanstack/react-query";
 import { GetTransactionsResponse, Summary } from "@/interfaces/transaction";
 import { fetchJson } from "@/config/request";
 import { TransactionTable } from "@/components/features/Transactions";
-import { BankAccounDropdown } from "@/components/BankAccounsDropdown";
-import { parseAbsoluteToLocal, ZonedDateTime } from "@internationalized/date";
-import { RangeValue } from "@react-types/shared";
-import { getMonthBounds } from "@/config/utils";
 import { SummaryPanel } from "@/components/SummaryPanel";
 import { useIsMobile } from "@/hooks/useIsMobile";
-import { CustomDateRangePicker } from "@/components/shared/CustomDateRangePicker";
 import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
-import { SearchToolbar } from "@/components/features/Transactions/SearchToolbar";
 import { useAppStore } from "@/stores/useAppStore";
 import { TransactionStatus } from "@/app/api/domain/transaction/model/transaction.model";
+import { getMonthBounds } from "@/config/utils";
+import {
+  ZolventFilter,
+  ZolventFilters,
+} from "@/components/shared/ZolventFilter/ZolventFilter";
+
+const currentMonthBounds = getMonthBounds(new Date());
+const defaultFilterValues: ZolventFilters = {
+  startDate: currentMonthBounds.start.toISOString(),
+  endDate: currentMonthBounds.end.toISOString(),
+};
 
 function PageContent() {
   const { t } = useTranslation(LocaleNamespace.Transactions);
   const { setPageTitle } = useAppStore();
   const isMobile = useIsMobile();
-  const [filterValue, setFilterValue] = useState("");
-  const currentMonthBounds = getMonthBounds(new Date());
-  const [selectedAccount, setSelectedAccount] = useState<string>("");
-  const [dateWithin, setDateWithin] = useState<RangeValue<ZonedDateTime>>({
-    start: parseAbsoluteToLocal(currentMonthBounds.start.toISOString()),
-    end: parseAbsoluteToLocal(currentMonthBounds.end.toISOString()),
-  });
-  const dateWithinStart = dateWithin.start.toDate().toISOString();
-  const dateWithinEnd = dateWithin.end.toDate().toISOString();
+  const [filters, setFilters] = useState<ZolventFilters>({});
+  const {
+    freeText: filterValue = "",
+    account: selectedAccount = "",
+    startDate: dateWithinStart = "",
+    endDate: dateWithinEnd = "",
+  } = filters;
   const url = `/api/transaction/${TransactionStatus.COMPLETE}/?acc=${selectedAccount}&start=${dateWithinStart}&end=${dateWithinEnd}`;
   const { isLoading, data: reesponse } = useQuery<GetTransactionsResponse>({
     queryKey: [
@@ -55,60 +58,39 @@ function PageContent() {
         (transaction) =>
           transaction.description
             .toLowerCase()
-            .includes(filterValue.toLowerCase()) ||
+            .includes(filterValue?.toLowerCase()) ||
           transaction.category?.name
             ?.toLowerCase()
-            .includes(filterValue.toLowerCase()),
+            .includes(filterValue?.toLowerCase()),
       );
     }
 
     return filteredTransations;
   }, [reesponse?.transactions, filterValue]);
 
-  const renderTopContent = () => {
-    return (
-      <div className="flex w-full flex-col gap-4">
-        <div className="flex justify-between gap-2 items-center">
-          <SearchToolbar
-            filterValue={filterValue}
-            onSearchChange={setFilterValue}
-          >
-            <div className="flex flex-row gap-2">
-              <CustomDateRangePicker
-                label={t("dateRangeFilter")}
-                granularity="day"
-                isRequired
-                value={dateWithin}
-                onChange={setDateWithin}
-              />
-              <BankAccounDropdown
-                label={t("accountFilter")}
-                onChange={(key) => setSelectedAccount(key ?? "")}
-              />
-            </div>
-          </SearchToolbar>
-        </div>
-      </div>
-    );
-  };
-
   return (
-    <section className="flex flex-col items-center justify-center gap-4">
-      <div className="flex flex-col w-full justify-start items-start gap-2">
-        <SummaryPanel
-          summary={reesponse?.summary}
-          shortNumber={isMobile}
-          includedKeys={[
-            "totalBalance",
-            ...(isMobile ? [] : ["totalIncomes" as keyof Summary]),
-            "totalExpenses",
-            "totalTransfers",
-          ]}
-        />
-      </div>
-      {renderTopContent()}
-      <TransactionTable transactions={transactions} isLoading={isLoading} />
-    </section>
+    <ZolventFilter
+      t={t}
+      storageKey="transactions-filters"
+      defaultFilterValues={defaultFilterValues}
+      onFilter={setFilters}
+    >
+      <section className="flex flex-col items-center justify-center gap-2">
+        <div className="flex flex-col w-full justify-start items-start gap-2 mb-2">
+          <SummaryPanel
+            summary={reesponse?.summary}
+            shortNumber={isMobile}
+            includedKeys={[
+              "totalBalance",
+              ...(isMobile ? [] : ["totalIncomes" as keyof Summary]),
+              "totalExpenses",
+              "totalTransfers",
+            ]}
+          />
+        </div>
+        <TransactionTable transactions={transactions} isLoading={isLoading} />
+      </section>
+    </ZolventFilter>
   );
 }
 

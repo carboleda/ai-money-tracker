@@ -12,6 +12,7 @@ import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
 import { useAppStore } from "@/stores/useAppStore";
 import { fetchJson } from "@/config/request";
+import { ZolventFilter } from "@/components/shared/ZolventFilter/ZolventFilter";
 
 const KEY = "/api/recurring-expenses";
 
@@ -30,45 +31,47 @@ function PageContent() {
   });
 
   return (
-    <section className="flex flex-col items-center justify-center gap-4">
-      <div className="flex flex-col w-full justify-start items-start gap-2">
-        <div className="flex flex-wrap gap-2">
-          <TransactionTypeDecorator
-            color="accent"
-            size={isMobile ? "sm" : "md"}
-            avatar={<HiFire />}
-          >
-            {reesponse?.groupTotal && (
-              <>
-                <span className="font-bold hidden md:inline">
-                  {t("monthly")}&nbsp;
-                </span>
-                {formatCurrency(reesponse?.groupTotal.monthly)}
-              </>
-            )}
-          </TransactionTypeDecorator>
+    <ZolventFilter t={t} storageKey="recurring-filters" onFilter={() => {}}>
+      <section className="flex flex-col items-center justify-center gap-2">
+        <div className="flex flex-col w-full justify-start items-start gap-2 mb-2">
+          <div className="flex flex-wrap gap-2">
+            <TransactionTypeDecorator
+              color="accent"
+              size={isMobile ? "sm" : "md"}
+              avatar={<HiFire />}
+            >
+              {reesponse?.groupTotal && (
+                <>
+                  <span className="font-bold hidden md:inline">
+                    {t("monthly")}&nbsp;
+                  </span>
+                  {formatCurrency(reesponse?.groupTotal.monthly)}
+                </>
+              )}
+            </TransactionTypeDecorator>
 
-          <TransactionTypeDecorator
-            color="default"
-            size={isMobile ? "sm" : "md"}
-            avatar={<HiOutlineCalendar />}
-          >
-            {reesponse?.groupTotal && (
-              <>
-                <span className="font-bold hidden md:inline">
-                  {t("biannualAndYearly")}&nbsp;
-                </span>
-                {formatCurrency(reesponse?.groupTotal.others)}
-              </>
-            )}
-          </TransactionTypeDecorator>
+            <TransactionTypeDecorator
+              color="default"
+              size={isMobile ? "sm" : "md"}
+              avatar={<HiOutlineCalendar />}
+            >
+              {reesponse?.groupTotal && (
+                <>
+                  <span className="font-bold hidden md:inline">
+                    {t("biannualAndYearly")}&nbsp;
+                  </span>
+                  {formatCurrency(reesponse?.groupTotal.others)}
+                </>
+              )}
+            </TransactionTypeDecorator>
+          </div>
         </div>
-      </div>
-      <RecurringExpensesTable
-        recurringExpenses={reesponse?.recurringExpensesConfig}
-        isLoading={isLoading}
-      />
-    </section>
+        <RecurringExpensesTable
+          recurringExpenses={reesponse?.recurringExpensesConfig}
+          isLoading={isLoading}
+        />
+      </section>
+    </ZolventFilter>
   );
 }
 

@@ -13,6 +13,7 @@ import { TransactionTypeDecorator } from "@/components/TransactionTypeDecorator"
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { HiScale } from "react-icons/hi";
 import { fetchJson } from "@/config/request";
+import { ZolventFilter } from "@/components/shared/ZolventFilter/ZolventFilter";
 
 const KEY = "/api/account";
 
@@ -45,23 +46,25 @@ export function PageContent() {
   const totalBalance = calculateTotalBalance(response?.accounts);
 
   return (
-    <section className="flex flex-col items-center justify-center gap-4">
-      <div className="flex flex-col w-full justify-start items-start gap-2">
-        <TransactionTypeDecorator
-          color="accent"
-          size={isMobile ? "sm" : "md"}
-          avatar={<HiScale />}
-        >
-          <>
-            <span className="font-bold hidden md:inline">
-              {t("globalBalance")}&nbsp;
-            </span>
-            {formatCurrency(totalBalance)}
-          </>
-        </TransactionTypeDecorator>
-      </div>
-      <AccountsTable accounts={response?.accounts} isLoading={isLoading} />
-    </section>
+    <ZolventFilter t={t} storageKey="accounts-filters" onFilter={() => {}}>
+      <section className="flex flex-col items-center justify-center gap-2">
+        <div className="flex flex-col w-full justify-start items-start gap-2 mb-2">
+          <TransactionTypeDecorator
+            color="accent"
+            size={isMobile ? "sm" : "md"}
+            avatar={<HiScale />}
+          >
+            <>
+              <span className="font-bold hidden md:inline">
+                {t("globalBalance")}&nbsp;
+              </span>
+              {formatCurrency(totalBalance)}
+            </>
+          </TransactionTypeDecorator>
+        </div>
+        <AccountsTable accounts={response?.accounts} isLoading={isLoading} />
+      </section>
+    </ZolventFilter>
   );
 }
 
