@@ -58,6 +58,7 @@ export const TransactionTable: React.FC<TranactionTableProps> = ({
 
   return (
     <>
+      <ZolventFilter.FreeTextFilter applyOnChange />
       <Table>
         <TableToolbar
           t={t}
@@ -90,7 +91,6 @@ export const TransactionTable: React.FC<TranactionTableProps> = ({
         onDismiss={onDialogDismissed}
       />
       <ZolventFilter.Container>
-        <ZolventFilter.FreeTextFilter />
         <ZolventFilter.AccountFilter />
         <ZolventFilter.DateRangeFilter />
       </ZolventFilter.Container>

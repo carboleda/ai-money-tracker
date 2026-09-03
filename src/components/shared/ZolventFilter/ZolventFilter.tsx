@@ -15,6 +15,7 @@ import React, {
 } from "react";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { useZolventFilterStore } from "@/stores/useZolventFilterStore";
+import { FreeTextFilter } from "./Filters/FreeTextFIlter";
 
 const ZolventFilterModalContainer = lazy(() => import("./ModalContainer"));
 const ZolventFilterDrawerContainer = lazy(() => import("./DrawerContainer"));
@@ -70,6 +71,7 @@ interface ZolventFilterContextValue {
   setDraftFilters: (patch: Partial<ZolventFilters>) => void;
   appliedFilters: ZolventFilters;
   applyFilters: () => void;
+  setImmediateFilters: (patch: Partial<ZolventFilters>) => void;
   resetFilters: () => void;
   activeFilterCount: number;
 }
@@ -148,19 +150,34 @@ const ZolventFilterRoot: React.FC<ZolventFilterProps> = ({
     setDraftFiltersState((prev) => ({ ...prev, ...patch }));
   }, []);
 
-  const commitFilters = useCallback(
-    (values: ZolventFilters) => {
-      setAppliedFilters(values);
-      setPersistedFilters(storageKey, values);
-      onFilter(values);
-      setIsFilterOpen(false);
+  const persistAndNotify = useCallback(
+    (next: ZolventFilters) => {
+      setAppliedFilters(next);
+      setPersistedFilters(storageKey, next);
+      onFilter(next);
     },
     [onFilter, setPersistedFilters, storageKey],
+  );
+
+  const commitFilters = useCallback(
+    (values: ZolventFilters) => {
+      persistAndNotify(values);
+      setIsFilterOpen(false);
+    },
+    [persistAndNotify],
   );
 
   const applyFilters = useCallback(() => {
     commitFilters(draftFilters);
   }, [commitFilters, draftFilters]);
+
+  const setImmediateFilters = useCallback(
+    (patch: Partial<ZolventFilters>) => {
+      setDraftFiltersState((prev) => ({ ...prev, ...patch }));
+      persistAndNotify({ ...appliedFilters, ...patch });
+    },
+    [appliedFilters, persistAndNotify],
+  );
 
   const resetFilters = useCallback(() => {
     const defaults = defaultFilterValues ?? {};
@@ -184,6 +201,7 @@ const ZolventFilterRoot: React.FC<ZolventFilterProps> = ({
       setDraftFilters,
       appliedFilters,
       applyFilters,
+      setImmediateFilters,
       resetFilters,
       activeFilterCount,
     }),
@@ -194,6 +212,7 @@ const ZolventFilterRoot: React.FC<ZolventFilterProps> = ({
       setDraftFilters,
       appliedFilters,
       applyFilters,
+      setImmediateFilters,
       resetFilters,
       activeFilterCount,
     ],
@@ -243,11 +262,7 @@ export const ZolventFilter = Object.assign(ZolventFilterRoot, {
       default: module.AccountFilter,
     })),
   ),
-  FreeTextFilter: React.lazy(() =>
-    import("./Filters/FreeTextFIlter").then((module) => ({
-      default: module.FreeTextFilter,
-    })),
-  ),
+  FreeTextFilter,
   DateRangeFilter: React.lazy(() =>
     import("./Filters/DateRangeFilter").then((module) => ({
       default: module.DateRangeFilter,
