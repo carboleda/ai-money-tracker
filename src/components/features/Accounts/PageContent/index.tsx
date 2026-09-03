@@ -45,8 +45,8 @@ export function PageContent() {
   const totalBalance = calculateTotalBalance(response?.accounts);
 
   return (
-    <section className="flex flex-col items-center justify-center gap-4">
-      <div className="flex flex-col w-full justify-start items-start gap-2">
+    <section className="flex flex-col items-center justify-center gap-2">
+      <div className="flex flex-col w-full justify-start items-start gap-2 mb-2">
         <TransactionTypeDecorator
           color="accent"
           size={isMobile ? "sm" : "md"}
