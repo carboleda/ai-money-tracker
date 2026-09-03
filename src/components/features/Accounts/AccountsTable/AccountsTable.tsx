@@ -9,11 +9,14 @@ import { useMutateAccount } from "@/hooks/useMutateAccount";
 import { useRenderCell } from "./Columns";
 import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
-import { SearchToolbar } from "@/components/features/Transactions/SearchToolbar";
 import { useDeleteTableItem } from "@/hooks/useDeleteTableItem";
 import { TableToolbar } from "@/components/shared/Table/TableToolbar";
 import { useTableSelection } from "@/hooks/useTableSelection";
 import { TableContainer } from "@/components/shared/Table/TableContainer";
+import {
+  useZolventFilterContext,
+  ZolventFilter,
+} from "@/components/shared/ZolventFilter/ZolventFilter";
 
 interface AccountsTableProps {
   isLoading: boolean;
@@ -26,7 +29,8 @@ export const AccountsTable: React.FC<AccountsTableProps> = ({
 }) => {
   const { t } = useTranslation(LocaleNamespace.Accounts);
   const [isOpen, setIsOpen] = useState(false);
-  const [filterValue, setFilterValue] = useState("");
+  const { appliedFilters } = useZolventFilterContext();
+  const filterValue = appliedFilters.freeText ?? "";
   const { isMutating, deleteAccount } = useMutateAccount();
   const { columns, renderCell } = useRenderCell();
   const { onDelete } = useDeleteTableItem({ onConfirmDelete: deleteAccount });
@@ -65,22 +69,11 @@ export const AccountsTable: React.FC<AccountsTableProps> = ({
     setIsOpen(true);
   };
 
-  const renderTopContent = () => (
-    <div className="flex w-full flex-col gap-4">
-      <div className="flex justify-between gap-3 items-center w-full">
-        <SearchToolbar
-          filterValue={filterValue}
-          onSearchChange={setFilterValue}
-        />
-      </div>
-    </div>
-  );
-
   if (isLoading || !accounts) return <TableSkeleton />;
 
   return (
     <>
-      {renderTopContent()}
+      <ZolventFilter.FreeTextFilter applyOnChange />
       <Table>
         <TableToolbar
           selectedItem={selectedItem}
@@ -103,7 +96,7 @@ export const AccountsTable: React.FC<AccountsTableProps> = ({
           ariaLabelKey="accounts"
           renderCell={renderCell}
           columns={columns}
-          items={accounts}
+          items={filteredAccounts}
           onSelectionChange={onSelectionChange}
           selectedKeys={selectedKeys}
         />
