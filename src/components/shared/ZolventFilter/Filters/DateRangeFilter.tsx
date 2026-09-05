@@ -2,7 +2,7 @@ import { useCallback } from "react";
 import { CustomDateRangePicker, RangeList } from "../../CustomDateRangePicker";
 import { getMonthBounds } from "@/config/utils";
 import { parseAbsoluteToLocal, ZonedDateTime } from "@internationalized/date";
-import { RangeValue } from "@heroui/react";
+import { Label, RangeValue } from "@heroui/react";
 import { useZolventFilterContext } from "../ZolventFilter";
 
 export const DateRangeFilter: React.FC = () => {
@@ -37,15 +37,17 @@ export const DateRangeFilter: React.FC = () => {
   );
 
   return (
-    <CustomDateRangePicker
-      label={t("dateRangeFilter")}
-      granularity="day"
-      className="w-full"
-      isRequired
-      value={dateWithin}
-      onChange={onChange}
-      selectedKey={selectedKey}
-      onSelectedKeyChange={onSelectedKeyChange}
-    />
+    <div className="flex flex-col gap-2">
+      <Label className="text-sm font-semibold">{t("dateRangeFilter")}</Label>
+      <CustomDateRangePicker
+        granularity="day"
+        className="w-full"
+        isRequired
+        value={dateWithin}
+        onChange={onChange}
+        selectedKey={selectedKey}
+        onSelectedKeyChange={onSelectedKeyChange}
+      />
+    </div>
   );
 };
