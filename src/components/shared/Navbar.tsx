@@ -14,7 +14,7 @@ export const Navbar = () => {
         isIconOnly
         aria-label="Menu"
         variant="ghost"
-        className="sm:hidden rounded-sm"
+        className="md:hidden rounded-sm"
         onPress={() => toggleSidebar()}
       >
         <CiMenuBurger className="size-6" />

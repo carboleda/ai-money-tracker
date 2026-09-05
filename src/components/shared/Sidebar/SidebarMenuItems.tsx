@@ -27,6 +27,7 @@ const keyLabel = new Map(
 
 interface SidebarMenuItemsProps {
   onItemClick?: (key: Key) => void;
+  collapsed?: boolean;
 }
 
 interface IconWrapperProps {
@@ -50,22 +51,37 @@ export const IconWrapper = ({ children, className }: IconWrapperProps) => (
   </div>
 );
 
-const renderPageItem = (page: Page, t: TFunction, pathname: string) => {
+const renderPageItem = (
+  page: Page,
+  t: TFunction,
+  pathname: string,
+  collapsed?: boolean
+) => {
   return (
     <ListBox.Item
       key={page.label}
       id={page.label}
       href={page.href}
       textValue={page.label}
+      className={clsx(collapsed && "md:justify-center md:gap-0 md:pe-2")}
     >
       <IconWrapper className={page.className}>
         <page.icon className="text-lg md:text-base" />
       </IconWrapper>
-      <Label>{t(page.label)}</Label>
+      <Label
+        className={clsx(
+          "overflow-hidden whitespace-nowrap transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]",
+          collapsed ? "md:max-w-0 md:opacity-0" : "md:max-w-40 md:opacity-100"
+        )}
+      >
+        {t(page.label)}
+      </Label>
       <ListBox.ItemIndicator>
         {() =>
           page.label === keyLabel.get(pathname) ? (
-            <FaCircleArrowRight className="size-4 text-accent" />
+            <FaCircleArrowRight
+              className={clsx("size-4 text-accent", collapsed && "md:hidden")}
+            />
           ) : null
         }
       </ListBox.ItemIndicator>
@@ -75,6 +91,7 @@ const renderPageItem = (page: Page, t: TFunction, pathname: string) => {
 
 export const SidebarMenuItems: React.FC<SidebarMenuItemsProps> = ({
   onItemClick,
+  collapsed,
 }) => {
   const pathname = usePathname();
   const { t } = useTranslation(LocaleNamespace.Login);
@@ -106,7 +123,10 @@ export const SidebarMenuItems: React.FC<SidebarMenuItemsProps> = ({
 
   return (
     <ListBox
-      className="flex w-full flex-col justify-start items-start"
+      className={clsx(
+        "flex w-full flex-col justify-start items-start",
+        collapsed && "md:items-center"
+      )}
       aria-label="User Menu"
       selectionMode="none"
       variant="default"
@@ -118,8 +138,9 @@ export const SidebarMenuItems: React.FC<SidebarMenuItemsProps> = ({
           key={SidebarMenuItemKeys.Avatar}
           id={SidebarMenuItemKeys.Avatar}
           textValue="User Avatar"
+          className={clsx(collapsed && "md:justify-center")}
         >
-          <UserAvatar />
+          <UserAvatar collapsed={collapsed} />
         </ListBox.Item>
         {/* <ListBox.Item
           key={SidebarMenuItemKeys.Notifications}
@@ -136,7 +157,7 @@ export const SidebarMenuItems: React.FC<SidebarMenuItemsProps> = ({
       <ListBox.Section className="w-full">
         {siteConfig.pages
           .filter((page: any) => "href" in page)
-          .map((page) => renderPageItem(page as Page, t, pathname))}
+          .map((page) => renderPageItem(page as Page, t, pathname, collapsed))}
       </ListBox.Section>
       <Separator />
       {siteConfig.pages
@@ -144,9 +165,16 @@ export const SidebarMenuItems: React.FC<SidebarMenuItemsProps> = ({
         .map((page: any) => {
           return (
             <ListBox.Section className="w-full" key={page.groupLabel}>
-              <Header>{t(page.groupLabel)}</Header>
+              <Header
+                className={clsx(
+                  "overflow-hidden transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]",
+                  collapsed ? "md:max-h-0 md:opacity-0" : "md:max-h-10 md:opacity-100"
+                )}
+              >
+                {t(page.groupLabel)}
+              </Header>
               {page.pages.map((groupPage: Page) =>
-                renderPageItem(groupPage, t, pathname),
+                renderPageItem(groupPage, t, pathname, collapsed),
               )}
             </ListBox.Section>
           );

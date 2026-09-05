@@ -81,7 +81,7 @@ export const TableContainer = <T extends HasId>({
             }
 
             return (
-              <Table.Row key={item.id} id={item.id}>
+              <Table.Row key={item.id}>
                 <Table.Collection items={columns}>
                   {(column) => {
                     return renderCell({
