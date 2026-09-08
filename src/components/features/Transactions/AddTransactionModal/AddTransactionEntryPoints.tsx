@@ -5,6 +5,7 @@ import { HiOutlineSparkles } from "react-icons/hi2";
 import { useTransactionDraftStore } from "@/stores/useTransactionDraftStore";
 import { AddTransactionModal } from "./AddTransactionModal";
 import { Button } from "@heroui/react";
+import { useSearchParams } from "next/navigation";
 
 /**
  * Global entry points for the AI Draft Transaction Pipeline, mounted once
@@ -21,6 +22,7 @@ import { Button } from "@heroui/react";
  *  - The single globally-mounted `<AddTransactionModal>`.
  */
 export const AddTransactionEntryPoints: React.FC = () => {
+  const searchParams = useSearchParams();
   const isOpen = useTransactionDraftStore((s) => s.isOpen);
   const openDraftModal = useTransactionDraftStore((s) => s.openDraftModal);
   const closeDraftModal = useTransactionDraftStore((s) => s.closeDraftModal);
@@ -49,6 +51,13 @@ export const AddTransactionEntryPoints: React.FC = () => {
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [isOpen, openDraftModal]);
+
+  useEffect(() => {
+    // If the URL contains `?new_trx=true`, auto-open the add transaction modal on page load.
+    if (searchParams.get("new_trx") === "true") {
+      openDraftModal();
+    }
+  }, [searchParams, openDraftModal]);
 
   const handleClose = () => {
     resetDraft();
