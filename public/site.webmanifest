@@ -1,11 +1,52 @@
 {
+  "id": "zolvent_app",
   "name": "Zolvent",
   "short_name": "Zolvent",
   "description": "Your personal finance tracker powered by AI",
-  "start_url": "/",
+  "start_url": "/login",
   "display": "standalone",
   "background_color": "#000000",
-  "theme_color": "#000000",
+  "theme_color": "#45c431",
+  "scope": "/",
+  "categories": ["finance", "productivity", "tools"],
+  "shortcuts": [
+    {
+      "url": "/private/transactions?new_trx=true",
+      "name": "New Transaction",
+      "short_name": "New Transaction",
+      "description": "Quickly add a new transaction using AI",
+      "icons": [
+        {
+          "src": "/shortcuts/new_trx.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "url": "/private/recurring-expenses/management",
+      "name": "Pay Pending Bills",
+      "short_name": "Pending",
+      "description": "View your pending bills and pay them with ease",
+      "icons": [
+        {
+          "src": "/shortcuts/pending.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "url": "/private",
+      "name": "View Summary",
+      "short_name": "Summary",
+      "description": "View your transaction history and manage your finances",
+      "icons": [
+        {
+          "src": "/shortcuts/summary.png",
+          "sizes": "96x96"
+        }
+      ]
+    }
+  ],
   "icons": [
     {
       "src": "/favicon/favicon.ico",
@@ -36,6 +77,36 @@
       "src": "/favicon/web-app-manifest-512x512.png",
       "sizes": "512x512",
       "type": "image/png"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshots/mobile_screenshot_menu.png",
+      "sizes": "722x1472",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Menu"
+    },
+    {
+      "src": "/screenshots/mobile_screenshot_transactions.png",
+      "sizes": "722x1472",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Transactions"
+    },
+    {
+      "src": "/screenshots/mobile_screenshot_new_transaction_ai.png",
+      "sizes": "722x1472",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "New Transaction (AI)"
+    },
+    {
+      "src": "/screenshots/desktop_screenshot_transactions.png",
+      "sizes": "3024x1652",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Transactions"
     }
   ]
 }

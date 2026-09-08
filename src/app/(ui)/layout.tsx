@@ -49,13 +49,18 @@ export default async function Layout({ children }: Readonly<PropsWithChildren>) 
           sizes="180x180"
           href="/favicon/apple-touch-icon.png"
         />
+        <link
+          rel="apple-touch-startup-image"
+          href="/screenshots/screenshot_transactions.png"
+          media="orientation: portrait"
+        ></link>
         <meta name="apple-mobile-web-app-title" content="Zolvent" />
         <link rel="manifest" href="/site.webmanifest" />
       </head>
       <body
         className={clsx(
           "min-h-screen bg-background font-sans antialiased",
-          fontSans.variable
+          fontSans.variable,
         )}
       >
         <Providers>
