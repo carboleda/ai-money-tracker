@@ -65,9 +65,7 @@ export default async function Layout({ children }: Readonly<PropsWithChildren>) 
       >
         <Providers>
           <div className="relative flex flex-col h-screen">
-            <main className="container mx-auto px-2 md:px-2 grow">
-              {children}
-            </main>
+            <main className="px-2 md:px-4 grow">{children}</main>
           </div>
         </Providers>
       </body>
