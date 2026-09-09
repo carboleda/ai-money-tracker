@@ -1,4 +1,7 @@
 import { Injectable } from "@/app/api/decorators/tsyringe.decorator";
+// TokenMessage is deprecated since firebase-admin@14.1 in favor of FidMessage,
+// which addresses by Firebase Installation ID — a different model than the
+// per-device FCM registration tokens this service sends to. Kept intentionally.
 import { getMessaging, TokenMessage } from "firebase-admin/messaging";
 import {
   MessagingService,

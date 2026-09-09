@@ -72,6 +72,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ children }) => {
                 height={40}
                 className="rounded-xs"
                 alt="App logo"
+                loading="eager"
                 src={siteConfig.icons.logo}
               />
               <p

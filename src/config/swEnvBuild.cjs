@@ -5,7 +5,7 @@ const fs = require("node:fs");
 
 const { NEXT_PUBLIC_FIREBASE_APP_CONFIG } = process.env;
 
-const content = `const swEnv = {
+const content = `export default {
     NEXT_PUBLIC_FIREBASE_APP_CONFIG: ${NEXT_PUBLIC_FIREBASE_APP_CONFIG}
 }`;
 

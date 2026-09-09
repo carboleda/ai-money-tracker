@@ -2,15 +2,9 @@
 
 import { useEffect, useRef, PropsWithChildren } from "react";
 import { FirebaseApp } from "firebase/app";
-import {
-  getMessaging,
-  MessagePayload,
-  onMessage,
-  getToken,
-} from "firebase/messaging";
+import { getMessaging, MessagePayload, onMessage, isSupported } from "firebase/messaging";
 import { NotificationRequestModal } from "@/components/NotificationsRequestModal";
-import { Env } from "@/config/env";
-import { DeviceInfo } from "@/config/deviceInfo";
+import { requestFcmToken } from "@/firebase/client/messaging";
 import { useMutateUser } from "@/hooks/useMutateUser";
 import { useGetUser } from "@/hooks/useGetUser";
 
@@ -46,28 +40,17 @@ const FcmProviderFrontend: React.FC<FcmProviderProps> = ({
 
     const refreshToken = async () => {
       try {
-        const messaging = getMessaging(firebaseApp);
-        const [registration, { deviceId, deviceName }] = await Promise.all([
-          navigator.serviceWorker.ready,
-          DeviceInfo.generate(),
-        ]);
-        const freshToken = await getToken(messaging, {
-          vapidKey: Env.NEXT_PUBLIC_FIREBASE_VAPID_KEY,
-          serviceWorkerRegistration: registration,
-        });
-
-        if (!freshToken) return;
+        const device = await requestFcmToken(firebaseApp);
+        if (!device) return;
 
         // Only write to Firestore when the token has actually changed.
         const storedDevice = user?.devices?.find(
-          (d) => d.deviceId === deviceId,
+          (d) => d.deviceId === device.deviceId,
         );
 
-        if (storedDevice?.fcmToken === freshToken) return;
+        if (storedDevice?.fcmToken === device.fcmToken) return;
 
-        await updateUser({
-          devices: [{ deviceId, deviceName, fcmToken: freshToken }],
-        });
+        await updateUser({ devices: [device] });
       } catch (error) {
         // Non-critical background operation — log but never throw.
         console.warn("[FcmProvider] Silent token refresh failed:", error);
@@ -80,7 +63,9 @@ const FcmProviderFrontend: React.FC<FcmProviderProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoading, firebaseApp, user]);
 
-  const onPermissionGranted = () => {
+  const onPermissionGranted = async () => {
+    if (!firebaseApp || !(await isSupported())) return;
+
     const messaging = getMessaging(firebaseApp);
     onMessage(messaging, (payload: MessagePayload) => {
       const { title = "New message", body } = payload.notification ?? {};
