@@ -1,5 +1,6 @@
 import { UserAdapter } from "../user.adapter";
 import { UserEntity } from "../user.entity";
+import { EmailStrategy } from "@/app/api/domain/user/model/user.model";
 
 describe("UserAdapter", () => {
   describe("toModel", () => {
@@ -52,6 +53,29 @@ describe("UserAdapter", () => {
       expect(result.email).toBe(email);
       expect(result.devices).toBeUndefined();
     });
+
+    it("should convert settings when present", () => {
+      const id = "user123";
+      const email = "user@example.com";
+      const data: UserEntity = {
+        email,
+        settings: { emailStrategy: EmailStrategy.DIGEST },
+      };
+
+      const result = UserAdapter.toModel(data, id);
+
+      expect(result.settings).toEqual({ emailStrategy: EmailStrategy.DIGEST });
+    });
+
+    it("should handle undefined settings", () => {
+      const id = "user789";
+      const email = "user789@example.com";
+      const data: UserEntity = { email };
+
+      const result = UserAdapter.toModel(data, id);
+
+      expect(result.settings).toBeUndefined();
+    });
   });
 
   describe("toEntity", () => {
@@ -88,6 +112,33 @@ describe("UserAdapter", () => {
       const result = UserAdapter.toEntity(model);
 
       expect(result.devices).toHaveLength(0);
+    });
+
+    it("should convert settings when present", () => {
+      const model = {
+        id: "user123",
+        email: "user@example.com",
+        devices: [],
+        settings: { emailStrategy: EmailStrategy.STANDALONE },
+      };
+
+      const result = UserAdapter.toEntity(model);
+
+      expect(result.settings).toEqual({
+        emailStrategy: EmailStrategy.STANDALONE,
+      });
+    });
+
+    it("should handle undefined settings when converting to entity", () => {
+      const model = {
+        id: "user456",
+        email: "user2@example.com",
+        devices: [],
+      };
+
+      const result = UserAdapter.toEntity(model);
+
+      expect(result.settings).toBeUndefined();
     });
   });
 });

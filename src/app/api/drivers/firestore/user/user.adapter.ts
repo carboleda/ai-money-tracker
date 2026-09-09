@@ -11,6 +11,7 @@ export class UserAdapter {
         deviceName: deviceEntity.deviceName,
         fcmToken: deviceEntity.fcmToken,
       })),
+      settings: entity.settings,
     };
   }
 
@@ -22,6 +23,7 @@ export class UserAdapter {
         deviceName: deviceModel.deviceName,
         fcmToken: deviceModel.fcmToken,
       })),
+      settings: model.settings,
     };
   }
 }

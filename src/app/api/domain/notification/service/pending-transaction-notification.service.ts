@@ -2,12 +2,11 @@ import { Injectable } from "@/app/api/decorators/tsyringe.decorator";
 import { FilterTransactionsService } from "@/app/api/domain/transaction/service/filter-transactions.service";
 import { GetUserService } from "@/app/api/domain/user/service/get-user.service";
 import { NotificationService } from "./notification.service";
-import { NotificationModel } from "../model/notification.model";
-import {
-  TransactionStatus,
-  TransactionModel,
-} from "@/app/api/domain/transaction/model/transaction.model";
+import { TransactionStatus } from "@/app/api/domain/transaction/model/transaction.model";
+import { EmailStrategy } from "@/app/api/domain/user/model/user.model";
 import { Env } from "@/config/env";
+import { StandaloneNotificationStrategy } from "../strategy/standalone-notification.strategy";
+import { DigestNotificationStrategy } from "../strategy/digest-notification.strategy";
 
 export interface PendingTransactionNotificationResult {
   processedTransactions?: number;
@@ -23,7 +22,9 @@ export class PendingTransactionNotificationService {
   constructor(
     private readonly filterTransactionsService: FilterTransactionsService,
     private readonly getUserService: GetUserService,
-    private readonly notificationService: NotificationService
+    private readonly notificationService: NotificationService,
+    private readonly standaloneNotificationStrategy: StandaloneNotificationStrategy,
+    private readonly digestNotificationStrategy: DigestNotificationStrategy
   ) {}
 
   async execute(): Promise<PendingTransactionNotificationResult> {
@@ -61,12 +62,18 @@ export class PendingTransactionNotificationService {
         return { success: true, processedTransactions: transactions.length };
       }
 
-      const notifications = transactionsToNotify.flatMap((transaction) => {
-        const notification = this.createNotificationForTransaction(
-          now,
-          transaction
-        );
+      const strategy =
+        (user.settings?.emailStrategy ?? EmailStrategy.STANDALONE) ===
+        EmailStrategy.DIGEST
+          ? this.digestNotificationStrategy
+          : this.standaloneNotificationStrategy;
 
+      const notificationsToSend = strategy.buildNotifications(
+        transactionsToNotify,
+        now
+      );
+
+      const notifications = notificationsToSend.flatMap((notification) => {
         user.devices = user.devices || [];
         return user.devices
           .filter((device) => device.fcmToken)
@@ -106,54 +113,4 @@ export class PendingTransactionNotificationService {
     }
   }
 
-  private createNotificationForTransaction(
-    now: Date,
-    transaction: TransactionModel
-  ): NotificationModel {
-    const createdAt = transaction.createdAt;
-    const daysDifference = Math.abs(this.dateDiffInDays(now, createdAt));
-    const hoursDifference = Math.abs(this.dateDiffInHours(now, createdAt));
-
-    if (createdAt <= now) {
-      // Overdue payment
-      const dueText =
-        hoursDifference <= 24 ? "today" : `${daysDifference} days ago`;
-      return new NotificationModel({
-        title: "[ACTION REQUIRED]: Payment due",
-        body: `Payment for ${transaction.description} is due ${dueText}, pay it ASAP.`,
-        extraData: {
-          transactionId: transaction.id!,
-        },
-      });
-    }
-
-    // Upcoming payment reminder
-    return new NotificationModel({
-      title: "[REMINDER]: Payment will be due soon",
-      body: `Payment for ${transaction.description} is due on ${this.formatDate(
-        createdAt
-      )}.`,
-      extraData: {
-        transactionId: transaction.id!,
-      },
-    });
-  }
-
-  private dateDiffInDays(date1: Date, date2: Date): number {
-    const timeDiff = Math.abs(date2.getTime() - date1.getTime());
-    return Math.floor(timeDiff / (1000 * 60 * 60 * 24));
-  }
-
-  private dateDiffInHours(date1: Date, date2: Date): number {
-    const timeDiff = Math.abs(date2.getTime() - date1.getTime());
-    return Math.floor(timeDiff / (1000 * 60 * 60));
-  }
-
-  private formatDate(date: Date): string {
-    return date.toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-  }
 }
