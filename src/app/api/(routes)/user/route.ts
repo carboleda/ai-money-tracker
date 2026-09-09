@@ -7,12 +7,19 @@ import { api } from "@/app/api";
 import { withUserContext } from "../../context/initialize-context";
 
 export async function GET(req: NextRequest) {
+  const profile = {
+    name: decodeURIComponent(req.headers.get("X-User-Name") || "") || undefined,
+    email: req.headers.get("X-User-Email") || undefined,
+    picture: req.headers.get("X-User-Picture") || undefined,
+  };
+
   return withUserContext(req, async () => {
     const service = api.resolve(GetUserService);
     const user = await service.execute();
 
     return NextResponse.json({
       user,
+      profile,
     });
   });
 }

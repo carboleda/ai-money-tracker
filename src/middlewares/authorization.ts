@@ -15,11 +15,18 @@ export async function authorizatonMiddleware(
   }
 
   const tokens = await getTokens(request.cookies, {
-    apiKey: Env.FIREBASE_SERVICE_ACCOUNT.apiKey,
+    apiKey: Env.NEXT_PUBLIC_FIREBASE_APP_CONFIG.apiKey,
     cookieName: "AuthToken",
     cookieSignatureKeys: Env.AUTH_COOKIE_SIGNATURE_KEYS,
-    serviceAccount: Env.NEXT_PUBLIC_FIREBASE_APP_CONFIG as any,
+    serviceAccount: {
+      projectId: Env.FIREBASE_SERVICE_ACCOUNT.project_id,
+      clientEmail: Env.FIREBASE_SERVICE_ACCOUNT.client_email,
+      privateKey: Env.FIREBASE_SERVICE_ACCOUNT.private_key,
+    },
   });
 
-  request.headers.set("X-User-Email", tokens?.decodedToken?.email || "");
+  const { email, name, picture } = tokens?.decodedToken || {};
+  request.headers.set("X-User-Email", email || "");
+  request.headers.set("X-User-Name", encodeURIComponent(name || ""));
+  request.headers.set("X-User-Picture", picture || "");
 }

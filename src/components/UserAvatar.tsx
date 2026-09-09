@@ -3,7 +3,7 @@
 import React from "react";
 import { Env } from "@/config/env";
 import { Avatar } from "@heroui/react";
-import { useAuthUser } from "@/hooks/useAuthUser";
+import { useGetUser } from "@/hooks/useGetUser";
 import clsx from "clsx";
 
 interface UserAvatarProps {
@@ -11,9 +11,9 @@ interface UserAvatarProps {
 }
 
 export const UserAvatar: React.FC<UserAvatarProps> = ({ collapsed }) => {
-  const user = useAuthUser();
-  const src = Env.isLocal ? undefined : user?.picture;
-  const initials = user?.name?.charAt(0) || "U";
+  const { profile } = useGetUser();
+  const src = Env.isLocal ? undefined : profile?.picture;
+  const initials = profile?.name?.charAt(0) || "U";
 
   return (
     <div
@@ -23,7 +23,7 @@ export const UserAvatar: React.FC<UserAvatarProps> = ({ collapsed }) => {
       )}
     >
       <Avatar className="w-9 h-9 ring-2 ring-background">
-        {src && <Avatar.Image src={src} alt={user?.name ?? "User"} />}
+        {src && <Avatar.Image src={src} alt={profile?.name ?? "User"} />}
         <Avatar.Fallback className="bg-success/20 text-success">
           {initials}
         </Avatar.Fallback>
@@ -34,8 +34,8 @@ export const UserAvatar: React.FC<UserAvatarProps> = ({ collapsed }) => {
           collapsed ? "md:max-w-0 md:opacity-0" : "md:max-w-40 md:opacity-100"
         )}
       >
-        <span className="text-sm truncate">{user?.name}</span>
-        <span className="text-xs text-muted truncate">{user?.email}</span>
+        <span className="text-sm truncate">{profile?.name}</span>
+        <span className="text-xs text-muted truncate">{profile?.email}</span>
       </div>
     </div>
   );

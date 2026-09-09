@@ -4,8 +4,15 @@ import { fetchJson } from "@/config/request";
 
 const KEY = "/api/user";
 
+interface UserProfile {
+  name?: string;
+  email?: string;
+  picture?: string;
+}
+
 interface GetUserResponse {
   user: User;
+  profile: UserProfile;
 }
 
 export const useGetUser = () => {
@@ -16,6 +23,7 @@ export const useGetUser = () => {
 
   return {
     user: data?.user ?? null,
+    profile: data?.profile ?? null,
     error,
     isLoading,
   };
