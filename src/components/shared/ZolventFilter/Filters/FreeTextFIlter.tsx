@@ -1,13 +1,21 @@
 import { useZolventFilterContext } from "../ZolventFilter";
-import { CloseButton, InputGroup, TextField } from "@heroui/react";
+import {
+  CloseButton,
+  InputGroup,
+  TextField,
+  TextFieldRootProps,
+} from "@heroui/react";
 import { HiOutlineSearch } from "react-icons/hi";
 
-interface FreeTextFilterProps {
+interface FreeTextFilterProps extends TextFieldRootProps {
   applyOnChange?: boolean;
+  inputGroupClassName?: string;
 }
 
 export const FreeTextFilter: React.FC<FreeTextFilterProps> = ({
   applyOnChange = false,
+  inputGroupClassName,
+  ...rest
 }) => {
   const {
     t,
@@ -30,10 +38,15 @@ export const FreeTextFilter: React.FC<FreeTextFilterProps> = ({
   };
 
   return (
-    <TextField className="w-full" value={value} onChange={onValueChange}>
-      <InputGroup variant="secondary">
+    <TextField
+      className="w-full"
+      value={value}
+      onChange={onValueChange}
+      {...rest}
+    >
+      <InputGroup variant="secondary" className={inputGroupClassName}>
         <InputGroup.Prefix>
-          <HiOutlineSearch />
+          <HiOutlineSearch className="text-lg" />
         </InputGroup.Prefix>
         <InputGroup.Input placeholder={t("searchByDescription")} />
         {value && (

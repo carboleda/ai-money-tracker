@@ -73,7 +73,11 @@ export const AccountsTable: React.FC<AccountsTableProps> = ({
 
   return (
     <>
-      <ZolventFilter.FreeTextFilter applyOnChange />
+      <ZolventFilter.FreeTextFilter
+        className="top-freetext-filter"
+        inputGroupClassName="rounded-2xl"
+        applyOnChange
+      />
       <Table>
         <TableToolbar
           selectedItem={selectedItem}

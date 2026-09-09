@@ -81,7 +81,11 @@ export const PendingTransactionTable: React.FC<
 
   return (
     <>
-      <ZolventFilter.FreeTextFilter applyOnChange />
+      <ZolventFilter.FreeTextFilter
+        className="top-freetext-filter"
+        inputGroupClassName="rounded-2xl"
+        applyOnChange
+      />
       <Table>
         <TableToolbar
           selectedItem={selectedItem}

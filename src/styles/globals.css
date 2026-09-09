@@ -108,3 +108,7 @@
 .animate-wave-pulse {
   animation: wave-pulse 1s ease-in-out infinite;
 }
+
+.top-freetext-filter {
+  @apply w-full md:w-1/3 self-start;
+}
