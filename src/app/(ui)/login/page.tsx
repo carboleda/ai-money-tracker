@@ -88,6 +88,7 @@ function LoginPage() {
             width={40}
             height={40}
             alt="App logo"
+            loading="eager"
             src={siteConfig.icons.logo}
           />
           <h1 className="text-2xl font-bold text-center">{t("title")}</h1>
