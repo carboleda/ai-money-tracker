@@ -8,7 +8,7 @@ export const queryClient = new QueryClient({
       refetchOnReconnect: true,
       retry: 1,
       // Mark data as stale immediately so it always checks for updates in the background
-      staleTime: 0,
+      staleTime: 1000 * 60 * 3, // 3 minutes
       // Keep the cached data in memory for 24 hours (or Infinity)
       // This ensures the cache is ALWAYS there to be served instantly!
       gcTime: 1000 * 60 * 60 * 24,
