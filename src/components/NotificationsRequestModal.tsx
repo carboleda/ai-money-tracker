@@ -3,13 +3,12 @@
 import { useOverlayState } from "@heroui/react";
 import { useEffect } from "react";
 import { Env } from "@/config/env";
-import { getMessaging, getToken } from "firebase/messaging";
 import { FirebaseApp } from "firebase/app";
+import { requestFcmToken } from "@/firebase/client/messaging";
 import { useMutateUser } from "@/hooks/useMutateUser";
 import { Action, ConfirmationModal } from "./shared/ConfirmationModal";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { useTranslation } from "react-i18next";
-import { DeviceInfo } from "@/config/deviceInfo";
 
 interface NotificationRequestModalProps {
   firebaseApp?: FirebaseApp;
@@ -49,18 +48,13 @@ export const NotificationRequestModal: React.FC<
       const permission = await Notification.requestPermission();
 
       if (permission === "granted") {
-        const messaging = getMessaging(firebaseApp);
-        const [registration, { deviceId, deviceName }] = await Promise.all([
-          navigator.serviceWorker.ready,
-          DeviceInfo.generate(),
-        ]);
-        const fcmToken = await getToken(messaging, {
-          vapidKey: Env.NEXT_PUBLIC_FIREBASE_VAPID_KEY,
-          serviceWorkerRegistration: registration,
-        });
-        await updateUser({
-          devices: [{ deviceId, deviceName, fcmToken }],
-        });
+        const device = await requestFcmToken(firebaseApp);
+        if (!device) {
+          alert(t("requestDenied"));
+          return;
+        }
+
+        await updateUser({ devices: [device] });
 
         onPermissionGranted();
       } else {

@@ -4,23 +4,34 @@
  *     firebase-messaging-sw.js — only one SW can control a given scope, so
  *     that file was merged in here and removed).
  *  2. App-shell runtime caching + offline navigation fallback.
+ *
+ * Migration note: this file used to load the Namespace/compat SDKs via
+ * importScripts() (firebase-app-compat.js / firebase-messaging-compat.js)
+ * and call firebase.initializeApp()/firebase.messaging() in namespace
+ * style. It's now on the modular API, imported as native ES modules from
+ * the CDN (pinned to match the npm `firebase` package version) — which is
+ * why registration must pass { type: "module" } (see
+ * ServiceWorkerRegistrar.tsx). Module-scope service workers can't use
+ * importScripts() at all, including for local files, so swEnv.js was
+ * converted to `export default {...}` and is imported here instead.
  */
 
 // --- Firebase Cloud Messaging -----------------------------------------
 
-importScripts(
-  "https://www.gstatic.com/firebasejs/11.6.1/firebase-app-compat.js",
-  "https://www.gstatic.com/firebasejs/11.6.1/firebase-messaging-compat.js",
-  "swEnv.js",
-);
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
+import {
+  getMessaging,
+  onBackgroundMessage,
+} from "https://www.gstatic.com/firebasejs/12.18.0/firebase-messaging-sw.js";
+import swEnv from "./swEnv.js";
 
-firebase.initializeApp(swEnv.NEXT_PUBLIC_FIREBASE_APP_CONFIG);
+const firebaseApp = initializeApp(swEnv.NEXT_PUBLIC_FIREBASE_APP_CONFIG);
 
-const messaging = firebase.messaging();
+const messaging = getMessaging(firebaseApp);
 
-messaging.onBackgroundMessage(function (payload) {
+onBackgroundMessage(messaging, async (payload) => {
   const { title, body, ...data } = payload?.data ?? {};
-  const currentNotification = getCurrentNotification(data.transactionId);
+  const currentNotification = await getCurrentNotification(data.transactionId);
 
   if (currentNotification) {
     currentNotification.close();
@@ -37,19 +48,21 @@ messaging.onBackgroundMessage(function (payload) {
 
 self.addEventListener("notificationclick", function (event) {
   const urlToOpen = new URL(
-    "https://zolvent.calabs.dev/private/recurring-expenses/management",
-    self.location.origin
+    "/private/recurring-expenses/management",
+    self.location.origin,
   ).href;
 
   const promiseChain = clients
     .matchAll({ type: "window", includeUncontrolled: true })
     .then((windowClients) => {
       const matchingClient = windowClients.find(
-        (windowClient) => windowClient.url === urlToOpen
+        (windowClient) => new URL(windowClient.url).origin === self.location.origin
       );
 
       if (matchingClient) {
-        return matchingClient.focus();
+        return matchingClient
+          .navigate(urlToOpen)
+          .then((navigatedClient) => (navigatedClient || matchingClient).focus());
       }
 
       return clients.openWindow(urlToOpen);
@@ -59,8 +72,8 @@ self.addEventListener("notificationclick", function (event) {
   event.notification.close();
 });
 
-function getCurrentNotification(transactionId) {
-  const notifications = self.registration.getNotifications();
+async function getCurrentNotification(transactionId) {
+  const notifications = await self.registration.getNotifications();
   for (const notification of notifications) {
     if (
       notification.data &&
