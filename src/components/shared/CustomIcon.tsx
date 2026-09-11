@@ -10,9 +10,9 @@ interface CustomIconProps extends AvatarRootProps {
 const renderIcon = (icon?: string | null, isChecked?: boolean) => {
   if (isChecked) {
     return (
-      <div className="relative flex items-center justify-center rounded-full w-6 h-6 bg-success/20">
-        <span className="absolute inset-0 rounded-full bg-success animate-check-ring" />
-        <FaCheck className="relative text-sm text-success animate-check-pop" />
+      <div className="relative flex items-center justify-center rounded-full w-6 h-6 bg-current/20">
+        <span className="absolute inset-0 rounded-full bg-current animate-check-ring" />
+        <FaCheck className="relative text-sm text-current animate-check-pop" />
       </div>
     );
   }
