@@ -41,13 +41,14 @@ const columnsMobile: TableColumn[] = [
 const renderCellDesktop = ({
   key,
   item,
+  isChecked,
 }: RenderCellProps<RecurringExpenseOutput>): JSX.Element => {
   switch (key) {
     case "description":
       return (
         <Table.Cell>
           <div className="flex items-center gap-2">
-            <CustomIcon icon={item.category?.icon} />
+            <CustomIcon icon={item.category?.icon} isChecked={isChecked} />
             <div className="flex flex-col items-start gap-1">
               <span className="text-muted">{item.description}</span>
               {item.category && (
@@ -67,9 +68,7 @@ const renderCellDesktop = ({
       return (
         <Table.Cell className="text-end">
           <TransactionTypeDecorator
-            color={
-              item.frequency === Frequency.MONTHLY ? "accent" : "default"
-            }
+            color={item.frequency === Frequency.MONTHLY ? "accent" : "default"}
             disabled={item.disabled}
           >
             {formatCurrency(item.amount)}
@@ -98,6 +97,7 @@ const renderSeparator = (
 const renderCellMobile = ({
   key,
   item,
+  isChecked,
 }: RenderCellProps<RecurringExpenseOutput>): JSX.Element => {
   if (key !== "expense") return <></>;
 
@@ -107,7 +107,7 @@ const renderCellMobile = ({
         <p className="text-sm font-semibold truncate">{item.description}</p>
         <div className="flex items-center justify-between gap-3 w-full">
           <div className="flex items-center gap-2 min-w-0">
-            <CustomIcon icon={item.category?.icon} />
+            <CustomIcon icon={item.category?.icon} isChecked={isChecked} />
             {item.category && (
               <span className="text-xs font-light text-default-500 truncate">
                 {item.category.name}

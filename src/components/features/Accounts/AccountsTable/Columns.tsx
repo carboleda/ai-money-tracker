@@ -57,12 +57,13 @@ const renderCellDesktop = ({
   key,
   item,
   t,
+  isChecked,
 }: RenderCellProps<Account>): JSX.Element => {
   switch (key) {
     case "icon":
       return (
         <Table.Cell>
-          <CustomIcon icon={item.icon} />
+          <CustomIcon icon={item.icon} isChecked={isChecked} />
         </Table.Cell>
       );
     case "ref":
@@ -96,13 +97,14 @@ const renderCellMobile = ({
   key,
   item,
   t,
+  isChecked,
 }: RenderCellProps<Account>): JSX.Element => {
   if (key !== "account") return <></>;
 
   return (
     <Table.Cell colSpan={5}>
       <div className="flex flex-row items-center justify-start gap-4">
-        <CustomIcon icon={item.icon} />
+        <CustomIcon icon={item.icon} isChecked={isChecked} />
         <div className="flex flex-col gap-1">
           <div className="flex gap-2 text-sm">
             <span className="font-bold">{item.name}</span>

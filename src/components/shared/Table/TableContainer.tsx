@@ -65,6 +65,7 @@ export const TableContainer = <T extends HasId>({
         </Table.Header>
         <Table.Body
           items={items}
+          dependencies={[selectedKeys]}
           renderEmptyState={() => (
             <EmptyTableState
               message={t(emptyContentLabelKey ?? "emptyContent")}
@@ -72,6 +73,11 @@ export const TableContainer = <T extends HasId>({
           )}
         >
           {(item) => {
+            const isChecked =
+              ((typeof selectedKeys === "string" && selectedKeys === "all") ||
+                selectedKeys?.has(item.id)) ??
+              false;
+
             if (separators?.has(item.id)) {
               return renderSeparator?.(
                 item.id,
@@ -82,11 +88,12 @@ export const TableContainer = <T extends HasId>({
 
             return (
               <Table.Row key={item.id}>
-                <Table.Collection items={columns}>
+                <Table.Collection items={columns} dependencies={[isChecked]}>
                   {(column) => {
                     return renderCell({
                       key: column.key,
                       item,
+                      isChecked,
                     });
                   }}
                 </Table.Collection>

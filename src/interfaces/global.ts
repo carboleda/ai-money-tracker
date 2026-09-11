@@ -11,6 +11,7 @@ export interface RenderCellProps<T> {
   key: Key;
   item: T;
   t?: TFunction;
+  isChecked?: boolean;
 }
 
 export interface HasId {

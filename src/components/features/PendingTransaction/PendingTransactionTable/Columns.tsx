@@ -59,6 +59,7 @@ const statusDotColorMap: Record<
 const renderCellDesktop = ({
   key,
   item,
+  isChecked,
 }: RenderCellProps<TransactionOutput>): JSX.Element => {
   const status = getTransactionOverdueStatus(item.createdAt);
 
@@ -69,6 +70,7 @@ const renderCellDesktop = ({
           <div className="flex items-center gap-2">
             <CustomIcon
               withBadge
+              isChecked={isChecked}
               icon={item.category?.icon}
               color={statusDotColorMap[status]}
               variant="soft"
@@ -118,6 +120,7 @@ const renderCellDesktop = ({
 const renderCellMobile = ({
   key,
   item,
+  isChecked,
 }: RenderCellProps<TransactionOutput>): JSX.Element => {
   if (key !== "transaction") return <></>;
 
@@ -135,6 +138,7 @@ const renderCellMobile = ({
           <div className="flex items-center gap-2 min-w-0">
             <CustomIcon
               withBadge
+              isChecked={isChecked}
               icon={item.category?.icon}
               color={statusDotColorMap[status]}
               variant="soft"

@@ -41,13 +41,14 @@ const columnsMobile: TableColumn[] = [
 const renderCellDesktop = ({
   key,
   item,
+  isChecked,
 }: RenderCellProps<TransactionOutput>): JSX.Element => {
   switch (key) {
     case "description":
       return (
         <Table.Cell>
           <div className="flex items-center gap-2">
-            <CustomIcon icon={item.category?.icon} />
+            <CustomIcon icon={item.category?.icon} isChecked={isChecked} />
             <div className="flex flex-col items-start gap-1">
               <span className="font-normal">{item.description}</span>
               <div className="flex flex-row gap-1 items-center text-md">
@@ -94,6 +95,7 @@ const renderCellDesktop = ({
 const renderCellMobile = ({
   key,
   item,
+  isChecked,
 }: RenderCellProps<TransactionOutput>): JSX.Element => {
   if (key !== "transaction") {
     return <></>;
@@ -105,7 +107,7 @@ const renderCellMobile = ({
         <p className="text-sm font-semibold truncate">{item.description}</p>
         <div className="flex items-center justify-between gap-3 w-full">
           <div className="flex items-center gap-2 min-w-0">
-            <CustomIcon icon={item.category?.icon} />
+            <CustomIcon icon={item.category?.icon} isChecked={isChecked} />
             <div className="flex flex-col min-w-0 gap-0.5">
               <span className="text-xs font-medium truncate">
                 {item.sourceAccount.name}
