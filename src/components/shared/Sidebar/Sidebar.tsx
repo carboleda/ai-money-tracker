@@ -75,17 +75,22 @@ export const Sidebar: React.FC<SidebarProps> = ({ children }) => {
                 loading="eager"
                 src={siteConfig.icons.logo}
               />
-              <p
+              <div
                 className={clsx(
-                  "font-bold text-inherit text-lg dark:text-zinc-200 overflow-hidden whitespace-nowrap transition-all duration-300",
+                  "flex flex-col justify-start gap-0 overflow-hidden whitespace-nowrap transition-all duration-300",
                   EASE,
                   isCollapsed
                     ? "md:max-w-0 md:opacity-0"
                     : "md:max-w-40 md:opacity-100",
                 )}
               >
-                {siteConfig.name}
-              </p>
+                <p className="font-bold text-inherit text-lg dark:text-zinc-200">
+                  {siteConfig.name}
+                </p>
+                <span className="text-xs text-muted">
+                  v{process.env.NEXT_PUBLIC_APP_VERSION}
+                </span>
+              </div>
             </div>
             <div className="flex flex-col h-full space-y-2 font-medium mt-6">
               <SidebarMenuItems
