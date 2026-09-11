@@ -34,6 +34,7 @@ import { LocaleNamespace } from "@/i18n/namespace";
 import { HiMinusSm, HiPlusSm } from "react-icons/hi";
 import { useToast } from "@/hooks/useToast";
 import { ModalContainer } from "@/components/shared/ModalContainer";
+import { LoadingButton } from "@/components/shared/LoadingButton";
 
 const fixedMonth = parseAbsoluteToLocal(
   new Date(Env.NEXT_PUBLIC_FIXED_MONTH).toISOString()
@@ -268,14 +269,14 @@ export const RecurringExpenseModalForm: React.FC<
               >
                 {t("cancel")}
               </Button>
-              <Button
+              <LoadingButton
                 variant="primary"
                 isPending={isMutating}
                 isDisabled={areButtonsDisabled}
                 onPress={onSave}
               >
                 {t("save")}
-              </Button>
+              </LoadingButton>
             </Modal.Footer>
           </Modal.Dialog>
         </ModalContainer>

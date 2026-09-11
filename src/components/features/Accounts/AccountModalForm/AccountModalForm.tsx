@@ -20,6 +20,7 @@ import dynamic from "next/dynamic";
 import { Theme } from "emoji-picker-react";
 import { CustomDropdown } from "@/components/shared/CustomDropdown";
 import { ModalContainer } from "@/components/shared/ModalContainer";
+import { LoadingButton } from "@/components/shared/LoadingButton";
 
 // Dynamically import to avoid SSR issues
 const EmojiPicker = dynamic(
@@ -256,14 +257,14 @@ export const AccountModalForm: React.FC<AccountModalFormProps> = ({
               >
                 {t("cancel")}
               </Button>
-              <Button
+              <LoadingButton
                 variant="primary"
                 isPending={isMutating}
                 isDisabled={areButtonsDisabled}
                 onPress={onSave}
               >
                 {t("save")}
-              </Button>
+              </LoadingButton>
             </Modal.Footer>
           </Modal.Dialog>
         </ModalContainer>

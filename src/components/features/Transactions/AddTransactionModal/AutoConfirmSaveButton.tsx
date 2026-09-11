@@ -1,13 +1,13 @@
 "use client";
 
 import React from "react";
-import { Button } from "@heroui/react";
 import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
 import {
   useTransactionDraftStore,
   AUTO_CONFIRM_SECONDS,
 } from "@/stores/useTransactionDraftStore";
+import { LoadingButton } from "@/components/shared/LoadingButton";
 
 export interface AutoConfirmSaveButtonProps {
   isDisabled?: boolean;
@@ -48,7 +48,7 @@ export const AutoConfirmSaveButton: React.FC<AutoConfirmSaveButtonProps> = ({
   };
 
   return (
-    <Button
+    <LoadingButton
       variant="primary"
       isPending={isSaving}
       isDisabled={isDisabled}
@@ -66,6 +66,6 @@ export const AutoConfirmSaveButton: React.FC<AutoConfirmSaveButtonProps> = ({
         {t("aiDraft.save")}
         {isAutoConfirmActive && ` (${autoConfirmCountdown}s)`}
       </span>
-    </Button>
+    </LoadingButton>
   );
 };

@@ -82,12 +82,20 @@ export const InlineDateTimeChip: React.FC<InlineDateTimeChipProps> = ({
       <Popover.Content placement="bottom">
         <Popover.Dialog>
           <Popover.Arrow />
-          <div className="flex flex-col gap-3 p-1 min-w-56">
+          <div className="flex flex-col gap-3 p-1">
             <div className="flex gap-2">
-              <Button size="sm" variant="secondary" onPress={() => setQuickDay(0)}>
+              <Button
+                size="sm"
+                variant="secondary"
+                onPress={() => setQuickDay(0)}
+              >
                 {t("aiDraft.dateTime.today")}
               </Button>
-              <Button size="sm" variant="secondary" onPress={() => setQuickDay(-1)}>
+              <Button
+                size="sm"
+                variant="secondary"
+                onPress={() => setQuickDay(-1)}
+              >
                 {t("aiDraft.dateTime.yesterday")}
               </Button>
             </div>

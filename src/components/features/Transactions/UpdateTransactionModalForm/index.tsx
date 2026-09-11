@@ -24,6 +24,7 @@ import {
 } from "@/app/api/domain/transaction/model/transaction.model";
 import { UpdateTransactionInput } from "@/app/api/domain/transaction/ports/inbound/update-transaction.port";
 import { ModalContainer } from "@/components/shared/ModalContainer";
+import { LoadingButton } from "@/components/shared/LoadingButton";
 
 interface UpdateTransactionModalFormProps {
   item?: TransactionOutput;
@@ -212,14 +213,14 @@ export const UpdateTransactionModalForm: React.FC<
               >
                 {t("cancel")}
               </Button>
-              <Button
+              <LoadingButton
                 variant="primary"
                 isPending={isMutating}
                 isDisabled={areButtonsDisabled}
                 onPress={onSave}
               >
                 {t("save")}
-              </Button>
+              </LoadingButton>
             </Modal.Footer>
           </Modal.Dialog>
         </ModalContainer>

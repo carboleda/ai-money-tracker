@@ -12,6 +12,7 @@ import { TransactionStatus } from "@/app/api/domain/transaction/model/transactio
 import { TransactionOutput } from "@/app/api/domain/transaction/ports/outbound/filter-transactions.port";
 import { UpdateTransactionInput } from "@/app/api/domain/transaction/ports/inbound/update-transaction.port";
 import { ModalContainer } from "@/components/shared/ModalContainer";
+import { LoadingButton } from "@/components/shared/LoadingButton";
 
 interface CompleteTransactionModalFormProps {
   item?: TransactionOutput;
@@ -92,7 +93,7 @@ export const CompleteTransactionModalForm: React.FC<
             <Modal.Header className="mb-4">
               <Modal.Heading className="flex flex-col gap-1">
                 <span>{t("completeTransaction")}</span>
-                <span className="text-sm font-normal subtitle">
+                <span className="text-sm font-normal text-muted">
                   {item?.description}
                 </span>
               </Modal.Heading>
@@ -149,14 +150,14 @@ export const CompleteTransactionModalForm: React.FC<
               >
                 {t("cancel")}
               </Button>
-              <Button
+              <LoadingButton
                 variant="primary"
                 isPending={isMutating}
                 isDisabled={areButtonsDisabled}
                 onPress={onSave}
               >
                 {t("completeTransationButton")}
-              </Button>
+              </LoadingButton>
             </Modal.Footer>
           </Modal.Dialog>
         </ModalContainer>
