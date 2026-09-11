@@ -14,14 +14,14 @@ export const NotePopover: React.FC<NotePopoverProps> = ({ content }) => {
     <Popover>
       <Button
         isIconOnly
-        variant="tertiary"
+        variant="ghost"
         size="sm"
         aria-label="Notes"
         className="h-6"
       >
         <FaCommentDollar className="text-lg md:text-xl" />
       </Button>
-      <Popover.Content placement="bottom" className="px-3 py-2">
+      <Popover.Content placement="bottom">
         <Popover.Dialog>
           <Popover.Arrow />
           <div className="min-w-32">
