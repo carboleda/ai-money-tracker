@@ -57,7 +57,7 @@ export const pages: (Page | PageGroup)[] = [
 
 export const siteConfig = {
   name: "Zolvent",
-  description: "Make beautiful websites regardless of your design experience.",
+  description: "Personal application to help you take control on your finances",
   placeholders: [
     "Ingreso por salario de 2000, C1408",
     "Transferencia de C1408 a C2163 por 5000",

@@ -13,7 +13,38 @@ export const metadata: Metadata = {
     template: `%s - ${siteConfig.name}`,
   },
   description: siteConfig.description,
-  icons: siteConfig.icons,
+  manifest: "/site.webmanifest",
+  icons: {
+    icon: [
+      {
+        url: "/favicon/favicon-192x192.png",
+        sizes: "192x192",
+        type: "image/png",
+      },
+      { url: "/favicon/favicon-48x48.png", sizes: "48x48", type: "image/png" },
+      { url: "/favicon/favicon.ico", sizes: "32x32", type: "image/x-icon" },
+      { url: "/favicon/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+      { url: "/favicon/favicon.svg", type: "image/svg+xml" },
+    ],
+    shortcut: "/favicon/favicon.ico",
+    apple: { url: "/favicon/apple-touch-icon.png", sizes: "180x180" },
+  },
+  appleWebApp: {
+    capable: true,
+    title: siteConfig.name,
+    statusBarStyle: "default",
+    startupImage: [
+      {
+        url: "/screenshots/mobile_screenshot_transactions.png",
+        media: "orientation: portrait",
+      },
+    ],
+  },
+  other: {
+    browsermode: "application",
+    "full-screen": "yes",
+    "apple-mobile-web-app-capable": "yes",
+  },
 };
 
 export const viewport: Viewport = {
@@ -35,28 +66,6 @@ export default async function Layout({ children }: Readonly<PropsWithChildren>) 
 
   return (
     <html suppressHydrationWarning lang="en" className={theme}>
-      <head>
-        <link
-          rel="icon"
-          type="image/png"
-          href="/favicon/favicon-48x48.png"
-          sizes="48x48"
-        />
-        <link rel="icon" type="image/svg+xml" href="/favicon/favicon.svg" />
-        <link rel="shortcut icon" href="/favicon/favicon.ico" />
-        <link
-          rel="apple-touch-icon"
-          sizes="180x180"
-          href="/favicon/apple-touch-icon.png"
-        />
-        <link
-          rel="apple-touch-startup-image"
-          href="/screenshots/screenshot_transactions.png"
-          media="orientation: portrait"
-        ></link>
-        <meta name="apple-mobile-web-app-title" content="Zolvent" />
-        <link rel="manifest" href="/site.webmanifest" />
-      </head>
       <body
         className={clsx(
           "min-h-screen bg-background font-sans antialiased",
