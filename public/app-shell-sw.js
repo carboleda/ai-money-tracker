@@ -91,18 +91,37 @@ async function getCurrentNotification(transactionId) {
 // every successful same-origin GET — full navigations, JS/CSS/manifest/icon
 // assets, and the RSC/Flight fetches the App Router makes for client-side
 // transitions — is cached as it is fetched, keyed by pathname, and served
-// from that cache when the network is unavailable. Intercepting the RSC
-// fetches is required, not optional: without it, every <Link>/router.push
-// transition re-fetches the destination route's Flight payload over the
-// network and fails offline even for a page visited moments earlier.
+// stale-while-revalidate: a cached hit is returned immediately and the
+// network fetch that refreshes it (and reports connectivity) runs in the
+// background, so a page you've already visited feels instant instead of
+// re-paying a full round trip every time. Intercepting the RSC fetches is
+// required, not optional: without it, every <Link>/router.push transition
+// re-fetches the destination route's Flight payload over the network and
+// fails offline even for a page visited moments earlier.
 
-const APP_SHELL_CACHE = "app-shell-v2";
+// Bumped whenever an existing entry's caching semantics change in a way
+// that a plain overwrite can't fix — e.g. v3 corrects redirected responses
+// (see cleanRedirectResponse) that v2 had already cached raw for anyone
+// upgrading in place.
+const APP_SHELL_CACHE = "app-shell-v3";
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
     caches
       .open(APP_SHELL_CACHE)
-      .then((cache) => cache.addAll(["/", "/site.webmanifest"]))
+      .then((cache) =>
+        Promise.all(
+          // Not cache.addAll(): it stores whatever fetch() returns as-is,
+          // and "/" redirects to /login (src/proxy.ts) — see
+          // cleanRedirectResponse for why a redirected response can't be
+          // precached raw.
+          ["/", "/site.webmanifest"].map((url) =>
+            fetch(url)
+              .then((response) => cleanRedirectResponse(response))
+              .then((response) => cache.put(url, response))
+          )
+        )
+      )
       .catch(() => {})
   );
   self.skipWaiting();
@@ -137,7 +156,7 @@ self.addEventListener("fetch", (event) => {
 
   if (isNavigation || isAppShellAsset || isRscRequest) {
     event.respondWith(
-      networkFirstWithCache(event, request, { isNavigation, isRscRequest })
+      staleWhileRevalidate(event, request, { isNavigation, isRscRequest })
     );
   }
 });
@@ -173,36 +192,31 @@ function cacheKeyFor(request, isRscRequest) {
   return url.toString();
 }
 
-async function networkFirstWithCache(
+async function staleWhileRevalidate(
   event,
   request,
   { isNavigation, isRscRequest } = {}
 ) {
   const cache = await caches.open(APP_SHELL_CACHE);
   const cacheKey = cacheKeyFor(request, isRscRequest);
+  const cached = await cache.match(cacheKey);
+
+  const revalidate = fetchAndCache(event, cache, cacheKey, request);
+
+  if (cached) {
+    // Serve the cached copy immediately and let the network refresh it (and
+    // report connectivity) in the background instead of blocking on it —
+    // waitUntil keeps the SW alive for that background work without making
+    // the page wait for it. Swallow the rejection here: a failed background
+    // revalidation has already been handled (broadcastNetworkStatus) inside
+    // fetchAndCache, there's nothing left for this call site to do with it.
+    event.waitUntil(revalidate.catch(() => {}));
+    return cached;
+  }
 
   try {
-    const response = await fetch(request);
-    if (response?.ok) {
-      // Not awaited (so it doesn't delay the response the page is waiting
-      // on), but handed to waitUntil so the SW isn't torn down mid-write —
-      // an un-extended fire-and-forget promise can be aborted the instant
-      // respondWith() resolves.
-      event.waitUntil(cache.put(cacheKey, response.clone()));
-    }
-    event.waitUntil(broadcastNetworkStatus(true));
-    return response;
+    return await revalidate;
   } catch (error) {
-    // A real fetch failure here is the SW's own ground truth for
-    // connectivity — navigator.onLine/the online/offline events on the page
-    // are unreliable (e.g. connected to a LAN with no upstream internet
-    // never fires 'offline'), so tell every open tab explicitly whenever a
-    // request actually fails, instead of leaving them to guess.
-    event.waitUntil(broadcastNetworkStatus(false));
-
-    const cached = await cache.match(cacheKey);
-    if (cached) return cached;
-
     // Only a full-document navigation gets the offline placeholder below.
     // An uncached RSC miss instead propagates so the App Router's own
     // fallback (a hard navigation, which re-enters this handler as
@@ -212,6 +226,46 @@ async function networkFirstWithCache(
 
     throw error;
   }
+}
+
+async function fetchAndCache(event, cache, cacheKey, request) {
+  try {
+    const response = await fetch(request);
+    // A real fetch failure here is the SW's own ground truth for
+    // connectivity — navigator.onLine/the online/offline events on the page
+    // are unreliable (e.g. connected to a LAN with no upstream internet
+    // never fires 'offline'), so tell every open tab explicitly whenever a
+    // request actually fails, instead of leaving them to guess.
+    event.waitUntil(broadcastNetworkStatus(true));
+    if (!response?.ok) return response;
+
+    // This app's middleware redirects "/" to /login and redirects protected
+    // routes based on auth state (src/proxy.ts, src/middlewares/
+    // authentication.ts), so `fetch()` following that redirect hands back a
+    // Response with `.redirected === true` on real, common traffic — not an
+    // edge case. Browsers refuse to let a Response with that flag set
+    // fulfill a navigation FetchEvent once it comes back out of the Cache
+    // API, so a redirected response must be rebuilt without the flag before
+    // it's stored, or Safari fails to render the page the next time it's
+    // served offline.
+    const clean = await cleanRedirectResponse(response);
+    event.waitUntil(cache.put(cacheKey, clean.clone()));
+    return clean;
+  } catch (error) {
+    event.waitUntil(broadcastNetworkStatus(false));
+    throw error;
+  }
+}
+
+async function cleanRedirectResponse(response) {
+  if (!response.redirected) return response;
+
+  const body = await response.blob();
+  return new Response(body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers: response.headers,
+  });
 }
 
 async function broadcastNetworkStatus(isOnline) {
