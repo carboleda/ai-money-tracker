@@ -1,6 +1,6 @@
 import { formatCurrency } from "@/config/utils";
 import { Chip, Table } from "@heroui/react";
-import { TransactionTypeDecorator } from "@/components/TransactionTypeDecorator";
+import { TransactionTypeDecorator } from "@/components/shared/TransactionTypeDecorator";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { TableColumn, RenderCellProps } from "@/interfaces/global";
 import dayjs from "dayjs";

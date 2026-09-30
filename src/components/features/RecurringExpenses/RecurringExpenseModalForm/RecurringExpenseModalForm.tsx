@@ -21,11 +21,11 @@ import {
 import { Frequency } from "@/app/api/domain/recurring-expense/model/recurring-expense.model";
 import type { RecurringExpenseOutput } from "@/app/api/domain/recurring-expense/ports/outbound/get-recurring-expenses.port";
 import type { CreateRecurringExpenseInput } from "@/app/api/domain/recurring-expense/ports/inbound/create-recurring-expense.port";
-import { FrequencyDropdown } from "@/components/FrequencyDropdown";
+import { FrequencyDropdown } from "@/components/shared/FrequencyDropdown";
 import { CustomDateField } from "@/components/shared/CustomDateField";
 import { useMutateRecurringExpenses } from "@/hooks/useMutateRecurringExpense";
 import { IconComment, IconLink } from "@/components/shared/icons";
-import { CategoriesAutocomplete } from "@/components/CategoriesAutocomplete";
+import { CategoriesAutocomplete } from "@/components/shared/CategoriesAutocomplete";
 import { CategoryModel } from "@/app/api/domain/category/model/category.model";
 import { Env } from "@/config/env";
 import { MaskedCurrencyInput } from "@/components/shared/MaskedCurrencyInput";

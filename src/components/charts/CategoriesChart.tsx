@@ -7,7 +7,7 @@ import { useCategoryChart } from "@/hooks/charts/useCategoryChart";
 import { ChartDetailsModal } from "./ChartDetailsModal";
 import { Chip, Table } from "@heroui/react";
 import { formatCurrency, formatTimeDate } from "@/config/utils";
-import { TransactionTypeDecorator } from "../TransactionTypeDecorator";
+import { TransactionTypeDecorator } from "../shared/TransactionTypeDecorator";
 import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
 import { TransactionOutput } from "@/app/api/domain/transaction/ports/outbound/filter-transactions.port";

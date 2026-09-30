@@ -1,5 +1,8 @@
 import { useCallback } from "react";
-import { CustomDateRangePicker, RangeList } from "../../CustomDateRangePicker";
+import {
+  CustomDateRangePicker,
+  RangeList,
+} from "@/components/shared/CustomDateRangePicker/ButtonGroup";
 import { getMonthBounds } from "@/config/utils";
 import { parseAbsoluteToLocal, ZonedDateTime } from "@internationalized/date";
 import { Label, RangeValue } from "@heroui/react";
@@ -9,7 +12,7 @@ export const DateRangeFilter: React.FC = () => {
   const { t, draftFilters, setDraftFilters } = useZolventFilterContext();
   const currentMonthBounds = getMonthBounds(new Date());
   const selectedKey =
-    (draftFilters.dateRangeKey as RangeList) || RangeList.this;
+    (draftFilters.dateRangeKey as RangeList) || RangeList.currentMonth;
   const dateWithin: RangeValue<ZonedDateTime> = {
     start: parseAbsoluteToLocal(
       draftFilters.startDate || currentMonthBounds.start.toISOString(),

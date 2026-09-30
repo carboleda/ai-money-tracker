@@ -9,7 +9,7 @@ import { LocaleNamespace } from "@/i18n/namespace";
 import { useAppStore } from "@/stores/useAppStore";
 import { formatCurrency } from "@/config/utils";
 import { useAccountStore } from "@/stores/useAccountStore";
-import { TransactionTypeDecorator } from "@/components/TransactionTypeDecorator";
+import { TransactionTypeDecorator } from "@/components/shared/TransactionTypeDecorator";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { HiScale } from "react-icons/hi";
 import { fetchJson } from "@/config/request";

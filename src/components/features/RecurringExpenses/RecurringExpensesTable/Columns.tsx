@@ -2,7 +2,7 @@ import { formatCurrency, formatFrequency } from "@/config/utils";
 import { Chip, Table } from "@heroui/react";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { TableColumn, RenderCellProps } from "@/interfaces/global";
-import { TransactionTypeDecorator } from "@/components/TransactionTypeDecorator";
+import { TransactionTypeDecorator } from "@/components/shared/TransactionTypeDecorator";
 import { Frequency } from "@/app/api/domain/recurring-expense/model/recurring-expense.model";
 import type { RecurringExpenseOutput } from "@/app/api/domain/recurring-expense/ports/outbound/get-recurring-expenses.port";
 import { CustomIcon } from "@/components/shared/CustomIcon";

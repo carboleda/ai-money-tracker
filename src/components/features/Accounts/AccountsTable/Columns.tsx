@@ -6,7 +6,7 @@ import { Account } from "@/interfaces/account";
 import { JSX } from "react";
 import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
-import { TransactionTypeDecorator } from "@/components/TransactionTypeDecorator";
+import { TransactionTypeDecorator } from "@/components/shared/TransactionTypeDecorator";
 import { CustomIcon } from "@/components/shared/CustomIcon";
 
 const columnsDesktop: TableColumn[] = [
