@@ -21,7 +21,7 @@ export const BankAccounsCards: React.FC<BankAccounsCardsProps> = ({
   label = "Bank Account",
   value,
   isRequired = false,
-  allowEmptySelection = false,
+  allowEmptySelection = true,
   showLabel = false,
   className,
   onChange,
