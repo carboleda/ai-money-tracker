@@ -12,7 +12,7 @@ export const DateRangeFilter: React.FC = () => {
   const { t, draftFilters, setDraftFilters } = useZolventFilterContext();
   const currentMonthBounds = getMonthBounds(new Date());
   const selectedKey =
-    (draftFilters.dateRangeKey as RangeList) || RangeList.this;
+    (draftFilters.dateRangeKey as RangeList) || RangeList.currentMonth;
   const dateWithin: RangeValue<ZonedDateTime> = {
     start: parseAbsoluteToLocal(
       draftFilters.startDate || currentMonthBounds.start.toISOString(),

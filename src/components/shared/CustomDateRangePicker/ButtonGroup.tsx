@@ -17,10 +17,11 @@ import { getMonthBounds } from "@/config/utils";
 import { useTranslation } from "react-i18next";
 
 export enum RangeList {
-  this = "this",
-  last = "last",
-  two = "two",
-  quarter = "quarter",
+  sevenDays = "sevenDays",
+  currentMonth = "currentMonth",
+  prevMonth = "prevMonth",
+  twoMonths = "twoMonths",
+  threeMonths = "threeMonths",
   custom = "custom",
 }
 
@@ -38,25 +39,54 @@ export interface CustomDateRangePickerProps extends Omit<
 
 const currentMonthBounds = getMonthBounds(new Date());
 
+const getRollingBounds = (
+  amount: number,
+  unit: "days" | "months",
+): { start: Date; end: Date } => {
+  const start = new Date();
+  if (unit === "days") start.setDate(start.getDate() - amount);
+  else start.setMonth(start.getMonth() - amount);
+  start.setHours(0, 0, 0, 0);
+
+  const end = new Date();
+  end.setHours(23, 59, 59, 999);
+
+  return { start, end };
+};
+
 const getBoundsForKey = (key: RangeList): { start: Date; end: Date } => {
-  if (key === RangeList.last) {
+  if (key === RangeList.sevenDays) return getRollingBounds(7, "days");
+  if (key === RangeList.prevMonth) {
     return getMonthBounds(
       new Date(new Date().getFullYear(), new Date().getMonth() - 1, 1),
     );
   }
-  if (key === RangeList.two) {
-    return getMonthBounds(
-      new Date(new Date().getFullYear(), new Date().getMonth() - 2, 1),
-    );
-  }
-  if (key === RangeList.quarter) {
-    const quarterBounds = getMonthBounds(
-      new Date(new Date().getFullYear(), new Date().getMonth() - 3, 1),
-    );
-    return { start: quarterBounds.start, end: currentMonthBounds.end };
-  }
+  if (key === RangeList.twoMonths) return getRollingBounds(2, "months");
+  if (key === RangeList.threeMonths) return getRollingBounds(3, "months");
 
   return currentMonthBounds;
+};
+
+const monthShortLabelFormatOptions: Intl.DateTimeFormatOptions = {
+  month: "short",
+};
+
+const getPresetLabel = (key: RangeList, t: (key: string) => string) => {
+  if (key === RangeList.prevMonth) {
+    return new Date(
+      new Date().getFullYear(),
+      new Date().getMonth() - 1,
+      1,
+    ).toLocaleDateString(undefined, monthShortLabelFormatOptions);
+  }
+  if (key === RangeList.currentMonth) {
+    return new Date().toLocaleDateString(
+      undefined,
+      monthShortLabelFormatOptions,
+    );
+  }
+
+  return t(key);
 };
 
 const presetEntries = Object.entries(RangeList).filter(
@@ -125,7 +155,7 @@ export const CustomDateRangePicker: React.FC<CustomDateRangePickerProps> = ({
         >
           {presetEntries.map(([key, value]) => (
             <ToggleButton key={key} id={value}>
-              {t(value)}
+              {getPresetLabel(value as RangeList, t)}
             </ToggleButton>
           ))}
         </ToggleButtonGroup>

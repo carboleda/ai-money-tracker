@@ -30,7 +30,9 @@ function PageContent() {
     start: parseAbsoluteToLocal(currentMonthBounds.start.toISOString()),
     end: parseAbsoluteToLocal(currentMonthBounds.end.toISOString()),
   });
-  const [selectedKey, setSelectedKey] = useState<RangeList>(RangeList.this);
+  const [selectedKey, setSelectedKey] = useState<RangeList>(
+    RangeList.currentMonth,
+  );
   const dateWithinStart = dateWithin.start.toDate().toISOString();
   const dateWithinEnd = dateWithin.end.toDate().toISOString();
   const url = `/api/summary?start=${dateWithinStart}&end=${dateWithinEnd}`;

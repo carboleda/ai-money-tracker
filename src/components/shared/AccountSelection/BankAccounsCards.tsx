@@ -52,11 +52,11 @@ export const BankAccounsCards: React.FC<BankAccounsCardsProps> = ({
               textValue={account.name}
               className={({ isSelected }) =>
                 clsx(
-                  "flex! flex-col! w-24! max-w-24! shrink-0 min-w-0 justify-between gap-0.5 h-11 overflow-hidden rounded-lg p-1.5 border-2 cursor-pointer transition-all",
+                  "flex! flex-col! w-24! max-w-24! shrink-0 min-w-0 justify-between gap-0.5 h-11 overflow-hidden rounded-2xl p-1.5 border-2 cursor-pointer transition-all",
                   CARD_COLORS[index % CARD_COLORS.length],
                   isSelected
                     ? "border-muted"
-                    : "border-transparent opacity-80 hover:opacity-100",
+                    : "border-transparent opacity-70 hover:opacity-100",
                 )
               }
             >
