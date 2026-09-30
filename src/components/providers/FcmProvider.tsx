@@ -57,7 +57,7 @@ const FcmProviderFrontend: React.FC<FcmProviderProps> = ({
       }
     };
 
-    refreshToken();
+    void refreshToken();
     // `user` is intentionally included so we have the resolved data available
     // for comparison, but `tokenRefreshed` guards against re-running.
     // eslint-disable-next-line react-hooks/exhaustive-deps
