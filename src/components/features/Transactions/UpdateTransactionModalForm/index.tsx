@@ -14,7 +14,7 @@ import { CustomDateField } from "@/components/shared/CustomDateField";
 import { CustomTimeField } from "@/components/shared/CustomTimeField";
 import { MaskedCurrencyInput } from "@/components/shared/MaskedCurrencyInput";
 import { useMutateTransaction } from "@/hooks/useMutateTransaction";
-import { BankAccounDropdown } from "@/components/shared/BankAccounsDropdown";
+import { BankAccounDropdown } from "@/components/shared/AccountSelection/BankAccounsDropdown";
 import { useToast } from "@/hooks/useToast";
 import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";

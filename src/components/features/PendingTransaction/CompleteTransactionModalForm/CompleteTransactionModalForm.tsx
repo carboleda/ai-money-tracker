@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Button, Chip, Modal } from "@heroui/react";
-import { BankAccounDropdown } from "@/components/shared/BankAccounsDropdown";
+import { BankAccounDropdown } from "@/components/shared/AccountSelection/BankAccounsDropdown";
 import { useMutateTransaction } from "@/hooks/useMutateTransaction";
 import { CustomDateField } from "@/components/shared/CustomDateField";
 import { CustomTimeField } from "@/components/shared/CustomTimeField";
