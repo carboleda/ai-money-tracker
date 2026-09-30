@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { GetTransactionsResponse } from "@/interfaces/transaction";
 import { PendingTransactionTable } from "@/components/features/PendingTransaction";
-import { SummaryPanel } from "@/components/SummaryPanel";
+import { SummaryPanel } from "@/components/shared/SummaryPanel";
 import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
 import { useAppStore } from "@/stores/useAppStore";

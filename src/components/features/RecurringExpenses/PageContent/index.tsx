@@ -6,7 +6,7 @@ import { RecurringExpensesTable } from "@/components/features/RecurringExpenses"
 import type { GetRecurringExpensesOutput } from "@/app/api/domain/recurring-expense/ports/outbound/get-recurring-expenses.port";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { formatCurrency } from "@/config/utils";
-import { TransactionTypeDecorator } from "@/components/TransactionTypeDecorator";
+import { TransactionTypeDecorator } from "@/components/shared/TransactionTypeDecorator";
 import { HiFire, HiOutlineCalendar } from "react-icons/hi";
 import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";

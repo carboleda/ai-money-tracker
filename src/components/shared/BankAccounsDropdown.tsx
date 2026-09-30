@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { CustomDropdown, CustomDropdownProps } from "./shared/CustomDropdown";
+import { CustomDropdown, CustomDropdownProps } from "./CustomDropdown";
 import { useAccountStore } from "@/stores/useAccountStore";
 
 interface BankAccounDropdownProps extends Omit<CustomDropdownProps, "values"> {}

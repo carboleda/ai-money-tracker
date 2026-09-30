@@ -3,7 +3,7 @@
 import { useEffect, useRef, PropsWithChildren } from "react";
 import { FirebaseApp } from "firebase/app";
 import { getMessaging, MessagePayload, onMessage, isSupported } from "firebase/messaging";
-import { NotificationRequestModal } from "@/components/NotificationsRequestModal";
+import { NotificationRequestModal } from "@/components/shared/NotificationsRequestModal";
 import { requestFcmToken } from "@/firebase/client/messaging";
 import { useMutateUser } from "@/hooks/useMutateUser";
 import { useGetUser } from "@/hooks/useGetUser";

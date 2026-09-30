@@ -4,7 +4,7 @@ import { Key, ReactNode, useEffect, useState } from "react";
 import { Page, siteConfig } from "@/config/site";
 import { useTranslation } from "react-i18next";
 import { usePathname } from "next/navigation";
-import { UserAvatar } from "../../UserAvatar";
+import { UserAvatar } from "../UserAvatar";
 import clsx from "clsx";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { LocaleNamespace } from "@/i18n/namespace";

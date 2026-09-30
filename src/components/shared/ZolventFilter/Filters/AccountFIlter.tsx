@@ -1,4 +1,4 @@
-import { BankAccounDropdown } from "@/components/BankAccounsDropdown";
+import { BankAccounDropdown } from "@/components/shared/BankAccounsDropdown";
 import { useZolventFilterContext } from "../ZolventFilter";
 import { Label } from "@heroui/react";
 

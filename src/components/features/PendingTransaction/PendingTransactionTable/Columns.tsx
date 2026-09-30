@@ -6,9 +6,9 @@ import {
 import { AvatarVariants, Chip, Table } from "@heroui/react";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { TableColumn, RenderCellProps } from "@/interfaces/global";
-import { TransactionTypeDecorator } from "@/components/TransactionTypeDecorator";
+import { TransactionTypeDecorator } from "@/components/shared/TransactionTypeDecorator";
 import Link from "next/link";
-import { NotePopover } from "@/components/NotePopover";
+import { NotePopover } from "@/components/shared/NotePopover";
 import { CustomIcon } from "@/components/shared/CustomIcon";
 import { JSX } from "react";
 import { GoLinkExternal } from "react-icons/go";

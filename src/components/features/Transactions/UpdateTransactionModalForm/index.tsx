@@ -8,13 +8,13 @@ import {
   Modal,
   TextField,
 } from "@heroui/react";
-import { CategoriesAutocomplete } from "@/components/CategoriesAutocomplete";
+import { CategoriesAutocomplete } from "@/components/shared/CategoriesAutocomplete";
 import { CategoryModel } from "@/app/api/domain/category/model/category.model";
 import { CustomDateField } from "@/components/shared/CustomDateField";
 import { CustomTimeField } from "@/components/shared/CustomTimeField";
 import { MaskedCurrencyInput } from "@/components/shared/MaskedCurrencyInput";
 import { useMutateTransaction } from "@/hooks/useMutateTransaction";
-import { BankAccounDropdown } from "@/components/BankAccounsDropdown";
+import { BankAccounDropdown } from "@/components/shared/BankAccounsDropdown";
 import { useToast } from "@/hooks/useToast";
 import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";

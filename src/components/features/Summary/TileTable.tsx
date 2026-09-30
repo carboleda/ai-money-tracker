@@ -3,7 +3,7 @@
 import React, { ReactNode } from "react";
 import { ChipProps, Table } from "@heroui/react";
 import { formatCurrency } from "@/config/utils";
-import { TransactionTypeDecorator } from "@/components/TransactionTypeDecorator";
+import { TransactionTypeDecorator } from "@/components/shared/TransactionTypeDecorator";
 import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
 import { EmptyTableState } from "@/components/shared/Table/EmptyTableState";

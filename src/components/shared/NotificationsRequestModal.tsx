@@ -6,7 +6,7 @@ import { Env } from "@/config/env";
 import { FirebaseApp } from "firebase/app";
 import { requestFcmToken } from "@/firebase/client/messaging";
 import { useMutateUser } from "@/hooks/useMutateUser";
-import { Action, ConfirmationModal } from "./shared/ConfirmationModal";
+import { Action, ConfirmationModal } from "./ConfirmationModal";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { useTranslation } from "react-i18next";
 
