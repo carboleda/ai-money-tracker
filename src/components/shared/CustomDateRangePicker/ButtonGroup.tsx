@@ -146,6 +146,7 @@ export const CustomDateRangePicker: React.FC<CustomDateRangePickerProps> = ({
       <div className="flex items-center gap-1">
         <ToggleButtonGroup
           isDetached
+          size="sm"
           selectionMode="single"
           disallowEmptySelection
           selectedKeys={isCustomSelected ? [] : [selectedKey]}
@@ -163,7 +164,7 @@ export const CustomDateRangePicker: React.FC<CustomDateRangePickerProps> = ({
         <DateRangePicker {...props} onChange={onDateChange}>
           <Group className="inline-flex">
             <DateRangePicker.Trigger
-              className={`${toggleButtonVariants({})} w-fit! rounded-3xl! px-4! py-0!`}
+              className={`${toggleButtonVariants({ size: "sm" })} w-fit! rounded-3xl! px-4! py-0!`}
               data-selected={isCustomSelected ? "true" : undefined}
               onPress={() => onPresetChange(RangeList.custom)}
             >
@@ -190,6 +191,11 @@ export const CustomDateRangePicker: React.FC<CustomDateRangePickerProps> = ({
                   {(date) => <RangeCalendar.Cell date={date} />}
                 </RangeCalendar.GridBody>
               </RangeCalendar.Grid>
+              <RangeCalendar.YearPickerGrid>
+                <RangeCalendar.YearPickerGridBody>
+                  {({ year }) => <RangeCalendar.YearPickerCell year={year} />}
+                </RangeCalendar.YearPickerGridBody>
+              </RangeCalendar.YearPickerGrid>
             </RangeCalendar>
           </DateRangePicker.Popover>
         </DateRangePicker>
