@@ -33,8 +33,11 @@ export const InlineEditableTitle: React.FC<InlineEditableTitleProps> = ({
 
   useEffect(() => {
     if (isEditing) {
-      inputRef.current?.focus();
-      inputRef.current?.select();
+      const input = inputRef.current;
+      if (!input) return;
+      input.focus();
+      const end = input.value.length;
+      input.setSelectionRange(end, end);
     }
   }, [isEditing]);
 
