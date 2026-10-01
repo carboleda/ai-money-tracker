@@ -18,7 +18,7 @@ import { useMutateTransaction } from "@/hooks/useMutateTransaction";
 import { useDraftAutoConfirm } from "@/hooks/useDraftAutoConfirm";
 import { CreateTransactionPayload } from "@/interfaces/transaction";
 import { MultimodalDraftInput } from "./MultimodalDraftInput";
-import { InlineDescriptionTitle } from "./InlineDescriptionTitle";
+import { InlineEditableTitle } from "@/components/shared/InlineChips";
 import { DraftChipsGroup } from "./DraftChipsGroup";
 import { AutoConfirmSaveButton } from "./AutoConfirmSaveButton";
 import { ModalContainer } from "@/components/shared/ModalContainer";
@@ -145,7 +145,7 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
     text?: string;
     picture?: string;
   }) => {
-    parseDraft({ text, picture });
+    void parseDraft({ text, picture });
   };
 
   return (
@@ -213,9 +213,10 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
                     <HiOutlineSparkles />
                     <span>{t("aiDraft.badge")}</span>
                   </div>
-                  <InlineDescriptionTitle
-                    description={description}
-                    onDescriptionChange={setDescription}
+                  <InlineEditableTitle
+                    value={description}
+                    onChange={setDescription}
+                    placeholder={t("aiDraft.descriptionPlaceholder")}
                     onInteraction={onInteraction}
                   />
                   <DraftChipsGroup onInteraction={onInteraction} />

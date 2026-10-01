@@ -2,33 +2,34 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import { HiPencil } from "react-icons/hi2";
-import { useTranslation } from "react-i18next";
-import { LocaleNamespace } from "@/i18n/namespace";
 import clsx from "clsx";
 
-export interface InlineDescriptionTitleProps {
-  description: string;
-  onDescriptionChange: (description: string) => void;
-  onInteraction: () => void;
+export interface InlineEditableTitleProps {
+  value: string;
+  onChange: (value: string) => void;
+  placeholder: string;
+  isRequired?: boolean;
+  onInteraction?: () => void;
 }
 
 /**
- * Inline-editable AI draft summary title.
- * See sdd/ai-draft-transaction-pipeline.md §2.4 (#1) / §4.2 (#2).
+ * Inline-editable title: click-to-edit text, commits on blur/Enter/Tab,
+ * reverts on Escape.
  */
-export const InlineDescriptionTitle: React.FC<InlineDescriptionTitleProps> = ({
-  description,
-  onDescriptionChange,
-  onInteraction,
+export const InlineEditableTitle: React.FC<InlineEditableTitleProps> = ({
+  value,
+  onChange,
+  placeholder,
+  isRequired = false,
+  onInteraction = () => {},
 }) => {
-  const { t } = useTranslation(LocaleNamespace.Transactions);
   const [isEditing, setIsEditing] = useState(false);
-  const [value, setValue] = useState(description);
+  const [draft, setDraft] = useState(value);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    setValue(description);
-  }, [description]);
+    setDraft(value);
+  }, [value]);
 
   useEffect(() => {
     if (isEditing) {
@@ -39,10 +40,10 @@ export const InlineDescriptionTitle: React.FC<InlineDescriptionTitleProps> = ({
 
   const commit = () => {
     setIsEditing(false);
-    if (value.trim() && value !== description) {
-      onDescriptionChange(value.trim());
+    if (draft.trim() && draft !== value) {
+      onChange(draft.trim());
     } else {
-      setValue(description);
+      setDraft(value);
     }
   };
 
@@ -56,8 +57,8 @@ export const InlineDescriptionTitle: React.FC<InlineDescriptionTitleProps> = ({
       <input
         ref={inputRef}
         type="text"
-        value={value}
-        onChange={(e) => setValue(e.target.value)}
+        value={draft}
+        onChange={(e) => setDraft(e.target.value)}
         onBlur={commit}
         onKeyDown={(e) => {
           if (e.key === "Enter" || e.key === "Tab") {
@@ -66,12 +67,12 @@ export const InlineDescriptionTitle: React.FC<InlineDescriptionTitleProps> = ({
           }
           if (e.key === "Escape") {
             e.preventDefault();
-            setValue(description);
+            setDraft(value);
             setIsEditing(false);
           }
         }}
         className="w-full bg-transparent border-0 outline-none text-foreground text-lg font-semibold placeholder:text-muted"
-        placeholder={t("aiDraft.descriptionPlaceholder")}
+        placeholder={placeholder}
       />
     );
   }
@@ -82,9 +83,10 @@ export const InlineDescriptionTitle: React.FC<InlineDescriptionTitleProps> = ({
       onClick={startEditing}
       className="group flex items-center gap-1.5 text-left text-foreground text-lg font-semibold cursor-text"
     >
-      <span className={clsx(!description && "text-muted font-normal")}>
-        {description || t("aiDraft.descriptionPlaceholder")}
+      <span className={clsx(!value && "text-muted font-normal")}>
+        {value || placeholder}
       </span>
+      {isRequired && !value && <span className="text-danger">*</span>}
       <HiPencil className="text-sm" />
     </button>
   );

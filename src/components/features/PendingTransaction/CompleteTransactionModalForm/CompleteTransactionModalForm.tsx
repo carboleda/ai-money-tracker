@@ -1,10 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Button, Chip, Modal } from "@heroui/react";
-import { BankAccounDropdown } from "@/components/shared/AccountSelection/BankAccounsDropdown";
 import { useMutateTransaction } from "@/hooks/useMutateTransaction";
-import { CustomDateField } from "@/components/shared/CustomDateField";
-import { CustomTimeField } from "@/components/shared/CustomTimeField";
-import { MaskedCurrencyInput } from "@/components/shared/MaskedCurrencyInput";
 import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
 import { useToast } from "@/hooks/useToast";
@@ -13,6 +9,7 @@ import { TransactionOutput } from "@/app/api/domain/transaction/ports/outbound/f
 import { UpdateTransactionInput } from "@/app/api/domain/transaction/ports/inbound/update-transaction.port";
 import { ModalContainer } from "@/components/shared/ModalContainer";
 import { LoadingButton } from "@/components/shared/LoadingButton";
+import { CompleteTransactionChipsGroup } from "./CompleteTransactionChipsGroup";
 
 interface CompleteTransactionModalFormProps {
   item?: TransactionOutput;
@@ -31,7 +28,7 @@ export const CompleteTransactionModalForm: React.FC<
   const [createdAtInput, setCreatedAtInput] = useState<Date>();
   const [amountInput, setAmountInput] = useState<number>();
 
-  const areButtonsDisabled = isMutating || validationError !== "";
+  const areButtonsDisabled = isMutating;
 
   useEffect(() => {
     setCreatedAtInput(new Date());
@@ -47,6 +44,7 @@ export const CompleteTransactionModalForm: React.FC<
     setSelectedAccount("");
     setCreatedAtInput(undefined);
     setAmountInput(0);
+    setValidationError("");
   };
 
   const clearError = () => setValidationError("");
@@ -99,39 +97,15 @@ export const CompleteTransactionModalForm: React.FC<
               </Modal.Heading>
             </Modal.Header>
             <Modal.Body className="flex flex-col gap-4">
-              <div className="self-start w-full">
-                <BankAccounDropdown
-                  label={t("bankAccount")}
-                  className="w-full"
-                  showLabel
-                  isRequired
-                  onChange={(key) => setSelectedAccount(key ?? "")}
-                />
-              </div>
-              <MaskedCurrencyInput
-                label={t("amount")}
-                variant="secondary"
-                type="text"
-                isRequired
-                value={amountInput?.toString()}
-                onValueChange={(v) => setAmountInput(v.floatValue)}
+              <CompleteTransactionChipsGroup
+                type={item?.type}
+                amount={amountInput}
+                onAmountChange={setAmountInput}
+                sourceAccountRef={selectedAccount}
+                onSourceAccountChange={setSelectedAccount}
+                createdAt={createdAtInput}
+                onCreatedAtChange={setCreatedAtInput}
               />
-              <div className="flex gap-2">
-                <CustomDateField
-                  label={t("paidOn")}
-                  isRequired
-                  value={createdAtInput ?? new Date()}
-                  onChange={setCreatedAtInput}
-                  className="w-full"
-                />
-                <CustomTimeField
-                  label={t("paidOnTime")}
-                  isRequired
-                  value={createdAtInput ?? new Date()}
-                  onChange={setCreatedAtInput}
-                  className="w-full"
-                />
-              </div>
               {validationError && (
                 <Chip
                   variant="soft"

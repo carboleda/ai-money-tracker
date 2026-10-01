@@ -1,44 +1,17 @@
 import React, { useEffect, useState } from "react";
-import {
-  Button,
-  Chip,
-  FieldError,
-  Input,
-  InputGroup,
-  Label,
-  Modal,
-  Switch,
-  TextArea,
-  TextField,
-} from "@heroui/react";
-import {
-  parseAbsoluteToLocal,
-  startOfMonth,
-  endOfMonth,
-  startOfYear,
-  endOfYear,
-} from "@internationalized/date";
+import { Button, Chip, Modal, Switch } from "@heroui/react";
 import { Frequency } from "@/app/api/domain/recurring-expense/model/recurring-expense.model";
 import type { RecurringExpenseOutput } from "@/app/api/domain/recurring-expense/ports/outbound/get-recurring-expenses.port";
 import type { CreateRecurringExpenseInput } from "@/app/api/domain/recurring-expense/ports/inbound/create-recurring-expense.port";
-import { FrequencyDropdown } from "@/components/shared/FrequencyDropdown";
-import { CustomDateField } from "@/components/shared/CustomDateField";
 import { useMutateRecurringExpenses } from "@/hooks/useMutateRecurringExpense";
-import { IconComment, IconLink } from "@/components/shared/icons";
-import { CategoriesAutocomplete } from "@/components/shared/CategoriesAutocomplete";
 import { CategoryModel } from "@/app/api/domain/category/model/category.model";
-import { Env } from "@/config/env";
-import { MaskedCurrencyInput } from "@/components/shared/MaskedCurrencyInput";
 import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
-import { HiMinusSm, HiPlusSm } from "react-icons/hi";
 import { useToast } from "@/hooks/useToast";
 import { ModalContainer } from "@/components/shared/ModalContainer";
 import { LoadingButton } from "@/components/shared/LoadingButton";
-
-const fixedMonth = parseAbsoluteToLocal(
-  new Date(Env.NEXT_PUBLIC_FIXED_MONTH).toISOString()
-);
+import { InlineEditableTitle } from "@/components/shared/InlineChips";
+import { RecurringExpenseChipsGroup } from "./RecurringExpenseChipsGroup";
 
 interface RecurringExpenseModalFormProps {
   item?: RecurringExpenseOutput;
@@ -57,18 +30,15 @@ export const RecurringExpenseModalForm: React.FC<
   const [descriptionInput, setDescriptionInput] = useState<string>("");
   const [paymentLinkInput, setPaymentLinkInput] = useState<string>();
   const [notesInput, setNotesInput] = useState<string>();
-  const [transactonCategoryInput, setTransactonCategoryInput] =
-    useState<CategoryModel["ref"] | undefined>();
+  const [transactonCategoryInput, setTransactonCategoryInput] = useState<
+    CategoryModel["ref"] | undefined
+  >();
   const [frequencyInput, setFrequencyInput] = useState<Frequency>(
-    Frequency.MONTHLY
+    Frequency.MONTHLY,
   );
   const [amountInput, setAmountInput] = useState<number>();
   const [dueDateInput, setDueDateInput] = useState<Date>();
   const [disabledInput, setDisabledInput] = useState<boolean>(false);
-  const [dueDateMinMax, setDueDateMinMax] = useState<{
-    min: Date;
-    max: Date;
-  }>();
 
   const areButtonsDisabled = isMutating || validationError !== "";
 
@@ -84,18 +54,6 @@ export const RecurringExpenseModalForm: React.FC<
       setNotesInput(item.notes);
     }
   }, [item]);
-
-  useEffect(() => {
-    if (frequencyInput === Frequency.MONTHLY) {
-      const min = startOfMonth(fixedMonth);
-      const max = endOfMonth(fixedMonth);
-      setDueDateMinMax({ min: min.toDate(), max: max.toDate() });
-    } else {
-      const min = startOfYear(fixedMonth);
-      const max = endOfYear(fixedMonth);
-      setDueDateMinMax({ min: min.toDate(), max: max.toDate() });
-    }
-  }, [frequencyInput]);
 
   const onOpenChangeHandler = (_open: boolean) => {
     onDismiss();
@@ -148,7 +106,7 @@ export const RecurringExpenseModalForm: React.FC<
         onDismiss();
         showSuccessToast({
           title: t(
-            isUpdate ? "recurringExpenseUpdated" : "recurringExpenseCreated"
+            isUpdate ? "recurringExpenseUpdated" : "recurringExpenseCreated",
           ),
         });
       })
@@ -164,93 +122,42 @@ export const RecurringExpenseModalForm: React.FC<
         isDismissable={false}
       >
         <ModalContainer>
-          <Modal.Dialog>
-            <Modal.Header className="flex flex-row justify-between mb-4">
-              <Modal.Heading>{t("recurringExpenses")}</Modal.Heading>
-              <Switch
-                aria-label={t("disabled")}
-                size="sm"
-                isSelected={!disabledInput}
-                onChange={(v) => setDisabledInput(!v)}
-              >
-                <Switch.Content>
-                  <Switch.Control className="flex items-center gap-2">
-                    <HiPlusSm />
-                    <Switch.Thumb />
-                    <HiMinusSm />
-                  </Switch.Control>
-                </Switch.Content>
-              </Switch>
-            </Modal.Header>
+          <Modal.Dialog aria-label={t("recurringExpenses")}>
             <Modal.Body className="flex flex-col gap-4">
-              <TextField
-                autoFocus
-                isRequired
-                value={descriptionInput}
-                onChange={setDescriptionInput}
-              >
-                <Label>{t("description")}</Label>
-                <Input variant="secondary" />
-                <FieldError />
-              </TextField>
-              <div className="flex gap-2">
-                <CategoriesAutocomplete
-                  label={t("category")}
+              <div className="flex flex-row items-center gap-2">
+                <Switch
+                  aria-label={t("disabled")}
+                  size="sm"
+                  isSelected={!disabledInput}
+                  onChange={(v) => setDisabledInput(!v)}
+                >
+                  <Switch.Content>
+                    <Switch.Control>
+                      <Switch.Thumb />
+                    </Switch.Control>
+                  </Switch.Content>
+                </Switch>
+                <InlineEditableTitle
+                  value={descriptionInput}
+                  onChange={setDescriptionInput}
+                  placeholder={t("description")}
                   isRequired
-                  value={transactonCategoryInput}
-                  onChange={setTransactonCategoryInput}
-                />
-
-                <MaskedCurrencyInput
-                  label={t("amount")}
-                  variant="secondary"
-                  type="text"
-                  isRequired
-                  value={amountInput?.toString()}
-                  onValueChange={(v) => setAmountInput(v.floatValue)}
                 />
               </div>
-              <div className="flex gap-2">
-                <div className="w-full">
-                  <FrequencyDropdown
-                    selectedFrequency={frequencyInput}
-                    onChange={setFrequencyInput}
-                  />
-                </div>
-                <CustomDateField
-                  label={t("dueDate")}
-                  isRequired
-                  value={dueDateInput ?? dueDateMinMax?.min ?? new Date()}
-                  onChange={setDueDateInput}
-                  minValue={dueDateMinMax?.min}
-                  maxValue={dueDateMinMax?.max}
-                />
-              </div>
-              <TextField
-                value={paymentLinkInput}
-                onChange={setPaymentLinkInput}
-              >
-                <Label>{t("paymentLink")}</Label>
-                <InputGroup variant="secondary">
-                  <InputGroup.Prefix>
-                    <IconLink />
-                  </InputGroup.Prefix>
-                  <InputGroup.Input />
-                </InputGroup>
-              </TextField>
-              <TextField value={notesInput} onChange={setNotesInput}>
-                <Label>{t("notes")}</Label>
-                <InputGroup>
-                  <InputGroup.Prefix>
-                    <IconComment size={20} />
-                  </InputGroup.Prefix>
-                  <TextArea
-                    variant="secondary"
-                    className="w-full"
-                    placeholder={t("notesPlaceholder")}
-                  />
-                </InputGroup>
-              </TextField>
+              <RecurringExpenseChipsGroup
+                categoryRef={transactonCategoryInput}
+                onCategoryChange={setTransactonCategoryInput}
+                amount={amountInput}
+                onAmountChange={setAmountInput}
+                frequency={frequencyInput}
+                onFrequencyChange={setFrequencyInput}
+                dueDate={dueDateInput}
+                onDueDateChange={setDueDateInput}
+                paymentLink={paymentLinkInput}
+                onPaymentLinkChange={setPaymentLinkInput}
+                notes={notesInput}
+                onNotesChange={setNotesInput}
+              />
               {validationError && (
                 <Chip
                   variant="soft"
