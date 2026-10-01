@@ -5,6 +5,7 @@ export interface TableColumn {
   key: string;
   className?: string;
   isRowHeader?: boolean;
+  hidden?: boolean;
 }
 
 export interface RenderCellProps<T> {

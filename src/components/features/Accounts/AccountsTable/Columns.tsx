@@ -41,15 +41,19 @@ const columnsMobile: TableColumn[] = [
   },
   {
     key: "empty1",
+    hidden: true,
   },
   {
     key: "empty2",
+    hidden: true,
   },
   {
     key: "empty3",
+    hidden: true,
   },
   {
     key: "empty4",
+    hidden: true,
   },
 ];
 
@@ -89,18 +93,15 @@ const renderCellDesktop = ({
         </Table.Cell>
       );
     default:
-      return <></>;
+      return <Table.Cell />;
   }
 };
 
 const renderCellMobile = ({
-  key,
   item,
   t,
   isChecked,
 }: RenderCellProps<Account>): JSX.Element => {
-  if (key !== "account") return <></>;
-
   return (
     <Table.Cell colSpan={5}>
       <div className="flex flex-row items-center justify-start gap-4">

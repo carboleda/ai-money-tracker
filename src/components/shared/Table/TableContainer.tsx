@@ -33,6 +33,7 @@ export const TableContainer = <T extends HasId>({
   separators,
 }: Readonly<TableContainerProps<T>>) => {
   const { maxTableHeight, containerRef } = useMeasuredTableHeight();
+  const visibleColumns = columns.filter((column) => !column.hidden);
 
   return (
     <Table.ScrollContainer
@@ -88,7 +89,10 @@ export const TableContainer = <T extends HasId>({
 
             return (
               <Table.Row key={item.id}>
-                <Table.Collection items={columns} dependencies={[isChecked]}>
+                <Table.Collection
+                  items={visibleColumns}
+                  dependencies={[isChecked]}
+                >
                   {(column) => {
                     return renderCell({
                       key: column.key,

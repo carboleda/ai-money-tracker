@@ -41,9 +41,11 @@ const columnsMobile: TableColumn[] = [
   },
   {
     key: "empty1",
+    hidden: true,
   },
   {
     key: "empty2",
+    hidden: true,
   },
 ];
 
@@ -113,17 +115,14 @@ const renderCellDesktop = ({
         </Table.Cell>
       );
     default:
-      return <></>;
+      return <Table.Cell />;
   }
 };
 
 const renderCellMobile = ({
-  key,
   item,
   isChecked,
 }: RenderCellProps<TransactionOutput>): JSX.Element => {
-  if (key !== "transaction") return <></>;
-
   const status = getTransactionOverdueStatus(item.createdAt);
 
   return (
