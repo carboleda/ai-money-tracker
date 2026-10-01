@@ -38,13 +38,13 @@ export function InlineCategoryChip<T extends InlineCategoryOption>({
   isRequired = false,
   onCategoryChange,
   onInteraction = () => {},
-}: InlineCategoryChipProps<T>) {
+}: Readonly<InlineCategoryChipProps<T>>) {
   const { contains } = useFilter({ sensitivity: "base" });
   const searchInputRef = useRef<HTMLInputElement>(null);
 
   const filteredCategories = useMemo(
     () => categories.filter(filterFn),
-    [categories, filterFn]
+    [categories, filterFn],
   );
 
   const onOpenChange = (isOpen: boolean) => {
@@ -74,7 +74,7 @@ export function InlineCategoryChip<T extends InlineCategoryOption>({
       <Autocomplete.Trigger
         className={clsx(
           CHIP_BASE_CLASS,
-          isRequired && !categoryRef && CHIP_REQUIRED_EMPTY_CLASS
+          isRequired && !categoryRef && CHIP_REQUIRED_EMPTY_CLASS,
         )}
       >
         <Autocomplete.Value className="text-xs pr-0.5" />
