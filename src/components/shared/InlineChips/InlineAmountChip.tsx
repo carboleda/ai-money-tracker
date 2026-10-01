@@ -3,33 +3,33 @@
 import React, { useEffect, useRef, useState } from "react";
 import clsx from "clsx";
 import { HiPencil } from "react-icons/hi2";
-import { TransactionType } from "@/app/api/domain/transaction/model/transaction.model";
-import { formatCurrency } from "@/config/utils";
 import { NumericFormat } from "react-number-format";
+import { formatCurrency } from "@/config/utils";
 import {
   CHIP_ACTIVE_CLASS,
   CHIP_BASE_CLASS,
-  CHIP_EXPENSE_AMOUNT_CLASS,
-  CHIP_INCOME_AMOUNT_CLASS,
-  CHIP_TRANSFER_AMOUNT_CLASS,
-} from "../chipStyles";
+  CHIP_REQUIRED_EMPTY_CLASS,
+} from "./chipStyles";
 
 export interface InlineAmountChipProps {
-  amount: number;
-  type: TransactionType;
+  amount?: number;
+  colorClassName?: string;
+  sign?: "" | "-";
+  isRequired?: boolean;
   onAmountChange: (amount: number) => void;
-  onInteraction: () => void;
+  onInteraction?: () => void;
 }
 
 /**
  * Morphs between a badged amount display and an inline numeric input.
- * See sdd/ai-draft-transaction-pipeline.md §2.4 (Amount row) / §4.2 (#7).
  */
 export const InlineAmountChip: React.FC<InlineAmountChipProps> = ({
   amount,
-  type,
+  colorClassName = "",
+  sign = "",
+  isRequired = false,
   onAmountChange,
-  onInteraction,
+  onInteraction = () => {},
 }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [value, setValue] = useState(String(amount ?? ""));
@@ -46,12 +46,7 @@ export const InlineAmountChip: React.FC<InlineAmountChipProps> = ({
     }
   }, [isEditing]);
 
-  const amountColorClass = clsx({
-    [CHIP_EXPENSE_AMOUNT_CLASS]: type === TransactionType.EXPENSE,
-    [CHIP_INCOME_AMOUNT_CLASS]: type === TransactionType.INCOME,
-    [CHIP_TRANSFER_AMOUNT_CLASS]: type === TransactionType.TRANSFER,
-  });
-  const sign = type === TransactionType.EXPENSE ? "-" : "";
+  const isEmpty = amount === 0 || amount == null;
 
   const commit = () => {
     setIsEditing(false);
@@ -103,7 +98,11 @@ export const InlineAmountChip: React.FC<InlineAmountChipProps> = ({
     <button
       type="button"
       onClick={startEditing}
-      className={clsx(CHIP_BASE_CLASS, amountColorClass)}
+      className={clsx(
+        CHIP_BASE_CLASS,
+        colorClassName,
+        isRequired && isEmpty && CHIP_REQUIRED_EMPTY_CLASS
+      )}
     >
       <span>
         {sign}

@@ -1,5 +1,6 @@
 import {
   computeBiannualDates,
+  getDaysInMonth,
   getMonthBounds,
   getPreviousMonth,
 } from "../utils";
@@ -84,6 +85,28 @@ describe("utils", () => {
 
       expect(previousMonth.getMonth()).toBe(11); // December
       expect(previousMonth.getFullYear()).toBe(2023);
+    });
+  });
+
+  describe("getDaysInMonth", () => {
+    it("should return 29 for February in a leap year", () => {
+      expect(getDaysInMonth(2024, 1)).toBe(29);
+    });
+
+    it("should return 28 for February in a non-leap year", () => {
+      expect(getDaysInMonth(2025, 1)).toBe(28);
+    });
+
+    it("should return 30 for a 30-day month", () => {
+      expect(getDaysInMonth(2024, 3)).toBe(30); // April
+    });
+
+    it("should return 31 for a 31-day month", () => {
+      expect(getDaysInMonth(2024, 9)).toBe(31); // October
+    });
+
+    it("should return 31 for December", () => {
+      expect(getDaysInMonth(2024, 11)).toBe(31);
     });
   });
 

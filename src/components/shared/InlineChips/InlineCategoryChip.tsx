@@ -2,54 +2,49 @@
 
 import React, { useMemo, useRef } from "react";
 import { Autocomplete, ListBox, SearchField, useFilter } from "@heroui/react";
-import { useTranslation } from "react-i18next";
-import { LocaleNamespace } from "@/i18n/namespace";
-import { useCategoryStore } from "@/stores/useCategoryStore";
-import { TransactionType } from "@/app/api/domain/transaction/model/transaction.model";
-import {
-  CategoryType,
-  categoryAppliesToType,
-} from "@/app/api/domain/category/model/category.model";
-import { CHIP_BASE_CLASS } from "../chipStyles";
+import clsx from "clsx";
+import { CHIP_BASE_CLASS, CHIP_REQUIRED_EMPTY_CLASS } from "./chipStyles";
 
-export interface InlineCategoryChipProps {
-  categoryRef: string;
-  /**
-   * Deviation from the SDD's literal prop list (§4.2 #4): the active
-   * TransactionType is required to filter the category dropdown to
-   * categories matching the current type (CategoryType mirrors
-   * TransactionType values), since categories are shared across the whole
-   * app rather than pre-filtered by the caller.
-   */
-  type: TransactionType;
+export interface InlineCategoryOption {
+  ref: string;
+  name: string;
+  icon: string;
+}
+
+export interface InlineCategoryChipProps<
+  T extends InlineCategoryOption = InlineCategoryOption,
+> {
+  categoryRef?: string;
+  categories: T[];
+  filterFn?: (category: T) => boolean;
+  placeholder: string;
+  searchPlaceholder: string;
+  ariaLabel: string;
+  isRequired?: boolean;
   onCategoryChange: (categoryRef: string) => void;
-  onInteraction: () => void;
+  onInteraction?: () => void;
 }
 
 /**
- * Compact inline dropdown for the AI-drafted category.
- * See sdd/ai-draft-transaction-pipeline.md §2.4 (Category row) / §4.2 (#4).
+ * Compact inline autocomplete for selecting a category.
  */
-export const InlineCategoryChip: React.FC<InlineCategoryChipProps> = ({
+export function InlineCategoryChip<T extends InlineCategoryOption>({
   categoryRef,
-  type,
+  categories,
+  filterFn = () => true,
+  placeholder,
+  searchPlaceholder,
+  ariaLabel,
+  isRequired = false,
   onCategoryChange,
-  onInteraction,
-}) => {
-  const { t } = useTranslation(LocaleNamespace.Transactions);
-  const { categories } = useCategoryStore();
+  onInteraction = () => {},
+}: InlineCategoryChipProps<T>) {
   const { contains } = useFilter({ sensitivity: "base" });
   const searchInputRef = useRef<HTMLInputElement>(null);
 
   const filteredCategories = useMemo(
-    () =>
-      categories.filter((category) =>
-        categoryAppliesToType(
-          category.restrictedTypes,
-          type as unknown as CategoryType
-        )
-      ),
-    [categories, type]
+    () => categories.filter(filterFn),
+    [categories, filterFn]
   );
 
   const onOpenChange = (isOpen: boolean) => {
@@ -73,10 +68,15 @@ export const InlineCategoryChip: React.FC<InlineCategoryChipProps> = ({
       value={categoryRef || null}
       onChange={onChange}
       onOpenChange={onOpenChange}
-      placeholder={`🛒 ${t("aiDraft.category.select")}`}
-      aria-label={t("aiDraft.category.label")}
+      placeholder={placeholder}
+      aria-label={ariaLabel}
     >
-      <Autocomplete.Trigger className={CHIP_BASE_CLASS}>
+      <Autocomplete.Trigger
+        className={clsx(
+          CHIP_BASE_CLASS,
+          isRequired && !categoryRef && CHIP_REQUIRED_EMPTY_CLASS
+        )}
+      >
         <Autocomplete.Value className="text-xs pr-0.5" />
         <Autocomplete.Indicator>
           <span aria-hidden="true" className="text-white!">
@@ -91,7 +91,7 @@ export const InlineCategoryChip: React.FC<InlineCategoryChipProps> = ({
               <SearchField.SearchIcon />
               <SearchField.Input
                 ref={searchInputRef}
-                placeholder={t("aiDraft.category.search")}
+                placeholder={searchPlaceholder}
               />
             </SearchField.Group>
           </SearchField>
@@ -110,4 +110,4 @@ export const InlineCategoryChip: React.FC<InlineCategoryChipProps> = ({
       </Autocomplete.Popover>
     </Autocomplete>
   );
-};
+}

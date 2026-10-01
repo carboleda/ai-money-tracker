@@ -1,32 +1,15 @@
 import React, { useCallback, useEffect, useState } from "react";
-import {
-  Button,
-  Chip,
-  FieldError,
-  Input,
-  Label,
-  Modal,
-  Popover,
-  TextField,
-} from "@heroui/react";
-import { Account, ACCOUNT_TYPES, DEFAULT_ICON } from "@/interfaces/account";
+import { Button, Chip, Modal } from "@heroui/react";
+import { Account, DEFAULT_ICON } from "@/interfaces/account";
 import { useMutateAccount } from "@/hooks/useMutateAccount";
 import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
 import { useToast } from "@/hooks/useToast";
-import { MaskedCurrencyInput } from "@/components/shared/MaskedCurrencyInput";
 import { AccountType } from "@/app/api/domain/account/model/account.model";
-import dynamic from "next/dynamic";
-import { Theme } from "emoji-picker-react";
-import { CustomDropdown } from "@/components/shared/CustomDropdown";
 import { ModalContainer } from "@/components/shared/ModalContainer";
 import { LoadingButton } from "@/components/shared/LoadingButton";
-
-// Dynamically import to avoid SSR issues
-const EmojiPicker = dynamic(
-  () => import("emoji-picker-react").then((mod) => mod.default),
-  { ssr: false, loading: () => <div>Loading emojis...</div> }
-);
+import { InlineEditableTitle } from "@/components/shared/InlineChips";
+import { AccountChipsGroup } from "./AccountChipsGroup";
 
 interface AccountModalFormProps {
   item?: Account;
@@ -42,7 +25,6 @@ export const AccountModalForm: React.FC<AccountModalFormProps> = ({
   const { t } = useTranslation(LocaleNamespace.Accounts);
   const { showSuccessToast } = useToast();
   const { isMutating, createAccount, updateAccount } = useMutateAccount();
-  const [isEmojiPickerOpen, setIsEmojiPickerOpen] = useState(false);
   const [validationError, setValidationError] = useState<string>("");
   const [nameInput, setNameInput] = useState<string>("");
   const [refInput, setRefInput] = useState<string>("");
@@ -135,41 +117,6 @@ export const AccountModalForm: React.FC<AccountModalFormProps> = ({
       });
   };
 
-  const renderEmojiPickerPopover = () => {
-    return (
-      <Popover isOpen={isEmojiPickerOpen} onOpenChange={setIsEmojiPickerOpen}>
-        <Button
-          isIconOnly
-          variant="outline"
-          className="text-2xl h-14 w-16"
-          aria-label={t("icon")}
-        >
-          {iconInput || DEFAULT_ICON}
-        </Button>
-        <Popover.Content placement="bottom" className="w-80">
-          <Popover.Dialog>
-            <div className="px-1 py-2">
-              <EmojiPicker
-                onEmojiClick={(emojiData) => {
-                  createProxiedSetter(setIconInput)(emojiData.emoji);
-                  setIsEmojiPickerOpen(false);
-                }}
-                theme={Theme.AUTO}
-                width="100%"
-                height={400}
-                previewConfig={{
-                  showPreview: false,
-                }}
-                searchDisabled={false}
-                lazyLoadEmojis={true}
-              />
-            </div>
-          </Popover.Dialog>
-        </Popover.Content>
-      </Popover>
-    );
-  };
-
   return (
     <Modal>
       <Modal.Backdrop
@@ -179,12 +126,7 @@ export const AccountModalForm: React.FC<AccountModalFormProps> = ({
         isDismissable={false}
       >
         <ModalContainer>
-          <Modal.Dialog>
-            <Modal.Header className="mb-4">
-              <Modal.Heading className="flex flex-col gap-1">
-                {t("accounts")}
-              </Modal.Heading>
-            </Modal.Header>
+          <Modal.Dialog aria-label={t("accounts")}>
             <Modal.Body className="flex flex-col gap-4">
               {validationError && (
                 <Chip
@@ -195,59 +137,27 @@ export const AccountModalForm: React.FC<AccountModalFormProps> = ({
                   {validationError}
                 </Chip>
               )}
-              <div className="flex gap-2 w-full">
-                {renderEmojiPickerPopover()}
-                <TextField
-                  isRequired
-                  className="w-full"
-                  isDisabled={!!item}
-                  value={refInput}
-                  onChange={createProxiedSetter(setRefInput)}
-                >
-                  <Label>{t("ref")}</Label>
-                  <Input variant="secondary" placeholder="e.g., C1408" />
-                  <FieldError />
-                </TextField>
-              </div>
-              <TextField
-                autoFocus
-                isRequired
+              <InlineEditableTitle
                 value={nameInput}
                 onChange={createProxiedSetter(setNameInput)}
-              >
-                <Label>{t("name")}</Label>
-                <Input variant="secondary" />
-                <FieldError />
-              </TextField>
-              <CustomDropdown
-                values={ACCOUNT_TYPES.map((type) => ({
-                  key: type.key,
-                  label: t(type.label),
-                }))}
-                label={t("type")}
-                value={typeInput}
-                isRequired={true}
-                showLabel={true}
-                onChange={createProxiedSetter(setTypeInput) as any}
-              />
-              <MaskedCurrencyInput
-                label={t("balance")}
-                variant="secondary"
-                type="text"
+                placeholder={t("name")}
                 isRequired
-                value={balanceInput?.toString()}
-                onValueChange={(v) =>
-                  createProxiedSetter(setBalanceInput)(v.floatValue || 0)
-                }
               />
-              <TextField
-                value={descriptionInput}
-                onChange={setDescriptionInput}
-              >
-                <Label>{t("description")}</Label>
-                <Input variant="secondary" placeholder={t("description")} />
-                <FieldError />
-              </TextField>
+              <AccountChipsGroup
+                icon={iconInput}
+                onIconChange={createProxiedSetter(setIconInput)}
+                refValue={refInput}
+                onRefChange={createProxiedSetter(setRefInput)}
+                isRefDisabled={!!item}
+                type={typeInput}
+                onTypeChange={createProxiedSetter(setTypeInput)}
+                balance={balanceInput}
+                onBalanceChange={(value) =>
+                  createProxiedSetter(setBalanceInput)(value || 0)
+                }
+                description={descriptionInput}
+                onDescriptionChange={createProxiedSetter(setDescriptionInput)}
+              />
             </Modal.Body>
             <Modal.Footer>
               <Button

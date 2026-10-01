@@ -1,30 +1,17 @@
 import React, { useEffect, useState } from "react";
-import {
-  Button,
-  Chip,
-  FieldError,
-  Input,
-  Label,
-  Modal,
-  TextField,
-} from "@heroui/react";
-import { CategoriesAutocomplete } from "@/components/shared/CategoriesAutocomplete";
+import { Button, Chip, Modal } from "@heroui/react";
 import { CategoryModel } from "@/app/api/domain/category/model/category.model";
-import { CustomDateField } from "@/components/shared/CustomDateField";
-import { CustomTimeField } from "@/components/shared/CustomTimeField";
-import { MaskedCurrencyInput } from "@/components/shared/MaskedCurrencyInput";
 import { useMutateTransaction } from "@/hooks/useMutateTransaction";
-import { BankAccounDropdown } from "@/components/shared/AccountSelection/BankAccounsDropdown";
 import { useToast } from "@/hooks/useToast";
 import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
 import { TransactionOutput } from "@/app/api/domain/transaction/ports/outbound/filter-transactions.port";
-import {
-  TransactionType,
-} from "@/app/api/domain/transaction/model/transaction.model";
+import { TransactionType } from "@/app/api/domain/transaction/model/transaction.model";
 import { UpdateTransactionInput } from "@/app/api/domain/transaction/ports/inbound/update-transaction.port";
 import { ModalContainer } from "@/components/shared/ModalContainer";
 import { LoadingButton } from "@/components/shared/LoadingButton";
+import { InlineEditableTitle } from "@/components/shared/InlineChips";
+import { TransactionEditChipsGroup } from "./TransactionEditChipsGroup";
 
 interface UpdateTransactionModalFormProps {
   item?: TransactionOutput;
@@ -40,6 +27,9 @@ export const UpdateTransactionModalForm: React.FC<
   const { isMutating, updateTransaction } = useMutateTransaction();
   const [validationError, setValidationError] = useState<string>("");
   const [descriptionInput, setDescriptionInput] = useState<string>("");
+  const [typeInput, setTypeInput] = useState<TransactionType>(
+    TransactionType.EXPENSE,
+  );
   const [sourceAccountInput, setSourceAccountInput] = useState<string>("");
   const [destinationAccountInput, setDestinationAccountInput] =
     useState<string>("");
@@ -53,6 +43,7 @@ export const UpdateTransactionModalForm: React.FC<
   useEffect(() => {
     if (item) {
       setDescriptionInput(item.description);
+      setTypeInput(item.type);
       setSourceAccountInput(item.sourceAccount.ref);
       item.destinationAccount &&
         setDestinationAccountInput(item.destinationAccount.ref);
@@ -69,6 +60,7 @@ export const UpdateTransactionModalForm: React.FC<
 
   const clearInputs = () => {
     setDescriptionInput("");
+    setTypeInput(TransactionType.EXPENSE);
     setSourceAccountInput("");
     setDestinationAccountInput("");
     setTransactonCategoryInput(undefined);
@@ -78,12 +70,24 @@ export const UpdateTransactionModalForm: React.FC<
 
   const clearError = () => setValidationError("");
 
+  const onTypeChange = (nextType: TransactionType) => {
+    if (nextType === TransactionType.TRANSFER) {
+      setTransactonCategoryInput(undefined);
+    } else {
+      setDestinationAccountInput("");
+    }
+    setTypeInput(nextType);
+  };
+
   const validateForm = () => {
+    const isTransfer = typeInput === TransactionType.TRANSFER;
+
     if (
       !descriptionInput ||
       !sourceAccountInput ||
       !createdAtInput ||
-      amountInput === 0
+      amountInput === 0 ||
+      (isTransfer && !destinationAccountInput)
     ) {
       throw new Error(t("requiredFieldsMissing"));
     }
@@ -98,6 +102,7 @@ export const UpdateTransactionModalForm: React.FC<
       const payload: UpdateTransactionInput = {
         ...item!,
         description: descriptionInput,
+        type: typeInput,
         sourceAccount: sourceAccountInput,
         destinationAccount: destinationAccountInput,
         createdAt: createdAtInput!.toISOString(),
@@ -126,75 +131,28 @@ export const UpdateTransactionModalForm: React.FC<
         isDismissable={false}
       >
         <ModalContainer>
-          <Modal.Dialog>
-            <Modal.Header className="mb-4">
-              <Modal.Heading className="flex flex-col gap-1">
-                {t("updateTransaction")}
-              </Modal.Heading>
-            </Modal.Header>
+          <Modal.Dialog aria-label={t("updateTransaction")}>
             <Modal.Body className="flex flex-col gap-4">
-              <TextField
-                autoFocus
-                isRequired
+              <InlineEditableTitle
                 value={descriptionInput}
                 onChange={setDescriptionInput}
-              >
-                <Label>{t("description")}</Label>
-                <Input variant="secondary" />
-                <FieldError />
-              </TextField>
-              <div className="flex gap-2">
-                <BankAccounDropdown
-                  label={t("sourceAccount")}
-                  className="w-full"
-                  onChange={(key) => setSourceAccountInput(key ?? "")}
-                  value={sourceAccountInput}
-                  isRequired
-                  showLabel
-                />
-                {item?.type === TransactionType.TRANSFER && (
-                  <BankAccounDropdown
-                    label={t("destinationAccount")}
-                    className="w-full"
-                    onChange={(key) => setDestinationAccountInput(key ?? "")}
-                    value={destinationAccountInput}
-                    isRequired
-                    showLabel
-                  />
-                )}
-              </div>
-              <div className="flex flex-col md:flex-row gap-2">
-                <CategoriesAutocomplete
-                  label={t("category")}
-                  value={transactonCategoryInput}
-                  onChange={setTransactonCategoryInput}
-                />
-
-                <MaskedCurrencyInput
-                  label={t("amount")}
-                  variant="secondary"
-                  type="text"
-                  isRequired
-                  value={amountInput?.toString()}
-                  onValueChange={(v) => setAmountInput(v.floatValue)}
-                />
-              </div>
-              <div className="flex gap-2">
-                <CustomDateField
-                  label={t("transactionDate")}
-                  isRequired
-                  value={createdAtInput ?? new Date()}
-                  onChange={setCreatedAtInput}
-                  className="w-full"
-                />
-                <CustomTimeField
-                  label={t("transactionTime")}
-                  isRequired
-                  value={createdAtInput ?? new Date()}
-                  onChange={setCreatedAtInput}
-                  className="w-full"
-                />
-              </div>
+                placeholder={t("description")}
+                isRequired
+              />
+              <TransactionEditChipsGroup
+                type={typeInput}
+                onTypeChange={onTypeChange}
+                amount={amountInput}
+                onAmountChange={setAmountInput}
+                sourceAccountRef={sourceAccountInput}
+                onSourceAccountChange={setSourceAccountInput}
+                destinationAccountRef={destinationAccountInput}
+                onDestinationAccountChange={setDestinationAccountInput}
+                categoryRef={transactonCategoryInput}
+                onCategoryChange={setTransactonCategoryInput}
+                createdAt={createdAtInput}
+                onCreatedAtChange={setCreatedAtInput}
+              />
               {validationError && (
                 <Chip
                   variant="soft"

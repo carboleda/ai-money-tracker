@@ -10,7 +10,6 @@ import {
 } from "@/app/api/domain/category/model/category.model";
 import { useAccountStore } from "@/stores/useAccountStore";
 import { useCategoryStore } from "@/stores/useCategoryStore";
-import { useTransactionDraftStore } from "@/stores/useTransactionDraftStore";
 import {
   InlineAmountChip,
   InlineSelectChip,
@@ -19,33 +18,41 @@ import {
   InlineAccountChip,
   InlineDateTimeChip,
 } from "@/components/shared/InlineChips";
-import { getAmountColorClass, getAmountSign } from "./transactionChipColors";
 
-export interface DraftChipsGroupProps {
-  onInteraction: () => void;
+export interface TransactionEditChipsGroupProps {
+  type: TransactionType;
+  onTypeChange: (type: TransactionType) => void;
+  amount?: number;
+  onAmountChange: (amount: number) => void;
+  sourceAccountRef: string;
+  onSourceAccountChange: (accountRef: string) => void;
+  destinationAccountRef: string;
+  onDestinationAccountChange: (accountRef: string) => void;
+  categoryRef?: string;
+  onCategoryChange: (categoryRef: string) => void;
+  createdAt?: Date;
+  onCreatedAtChange: (date: Date) => void;
 }
 
-/**
- * Renders the row of interactive badged chips for the AI draft, adapting
- * the layout to the active TransactionType (Category hidden for Transfer,
- * Destination Account shown only for Transfer).
- * See sdd/ai-draft-transaction-pipeline.md §2.4 / §4.1 (<DraftChipsGroup>).
- */
-export const DraftChipsGroup: React.FC<DraftChipsGroupProps> = ({
-  onInteraction,
+export const TransactionEditChipsGroup: React.FC<
+  TransactionEditChipsGroupProps
+> = ({
+  type,
+  onTypeChange,
+  amount,
+  onAmountChange,
+  sourceAccountRef,
+  onSourceAccountChange,
+  destinationAccountRef,
+  onDestinationAccountChange,
+  categoryRef,
+  onCategoryChange,
+  createdAt,
+  onCreatedAtChange,
 }) => {
   const { t } = useTranslation(LocaleNamespace.Transactions);
   const { accounts } = useAccountStore();
   const { categories } = useCategoryStore();
-  const {
-    amount,
-    type,
-    categoryRef,
-    sourceAccountRef,
-    destinationAccountRef,
-    createdAt,
-    updateDraftField,
-  } = useTransactionDraftStore();
 
   const isTransfer = type === TransactionType.TRANSFER;
 
@@ -55,11 +62,7 @@ export const DraftChipsGroup: React.FC<DraftChipsGroupProps> = ({
       label: t("aiDraft.type.expense"),
       icon: "🏷️",
     },
-    {
-      id: TransactionType.INCOME,
-      label: t("aiDraft.type.income"),
-      icon: "🏷️",
-    },
+    { id: TransactionType.INCOME, label: t("aiDraft.type.income"), icon: "🏷️" },
     {
       id: TransactionType.TRANSFER,
       label: t("aiDraft.type.transfer"),
@@ -81,32 +84,17 @@ export const DraftChipsGroup: React.FC<DraftChipsGroupProps> = ({
 
   return (
     <div className="flex flex-wrap gap-2">
-      <InlineAmountChip
-        amount={amount}
-        colorClassName={getAmountColorClass(type)}
-        sign={getAmountSign(type)}
-        onAmountChange={(value) => updateDraftField("amount", value)}
-        onInteraction={onInteraction}
-      />
       <InlineSelectChip
         value={type}
         options={typeOptions}
-        onChange={(value) => updateDraftField("type", value)}
+        onChange={onTypeChange}
         ariaLabel={t("aiDraft.type.label")}
-        onInteraction={onInteraction}
       />
-      {!isTransfer && (
-        <InlineCategoryChip
-          categoryRef={categoryRef}
-          categories={categories}
-          filterFn={categoryFilterFn}
-          placeholder={`🛒 ${t("aiDraft.category.select")}`}
-          searchPlaceholder={t("aiDraft.category.search")}
-          ariaLabel={t("aiDraft.category.label")}
-          onCategoryChange={(value) => updateDraftField("categoryRef", value)}
-          onInteraction={onInteraction}
-        />
-      )}
+      <InlineAmountChip
+        amount={amount}
+        isRequired
+        onAmountChange={onAmountChange}
+      />
       <InlineAccountChip
         accountRef={sourceAccountRef}
         accounts={accounts}
@@ -115,32 +103,41 @@ export const DraftChipsGroup: React.FC<DraftChipsGroupProps> = ({
         labelPrefix={isTransfer ? `${t("aiDraft.account.from")}: ` : ""}
         placeholder={t("aiDraft.account.select")}
         ariaLabel={t("sourceAccount")}
-        onAccountChange={(value) => updateDraftField("sourceAccountRef", value)}
-        onInteraction={onInteraction}
+        isRequired
+        onAccountChange={onSourceAccountChange}
       />
       {isTransfer && (
         <InlineAccountChip
-          accountRef={destinationAccountRef ?? ""}
+          accountRef={destinationAccountRef}
           accounts={accounts}
           filterFn={destinationFilterFn}
           icon="📥"
           labelPrefix={`${t("aiDraft.account.to")}: `}
           placeholder={t("aiDraft.account.select")}
           ariaLabel={t("destinationAccount")}
-          onAccountChange={(value) =>
-            updateDraftField("destinationAccountRef", value)
-          }
-          onInteraction={onInteraction}
+          isRequired
+          onAccountChange={onDestinationAccountChange}
+        />
+      )}
+      {!isTransfer && (
+        <InlineCategoryChip
+          categoryRef={categoryRef}
+          categories={categories}
+          filterFn={categoryFilterFn}
+          placeholder={`🛒 ${t("aiDraft.category.select")}`}
+          searchPlaceholder={t("aiDraft.category.search")}
+          ariaLabel={t("aiDraft.category.label")}
+          onCategoryChange={onCategoryChange}
         />
       )}
       <InlineDateTimeChip
-        date={createdAt}
-        onDateChange={(value) => updateDraftField("createdAt", value)}
+        date={createdAt ?? new Date()}
+        onDateChange={onCreatedAtChange}
+        isRequired
         todayLabel={t("aiDraft.dateTime.today")}
         yesterdayLabel={t("aiDraft.dateTime.yesterday")}
         customDateLabel={t("aiDraft.dateTime.customDate")}
         customTimeLabel={t("aiDraft.dateTime.time")}
-        onInteraction={onInteraction}
       />
     </div>
   );

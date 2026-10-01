@@ -32,9 +32,11 @@ const columnsMobile: TableColumn[] = [
   },
   {
     key: "empty1",
+    hidden: true,
   },
   {
     key: "empty2",
+    hidden: true,
   },
 ];
 
@@ -76,7 +78,7 @@ const renderCellDesktop = ({
         </Table.Cell>
       );
     default:
-      return <></>;
+      return <Table.Cell />;
   }
 };
 
@@ -95,12 +97,9 @@ const renderSeparator = (
 };
 
 const renderCellMobile = ({
-  key,
   item,
   isChecked,
 }: RenderCellProps<RecurringExpenseOutput>): JSX.Element => {
-  if (key !== "expense") return <></>;
-
   return (
     <Table.Cell colSpan={3}>
       <div className="flex flex-col gap-1.5 py-1.5 w-full">
