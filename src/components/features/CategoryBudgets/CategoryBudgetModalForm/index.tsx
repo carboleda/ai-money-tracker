@@ -11,7 +11,7 @@ import { ModalContainer } from "@/components/shared/ModalContainer";
 import { LoadingButton } from "@/components/shared/LoadingButton";
 import {
   InlineAmountChip,
-  InlineSelectChip,
+  InlineComboBoxChip,
   InlineSelectOption,
 } from "@/components/shared/InlineChips";
 import type { CategoryWithBudgetStatusOutput } from "@/app/api/domain/category/ports/outbound/get-categories.port";
@@ -132,11 +132,12 @@ export const CategoryBudgetModalForm: React.FC<
                   isRequired
                   onAmountChange={setLimitInput}
                 />
-                <InlineSelectChip
+                <InlineComboBoxChip
                   value={alertThresholdInput}
                   options={alertThresholdOptions}
                   onChange={setAlertThresholdInput}
                   ariaLabel={t("alertThreshold")}
+                  formatCustomValue={(v) => `${v}%`}
                 />
               </div>
               {!!category?.committedFromRecurring && (

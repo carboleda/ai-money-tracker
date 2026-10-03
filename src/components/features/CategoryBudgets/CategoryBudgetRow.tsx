@@ -85,7 +85,7 @@ export const CategoryBudgetRow: React.FC<CategoryBudgetRowProps> = ({
               </Chip>
             )}
           </div>
-          {budget && budget.spent > 0 ? (
+          {budget ? (
             <button
               type="button"
               onClick={() => {
@@ -103,7 +103,7 @@ export const CategoryBudgetRow: React.FC<CategoryBudgetRowProps> = ({
                   budget?.isAlerted || isOverCommitted ? "danger" : "accent"
                 }
               >
-                <ProgressBar.Track>
+                <ProgressBar.Track className="bg-muted/30 dark:bg-zinc-700/80">
                   <ProgressBar.Fill />
                 </ProgressBar.Track>
               </ProgressBar>
