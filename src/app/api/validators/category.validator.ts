@@ -34,6 +34,14 @@ export const UpdateCategorySchema = CreateCategorySchema.omit({
     id: z.string().min(1, "ID is required"),
   });
 
+export const CustomizeCategorySchema = CreateCategorySchema.omit({
+  restrictedTypes: true,
+})
+  .partial()
+  .extend({
+    ref: z.string().min(1, "ref is required"),
+  });
+
 export const DeleteCategorySchema = z.object({
   id: z.string().min(1, "ID is required"),
 });

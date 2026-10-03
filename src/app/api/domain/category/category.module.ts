@@ -1,6 +1,7 @@
 import { container } from "tsyringe";
 import { GetAllCategoriesService } from "./service/get-all-categories.service";
 import { CreateCategoryService } from "./service/create-category.service";
+import { CustomizeCategoryService } from "./service/customize-category.service";
 import { UpdateCategoryService } from "./service/update-category.service";
 import { DeleteCategoryService } from "./service/delete-category.service";
 import { ValidateCategoryService } from "./service/validate-category.service";
@@ -20,6 +21,10 @@ export class CategoryModule {
 
     container.register(UpdateCategoryService, {
       useClass: UpdateCategoryService,
+    });
+
+    container.register(CustomizeCategoryService, {
+      useClass: CustomizeCategoryService,
     });
 
     container.register(DeleteCategoryService, {
