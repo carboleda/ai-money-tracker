@@ -6,7 +6,10 @@ import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
 import { useAppStore } from "@/stores/useAppStore";
 import { fetchJson } from "@/config/request";
-import { ZolventFilter } from "@/components/shared/ZolventFilter/ZolventFilter";
+import {
+  ZolventFilter,
+  useZolventFilterContext,
+} from "@/components/shared/ZolventFilter/ZolventFilter";
 import { TableSkeleton } from "@/components/shared/Table/TableSkeleton";
 import { CategoryType, categoryAppliesToType } from "@/app/api/domain/category/model/category.model";
 import type { CategoryWithBudgetStatusOutput } from "@/app/api/domain/category/ports/outbound/get-categories.port";
@@ -18,6 +21,54 @@ const RECURRING_KEY = "/api/recurring-expenses";
 
 interface GetCategoriesWithBudgetStatusOutput {
   categories: CategoryWithBudgetStatusOutput[];
+}
+
+interface CategoryBudgetListProps {
+  isLoading: boolean;
+  categories: CategoryWithBudgetStatusOutput[];
+  recurringExpensesByCategoryRef: Map<string, RecurringExpenseOutput[]>;
+}
+
+function CategoryBudgetList({
+  isLoading,
+  categories,
+  recurringExpensesByCategoryRef,
+}: Readonly<CategoryBudgetListProps>) {
+  const { appliedFilters } = useZolventFilterContext();
+  const filterValue = appliedFilters.freeText ?? "";
+
+  const filteredCategories = useMemo(() => {
+    if (!filterValue) return categories;
+
+    return categories.filter((category) =>
+      category.name.toLowerCase().includes(filterValue.toLowerCase()),
+    );
+  }, [categories, filterValue]);
+
+  return (
+    <>
+      <ZolventFilter.FreeTextFilter
+        className="top-freetext-filter"
+        inputGroupClassName="rounded-2xl"
+        applyOnChange
+      />
+      {isLoading ? (
+        <TableSkeleton />
+      ) : (
+        <div className="flex flex-col w-full gap-2">
+          {filteredCategories.map((category) => (
+            <CategoryBudgetRow
+              key={category.ref}
+              category={category}
+              recurringExpenses={
+                recurringExpensesByCategoryRef.get(category.ref) ?? []
+              }
+            />
+          ))}
+        </div>
+      )}
+    </>
+  );
 }
 
 function PageContent() {
@@ -67,21 +118,11 @@ function PageContent() {
       onFilter={() => {}}
     >
       <section className="flex flex-col w-full items-center justify-center gap-2">
-        {isLoading ? (
-          <TableSkeleton />
-        ) : (
-          <div className="flex flex-col w-full gap-2">
-            {categories.map((category) => (
-              <CategoryBudgetRow
-                key={category.ref}
-                category={category}
-                recurringExpenses={
-                  recurringExpensesByCategoryRef.get(category.ref) ?? []
-                }
-              />
-            ))}
-          </div>
-        )}
+        <CategoryBudgetList
+          isLoading={isLoading}
+          categories={categories}
+          recurringExpensesByCategoryRef={recurringExpensesByCategoryRef}
+        />
       </section>
     </ZolventFilter>
   );

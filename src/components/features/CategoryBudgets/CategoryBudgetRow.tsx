@@ -58,7 +58,7 @@ export const CategoryBudgetRow: React.FC<CategoryBudgetRowProps> = ({
   };
 
   return (
-    <div className="flex flex-col w-full rounded-lg bg-slate-100 dark:bg-zinc-900 p-3 gap-2">
+    <div className="flex flex-col w-full rounded-lg bg-muted/10 dark:bg-zinc-900 p-3 gap-2">
       <div className="flex items-center gap-3">
         <button
           type="button"
@@ -68,16 +68,18 @@ export const CategoryBudgetRow: React.FC<CategoryBudgetRowProps> = ({
         >
           <IconChevronDown
             size={18}
-            className={clsx(
-              "transition-transform",
-              isExpanded && "rotate-180"
-            )}
+            className={clsx("transition-transform", isExpanded && "rotate-180")}
           />
         </button>
         <CustomIcon icon={category.icon} />
         <div className="flex flex-col flex-1 min-w-0 gap-1">
           <div className="flex items-center gap-2">
-            <span className="font-semibold truncate">{category.name}</span>
+            <span className="font-semibold truncate">
+              {category.name}{" "}
+              <Chip>
+                {t("recurringCount", { count: recurringExpenses.length })}
+              </Chip>
+            </span>
             {isOverCommitted && (
               <Chip
                 size="sm"
@@ -143,7 +145,7 @@ export const CategoryBudgetRow: React.FC<CategoryBudgetRowProps> = ({
                 <span
                   className={clsx(
                     "text-sm truncate",
-                    expense.disabled && "opacity-50"
+                    expense.disabled && "opacity-50",
                   )}
                 >
                   {expense.description}
@@ -154,10 +156,7 @@ export const CategoryBudgetRow: React.FC<CategoryBudgetRowProps> = ({
               </div>
               <div className="flex items-center gap-2 shrink-0">
                 <span
-                  className={clsx(
-                    "text-sm",
-                    expense.disabled && "opacity-50"
-                  )}
+                  className={clsx("text-sm", expense.disabled && "opacity-50")}
                 >
                   {formatCurrency(expense.amount)}
                 </span>

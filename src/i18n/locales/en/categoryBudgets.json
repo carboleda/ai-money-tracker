@@ -13,5 +13,7 @@
   "spentOfLimit": "{{spent}} of {{limit}}",
   "expand": "Expand",
   "collapse": "Collapse",
-  "addRecurring": "Add recurring"
+  "addRecurring": "Add recurring",
+  "recurringCount_one": "{{count}} recurring",
+  "recurringCount_other": "{{count}} recurring"
 }

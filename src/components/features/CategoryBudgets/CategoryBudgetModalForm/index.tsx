@@ -43,7 +43,7 @@ export const CategoryBudgetModalForm: React.FC<
     { id: "100", label: "100%" },
   ];
 
-  const areButtonsDisabled = isMutating || validationError !== "";
+  const areButtonsDisabled = isMutating;
 
   useEffect(() => {
     if (isOpen && category) {

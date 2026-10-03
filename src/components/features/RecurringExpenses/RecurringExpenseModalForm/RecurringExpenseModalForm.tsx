@@ -51,7 +51,7 @@ export const RecurringExpenseModalForm: React.FC<
   const [dueDateInput, setDueDateInput] = useState<Date>();
   const [disabledInput, setDisabledInput] = useState<boolean>(false);
 
-  const areButtonsDisabled = isMutating || validationError !== "";
+  const areButtonsDisabled = isMutating;
 
   const { data: categoriesWithBudgetResponse } =
     useQuery<GetCategoriesWithBudgetStatusOutput>({
