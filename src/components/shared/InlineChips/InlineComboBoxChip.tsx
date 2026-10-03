@@ -15,6 +15,8 @@ export interface InlineComboBoxChipProps<T extends string> {
   onInteraction?: () => void;
   /** Formats a custom (non-preset) value for display, e.g. `(v) => `${v}%``. Defaults to the raw value. */
   formatCustomValue?: (value: T) => string;
+  /** Rejects keystrokes that would make the typed custom value invalid, e.g. `(text) => /^\d*$/.test(text)`. Defaults to allowing anything. */
+  isValidCustomInput?: (text: string) => boolean;
 }
 
 function findOption<T extends string>(
@@ -35,6 +37,7 @@ export function InlineComboBoxChip<T extends string>({
   isRequired = false,
   onInteraction = () => {},
   formatCustomValue = (v) => v,
+  isValidCustomInput = () => true,
 }: Readonly<InlineComboBoxChipProps<T>>) {
   const labelFor = useCallback(
     (v: T) => findOption(options, v)?.label ?? formatCustomValue(v),
@@ -66,12 +69,13 @@ export function InlineComboBoxChip<T extends string>({
   // stale selectedKey must be cleared or commitCustomValue would mistake the
   // typed text for an unchanged selection and revert it instead of committing.
   const handleInputChange = (text: string) => {
+    const previousLabel = selectedKey
+      ? findOption(options, selectedKey)?.label
+      : undefined;
+    const staysSelected = selectedKey !== null && text === previousLabel;
+    if (!staysSelected && !isValidCustomInput(text)) return;
     setInputValue(text);
-    setSelectedKey((previousKey) => {
-      if (previousKey === null) return null;
-      const previousLabel = findOption(options, previousKey)?.label;
-      return text === previousLabel ? previousKey : null;
-    });
+    setSelectedKey(staysSelected ? selectedKey : null);
   };
 
   // While editing, show the raw value instead of its formatted label so

@@ -138,6 +138,9 @@ export const CategoryBudgetModalForm: React.FC<
                   onChange={setAlertThresholdInput}
                   ariaLabel={t("alertThreshold")}
                   formatCustomValue={(v) => `${v}%`}
+                  isValidCustomInput={(text) =>
+                    /^\d*$/.test(text) && Number(text) <= 100
+                  }
                 />
               </div>
               {!!category?.committedFromRecurring && (
