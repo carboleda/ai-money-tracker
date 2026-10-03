@@ -1,6 +1,7 @@
 import { IconType } from "react-icons";
 import { HiCollection } from "react-icons/hi";
 import { HiMiniArrowPathRoundedSquare, HiChartPie } from "react-icons/hi2";
+import { BiSolidCategoryAlt } from "react-icons/bi";
 import { MdPending, MdAccountBalance } from "react-icons/md";
 
 export type SiteConfig = typeof siteConfig;
@@ -39,6 +40,12 @@ export const pages: (Page | PageGroup)[] = [
   {
     groupLabel: "settings",
     pages: [
+      {
+        label: "categoryBudgets",
+        href: "/private/category-budgets",
+        icon: BiSolidCategoryAlt,
+        className: "bg-success/10 text-emerald-600",
+      },
       {
         label: "recurring",
         href: "/private/recurring-expenses",

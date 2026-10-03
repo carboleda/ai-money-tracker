@@ -21,5 +21,6 @@
   "completeTransationButton": "Pagado",
   "transactionCompleted": "¡Transacción completada correctamente!",
   "recurringExpenseCreated": "¡Gasto recurrente creado!",
-  "recurringExpenseUpdated": "¡Gasto recurrente actualizado!"
+  "recurringExpenseUpdated": "¡Gasto recurrente actualizado!",
+  "overBudgetWarning": "Esto comprometería {{projected}}/mes en esta categoría, superando su presupuesto de {{limit}}/mes."
 }

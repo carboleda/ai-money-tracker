@@ -1,27 +1,38 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Button, Chip, Modal, Switch } from "@heroui/react";
+import { useQuery } from "@tanstack/react-query";
 import { Frequency } from "@/app/api/domain/recurring-expense/model/recurring-expense.model";
 import type { RecurringExpenseOutput } from "@/app/api/domain/recurring-expense/ports/outbound/get-recurring-expenses.port";
 import type { CreateRecurringExpenseInput } from "@/app/api/domain/recurring-expense/ports/inbound/create-recurring-expense.port";
+import type { CategoryWithBudgetStatusOutput } from "@/app/api/domain/category/ports/outbound/get-categories.port";
 import { useMutateRecurringExpenses } from "@/hooks/useMutateRecurringExpense";
 import { CategoryModel } from "@/app/api/domain/category/model/category.model";
 import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
 import { useToast } from "@/hooks/useToast";
+import { fetchJson } from "@/config/request";
+import { formatCurrency, getMonthlyEquivalentAmount } from "@/config/utils";
 import { ModalContainer } from "@/components/shared/ModalContainer";
 import { LoadingButton } from "@/components/shared/LoadingButton";
 import { InlineEditableTitle } from "@/components/shared/InlineChips";
 import { RecurringExpenseChipsGroup } from "./RecurringExpenseChipsGroup";
 
+const CATEGORY_WITH_BUDGET_KEY = "/api/category/with-budget";
+
+interface GetCategoriesWithBudgetStatusOutput {
+  categories: CategoryWithBudgetStatusOutput[];
+}
+
 interface RecurringExpenseModalFormProps {
   item?: RecurringExpenseOutput;
+  defaultCategoryRef?: CategoryModel["ref"];
   isOpen: boolean;
   onDismiss: () => void;
 }
 
 export const RecurringExpenseModalForm: React.FC<
   RecurringExpenseModalFormProps
-> = ({ item, onDismiss, isOpen }) => {
+> = ({ item, defaultCategoryRef, onDismiss, isOpen }) => {
   const { t } = useTranslation(LocaleNamespace.RecurringExpenses);
   const { showSuccessToast } = useToast();
   const { isMutating, createConfig, updateConfig } =
@@ -42,6 +53,57 @@ export const RecurringExpenseModalForm: React.FC<
 
   const areButtonsDisabled = isMutating || validationError !== "";
 
+  const { data: categoriesWithBudgetResponse } =
+    useQuery<GetCategoriesWithBudgetStatusOutput>({
+      queryKey: [CATEGORY_WITH_BUDGET_KEY],
+      queryFn: () =>
+        fetchJson<GetCategoriesWithBudgetStatusOutput>(
+          CATEGORY_WITH_BUDGET_KEY,
+        ),
+      enabled: isOpen,
+    });
+
+  const overBudgetWarning = useMemo(() => {
+    const selectedCategory = categoriesWithBudgetResponse?.categories.find(
+      (category) => category.ref === transactonCategoryInput,
+    );
+    const budgetLimit = selectedCategory?.budget?.limit;
+
+    if (!budgetLimit) {
+      return undefined;
+    }
+
+    const previousContribution =
+      item && item.category.ref === transactonCategoryInput && !item.disabled
+        ? getMonthlyEquivalentAmount(item.amount, item.frequency)
+        : 0;
+    const projectedContribution =
+      disabledInput || !amountInput
+        ? 0
+        : getMonthlyEquivalentAmount(amountInput, frequencyInput);
+    const projected =
+      (selectedCategory?.committedFromRecurring ?? 0) -
+      previousContribution +
+      projectedContribution;
+
+    if (projected <= budgetLimit) {
+      return undefined;
+    }
+
+    return t("overBudgetWarning", {
+      projected: formatCurrency(projected),
+      limit: formatCurrency(budgetLimit),
+    });
+  }, [
+    categoriesWithBudgetResponse,
+    transactonCategoryInput,
+    amountInput,
+    frequencyInput,
+    disabledInput,
+    item,
+    t,
+  ]);
+
   useEffect(() => {
     if (item) {
       setDescriptionInput(item.description);
@@ -52,8 +114,10 @@ export const RecurringExpenseModalForm: React.FC<
       setAmountInput(item.amount);
       setPaymentLinkInput(item.paymentLink);
       setNotesInput(item.notes);
+    } else if (defaultCategoryRef) {
+      setTransactonCategoryInput(defaultCategoryRef);
     }
-  }, [item]);
+  }, [item, defaultCategoryRef]);
 
   const onOpenChangeHandler = (_open: boolean) => {
     onDismiss();
@@ -158,6 +222,15 @@ export const RecurringExpenseModalForm: React.FC<
                 notes={notesInput}
                 onNotesChange={setNotesInput}
               />
+              {!validationError && overBudgetWarning && (
+                <Chip
+                  variant="soft"
+                  color="warning"
+                  className="text-wrap max-w-full w-full h-fit p-2 rounded-sm"
+                >
+                  {overBudgetWarning}
+                </Chip>
+              )}
               {validationError && (
                 <Chip
                   variant="soft"

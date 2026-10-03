@@ -77,6 +77,21 @@ export const computeBiannualDates = (date: Date): [Date, Date] => {
   ) as [Date, Date];
 };
 
+export const getMonthlyEquivalentAmount = (
+  amount: number,
+  frequency: Frequency,
+): number => {
+  if (frequency === Frequency.YEARLY) {
+    return amount / 12;
+  }
+
+  if (frequency === Frequency.BIANNUAL) {
+    return amount / 6;
+  }
+
+  return amount;
+};
+
 export const getEnglishOrdinalSuffix = (date: Date) => {
   // Return the day of the month with its ordinal suffix (e.g., 1st, 2nd, 3rd, 4th)
   const day = date.getDate();

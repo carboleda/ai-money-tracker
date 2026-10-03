@@ -72,5 +72,6 @@ export const CategoryWithBudgetStatusOutputSchema = CategoryOutputSchema.extend(
         isAlerted: z.boolean(),
       })
       .optional(),
+    committedFromRecurring: z.number(),
   }
 );

@@ -1,0 +1,17 @@
+{
+  "subtitle": "Track spending against your category budgets",
+  "setBudget": "Set budget",
+  "limitRequired": "Set a limit before saving.",
+  "alertThreshold": "Alert threshold",
+  "noAlert": "No alert",
+  "budgetUpdated": "Budget updated!",
+  "committedFromRecurringHint": "You already have {{amount}}/mo committed from recurring expenses in this category.",
+  "noBudgetSet": "No budget set",
+  "committedNoBudget": "No budget set — {{amount}}/mo committed from recurring",
+  "useAsBudget": "Use {{amount}} as budget",
+  "overCommitted": "Over-committed",
+  "spentOfLimit": "{{spent}} of {{limit}}",
+  "expand": "Expand",
+  "collapse": "Collapse",
+  "addRecurring": "Add recurring"
+}

@@ -7,6 +7,7 @@ import { DeleteCategoryService } from "./service/delete-category.service";
 import { ValidateCategoryService } from "./service/validate-category.service";
 import { ValidateBudgetService } from "./service/validate-budget.service";
 import { GetAllCategoriesWithBudgetStatusService } from "./service/get-all-categories-with-budget-status.service";
+import { GetRecurringCommitmentByCategoryService } from "./service/get-recurring-commitment-by-category.service";
 
 export class CategoryModule {
   static register(): void {
@@ -41,6 +42,10 @@ export class CategoryModule {
 
     container.register(GetAllCategoriesWithBudgetStatusService, {
       useClass: GetAllCategoriesWithBudgetStatusService,
+    });
+
+    container.register(GetRecurringCommitmentByCategoryService, {
+      useClass: GetRecurringCommitmentByCategoryService,
     });
   }
 }
