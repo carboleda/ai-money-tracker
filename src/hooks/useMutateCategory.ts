@@ -36,31 +36,31 @@ export const useMutateCategory = () => {
   const updateConfig = async (config: UpdateCategoryInput) => {
     if (!guardOnline()) throw new Error("Offline");
 
-    return updateMutateAsync({
+    const res = await updateMutateAsync({
       method: "PUT",
       body: JSON.stringify(config),
-    }).then((res) => {
-      if (res.status !== 200) {
-        throw new Error(res.statusText);
-      }
-
-      return res.json();
     });
+
+    if (res.status !== 200) {
+      throw new Error(res.statusText);
+    }
+
+    return res.json();
   };
 
   const customizeConfig = async (config: CustomizeCategoryInput) => {
     if (!guardOnline()) throw new Error("Offline");
 
-    return customizeMutateAsync({
+    const res = await customizeMutateAsync({
       method: "POST",
       body: JSON.stringify(config),
-    }).then((res) => {
-      if (res.status !== 201) {
-        throw new Error(res.statusText);
-      }
-
-      return res.json();
     });
+
+    if (res.status !== 201) {
+      throw new Error(res.statusText);
+    }
+
+    return res.json();
   };
 
   return {
