@@ -71,7 +71,7 @@ export const CategoryBudgetRow: React.FC<CategoryBudgetRowProps> = ({
             className={clsx("transition-transform", isExpanded && "rotate-180")}
           />
         </button>
-        <CustomIcon icon={category.icon} />
+        <CustomIcon icon={category.icon} variant="soft" color="accent" />
         <div className="flex flex-col flex-1 min-w-0 gap-1">
           <div className="flex items-center gap-2">
             <span className="font-semibold truncate">
@@ -86,7 +86,7 @@ export const CategoryBudgetRow: React.FC<CategoryBudgetRowProps> = ({
               </Chip>
             )}
           </div>
-          {budget ? (
+          {budget && budget.spent > 0 ? (
             <button
               type="button"
               onClick={() => setIsBudgetModalOpen(true)}
@@ -116,7 +116,7 @@ export const CategoryBudgetRow: React.FC<CategoryBudgetRowProps> = ({
               </span>
               <Button
                 size="sm"
-                variant="ghost"
+                variant="tertiary"
                 onPress={() => setIsBudgetModalOpen(true)}
               >
                 {category.committedFromRecurring > 0
@@ -134,7 +134,7 @@ export const CategoryBudgetRow: React.FC<CategoryBudgetRowProps> = ({
           {recurringExpenses.map((expense) => (
             <div
               key={expense.id}
-              className="flex items-center justify-between gap-2 rounded-md bg-white dark:bg-zinc-800 py-1 px-2"
+              className="flex items-center justify-between gap-2 rounded-md bg-muted/10 dark:bg-zinc-900/80 p-2"
             >
               <div className="flex flex-col min-w-0">
                 <span
@@ -180,7 +180,7 @@ export const CategoryBudgetRow: React.FC<CategoryBudgetRowProps> = ({
           ))}
           <Button
             size="sm"
-            variant="ghost"
+            variant="tertiary"
             onPress={onAddRecurring}
             className="self-end"
           >
