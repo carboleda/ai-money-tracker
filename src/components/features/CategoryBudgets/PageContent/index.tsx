@@ -99,10 +99,12 @@ function PageContent() {
 
   const categories = useMemo(
     () =>
-      (categoriesResponse?.categories ?? []).filter((category) =>
-        categoryAppliesToType(category.restrictedTypes, CategoryType.EXPENSE)
-      ),
-    [categoriesResponse]
+      (categoriesResponse?.categories ?? [])
+        .filter((category) =>
+          categoryAppliesToType(category.restrictedTypes, CategoryType.EXPENSE),
+        )
+        .toSorted((a, b) => a.name.localeCompare(b.name)),
+    [categoriesResponse],
   );
 
   const recurringExpensesByCategoryRef = useMemo(() => {

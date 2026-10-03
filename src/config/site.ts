@@ -41,16 +41,16 @@ export const pages: (Page | PageGroup)[] = [
     groupLabel: "settings",
     pages: [
       {
-        label: "categoryBudgets",
-        href: "/private/category-budgets",
-        icon: BiCategoryAlt,
-        className: "bg-muted/10 text-fuchsia-400",
-      },
-      {
         label: "recurring",
         href: "/private/recurring-expenses",
         icon: HiMiniArrowPathRoundedSquare,
         className: "bg-accent/10 text-info",
+      },
+      {
+        label: "categoryBudgets",
+        href: "/private/category-budgets",
+        icon: BiCategoryAlt,
+        className: "bg-muted/10 text-fuchsia-400",
       },
       {
         label: "accounts",
