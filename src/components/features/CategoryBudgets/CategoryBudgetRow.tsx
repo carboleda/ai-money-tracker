@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Button, Chip } from "@heroui/react";
+import { Button, Chip, ProgressBar } from "@heroui/react";
 import { HiOutlinePlusCircle } from "react-icons/hi";
 import clsx from "clsx";
 import { useTranslation } from "react-i18next";
@@ -28,6 +28,7 @@ export const CategoryBudgetRow: React.FC<CategoryBudgetRowProps> = ({
   const { t } = useTranslation(LocaleNamespace.CategoryBudgets);
   const [isExpanded, setIsExpanded] = useState(false);
   const [isBudgetModalOpen, setIsBudgetModalOpen] = useState(false);
+  const [useRecurringAsBudget, setUseRecurringAsBudget] = useState(false);
   const [isRecurringModalOpen, setIsRecurringModalOpen] = useState(false);
   const [selectedRecurringItem, setSelectedRecurringItem] =
     useState<RecurringExpenseOutput>();
@@ -39,8 +40,6 @@ export const CategoryBudgetRow: React.FC<CategoryBudgetRowProps> = ({
   const isOverCommitted =
     !!budget && category.committedFromRecurring > budget.limit;
   const percentageUsed = budget ? Math.min(budget.percentageUsed, 100) : 0;
-  const progressColorClass =
-    budget?.isAlerted || isOverCommitted ? "bg-danger" : "bg-accent";
 
   const onAddRecurring = () => {
     setSelectedRecurringItem(undefined);
@@ -58,7 +57,7 @@ export const CategoryBudgetRow: React.FC<CategoryBudgetRowProps> = ({
   };
 
   return (
-    <div className="flex flex-col w-full rounded-lg bg-muted/10 dark:bg-zinc-900 p-3 gap-2">
+    <div className="flex flex-col w-full rounded-xl bg-muted/10 dark:bg-zinc-900 p-2 gap-2">
       <div className="flex items-center gap-3">
         <button
           type="button"
@@ -89,15 +88,25 @@ export const CategoryBudgetRow: React.FC<CategoryBudgetRowProps> = ({
           {budget && budget.spent > 0 ? (
             <button
               type="button"
-              onClick={() => setIsBudgetModalOpen(true)}
+              onClick={() => {
+                setUseRecurringAsBudget(false);
+                setIsBudgetModalOpen(true);
+              }}
               className="flex flex-col gap-1 w-full text-left cursor-pointer"
             >
-              <div className="w-full h-2 rounded-full bg-default overflow-hidden">
-                <div
-                  className={clsx("h-full rounded-full", progressColorClass)}
-                  style={{ width: `${percentageUsed}%` }}
-                />
-              </div>
+              <ProgressBar
+                aria-label="Percentage used"
+                className="w-full"
+                size="sm"
+                value={percentageUsed}
+                color={
+                  budget?.isAlerted || isOverCommitted ? "danger" : "accent"
+                }
+              >
+                <ProgressBar.Track>
+                  <ProgressBar.Fill />
+                </ProgressBar.Track>
+              </ProgressBar>
               <span className="text-xs text-muted">
                 {t("spentOfLimit", {
                   spent: formatCurrency(budget.spent),
@@ -106,26 +115,27 @@ export const CategoryBudgetRow: React.FC<CategoryBudgetRowProps> = ({
               </span>
             </button>
           ) : (
-            <div className="flex items-center gap-2 flex-wrap">
-              <span className="text-xs text-muted">
-                {category.committedFromRecurring > 0
-                  ? t("committedNoBudget", {
-                      amount: formatCurrency(category.committedFromRecurring),
-                    })
-                  : t("noBudgetSet")}
-              </span>
-              <Button
-                size="sm"
-                variant="tertiary"
-                onPress={() => setIsBudgetModalOpen(true)}
+            <p className="text-xs text-muted">
+              {category.committedFromRecurring > 0 && (
+                <>
+                  {t("committedNoBudget", {
+                    amount: formatCurrency(category.committedFromRecurring),
+                  })}{" "}
+                </>
+              )}
+              <button
+                type="button"
+                onClick={() => {
+                  setUseRecurringAsBudget(category.committedFromRecurring > 0);
+                  setIsBudgetModalOpen(true);
+                }}
+                className="text-warning underline font-bold dark:font-normal cursor-pointer"
               >
                 {category.committedFromRecurring > 0
-                  ? t("useAsBudget", {
-                      amount: formatCurrency(category.committedFromRecurring),
-                    })
+                  ? t("useAsBudget")
                   : t("setBudget")}
-              </Button>
-            </div>
+              </button>
+            </p>
           )}
         </div>
       </div>
@@ -134,7 +144,7 @@ export const CategoryBudgetRow: React.FC<CategoryBudgetRowProps> = ({
           {recurringExpenses.map((expense) => (
             <div
               key={expense.id}
-              className="flex items-center justify-between gap-2 rounded-md bg-muted/10 dark:bg-zinc-900/80 p-2"
+              className="flex items-center justify-between gap-2 rounded-xl bg-muted/10 dark:bg-zinc-800/80 p-2"
             >
               <div className="flex flex-col min-w-0">
                 <span
@@ -192,6 +202,7 @@ export const CategoryBudgetRow: React.FC<CategoryBudgetRowProps> = ({
       <CategoryBudgetModalForm
         category={category}
         isOpen={isBudgetModalOpen}
+        useRecurringAsBudget={useRecurringAsBudget}
         onDismiss={() => setIsBudgetModalOpen(false)}
       />
       <RecurringExpenseModalForm

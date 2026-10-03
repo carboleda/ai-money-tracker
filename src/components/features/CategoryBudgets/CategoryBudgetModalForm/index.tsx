@@ -20,13 +20,14 @@ interface CategoryBudgetModalFormProps {
   category?: CategoryWithBudgetStatusOutput;
   isOpen: boolean;
   onDismiss: () => void;
+  useRecurringAsBudget?: boolean;
 }
 
 const NO_THRESHOLD = "none";
 
 export const CategoryBudgetModalForm: React.FC<
   CategoryBudgetModalFormProps
-> = ({ category, onDismiss, isOpen }) => {
+> = ({ category, onDismiss, isOpen, useRecurringAsBudget }) => {
   const { t } = useTranslation(LocaleNamespace.CategoryBudgets);
   const { showSuccessToast } = useToast();
   const { isMutating, updateConfig, customizeConfig } = useMutateCategory();
@@ -45,21 +46,30 @@ export const CategoryBudgetModalForm: React.FC<
 
   const areButtonsDisabled = isMutating;
 
+  const getInitialLimit = (
+    category: CategoryWithBudgetStatusOutput,
+    useRecurringAsBudget?: boolean,
+  ): number | undefined => {
+    if (useRecurringAsBudget) return category.committedFromRecurring;
+    if (category.budget) return category.budget.limit;
+    if (category.committedFromRecurring > 0)
+      return category.committedFromRecurring;
+    return undefined;
+  };
+
+  const getInitialAlertThreshold = (
+    category: CategoryWithBudgetStatusOutput,
+  ): string =>
+    category.budget?.alertThreshold !== undefined
+      ? String(category.budget.alertThreshold)
+      : NO_THRESHOLD;
+
   useEffect(() => {
     if (isOpen && category) {
-      setLimitInput(
-        category.budget?.limit ??
-          (category.committedFromRecurring > 0
-            ? category.committedFromRecurring
-            : undefined)
-      );
-      setAlertThresholdInput(
-        category.budget?.alertThreshold !== undefined
-          ? String(category.budget.alertThreshold)
-          : NO_THRESHOLD
-      );
+      setLimitInput(getInitialLimit(category, useRecurringAsBudget));
+      setAlertThresholdInput(getInitialAlertThreshold(category));
     }
-  }, [category, isOpen]);
+  }, [category, isOpen, useRecurringAsBudget]);
 
   const onOpenChangeHandler = (_open: boolean) => {
     onDismiss();
