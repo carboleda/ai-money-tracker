@@ -65,29 +65,35 @@ function CategoryBudgetList({
         inputGroupClassName="rounded-2xl"
         applyOnChange
       />
-      <TableToolbar isMutating={false} rowCount={filteredCategories.length} t={t}>
-        <TableToolbar.ToggleAction
-          isSelected={hideEmptyCategories}
-          onChange={setHideEmptyCategories}
-          labelKey="hideEmptyCategories"
-          icon={hideEmptyCategories ? <HiEyeSlash /> : <HiEye />}
-        />
-      </TableToolbar>
-      {isLoading ? (
-        <TableSkeleton />
-      ) : (
-        <div className="flex flex-col w-full gap-2">
-          {filteredCategories.map((category) => (
-            <CategoryBudgetRow
-              key={category.ref}
-              category={category}
-              recurringExpenses={
-                recurringExpensesByCategoryRef.get(category.ref) ?? []
-              }
-            />
-          ))}
-        </div>
-      )}
+      <div className="w-full bg-surface-secondary rounded-3xl px-1 pb-1">
+        <TableToolbar
+          isMutating={false}
+          rowCount={filteredCategories.length}
+          t={t}
+        >
+          <TableToolbar.ToggleAction
+            isSelected={hideEmptyCategories}
+            onChange={setHideEmptyCategories}
+            labelKey="hideEmptyCategories"
+            icon={hideEmptyCategories ? <HiEyeSlash /> : <HiEye />}
+          />
+        </TableToolbar>
+        {isLoading ? (
+          <TableSkeleton />
+        ) : (
+          <div className="flex flex-col w-full gap-0.5">
+            {filteredCategories.map((category) => (
+              <CategoryBudgetRow
+                key={category.ref}
+                category={category}
+                recurringExpenses={
+                  recurringExpensesByCategoryRef.get(category.ref) ?? []
+                }
+              />
+            ))}
+          </div>
+        )}
+      </div>
     </>
   );
 }

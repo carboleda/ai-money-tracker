@@ -57,7 +57,7 @@ export const CategoryBudgetRow: React.FC<CategoryBudgetRowProps> = ({
   };
 
   return (
-    <div className="flex flex-col w-full rounded-xl bg-muted/10 dark:bg-zinc-900 p-2 gap-2">
+    <div className="flex flex-col w-full rounded-xl bg-surface p-2 gap-2">
       <div className="flex items-center gap-3">
         <button
           type="button"
@@ -140,11 +140,11 @@ export const CategoryBudgetRow: React.FC<CategoryBudgetRowProps> = ({
         </div>
       </div>
       {isExpanded && (
-        <div className="flex flex-col gap-2 pl-8">
+        <div className="flex flex-col gap-0.5 pl-8">
           {recurringExpenses.map((expense) => (
             <div
               key={expense.id}
-              className="flex items-center justify-between gap-2 rounded-xl bg-muted/10 dark:bg-zinc-800/80 p-2"
+              className="flex items-center justify-between gap-2 rounded-xl bg-muted/5 dark:bg-zinc-800/80 p-2"
             >
               <div className="flex flex-col min-w-0">
                 <span
