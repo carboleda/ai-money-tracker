@@ -15,5 +15,6 @@
   "collapse": "Colapsar",
   "addRecurring": "Agregar recurrente",
   "recurringCount_one": "{{count}} recurrente",
-  "recurringCount_other": "{{count}} recurrentes"
+  "recurringCount_other": "{{count}} recurrentes",
+  "spentBudget": "Has gastado {{spent}} de {{limit}}"
 }

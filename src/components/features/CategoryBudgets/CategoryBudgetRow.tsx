@@ -81,12 +81,7 @@ export const CategoryBudgetRow: React.FC<CategoryBudgetRowProps> = ({
               </Chip>
             </span>
             {isOverCommitted && (
-              <Chip
-                size="sm"
-                color="warning"
-                variant="soft"
-                className="rounded-sm"
-              >
+              <Chip size="sm" color="warning" variant="soft">
                 {t("overCommitted")}
               </Chip>
             )}
@@ -135,11 +130,11 @@ export const CategoryBudgetRow: React.FC<CategoryBudgetRowProps> = ({
         </div>
       </div>
       {isExpanded && (
-        <div className="flex flex-col gap-2 pl-9">
+        <div className="flex flex-col gap-2 pl-8">
           {recurringExpenses.map((expense) => (
             <div
               key={expense.id}
-              className="flex items-center justify-between gap-2 rounded-md bg-white dark:bg-zinc-800 p-2"
+              className="flex items-center justify-between gap-2 rounded-md bg-white dark:bg-zinc-800 py-1 px-2"
             >
               <div className="flex flex-col min-w-0">
                 <span
@@ -154,16 +149,18 @@ export const CategoryBudgetRow: React.FC<CategoryBudgetRowProps> = ({
                   {formatFrequency(expense.frequency, expense.dueDate)}
                 </span>
               </div>
-              <div className="flex items-center gap-2 shrink-0">
-                <span
-                  className={clsx("text-sm", expense.disabled && "opacity-50")}
+              <div className="flex items-center gap-1 shrink-0">
+                <Chip
+                  color={expense.disabled ? "default" : "accent"}
+                  size="sm"
+                  variant="soft"
                 >
                   {formatCurrency(expense.amount)}
-                </span>
+                </Chip>
                 <Button
                   isIconOnly
                   size="sm"
-                  variant="ghost"
+                  variant="tertiary"
                   aria-label={t("edit")}
                   onPress={() => onEditRecurring(expense)}
                 >
@@ -172,7 +169,7 @@ export const CategoryBudgetRow: React.FC<CategoryBudgetRowProps> = ({
                 <Button
                   isIconOnly
                   size="sm"
-                  variant="ghost"
+                  variant="tertiary"
                   aria-label={t("delete")}
                   onPress={() => onDelete(expense.id, expense.description)}
                 >
@@ -185,7 +182,7 @@ export const CategoryBudgetRow: React.FC<CategoryBudgetRowProps> = ({
             size="sm"
             variant="ghost"
             onPress={onAddRecurring}
-            className="self-start"
+            className="self-end"
           >
             <HiOutlinePlusCircle />
             {t("addRecurring")}

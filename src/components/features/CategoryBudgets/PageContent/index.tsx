@@ -3,9 +3,12 @@
 import { useEffect, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
+import { Chip } from "@heroui/react";
+import { HiBanknotes } from "react-icons/hi2";
 import { LocaleNamespace } from "@/i18n/namespace";
 import { useAppStore } from "@/stores/useAppStore";
 import { fetchJson } from "@/config/request";
+import { formatCurrency } from "@/config/utils";
 import {
   ZolventFilter,
   useZolventFilterContext,
@@ -111,6 +114,21 @@ function PageContent() {
     return map;
   }, [recurringResponse]);
 
+  const budgetSummary = useMemo(
+    () =>
+      categories.reduce(
+        (acc, category) => {
+          if (category.budget) {
+            acc.totalSpent += category.budget.spent;
+            acc.totalLimit += category.budget.limit;
+          }
+          return acc;
+        },
+        { totalSpent: 0, totalLimit: 0 },
+      ),
+    [categories],
+  );
+
   return (
     <ZolventFilter
       t={t}
@@ -118,6 +136,23 @@ function PageContent() {
       onFilter={() => {}}
     >
       <section className="flex flex-col w-full items-center justify-center gap-2">
+        <div className="flex flex-col w-full justify-start items-start gap-2 mb-2">
+          <Chip
+            color={
+              budgetSummary.totalSpent > budgetSummary.totalLimit
+                ? "danger"
+                : "accent"
+            }
+            variant="soft"
+            className="rounded-sm"
+          >
+            <HiBanknotes />
+            {t("spentBudget", {
+              spent: formatCurrency(budgetSummary.totalSpent),
+              limit: formatCurrency(budgetSummary.totalLimit),
+            })}
+          </Chip>
+        </div>
         <CategoryBudgetList
           isLoading={isLoading}
           categories={categories}
