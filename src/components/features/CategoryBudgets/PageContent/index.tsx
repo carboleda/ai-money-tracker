@@ -4,9 +4,10 @@ import { useEffect, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { Chip } from "@heroui/react";
-import { HiBanknotes } from "react-icons/hi2";
+import { HiBanknotes, HiEye, HiEyeSlash } from "react-icons/hi2";
 import { LocaleNamespace } from "@/i18n/namespace";
 import { useAppStore } from "@/stores/useAppStore";
+import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { fetchJson } from "@/config/request";
 import { formatCurrency } from "@/config/utils";
 import {
@@ -14,6 +15,7 @@ import {
   useZolventFilterContext,
 } from "@/components/shared/ZolventFilter/ZolventFilter";
 import { TableSkeleton } from "@/components/shared/Table/TableSkeleton";
+import { TableToolbar } from "@/components/shared/Table/TableToolbar";
 import { CategoryType, categoryAppliesToType } from "@/app/api/domain/category/model/category.model";
 import type { CategoryWithBudgetStatusOutput } from "@/app/api/domain/category/ports/outbound/get-categories.port";
 import type { GetRecurringExpensesOutput, RecurringExpenseOutput } from "@/app/api/domain/recurring-expense/ports/outbound/get-recurring-expenses.port";
@@ -30,23 +32,31 @@ interface CategoryBudgetListProps {
   isLoading: boolean;
   categories: CategoryWithBudgetStatusOutput[];
   recurringExpensesByCategoryRef: Map<string, RecurringExpenseOutput[]>;
+  hideEmptyCategories: boolean;
+  setHideEmptyCategories: (hideEmptyCategories: boolean) => void;
 }
 
 function CategoryBudgetList({
   isLoading,
   categories,
   recurringExpensesByCategoryRef,
+  hideEmptyCategories,
+  setHideEmptyCategories,
 }: Readonly<CategoryBudgetListProps>) {
+  const { t } = useTranslation(LocaleNamespace.CategoryBudgets);
   const { appliedFilters } = useZolventFilterContext();
   const filterValue = appliedFilters.freeText ?? "";
 
   const filteredCategories = useMemo(() => {
-    if (!filterValue) return categories;
-
-    return categories.filter((category) =>
-      category.name.toLowerCase().includes(filterValue.toLowerCase()),
-    );
-  }, [categories, filterValue]);
+    return categories.filter((category) => {
+      const matchesText =
+        !filterValue ||
+        category.name.toLowerCase().includes(filterValue.toLowerCase());
+      const hasRecurring =
+        (recurringExpensesByCategoryRef.get(category.ref)?.length ?? 0) > 0;
+      return matchesText && (!hideEmptyCategories || hasRecurring);
+    });
+  }, [categories, filterValue, hideEmptyCategories, recurringExpensesByCategoryRef]);
 
   return (
     <>
@@ -55,6 +65,14 @@ function CategoryBudgetList({
         inputGroupClassName="rounded-2xl"
         applyOnChange
       />
+      <TableToolbar isMutating={false} rowCount={filteredCategories.length} t={t}>
+        <TableToolbar.ToggleAction
+          isSelected={hideEmptyCategories}
+          onChange={setHideEmptyCategories}
+          labelKey="hideEmptyCategories"
+          icon={hideEmptyCategories ? <HiEyeSlash /> : <HiEye />}
+        />
+      </TableToolbar>
       {isLoading ? (
         <TableSkeleton />
       ) : (
@@ -77,6 +95,10 @@ function CategoryBudgetList({
 function PageContent() {
   const { t } = useTranslation(LocaleNamespace.CategoryBudgets);
   const { setPageTitle } = useAppStore();
+  const [hideEmptyCategories, setHideEmptyCategories] = useLocalStorage<boolean>(
+    "category-budgets-hide-empty",
+    true,
+  );
 
   useEffect(() => {
     setPageTitle(t("categoryBudgets"), t("subtitle"));
@@ -159,6 +181,8 @@ function PageContent() {
           isLoading={isLoading}
           categories={categories}
           recurringExpensesByCategoryRef={recurringExpensesByCategoryRef}
+          hideEmptyCategories={hideEmptyCategories}
+          setHideEmptyCategories={setHideEmptyCategories}
         />
       </section>
     </ZolventFilter>

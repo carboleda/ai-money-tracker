@@ -15,5 +15,6 @@
   "addRecurring": "Add recurring",
   "recurringCount_one": "{{count}} recurring",
   "recurringCount_other": "{{count}} recurring",
-  "spentBudget": "Spent {{spent}} of {{limit}}"
+  "spentBudget": "Spent {{spent}} of {{limit}}",
+  "hideEmptyCategories": "Hide empty"
 }
