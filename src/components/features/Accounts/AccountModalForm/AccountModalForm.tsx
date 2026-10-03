@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { Button, Chip, Modal } from "@heroui/react";
+import { Modal } from "@heroui/react";
 import { Account, DEFAULT_ICON } from "@/interfaces/account";
 import { useMutateAccount } from "@/hooks/useMutateAccount";
 import { useTranslation } from "react-i18next";
@@ -7,7 +7,8 @@ import { LocaleNamespace } from "@/i18n/namespace";
 import { useToast } from "@/hooks/useToast";
 import { AccountType } from "@/app/api/domain/account/model/account.model";
 import { ModalContainer } from "@/components/shared/ModalContainer";
-import { LoadingButton } from "@/components/shared/LoadingButton";
+import { ModalFormFooter } from "@/components/shared/ModalFormFooter";
+import { ValidationErrorChip } from "@/components/shared/ValidationErrorChip";
 import { InlineEditableTitle } from "@/components/shared/InlineChips";
 import { AccountChipsGroup } from "./AccountChipsGroup";
 
@@ -128,15 +129,7 @@ export const AccountModalForm: React.FC<AccountModalFormProps> = ({
         <ModalContainer>
           <Modal.Dialog aria-label={t("accounts")}>
             <Modal.Body className="flex flex-col gap-4">
-              {validationError && (
-                <Chip
-                  variant="soft"
-                  color="danger"
-                  className="text-wrap max-w-full w-full h-fit p-2 rounded-sm"
-                >
-                  {validationError}
-                </Chip>
-              )}
+              <ValidationErrorChip message={validationError} />
               <InlineEditableTitle
                 value={nameInput}
                 onChange={createProxiedSetter(setNameInput)}
@@ -159,23 +152,12 @@ export const AccountModalForm: React.FC<AccountModalFormProps> = ({
                 onDescriptionChange={createProxiedSetter(setDescriptionInput)}
               />
             </Modal.Body>
-            <Modal.Footer>
-              <Button
-                variant="danger-soft"
-                isDisabled={areButtonsDisabled}
-                onPress={onOpenChangeHandler}
-              >
-                {t("cancel")}
-              </Button>
-              <LoadingButton
-                variant="primary"
-                isPending={isMutating}
-                isDisabled={areButtonsDisabled}
-                onPress={onSave}
-              >
-                {t("save")}
-              </LoadingButton>
-            </Modal.Footer>
+            <ModalFormFooter
+              isPending={isMutating}
+              isDisabled={areButtonsDisabled}
+              onCancel={onOpenChangeHandler}
+              onSave={onSave}
+            />
           </Modal.Dialog>
         </ModalContainer>
       </Modal.Backdrop>

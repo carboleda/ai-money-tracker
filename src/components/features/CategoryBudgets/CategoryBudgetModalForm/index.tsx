@@ -1,14 +1,15 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Button, Chip, Modal } from "@heroui/react";
+import { Chip, Modal } from "@heroui/react";
 import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
 import { useToast } from "@/hooks/useToast";
 import { useMutateCategory } from "@/hooks/useMutateCategory";
 import { formatCurrency } from "@/config/utils";
 import { ModalContainer } from "@/components/shared/ModalContainer";
-import { LoadingButton } from "@/components/shared/LoadingButton";
+import { ModalFormFooter } from "@/components/shared/ModalFormFooter";
+import { ValidationErrorChip } from "@/components/shared/ValidationErrorChip";
 import {
   InlineAmountChip,
   InlineComboBoxChip,
@@ -154,33 +155,14 @@ export const CategoryBudgetModalForm: React.FC<
                   })}
                 </Chip>
               )}
-              {validationError && (
-                <Chip
-                  variant="soft"
-                  color="danger"
-                  className="text-wrap max-w-full w-full h-fit p-2 rounded-sm"
-                >
-                  {validationError}
-                </Chip>
-              )}
+              <ValidationErrorChip message={validationError} />
             </Modal.Body>
-            <Modal.Footer>
-              <Button
-                variant="danger-soft"
-                isDisabled={areButtonsDisabled}
-                onPress={() => onOpenChangeHandler(false)}
-              >
-                {t("cancel")}
-              </Button>
-              <LoadingButton
-                variant="primary"
-                isPending={isMutating}
-                isDisabled={areButtonsDisabled}
-                onPress={onSave}
-              >
-                {t("save")}
-              </LoadingButton>
-            </Modal.Footer>
+            <ModalFormFooter
+              isPending={isMutating}
+              isDisabled={areButtonsDisabled}
+              onCancel={() => onOpenChangeHandler(false)}
+              onSave={onSave}
+            />
           </Modal.Dialog>
         </ModalContainer>
       </Modal.Backdrop>

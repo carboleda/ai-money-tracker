@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Chip, Modal } from "@heroui/react";
+import { Modal } from "@heroui/react";
 import { useMutateTransaction } from "@/hooks/useMutateTransaction";
 import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
@@ -8,7 +8,8 @@ import { TransactionStatus } from "@/app/api/domain/transaction/model/transactio
 import { TransactionOutput } from "@/app/api/domain/transaction/ports/outbound/filter-transactions.port";
 import { UpdateTransactionInput } from "@/app/api/domain/transaction/ports/inbound/update-transaction.port";
 import { ModalContainer } from "@/components/shared/ModalContainer";
-import { LoadingButton } from "@/components/shared/LoadingButton";
+import { ModalFormFooter } from "@/components/shared/ModalFormFooter";
+import { ValidationErrorChip } from "@/components/shared/ValidationErrorChip";
 import { CompleteTransactionChipsGroup } from "./CompleteTransactionChipsGroup";
 
 interface CompleteTransactionModalFormProps {
@@ -106,33 +107,15 @@ export const CompleteTransactionModalForm: React.FC<
                 createdAt={createdAtInput}
                 onCreatedAtChange={setCreatedAtInput}
               />
-              {validationError && (
-                <Chip
-                  variant="soft"
-                  color="danger"
-                  className="text-wrap max-w-full w-full h-fit p-2 rounded-sm"
-                >
-                  {validationError}
-                </Chip>
-              )}
+              <ValidationErrorChip message={validationError} />
             </Modal.Body>
-            <Modal.Footer>
-              <Button
-                variant="danger-soft"
-                isDisabled={areButtonsDisabled}
-                onPress={onOpenChangeHandler}
-              >
-                {t("cancel")}
-              </Button>
-              <LoadingButton
-                variant="primary"
-                isPending={isMutating}
-                isDisabled={areButtonsDisabled}
-                onPress={onSave}
-              >
-                {t("completeTransationButton")}
-              </LoadingButton>
-            </Modal.Footer>
+            <ModalFormFooter
+              isPending={isMutating}
+              isDisabled={areButtonsDisabled}
+              onCancel={onOpenChangeHandler}
+              onSave={onSave}
+              saveLabel={t("completeTransationButton")}
+            />
           </Modal.Dialog>
         </ModalContainer>
       </Modal.Backdrop>
