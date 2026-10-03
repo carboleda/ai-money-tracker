@@ -11,6 +11,11 @@ export interface CategoryRepository {
 
   create(data: CreateCategoryInput): Promise<string>;
 
+  createCustomFromPredefined(
+    ref: string,
+    data: CreateCategoryInput
+  ): Promise<string>;
+
   update(data: UpdateCategoryInput): Promise<void>;
 
   delete(id: string): Promise<void>;

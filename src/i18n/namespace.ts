@@ -5,4 +5,5 @@ export enum LocaleNamespace {
   Summary = "summary",
   RecurringExpenses = "recurringExpenses",
   Accounts = "accounts",
+  CategoryBudgets = "categoryBudgets",
 }

@@ -68,9 +68,20 @@ export class CategoryFirestoreRepository
   }
 
   async create(data: CreateCategoryInput): Promise<string> {
-    // Generate ref if not provided
-    const ref = nanoid(12);
+    return this.persistCustomCategory(nanoid(12), data);
+  }
 
+  async createCustomFromPredefined(
+    ref: string,
+    data: CreateCategoryInput
+  ): Promise<string> {
+    return this.persistCustomCategory(ref, data);
+  }
+
+  private async persistCustomCategory(
+    ref: string,
+    data: CreateCategoryInput
+  ): Promise<string> {
     // Check if ref already exists for this user (custom categories only)
     const existingCategory = await this.getCategoryByRef(ref);
     if (existingCategory) {

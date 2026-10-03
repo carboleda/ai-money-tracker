@@ -51,7 +51,7 @@ Transactions store categories as strings (refs), supporting both predefined refs
 
 **Key Design Decisions:**
 
-1. `ref` is auto-generated (UUID/nanoid), unique per user, immutable after creation
+1. `ref` is auto-generated (UUID/nanoid) for brand-new custom categories, unique per user, immutable after creation
 2. Predefined categories loaded from JSON file at service layer (not repository)
 3. Custom categories stored in Firestore, accessed via repository
 4. Predefined/custom merging happens at service layer (reusable across storage drivers)
@@ -70,6 +70,17 @@ Transactions store categories as strings (refs), supporting both predefined refs
 17. Budget stored as nested document within category (Firestore field)
 18. No `order` field - categories ordered by type, then by predefined/custom status
 19. Entities use Firestore driver pattern (entity.ts, adapter.ts, repository.ts) not interfaces
+20. `ref` is never client-settable through the generic create/update endpoints — `POST /api/category` always
+    generates a fresh `nanoid(12)` ref, and `PUT /api/category` rejects any category where `isCustom` is
+    `false`. Neither path can ever produce a custom document whose `ref` collides with a predefined `ref`.
+21. "Customizing a predefined category" (overriding it, per decision #6) is therefore a distinct, dedicated
+    operation — `CustomizeCategoryService` behind `POST /api/category/customize` — not a side effect of the
+    generic create or update flows. It is the only place allowed to write a custom category document whose
+    `ref` equals a predefined category's `ref`.
+22. Customizing clones the matched predefined category's `name`/`icon`/`color`/`description`/`restrictedTypes`
+    as defaults, applies any client-supplied overrides on top, and persists it as a new `isCustom: true`
+    document carrying the original predefined `ref`. Attempting to customize a `ref` that's already been
+    customized returns `409` (same conflict semantics as a duplicate ref on create).
 
 ---
 
@@ -224,7 +235,12 @@ Transactions store categories as strings (refs), supporting both predefined refs
 
   - `getAll()` - Returns only custom non-deleted categories from Firestore
   - `getCategoryByRef(ref: string)` - Get single custom category by ref from Firestore
-  - `create(data: CreateCategoryInput)` - Creates category with auto-generated ref, uniqueness check per user
+  - `create(data: CreateCategoryInput)` - Creates category with auto-generated (`nanoid`) ref, uniqueness
+    check per user
+  - `createCustomFromPredefined(ref: string, data: CreateCategoryInput)` - Creates a custom category with
+    the given `ref` instead of generating one, used exclusively by `CustomizeCategoryService`. Shares the
+    same ref-uniqueness check and document shape as `create()` (both delegate to a private
+    `persistCustomCategory(ref, data)` helper in the Firestore implementation)
   - `update(id: string, data: UpdateCategoryInput)` - Updates metadata only
   - `delete(id: string)` - Soft-deletes by setting `isDeleted: true`
 
@@ -280,6 +296,38 @@ Transactions store categories as strings (refs), supporting both predefined refs
   - Throws `DomainError` for validation failures:
     - `404` if category not found
     - `400` if attempting to delete predefined category
+
+- `src/app/api/domain/category/ports/inbound/customize-category.port.ts` - Inbound port:
+
+  ```typescript
+  export interface CustomizeCategoryInput {
+    ref: string; // ref of the predefined category being customized
+    name?: string;
+    icon?: string;
+    description?: string;
+    color?: string;
+    budget?: {
+      limit: number;
+      alertThreshold?: number;
+    };
+  }
+  ```
+
+- `src/app/api/domain/category/service/customize-category.service.ts` - Service for customizing a
+  predefined category (the only path that creates a custom category sharing a predefined `ref`):
+
+  - Looks up the predefined category by `input.ref` from the JSON config (same source `GetAllCategoriesService`
+    uses)
+  - Validates budget constraints via `ValidateBudgetService`, using the predefined category's `restrictedTypes`
+  - Builds a `CreateCategoryInput` by defaulting each field to the predefined category's value, overridden by
+    any value the client supplied
+  - Calls `CategoryRepository.createCustomFromPredefined(ref, data)` — a repository method distinct from
+    `create()` that persists the document with the given `ref` instead of generating a new one
+  - Throws `DomainError`:
+    - `404` if `ref` does not match any predefined category
+    - `400` if budget applied to non-expense category (via `ValidateBudgetService`)
+    - `409` if that predefined category has already been customized (a custom document with that `ref`
+      already exists)
 
 **Files to Create:**
 
@@ -354,6 +402,26 @@ Transactions store categories as strings (refs), supporting both predefined refs
     - Returns 400 if attempting to delete predefined category
     - Returns 200 with deleted category as `CategoryOutput`
 
+- `src/app/api/(routes)/category/customize/route.ts` - REST API endpoint for customizing a predefined
+  category (separate sub-route, same pattern as `category/with-budget/route.ts`):
+
+  - **POST** `/api/category/customize` - Creates a custom category that overrides a predefined one
+
+    - Accepts: `CustomizeCategoryInput` — required `ref` (must match an existing predefined category);
+      optional `name`, `icon`, `color`, `description`, `budget` (each defaults to the predefined category's
+      value when omitted)
+    - `restrictedTypes` is never accepted from the client here — it is always copied from the matched
+      predefined category, since the override is conceptually "the same category, customized," not a new
+      category type
+    - Validates payload via `CustomizeCategorySchema` (Zod), throws `DomainError` on validation failure
+    - Calls `CustomizeCategoryService.execute()`, catches `DomainError`
+    - Returns 404 if `ref` does not match a predefined category (from DomainError.statusCode)
+    - Returns 400 for invalid/missing fields or budget applied to a non-expense category
+    - Returns 409 if that predefined category has already been customized
+    - Returns 201 with the new custom category's id
+    - After this call, `GetAllCategoriesService`'s merge-by-ref logic picks up the new custom document and
+      returns it in place of the predefined entry
+
 **Validation Schema (Zod):**
 
 ```typescript
@@ -377,6 +445,14 @@ CreateCategorySchema = z.object({
 UpdateCategorySchema = CreateCategorySchema.omit({
   type: true,
 }).partial();
+
+CustomizeCategorySchema = CreateCategorySchema.omit({
+  type: true,
+})
+  .partial()
+  .extend({
+    ref: z.string().min(1, "ref is required"), // ref of the predefined category to customize
+  });
 
 CategoryOutputSchema = z.object({
   id: z.string(),
@@ -600,6 +676,68 @@ CategoryWithBudgetStatusOutputSchema = CategoryOutputSchema.extend({
 
 ---
 
+### Step 7: Customize Predefined Category
+
+**Objective:** Give users a way to "edit" a predefined category without ever letting the generic create/update
+endpoints accept a client-supplied `ref` — closing the gap where the merge-by-ref override logic in
+`GetAllCategoriesService` (Step 6) had no implemented path to actually produce an overriding document.
+
+**Files to Create:**
+
+- `src/app/api/domain/category/ports/inbound/customize-category.port.ts` - Inbound port:
+
+  ```typescript
+  export interface CustomizeCategoryInput {
+    ref: string; // ref of the predefined category being customized
+    name?: string;
+    icon?: string;
+    description?: string;
+    color?: string;
+    budget?: {
+      limit: number;
+      alertThreshold?: number;
+    };
+  }
+  ```
+
+- `src/app/api/domain/category/service/customize-category.service.ts` - `CustomizeCategoryService`:
+
+  - Finds the predefined category matching `input.ref` in the JSON config
+  - Validates budget via `ValidateBudgetService`, using the predefined category's `restrictedTypes`
+  - Builds a `CreateCategoryInput` defaulting each field to the predefined category's value, overridden by
+    whatever the client supplied; `restrictedTypes` always comes from the predefined category
+  - Calls `categoryRepository.createCustomFromPredefined(ref, data)`
+  - Throws `DomainError`: `404` (ref not predefined), `400` (invalid budget), `409` (already customized)
+
+- `src/app/api/(routes)/category/customize/route.ts` - **POST** `/api/category/customize`:
+  - Accepts `CustomizeCategoryInput`, validated via `CustomizeCategorySchema` (Zod)
+  - Calls `CustomizeCategoryService.execute()`, catches `DomainError`
+  - Returns 201 with `{ id }` on success
+
+**Files to Modify:**
+
+- `src/app/api/domain/category/repository/category.repository.ts` - Add
+  `createCustomFromPredefined(ref: string, data: CreateCategoryInput): Promise<string>` to the interface
+- `src/app/api/drivers/firestore/category/category-firestore.repository.ts` - Implement
+  `createCustomFromPredefined()`; refactor the shared ref-uniqueness-check + write logic out of `create()`
+  into a private `persistCustomCategory(ref, data)` helper used by both methods
+- `src/app/api/validators/category.validator.ts` - Add `CustomizeCategorySchema` (like
+  `UpdateCategorySchema` but keyed by `ref` instead of `id`, and `ref` is required)
+- `src/app/api/domain/category/category.module.ts` - Register `CustomizeCategoryService` in the IoC
+  container
+
+**Expected Outcomes:**
+
+- Exactly one code path (`CustomizeCategoryService` → `createCustomFromPredefined`) can create a custom
+  category document whose `ref` matches a predefined category's `ref`
+- `ref` remains fully immutable and system-controlled everywhere else: `POST /api/category` keeps
+  auto-generating a fresh `nanoid`, `PUT /api/category` still rejects non-custom categories
+- The merge-by-ref override in `GetAllCategoriesService` (Step 6) is now actually reachable: after a
+  successful customize call, `GET /api/category` returns the custom version in place of the predefined one
+- No compilation errors
+
+---
+
 ## Implementation Sequencing
 
 ### Phase 1: Foundation (Steps 1-2)
@@ -625,6 +763,12 @@ CategoryWithBudgetStatusOutputSchema = CategoryOutputSchema.extend({
 - Implement budget validation
 - Add two category endpoints (with/without budget status)
 - Enables financial planning and monitoring features
+
+### Phase 5: Customize Predefined Category (Step 7)
+
+- Add dedicated customize port, service, repository method, and endpoint
+- Makes the Step 6 merge-by-ref override logic actually reachable
+- Keeps `ref` immutable/system-controlled on the generic create/update paths
 
 ---
 
@@ -691,6 +835,18 @@ CategoryWithBudgetStatusOutputSchema = CategoryOutputSchema.extend({
 - [ ] icon field validates emoji characters
 - [ ] color field validates hex color format
 - [ ] Error responses include descriptive messages
+- [ ] `POST /api/category` never accepts a client-supplied `ref` (always auto-generated server-side)
+- [ ] `PUT /api/category` never accepts a client-supplied `ref` and rejects non-custom categories
+- [ ] `POST /api/category/customize` accepts required `ref` (must match a predefined category)
+- [ ] `POST /api/category/customize` accepts optional name, icon, color, description, budget overrides
+- [ ] `POST /api/category/customize` ignores/rejects client-supplied `restrictedTypes` (copied from predefined)
+- [ ] `POST /api/category/customize` returns 404 if `ref` doesn't match a predefined category
+- [ ] `POST /api/category/customize` returns 400 if budget applied to a non-expense category
+- [ ] `POST /api/category/customize` returns 409 if that predefined category was already customized
+- [ ] `POST /api/category/customize` returns 201 with the new custom category's id
+- [ ] `CategoryRepository.createCustomFromPredefined()` persists the given `ref` instead of generating one
+- [ ] `CustomizeCategoryService` is the only code path that can create a custom document whose `ref` matches
+      a predefined `ref`
 
 ### Step 4: Transaction Enrichment
 
@@ -760,6 +916,22 @@ CategoryWithBudgetStatusOutputSchema = CategoryOutputSchema.extend({
 - [ ] Predefined/custom merging logic reusable across storage drivers
 - [ ] No merge logic duplication between GetAllCategoriesService and GetAllCategoriesWithBudgetStatusService
 
+### Step 7: Customize Predefined Category
+
+- [x] `CustomizeCategoryInput` port created with required `ref` and optional overrides
+- [x] `CustomizeCategoryService` looks up the predefined category by `ref` from JSON config
+- [x] `CustomizeCategoryService` throws 404 when `ref` doesn't match any predefined category
+- [x] `CustomizeCategoryService` validates budget via `ValidateBudgetService` using predefined `restrictedTypes`
+- [x] `CustomizeCategoryService` throws 409 when the predefined category was already customized
+- [x] Defaults each field to the predefined category's value, overridden by client-supplied values
+- [x] `restrictedTypes` always copied from predefined category, never accepted from the client
+- [x] `CategoryRepository.createCustomFromPredefined(ref, data)` added to repository interface
+- [x] Firestore implementation shares ref-check + write logic with `create()` via private helper
+- [x] `POST /api/category/customize` endpoint created, validated via `CustomizeCategorySchema`
+- [x] `CustomizeCategoryService` registered in `category.module.ts` IoC container
+- [x] This is the only code path that can create a custom category sharing a predefined `ref`
+- [x] `POST /api/category` and `PUT /api/category` remain unable to set/override `ref`
+
 ### Database
 
 - [ ] Firestore collection structure: `users/{userId}/categories`
@@ -775,7 +947,8 @@ CategoryWithBudgetStatusOutputSchema = CategoryOutputSchema.extend({
 
 - [ ] Custom categories accessible via category management interface
 - [ ] Predefined categories available as fallback/default
-- [ ] Users can customize predefined categories and customization overrides predefined ones
+- [ ] Users can customize predefined categories via `POST /api/category/customize`; the resulting custom
+      category (same `ref`) overrides the predefined one in `GET /api/category` results
 - [ ] Users cannot permanently delete categories (only soft-delete)
 - [ ] Soft-deleted categories not visible in dropdown selections
 - [ ] Category assignment prevents type mismatches
@@ -800,9 +973,10 @@ CategoryWithBudgetStatusOutputSchema = CategoryOutputSchema.extend({
 | 4    | Transaction Enrichment        | 0             | 3                   | ⏳ Planned |
 | 5    | Category Validation           | 1             | 3 + Category Module | ⏳ Planned |
 | 6    | Budget Tracking               | 3             | 1                   | ⏳ Planned |
+| 7    | Customize Predefined Category | 3             | 3                   | ✅ Done    |
 
-**Total New Files:** 14
-**Total Modified Files:** 9
+**Total New Files:** 17
+**Total Modified Files:** 12
 
 ---
 

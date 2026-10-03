@@ -21,5 +21,6 @@
   "completeTransationButton": "Paid",
   "transactionCompleted": "Transaction completed successfully!",
   "recurringExpenseCreated": "Recurring expense created!",
-  "recurringExpenseUpdated": "Recurring expense updated!"
+  "recurringExpenseUpdated": "Recurring expense updated!",
+  "overBudgetWarning": "This would commit {{projected}}/mo to this category, over its {{limit}}/mo budget."
 }

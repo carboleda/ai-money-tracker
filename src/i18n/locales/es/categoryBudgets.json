@@ -1,0 +1,20 @@
+{
+  "subtitle": "Controla tus gastos frente al presupuesto de cada categoría",
+  "setBudget": "Definir presupuesto",
+  "limitRequired": "Define un límite antes de guardar.",
+  "alertThreshold": "Umbral de alerta",
+  "noAlert": "Sin alerta",
+  "budgetUpdated": "¡Presupuesto actualizado!",
+  "committedFromRecurringHint": "Ya tienes {{amount}}/mes comprometidos en gastos recurrentes de esta categoría.",
+  "committedNoBudget": "{{amount}}/mes comprometidos en recurrentes.",
+  "useAsBudget": "Usar como presupuesto",
+  "overCommitted": "Sobre comprometido",
+  "spentOfLimit": "{{spent}} de {{limit}}",
+  "expand": "Expandir",
+  "collapse": "Colapsar",
+  "addRecurring": "Agregar recurrente",
+  "recurringCount_one": "{{count}} recurrente",
+  "recurringCount_other": "{{count}} recurrentes",
+  "spentBudget": "Has gastado {{spent}} de {{limit}}",
+  "hideEmptyCategories": "Ocultar vacías"
+}

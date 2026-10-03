@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Chip, Modal } from "@heroui/react";
+import { Modal } from "@heroui/react";
 import { CategoryModel } from "@/app/api/domain/category/model/category.model";
 import { useMutateTransaction } from "@/hooks/useMutateTransaction";
 import { useToast } from "@/hooks/useToast";
@@ -9,7 +9,8 @@ import { TransactionOutput } from "@/app/api/domain/transaction/ports/outbound/f
 import { TransactionType } from "@/app/api/domain/transaction/model/transaction.model";
 import { UpdateTransactionInput } from "@/app/api/domain/transaction/ports/inbound/update-transaction.port";
 import { ModalContainer } from "@/components/shared/ModalContainer";
-import { LoadingButton } from "@/components/shared/LoadingButton";
+import { ModalFormFooter } from "@/components/shared/ModalFormFooter";
+import { ValidationErrorChip } from "@/components/shared/ValidationErrorChip";
 import { InlineEditableTitle } from "@/components/shared/InlineChips";
 import { TransactionEditChipsGroup } from "./TransactionEditChipsGroup";
 
@@ -153,33 +154,14 @@ export const UpdateTransactionModalForm: React.FC<
                 createdAt={createdAtInput}
                 onCreatedAtChange={setCreatedAtInput}
               />
-              {validationError && (
-                <Chip
-                  variant="soft"
-                  color="danger"
-                  className="text-wrap max-w-full w-full h-fit p-2 rounded-sm"
-                >
-                  {validationError}
-                </Chip>
-              )}
+              <ValidationErrorChip message={validationError} />
             </Modal.Body>
-            <Modal.Footer>
-              <Button
-                variant="danger-soft"
-                isDisabled={areButtonsDisabled}
-                onPress={() => onOpenChangeHandler(false)}
-              >
-                {t("cancel")}
-              </Button>
-              <LoadingButton
-                variant="primary"
-                isPending={isMutating}
-                isDisabled={areButtonsDisabled}
-                onPress={onSave}
-              >
-                {t("save")}
-              </LoadingButton>
-            </Modal.Footer>
+            <ModalFormFooter
+              isPending={isMutating}
+              isDisabled={areButtonsDisabled}
+              onCancel={() => onOpenChangeHandler(false)}
+              onSave={onSave}
+            />
           </Modal.Dialog>
         </ModalContainer>
       </Modal.Backdrop>
