@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Button, Chip, ProgressBar } from "@heroui/react";
+import { Button, Chip, ProgressBar, Surface } from "@heroui/react";
 import { HiOutlinePlusCircle } from "react-icons/hi";
 import clsx from "clsx";
 import { useTranslation } from "react-i18next";
@@ -57,7 +57,7 @@ export const CategoryBudgetRow: React.FC<CategoryBudgetRowProps> = ({
   };
 
   return (
-    <div className="flex flex-col w-full rounded-xl bg-surface p-2 gap-2">
+    <Surface variant="default" className="flex flex-col w-full p-2 gap-2">
       <div className="flex items-center gap-3">
         <button
           type="button"
@@ -70,7 +70,7 @@ export const CategoryBudgetRow: React.FC<CategoryBudgetRowProps> = ({
             className={clsx("transition-transform", isExpanded && "rotate-180")}
           />
         </button>
-        <CustomIcon icon={category.icon} variant="soft" color="accent" />
+        <CustomIcon icon={category.icon} />
         <div className="flex flex-col flex-1 min-w-0 gap-1">
           <div className="flex items-center gap-2">
             <span className="font-semibold truncate">
@@ -142,9 +142,10 @@ export const CategoryBudgetRow: React.FC<CategoryBudgetRowProps> = ({
       {isExpanded && (
         <div className="flex flex-col gap-0.5 pl-8">
           {recurringExpenses.map((expense) => (
-            <div
+            <Surface
+              variant="tertiary"
               key={expense.id}
-              className="flex items-center justify-between gap-2 rounded-xl bg-muted/5 dark:bg-zinc-800/80 p-2"
+              className="flex items-center justify-between gap-2 rounded-xl p-2"
             >
               <div className="flex flex-col min-w-0">
                 <span
@@ -186,11 +187,11 @@ export const CategoryBudgetRow: React.FC<CategoryBudgetRowProps> = ({
                   <IconDelete size={16} />
                 </Button>
               </div>
-            </div>
+            </Surface>
           ))}
           <Button
             size="sm"
-            variant="tertiary"
+            variant="ghost"
             onPress={onAddRecurring}
             className="self-end"
           >
@@ -211,6 +212,6 @@ export const CategoryBudgetRow: React.FC<CategoryBudgetRowProps> = ({
         isOpen={isRecurringModalOpen}
         onDismiss={onRecurringModalDismissed}
       />
-    </div>
+    </Surface>
   );
 };

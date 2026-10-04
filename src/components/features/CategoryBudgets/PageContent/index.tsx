@@ -3,11 +3,12 @@
 import { useEffect, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
-import { Chip } from "@heroui/react";
+import { Chip, Surface } from "@heroui/react";
 import { HiBanknotes, HiEye, HiEyeSlash } from "react-icons/hi2";
 import { LocaleNamespace } from "@/i18n/namespace";
 import { useAppStore } from "@/stores/useAppStore";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
+import { useMeasuredTableHeight } from "@/hooks/useMeasuredTableHeight";
 import { fetchJson } from "@/config/request";
 import { formatCurrency } from "@/config/utils";
 import {
@@ -46,6 +47,7 @@ function CategoryBudgetList({
   const { t } = useTranslation(LocaleNamespace.CategoryBudgets);
   const { appliedFilters } = useZolventFilterContext();
   const filterValue = appliedFilters.freeText ?? "";
+  const { maxTableHeight, containerRef } = useMeasuredTableHeight();
 
   const filteredCategories = useMemo(() => {
     return categories.filter((category) => {
@@ -65,7 +67,7 @@ function CategoryBudgetList({
         inputGroupClassName="rounded-2xl"
         applyOnChange
       />
-      <div className="w-full bg-surface-secondary rounded-3xl px-1 pb-1">
+      <Surface variant="secondary" className="w-full rounded-3xl px-1 pb-1">
         <TableToolbar
           isMutating={false}
           rowCount={filteredCategories.length}
@@ -81,7 +83,11 @@ function CategoryBudgetList({
         {isLoading ? (
           <TableSkeleton />
         ) : (
-          <div className="flex flex-col w-full gap-0.5">
+          <div
+            ref={containerRef}
+            className="flex flex-col w-full gap-0.5 overflow-y-auto"
+            style={{ maxHeight: maxTableHeight }}
+          >
             {filteredCategories.map((category) => (
               <CategoryBudgetRow
                 key={category.ref}
@@ -93,7 +99,7 @@ function CategoryBudgetList({
             ))}
           </div>
         )}
-      </div>
+      </Surface>
     </>
   );
 }
