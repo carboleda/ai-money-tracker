@@ -24,6 +24,7 @@
   "typeExpense": "Gasto",
   "typeTransfer": "Transferencia",
   "nameAndIconRequired": "El nombre y el icono son obligatorios.",
+  "categoryNameExists": "Ya existe una categoría llamada \"{{name}}\".",
   "categoryCreated": "¡Categoría creada!",
   "categoryUpdated": "¡Categoría actualizada!",
   "editCategory": "Editar categoría"

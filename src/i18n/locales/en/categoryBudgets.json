@@ -24,6 +24,7 @@
   "typeExpense": "Expense",
   "typeTransfer": "Transfer",
   "nameAndIconRequired": "Name and icon are required.",
+  "categoryNameExists": "A category named \"{{name}}\" already exists.",
   "categoryCreated": "Category created!",
   "categoryUpdated": "Category updated!",
   "editCategory": "Edit category"

@@ -10,5 +10,5 @@ export interface CustomizeCategoryInput {
   restrictedTypes?: CategoryType[];
   description?: string;
   color?: string; // Hex color
-  budget?: CategoryBudget;
+  budget?: CategoryBudget | null;
 }

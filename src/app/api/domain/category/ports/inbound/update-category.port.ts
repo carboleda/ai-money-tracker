@@ -10,5 +10,5 @@ export interface UpdateCategoryInput {
   restrictedTypes?: CategoryType[];
   description?: string;
   color?: string;
-  budget?: CategoryBudget;
+  budget?: CategoryBudget | null;
 }

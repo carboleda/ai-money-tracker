@@ -6,7 +6,10 @@ import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
 import { useToast } from "@/hooks/useToast";
 import { useMutateCategory } from "@/hooks/useMutateCategory";
-import { CategoryType } from "@/app/api/domain/category/model/category.model";
+import {
+  CategoryType,
+  categoryAppliesToType,
+} from "@/app/api/domain/category/model/category.model";
 import { formatCurrency } from "@/config/utils";
 import { ModalContainer } from "@/components/shared/ModalContainer";
 import { ModalFormFooter } from "@/components/shared/ModalFormFooter";
@@ -17,6 +20,7 @@ import { CategoryChipsGroup, NO_THRESHOLD } from "./CategoryChipsGroup";
 
 interface CategoryModalFormProps {
   category?: CategoryWithBudgetStatusOutput;
+  existingCategories?: CategoryWithBudgetStatusOutput[];
   isOpen: boolean;
   onDismiss: () => void;
   useRecurringAsBudget?: boolean;
@@ -42,6 +46,7 @@ const getInitialAlertThreshold = (
 
 export const CategoryModalForm: React.FC<CategoryModalFormProps> = ({
   category,
+  existingCategories = [],
   onDismiss,
   isOpen,
   useRecurringAsBudget,
@@ -62,6 +67,10 @@ export const CategoryModalForm: React.FC<CategoryModalFormProps> = ({
     useState<string>(NO_THRESHOLD);
 
   const areButtonsDisabled = isMutating || validationError !== "";
+  const appliesToExpense = categoryAppliesToType(
+    restrictedTypesInput,
+    CategoryType.EXPENSE,
+  );
 
   const clearInputs = () => {
     setNameInput("");
@@ -111,27 +120,55 @@ export const CategoryModalForm: React.FC<CategoryModalFormProps> = ({
       return;
     }
 
+    const normalizedName = nameInput.trim().toLowerCase();
+    const isDuplicateName = existingCategories.some(
+      (existing) =>
+        existing.ref !== category?.ref &&
+        existing.name.trim().toLowerCase() === normalizedName,
+    );
+    if (isDuplicateName) {
+      setValidationError(t("categoryNameExists", { name: nameInput }));
+      return;
+    }
+
     clearError();
 
     const isUpdate = !!category;
+
+    let budgetConfig:
+      | {
+          limit: number;
+          alertThreshold?: number;
+        }
+      | null
+      | undefined;
+
+    if (!appliesToExpense) {
+      budgetConfig = isUpdate ? null : undefined;
+    } else if (limitInput) {
+      budgetConfig = {
+        limit: limitInput,
+        alertThreshold:
+          alertThresholdInput === NO_THRESHOLD
+            ? undefined
+            : Number(alertThresholdInput),
+      };
+    }
+
     const payload = {
       name: nameInput,
       icon: iconInput,
       restrictedTypes: restrictedTypesInput,
       description: descriptionInput || undefined,
-      budget: limitInput
-        ? {
-            limit: limitInput,
-            alertThreshold:
-              alertThresholdInput === NO_THRESHOLD
-                ? undefined
-                : Number(alertThresholdInput),
-          }
-        : undefined,
+      budget: budgetConfig,
     };
 
     const mutationFn = () => {
-      if (!isUpdate) return createConfig(payload);
+      if (!isUpdate)
+        return createConfig({
+          ...payload,
+          budget: payload.budget ?? undefined,
+        });
       if (category!.isCustom) {
         return updateConfig({ id: category!.id, ...payload });
       }
@@ -158,7 +195,9 @@ export const CategoryModalForm: React.FC<CategoryModalFormProps> = ({
         isDismissable={false}
       >
         <ModalContainer>
-          <Modal.Dialog aria-label={t(category ? "editCategory" : "addCategory")}>
+          <Modal.Dialog
+            aria-label={t(category ? "editCategory" : "addCategory")}
+          >
             <Modal.Body className="flex flex-col gap-4">
               <ValidationErrorChip message={validationError} />
               <InlineEditableTitle
@@ -176,8 +215,9 @@ export const CategoryModalForm: React.FC<CategoryModalFormProps> = ({
                 onLimitChange={setLimitInput}
                 alertThreshold={alertThresholdInput}
                 onAlertThresholdChange={setAlertThresholdInput}
+                showBudget={appliesToExpense}
               />
-              {!!category?.committedFromRecurring && (
+              {appliesToExpense && !!category?.committedFromRecurring && (
                 <Chip
                   variant="soft"
                   color="accent"

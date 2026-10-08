@@ -28,10 +28,12 @@ export const CreateCategorySchema = z.object({
 
 export const UpdateCategorySchema = CreateCategorySchema.partial().extend({
   id: z.string().min(1, "ID is required"),
+  budget: BudgetSchema.nullable().optional(),
 });
 
 export const CustomizeCategorySchema = CreateCategorySchema.partial().extend({
   ref: z.string().min(1, "ref is required"),
+  budget: BudgetSchema.nullable().optional(),
 });
 
 export const DeleteCategorySchema = z.object({

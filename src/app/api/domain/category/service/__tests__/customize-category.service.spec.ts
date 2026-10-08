@@ -5,6 +5,7 @@ import { CategoryRepository } from "@/app/api/domain/category/repository/categor
 import { CategoryModel } from "@/app/api/domain/category/model/category.model";
 import { getRepositoryToken } from "@/app/api/decorators/tsyringe.decorator";
 import { ValidateBudgetService } from "../validate-budget.service";
+import { ValidateCategoryNameService } from "../validate-category-name.service";
 import { DomainError } from "@/app/api/domain/shared/errors/domain.error";
 import type { CustomizeCategoryInput } from "@/app/api/domain/category/ports/inbound/customize-category.port";
 
@@ -12,6 +13,7 @@ describe("CustomizeCategoryService", () => {
   let service: CustomizeCategoryService;
   let categoryRepository: CategoryRepository;
   let validateBudgetService: ValidateBudgetService;
+  let validateCategoryNameService: ValidateCategoryNameService;
 
   beforeEach(() => {
     const testContainer = container.createChildContainer();
@@ -24,16 +26,24 @@ describe("CustomizeCategoryService", () => {
       execute: jest.fn().mockResolvedValue(undefined),
     } as unknown as ValidateBudgetService;
 
+    const mockValidateCategoryNameService = {
+      execute: jest.fn().mockResolvedValue(undefined),
+    } as unknown as ValidateCategoryNameService;
+
     testContainer.register(getRepositoryToken(CategoryModel), {
       useValue: mockRepository,
     });
     testContainer.register(ValidateBudgetService, {
       useValue: mockValidateBudgetService,
     });
+    testContainer.register(ValidateCategoryNameService, {
+      useValue: mockValidateCategoryNameService,
+    });
 
     service = testContainer.resolve(CustomizeCategoryService);
     categoryRepository = mockRepository;
     validateBudgetService = mockValidateBudgetService;
+    validateCategoryNameService = mockValidateCategoryNameService;
   });
 
   afterEach(() => {
@@ -151,5 +161,36 @@ describe("CustomizeCategoryService", () => {
     await expect(service.execute({ ref: "GROCERIES" })).rejects.toMatchObject({
       statusCode: 500,
     });
+  });
+
+  it("validates the new name against existing categories, excluding its own ref", async () => {
+    const input: CustomizeCategoryInput = {
+      ref: "GROCERIES",
+      name: "Weekly Groceries",
+    };
+
+    await service.execute(input);
+
+    expect(validateCategoryNameService.execute).toHaveBeenCalledWith({
+      name: "Weekly Groceries",
+      excludeRef: "GROCERIES",
+    });
+  });
+
+  it("skips name validation when no name override is supplied", async () => {
+    await service.execute({ ref: "GROCERIES" });
+
+    expect(validateCategoryNameService.execute).not.toHaveBeenCalled();
+  });
+
+  it("propagates the DomainError thrown by name validation", async () => {
+    jest
+      .spyOn(validateCategoryNameService, "execute")
+      .mockRejectedValue(new DomainError("Category 'Salary' already exists", 409));
+
+    await expect(
+      service.execute({ ref: "GROCERIES", name: "Salary" })
+    ).rejects.toMatchObject({ statusCode: 409 });
+    expect(categoryRepository.createCustomFromPredefined).not.toHaveBeenCalled();
   });
 });

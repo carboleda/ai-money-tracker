@@ -7,6 +7,7 @@ import {
 } from "@/app/api/decorators/tsyringe.decorator";
 import { CreateCategoryInput } from "../ports/inbound/create-category.port";
 import { DomainError } from "@/app/api/domain/shared/errors/domain.error";
+import { ValidateCategoryNameService } from "./validate-category-name.service";
 
 @Injectable()
 export class CreateCategoryService
@@ -14,10 +15,13 @@ export class CreateCategoryService
 {
   constructor(
     @InjectRepository(CategoryModel)
-    private readonly categoryRepository: CategoryRepository
+    private readonly categoryRepository: CategoryRepository,
+    private readonly validateCategoryNameService: ValidateCategoryNameService
   ) {}
 
   async execute(input: CreateCategoryInput): Promise<string> {
+    await this.validateCategoryNameService.execute({ name: input.name });
+
     try {
       return await this.categoryRepository.create(input);
     } catch (error) {

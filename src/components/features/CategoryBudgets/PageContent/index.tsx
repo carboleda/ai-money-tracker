@@ -20,7 +20,6 @@ import {
 } from "@/components/shared/ZolventFilter/ZolventFilter";
 import { TableSkeleton } from "@/components/shared/Table/TableSkeleton";
 import { TableToolbar } from "@/components/shared/Table/TableToolbar";
-import { CategoryType, categoryAppliesToType } from "@/app/api/domain/category/model/category.model";
 import type { CategoryWithBudgetStatusOutput } from "@/app/api/domain/category/ports/outbound/get-categories.port";
 import type { GetRecurringExpensesOutput, RecurringExpenseOutput } from "@/app/api/domain/recurring-expense/ports/outbound/get-recurring-expenses.port";
 import { CategoryBudgetRow } from "@/components/features/CategoryBudgets/CategoryBudgetRow";
@@ -134,6 +133,7 @@ function CategoryBudgetList({
               <CategoryBudgetRow
                 key={category.ref}
                 category={category}
+                existingCategories={categories}
                 recurringExpenses={
                   recurringExpensesByCategoryRef.get(category.ref) ?? []
                 }
@@ -145,11 +145,13 @@ function CategoryBudgetList({
         )}
       </Surface>
       <CategoryModalForm
+        existingCategories={categories}
         isOpen={isCreateOpen}
         onDismiss={() => setIsCreateOpen(false)}
       />
       <CategoryModalForm
         category={selectedCategory}
+        existingCategories={categories}
         isOpen={isEditOpen}
         onDismiss={onEditDismissed}
       />
@@ -186,11 +188,9 @@ function PageContent() {
 
   const categories = useMemo(
     () =>
-      (categoriesResponse?.categories ?? [])
-        .filter((category) =>
-          categoryAppliesToType(category.restrictedTypes, CategoryType.EXPENSE),
-        )
-        .toSorted((a, b) => a.name.localeCompare(b.name)),
+      (categoriesResponse?.categories ?? []).toSorted((a, b) =>
+        a.name.localeCompare(b.name),
+      ),
     [categoriesResponse],
   );
 

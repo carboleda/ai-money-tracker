@@ -11,6 +11,7 @@ import {
 } from "@/app/api/decorators/tsyringe.decorator";
 import { UpdateCategoryInput } from "../ports/inbound/update-category.port";
 import { DomainError } from "@/app/api/domain/shared/errors/domain.error";
+import { ValidateCategoryNameService } from "./validate-category-name.service";
 
 @Injectable()
 export class UpdateCategoryService
@@ -18,7 +19,8 @@ export class UpdateCategoryService
 {
   constructor(
     @InjectRepository(CategoryModel)
-    private readonly categoryRepository: CategoryRepository
+    private readonly categoryRepository: CategoryRepository,
+    private readonly validateCategoryNameService: ValidateCategoryNameService
   ) {}
 
   async execute(input: UpdateCategoryInput): Promise<void> {
@@ -33,10 +35,17 @@ export class UpdateCategoryService
         throw new DomainError(`Cannot modify predefined category`, 400);
       }
 
+      if (input.name !== undefined) {
+        await this.validateCategoryNameService.execute({
+          name: input.name,
+          excludeRef: category.ref,
+        });
+      }
+
       // Validate budget constraints
       const restrictedTypes = input.restrictedTypes ?? category.restrictedTypes;
       if (
-        input.budget !== undefined &&
+        input.budget != null &&
         !categoryAppliesToType(restrictedTypes, CategoryType.EXPENSE)
       ) {
         throw new DomainError(

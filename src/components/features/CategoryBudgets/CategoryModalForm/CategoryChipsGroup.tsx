@@ -23,6 +23,7 @@ export interface CategoryChipsGroupProps {
   onLimitChange: (limit: number) => void;
   alertThreshold: string;
   onAlertThresholdChange: (alertThreshold: string) => void;
+  showBudget?: boolean;
 }
 
 export const CategoryChipsGroup: React.FC<CategoryChipsGroupProps> = ({
@@ -34,6 +35,7 @@ export const CategoryChipsGroup: React.FC<CategoryChipsGroupProps> = ({
   onLimitChange,
   alertThreshold,
   onAlertThresholdChange,
+  showBudget = true,
 }) => {
   const { t } = useTranslation(LocaleNamespace.CategoryBudgets);
 
@@ -69,20 +71,24 @@ export const CategoryChipsGroup: React.FC<CategoryChipsGroupProps> = ({
           placeholder={t("restrictedTypes")}
         />
       </div>
-      <div className="flex flex-col gap-2">{t("budget")}</div>
-      <div className="flex flex-wrap gap-2">
-        <InlineAmountChip amount={limit} onAmountChange={onLimitChange} />
-        <InlineComboBoxChip
-          value={alertThreshold}
-          options={alertThresholdOptions}
-          onChange={onAlertThresholdChange}
-          ariaLabel={t("alertThreshold")}
-          formatCustomValue={(v) => `${v}%`}
-          isValidCustomInput={(text) =>
-            /^\d*$/.test(text) && Number(text) <= 100
-          }
-        />
-      </div>
+      {showBudget && (
+        <>
+          <div className="flex flex-col gap-2">{t("budget")}</div>
+          <div className="flex flex-wrap gap-2">
+            <InlineAmountChip amount={limit} onAmountChange={onLimitChange} />
+            <InlineComboBoxChip
+              value={alertThreshold}
+              options={alertThresholdOptions}
+              onChange={onAlertThresholdChange}
+              ariaLabel={t("alertThreshold")}
+              formatCustomValue={(v) => `${v}%`}
+              isValidCustomInput={(text) =>
+                /^\d*$/.test(text) && Number(text) <= 100
+              }
+            />
+          </div>
+        </>
+      )}
     </div>
   );
 };
