@@ -94,8 +94,9 @@ export class TransactionFirestoreRepository
       (TransactionEntity & { id: string }) | TransactionEntity
     >
   ): Promise<Array<TransactionEntity & { id?: string }>> {
-    // Get all custom categories from Firestore
-    const customCategories = await this.categoryRepository.getAll();
+    // Get all custom categories from Firestore, including soft-deleted ones so
+    // historical transactions keep resolving a deleted category's display data
+    const customCategories = await this.categoryRepository.getAllIncludingDeleted();
 
     // Create lookup maps
     const customCategoryMap = new Map<string, CategorySummary>();

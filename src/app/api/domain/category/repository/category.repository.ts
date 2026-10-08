@@ -5,6 +5,8 @@ import { UpdateCategoryInput } from "../ports/inbound/update-category.port";
 export interface CategoryRepository {
   getAll(): Promise<CategoryModel[]>;
 
+  getAllIncludingDeleted(): Promise<CategoryModel[]>;
+
   getCategoryById(id: string): Promise<CategoryModel | null>;
 
   getCategoryByRef(ref: string): Promise<CategoryModel | null>;

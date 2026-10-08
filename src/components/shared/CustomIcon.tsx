@@ -1,9 +1,12 @@
+import { ReactNode } from "react";
 import { Avatar, AvatarRootProps, Badge } from "@heroui/react";
 import { FaCheck } from "react-icons/fa";
 
 interface CustomIconProps extends AvatarRootProps {
   icon?: string | null;
   withBadge?: boolean;
+  badgeIcon?: ReactNode;
+  badgeColor?: Required<AvatarRootProps>["color"];
   isChecked?: boolean;
 }
 
@@ -22,6 +25,8 @@ const renderIcon = (icon?: string | null, isChecked?: boolean) => {
 export const CustomIcon: React.FC<CustomIconProps> = ({
   icon,
   withBadge = false,
+  badgeIcon,
+  badgeColor,
   isChecked = false,
   ...avatarProps
 }) => {
@@ -38,13 +43,15 @@ export const CustomIcon: React.FC<CustomIconProps> = ({
           {renderIcon(icon, isChecked)}
         </Avatar.Fallback>
       </Avatar>
-      {withBadge && (
+      {(withBadge || badgeIcon) && (
         <Badge
-          color={color}
+          color={badgeColor ?? color}
           placement="top-left"
           size="sm"
           className="min-w-3 min-h-3"
-        />
+        >
+          {badgeIcon}
+        </Badge>
       )}
     </Badge.Anchor>
   );

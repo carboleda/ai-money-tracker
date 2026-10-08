@@ -79,10 +79,17 @@ export const useMutateCategory = () => {
     return res.json();
   };
 
+  const deleteConfig = (id: string) => {
+    if (!guardOnline()) return Promise.resolve();
+
+    return categoryMutateAsync({ method: "DELETE", body: id });
+  };
+
   return {
     isMutating: isMutatingCategory || isCustomizing,
     createConfig,
     updateConfig,
     customizeConfig,
+    deleteConfig,
   };
 };

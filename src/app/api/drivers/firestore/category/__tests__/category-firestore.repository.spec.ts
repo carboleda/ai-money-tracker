@@ -148,6 +148,79 @@ describe("CategoryFirestoreRepository", () => {
     });
   });
 
+  describe("delete", () => {
+    it("hard-deletes a customized predefined category since the predefined version remains available", async () => {
+      const deleteMock = jest.fn().mockResolvedValue(undefined);
+      const updateMock = jest.fn();
+      const getMock = jest.fn().mockResolvedValue({
+        exists: true,
+        data: () => ({
+          ref: "GROCERIES",
+          isCustom: true,
+          isDeleted: false,
+          createdAt: { toDate: () => new Date() },
+          updatedAt: { toDate: () => new Date() },
+        }),
+      });
+      const docMock = jest.fn().mockReturnValue({
+        get: getMock,
+        update: updateMock,
+        delete: deleteMock,
+      });
+      mockUserCollection({ doc: docMock });
+
+      await repository.delete("doc-1");
+
+      expect(deleteMock).toHaveBeenCalled();
+      expect(updateMock).not.toHaveBeenCalled();
+    });
+
+    it("soft-deletes a fully custom category (no predefined counterpart)", async () => {
+      const deleteMock = jest.fn();
+      const updateMock = jest.fn().mockResolvedValue(undefined);
+      const getMock = jest.fn().mockResolvedValue({
+        exists: true,
+        data: () => ({
+          ref: "custom-ref-abc",
+          isCustom: true,
+          isDeleted: false,
+          createdAt: { toDate: () => new Date() },
+          updatedAt: { toDate: () => new Date() },
+        }),
+      });
+      const docMock = jest.fn().mockReturnValue({
+        get: getMock,
+        update: updateMock,
+        delete: deleteMock,
+      });
+      mockUserCollection({ doc: docMock });
+
+      await repository.delete("doc-2");
+
+      expect(updateMock).toHaveBeenCalledWith({ isDeleted: true });
+      expect(deleteMock).not.toHaveBeenCalled();
+    });
+
+    it("throws when attempting to delete a predefined category", async () => {
+      const getMock = jest.fn().mockResolvedValue({
+        exists: true,
+        data: () => ({
+          ref: "GROCERIES",
+          isCustom: false,
+          isDeleted: false,
+          createdAt: { toDate: () => new Date() },
+          updatedAt: { toDate: () => new Date() },
+        }),
+      });
+      const docMock = jest.fn().mockReturnValue({ get: getMock });
+      mockUserCollection({ doc: docMock });
+
+      await expect(repository.delete("doc-3")).rejects.toThrow(
+        "Cannot delete predefined category",
+      );
+    });
+  });
+
   it("reads/writes the categories subcollection under the current user", async () => {
     const addedDocGet = jest.fn().mockResolvedValue({ id: "doc-3" });
     const addMock = jest.fn().mockResolvedValue({ get: addedDocGet });

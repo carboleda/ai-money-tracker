@@ -14,12 +14,17 @@ import type { UserContext } from "@/app/api/context/user-context";
 import { CreateCategoryInput } from "@/app/api/domain/category/ports/inbound/create-category.port";
 import { UpdateCategoryInput } from "@/app/api/domain/category/ports/inbound/update-category.port";
 import { nanoid } from "nanoid";
+import { PredefinedCategory } from "@/app/api/domain/category/model/category.model";
+import { loadPredefinedCategoryMap } from "./predefined-category.helper";
 
 @Injectable()
 export class CategoryFirestoreRepository
   extends BaseFirestoreRepository
   implements CategoryRepository
 {
+  private readonly predefinedCategoryMap: Map<string, PredefinedCategory> =
+    loadPredefinedCategoryMap();
+
   constructor(
     @Inject(Firestore) firestore: Firestore,
     @InjectUserContext() userContext: UserContext
@@ -31,6 +36,17 @@ export class CategoryFirestoreRepository
     const snapshot = await this.getUserCollectionReference()
       .where("isDeleted", "==", false)
       .get();
+
+    const categories = snapshot.docs.map((doc) => {
+      const entity = { ...doc.data() } as CategoryEntity;
+      return CategoryAdapter.toModel(entity, doc.id);
+    });
+
+    return categories;
+  }
+
+  async getAllIncludingDeleted(): Promise<CategoryModel[]> {
+    const snapshot = await this.getUserCollectionReference().get();
 
     const categories = snapshot.docs.map((doc) => {
       const entity = { ...doc.data() } as CategoryEntity;
@@ -144,6 +160,14 @@ export class CategoryFirestoreRepository
       throw new Error(`Cannot delete predefined category`);
     }
 
-    await this.getUserCollectionReference().doc(id).update({ isDeleted: true });
+    const docRef = this.getUserCollectionReference().doc(id);
+
+    // A customization of a predefined category can be hard-deleted: the
+    // predefined category remains available under the same ref anyway.
+    if (this.predefinedCategoryMap.has(category.ref)) {
+      await docRef.delete();
+    } else {
+      await docRef.update({ isDeleted: true });
+    }
   }
 }

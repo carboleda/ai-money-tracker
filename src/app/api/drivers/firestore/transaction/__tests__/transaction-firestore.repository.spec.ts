@@ -54,6 +54,7 @@ describe("TransactionFirestoreRepository", () => {
     testContainer.register(getRepositoryToken(CategoryModel), {
       useValue: {
         getAll: jest.fn().mockResolvedValue([]),
+        getAllIncludingDeleted: jest.fn().mockResolvedValue([]),
       },
     });
 

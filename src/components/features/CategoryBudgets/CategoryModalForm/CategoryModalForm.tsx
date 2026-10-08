@@ -113,7 +113,7 @@ export const CategoryModalForm: React.FC<CategoryModalFormProps> = ({
 
     clearError();
 
-    const isUpdate = !!category?.id;
+    const isUpdate = !!category;
     const payload = {
       name: nameInput,
       icon: iconInput,

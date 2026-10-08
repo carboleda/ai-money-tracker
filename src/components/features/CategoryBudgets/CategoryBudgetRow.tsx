@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { Button, Chip, ProgressBar, Surface } from "@heroui/react";
 import { HiOutlinePlusCircle } from "react-icons/hi";
+import { FaStar } from "react-icons/fa";
 import clsx from "clsx";
 import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
@@ -86,7 +87,14 @@ export const CategoryBudgetRow: React.FC<CategoryBudgetRowProps> = ({
           }}
           className="flex items-center gap-3 flex-1 min-w-0 text-left cursor-pointer"
         >
-          <CustomIcon icon={category.icon} isChecked={isSelected} />
+          <CustomIcon
+            icon={category.icon}
+            isChecked={isSelected}
+            badgeColor="accent"
+            badgeIcon={
+              category.isCustom ? <FaStar className="size-1.5" /> : undefined
+            }
+          />
           <div className="flex flex-col flex-1 min-w-0 gap-1">
             <div className="flex items-center gap-2">
               <span className="font-semibold truncate">

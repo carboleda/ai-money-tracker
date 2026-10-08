@@ -116,7 +116,7 @@ const BaseAction: React.FC<ActionProps> = ({
       aria-label={label}
       variant="ghost"
       isIconOnly={isMobile}
-      isDisabled={isMutating || (!noItemRequired && !selectedItem)}
+      isDisabled={isMutating || (!noItemRequired && !selectedItem) || isDisabled}
       onPress={() => onAction?.(selectedItem)}
       {...buttonProps}
     >

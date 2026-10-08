@@ -10,6 +10,7 @@ import { useAppStore } from "@/stores/useAppStore";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { useMeasuredTableHeight } from "@/hooks/useMeasuredTableHeight";
 import { useMutateCategory } from "@/hooks/useMutateCategory";
+import { useDeleteTableItem } from "@/hooks/useDeleteTableItem";
 import { useTableSelection } from "@/hooks/useTableSelection";
 import { fetchJson } from "@/config/request";
 import { formatCurrency } from "@/config/utils";
@@ -53,7 +54,8 @@ function CategoryBudgetList({
   const { maxTableHeight, containerRef } = useMeasuredTableHeight();
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
-  const { isMutating } = useMutateCategory();
+  const { isMutating, deleteConfig } = useMutateCategory();
+  const { onDelete } = useDeleteTableItem({ onConfirmDelete: deleteConfig });
 
   const filteredCategories = useMemo(() => {
     return categories.filter((category) => {
@@ -107,6 +109,12 @@ function CategoryBudgetList({
             onPress={() => setIsCreateOpen(true)}
           />
           <TableToolbar.EditAction onPress={onEdit} />
+          <TableToolbar.DeleteAction
+            isDisabled={!selectedCategory?.isCustom}
+            onPress={(item: CategoryWithBudgetStatusOutput) =>
+              onDelete(item.id, item.name).then((ok) => ok && clearSelection())
+            }
+          />
           <TableToolbar.ToggleAction
             isSelected={hideEmptyCategories}
             onChange={setHideEmptyCategories}
