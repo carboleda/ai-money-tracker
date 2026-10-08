@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { Chip, Surface } from "@heroui/react";
@@ -21,6 +21,7 @@ import { CategoryType, categoryAppliesToType } from "@/app/api/domain/category/m
 import type { CategoryWithBudgetStatusOutput } from "@/app/api/domain/category/ports/outbound/get-categories.port";
 import type { GetRecurringExpensesOutput, RecurringExpenseOutput } from "@/app/api/domain/recurring-expense/ports/outbound/get-recurring-expenses.port";
 import { CategoryBudgetRow } from "@/components/features/CategoryBudgets/CategoryBudgetRow";
+import { CategoryModalForm } from "@/components/features/CategoryBudgets/CategoryModalForm/CategoryModalForm";
 
 const CATEGORY_KEY = "/api/category/with-budget";
 const RECURRING_KEY = "/api/recurring-expenses";
@@ -48,6 +49,7 @@ function CategoryBudgetList({
   const { appliedFilters } = useZolventFilterContext();
   const filterValue = appliedFilters.freeText ?? "";
   const { maxTableHeight, containerRef } = useMeasuredTableHeight();
+  const [isCreateOpen, setIsCreateOpen] = useState(false);
 
   const filteredCategories = useMemo(() => {
     return categories.filter((category) => {
@@ -73,6 +75,11 @@ function CategoryBudgetList({
           rowCount={filteredCategories.length}
           t={t}
         >
+          <TableToolbar.NewAction
+            noItemRequired
+            noSeparator
+            onPress={() => setIsCreateOpen(true)}
+          />
           <TableToolbar.ToggleAction
             isSelected={hideEmptyCategories}
             onChange={setHideEmptyCategories}
@@ -100,6 +107,10 @@ function CategoryBudgetList({
           </div>
         )}
       </Surface>
+      <CategoryModalForm
+        isOpen={isCreateOpen}
+        onDismiss={() => setIsCreateOpen(false)}
+      />
     </>
   );
 }

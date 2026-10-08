@@ -16,5 +16,15 @@
   "recurringCount_one": "{{count}} recurrente",
   "recurringCount_other": "{{count}} recurrentes",
   "spentBudget": "Has gastado {{spent}} de {{limit}}",
-  "hideEmptyCategories": "Ocultar vacías"
+  "hideEmptyCategories": "Ocultar vacías",
+  "addCategory": "Agregar categoría",
+  "name": "Nombre de la categoría",
+  "icon": "Icono",
+  "budget": "Presupuesto",
+  "restrictedTypes": "Tipos restringidos",
+  "typeIncome": "Ingreso",
+  "typeExpense": "Gasto",
+  "typeTransfer": "Transferencia",
+  "nameAndIconRequired": "El nombre y el icono son obligatorios.",
+  "categoryCreated": "¡Categoría creada!"
 }

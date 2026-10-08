@@ -16,5 +16,15 @@
   "recurringCount_one": "{{count}} recurring",
   "recurringCount_other": "{{count}} recurring",
   "spentBudget": "Spent {{spent}} of {{limit}}",
-  "hideEmptyCategories": "Hide empty"
+  "hideEmptyCategories": "Hide empty",
+  "addCategory": "Add category",
+  "name": "Category name",
+  "icon": "Icon",
+  "budget": "Budget",
+  "restrictedTypes": "Restricted types",
+  "typeIncome": "Income",
+  "typeExpense": "Expense",
+  "typeTransfer": "Transfer",
+  "nameAndIconRequired": "Name and icon are required.",
+  "categoryCreated": "Category created!"
 }
