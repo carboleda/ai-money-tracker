@@ -34,9 +34,10 @@ export class UpdateCategoryService
       }
 
       // Validate budget constraints
+      const restrictedTypes = input.restrictedTypes ?? category.restrictedTypes;
       if (
         input.budget !== undefined &&
-        !categoryAppliesToType(category.restrictedTypes, CategoryType.EXPENSE)
+        !categoryAppliesToType(restrictedTypes, CategoryType.EXPENSE)
       ) {
         throw new DomainError(
           `Budget can only be applied to expense categories`,

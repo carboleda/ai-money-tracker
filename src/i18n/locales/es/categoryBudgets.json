@@ -1,10 +1,8 @@
 {
   "subtitle": "Controla tus gastos frente al presupuesto de cada categoría",
   "setBudget": "Definir presupuesto",
-  "limitRequired": "Define un límite antes de guardar.",
   "alertThreshold": "Umbral de alerta",
   "noAlert": "Sin alerta",
-  "budgetUpdated": "¡Presupuesto actualizado!",
   "committedFromRecurringHint": "Ya tienes {{amount}}/mes comprometidos en gastos recurrentes de esta categoría.",
   "committedNoBudget": "{{amount}}/mes comprometidos en recurrentes.",
   "useAsBudget": "Usar como presupuesto",
@@ -26,5 +24,7 @@
   "typeExpense": "Gasto",
   "typeTransfer": "Transferencia",
   "nameAndIconRequired": "El nombre y el icono son obligatorios.",
-  "categoryCreated": "¡Categoría creada!"
+  "categoryCreated": "¡Categoría creada!",
+  "categoryUpdated": "¡Categoría actualizada!",
+  "editCategory": "Editar categoría"
 }

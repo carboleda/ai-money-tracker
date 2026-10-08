@@ -19,6 +19,7 @@ export async function POST(req: NextRequest) {
         ref: validatedData.ref,
         name: validatedData.name,
         icon: validatedData.icon,
+        restrictedTypes: validatedData.restrictedTypes,
         description: validatedData.description,
         color: validatedData.color,
         budget: validatedData.budget,

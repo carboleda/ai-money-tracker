@@ -14,16 +14,20 @@ import type { RecurringExpenseOutput } from "@/app/api/domain/recurring-expense/
 import { useMutateRecurringExpenses } from "@/hooks/useMutateRecurringExpense";
 import { useDeleteTableItem } from "@/hooks/useDeleteTableItem";
 import { RecurringExpenseModalForm } from "@/components/features/RecurringExpenses";
-import { CategoryBudgetModalForm } from "./CategoryBudgetModalForm";
+import { CategoryModalForm } from "./CategoryModalForm/CategoryModalForm";
 
 interface CategoryBudgetRowProps {
   category: CategoryWithBudgetStatusOutput;
   recurringExpenses: RecurringExpenseOutput[];
+  isSelected: boolean;
+  onToggleSelect: () => void;
 }
 
 export const CategoryBudgetRow: React.FC<CategoryBudgetRowProps> = ({
   category,
   recurringExpenses,
+  isSelected,
+  onToggleSelect,
 }) => {
   const { t } = useTranslation(LocaleNamespace.CategoryBudgets);
   const [isExpanded, setIsExpanded] = useState(false);
@@ -70,73 +74,82 @@ export const CategoryBudgetRow: React.FC<CategoryBudgetRowProps> = ({
             className={clsx("transition-transform", isExpanded && "rotate-180")}
           />
         </button>
-        <CustomIcon icon={category.icon} />
-        <div className="flex flex-col flex-1 min-w-0 gap-1">
-          <div className="flex items-center gap-2">
-            <span className="font-semibold truncate">
-              {category.name}{" "}
-              <Chip>
-                {t("recurringCount", { count: recurringExpenses.length })}
-              </Chip>
-            </span>
-            {isOverCommitted && (
-              <Chip size="sm" color="warning" variant="soft">
-                {t("overCommitted")}
-              </Chip>
+        <div
+          role="button"
+          tabIndex={0}
+          onClick={onToggleSelect}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              onToggleSelect();
+            }
+          }}
+          className="flex items-center gap-3 flex-1 min-w-0 text-left cursor-pointer"
+        >
+          <CustomIcon icon={category.icon} isChecked={isSelected} />
+          <div className="flex flex-col flex-1 min-w-0 gap-1">
+            <div className="flex items-center gap-2">
+              <span className="font-semibold truncate">
+                {category.name}{" "}
+                <Chip>
+                  {t("recurringCount", { count: recurringExpenses.length })}
+                </Chip>
+              </span>
+              {isOverCommitted && (
+                <Chip size="sm" color="warning" variant="soft">
+                  {t("overCommitted")}
+                </Chip>
+              )}
+            </div>
+            {budget ? (
+              <div className="flex flex-col gap-1 w-full text-left">
+                <ProgressBar
+                  aria-label="Percentage used"
+                  className="w-full"
+                  size="sm"
+                  value={percentageUsed}
+                  color={
+                    budget?.isAlerted || isOverCommitted ? "danger" : "accent"
+                  }
+                >
+                  <ProgressBar.Track className="bg-muted/30 dark:bg-zinc-700/80">
+                    <ProgressBar.Fill />
+                  </ProgressBar.Track>
+                </ProgressBar>
+                <span className="text-xs text-muted">
+                  {t("spentOfLimit", {
+                    spent: formatCurrency(budget.spent),
+                    limit: formatCurrency(budget.limit),
+                  })}
+                </span>
+              </div>
+            ) : (
+              <p className="text-xs text-muted">
+                {category.committedFromRecurring > 0 && (
+                  <>
+                    {t("committedNoBudget", {
+                      amount: formatCurrency(category.committedFromRecurring),
+                    })}{" "}
+                  </>
+                )}
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setUseRecurringAsBudget(
+                      category.committedFromRecurring > 0,
+                    );
+                    setIsBudgetModalOpen(true);
+                  }}
+                  className="text-warning underline font-bold dark:font-normal cursor-pointer"
+                >
+                  {category.committedFromRecurring > 0
+                    ? t("useAsBudget")
+                    : t("setBudget")}
+                </button>
+              </p>
             )}
           </div>
-          {budget ? (
-            <button
-              type="button"
-              onClick={() => {
-                setUseRecurringAsBudget(false);
-                setIsBudgetModalOpen(true);
-              }}
-              className="flex flex-col gap-1 w-full text-left cursor-pointer"
-            >
-              <ProgressBar
-                aria-label="Percentage used"
-                className="w-full"
-                size="sm"
-                value={percentageUsed}
-                color={
-                  budget?.isAlerted || isOverCommitted ? "danger" : "accent"
-                }
-              >
-                <ProgressBar.Track className="bg-muted/30 dark:bg-zinc-700/80">
-                  <ProgressBar.Fill />
-                </ProgressBar.Track>
-              </ProgressBar>
-              <span className="text-xs text-muted">
-                {t("spentOfLimit", {
-                  spent: formatCurrency(budget.spent),
-                  limit: formatCurrency(budget.limit),
-                })}
-              </span>
-            </button>
-          ) : (
-            <p className="text-xs text-muted">
-              {category.committedFromRecurring > 0 && (
-                <>
-                  {t("committedNoBudget", {
-                    amount: formatCurrency(category.committedFromRecurring),
-                  })}{" "}
-                </>
-              )}
-              <button
-                type="button"
-                onClick={() => {
-                  setUseRecurringAsBudget(category.committedFromRecurring > 0);
-                  setIsBudgetModalOpen(true);
-                }}
-                className="text-warning underline font-bold dark:font-normal cursor-pointer"
-              >
-                {category.committedFromRecurring > 0
-                  ? t("useAsBudget")
-                  : t("setBudget")}
-              </button>
-            </p>
-          )}
         </div>
       </div>
       {isExpanded && (
@@ -200,7 +213,7 @@ export const CategoryBudgetRow: React.FC<CategoryBudgetRowProps> = ({
           </Button>
         </div>
       )}
-      <CategoryBudgetModalForm
+      <CategoryModalForm
         category={category}
         isOpen={isBudgetModalOpen}
         useRecurringAsBudget={useRecurringAsBudget}

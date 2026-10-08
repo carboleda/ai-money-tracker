@@ -123,6 +123,8 @@ export class CategoryFirestoreRepository
     const updates: Partial<CategoryEntity> = {};
     if (data.name !== undefined) updates.name = data.name;
     if (data.icon !== undefined) updates.icon = data.icon;
+    if (data.restrictedTypes !== undefined)
+      updates.restrictedTypes = data.restrictedTypes;
     if (data.color !== undefined) updates.color = data.color;
     if (data.description !== undefined) updates.description = data.description;
     if (data.budget !== undefined) updates.budget = data.budget;

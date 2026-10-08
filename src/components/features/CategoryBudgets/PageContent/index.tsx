@@ -9,6 +9,8 @@ import { LocaleNamespace } from "@/i18n/namespace";
 import { useAppStore } from "@/stores/useAppStore";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { useMeasuredTableHeight } from "@/hooks/useMeasuredTableHeight";
+import { useMutateCategory } from "@/hooks/useMutateCategory";
+import { useTableSelection } from "@/hooks/useTableSelection";
 import { fetchJson } from "@/config/request";
 import { formatCurrency } from "@/config/utils";
 import {
@@ -50,6 +52,8 @@ function CategoryBudgetList({
   const filterValue = appliedFilters.freeText ?? "";
   const { maxTableHeight, containerRef } = useMeasuredTableHeight();
   const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const [isEditOpen, setIsEditOpen] = useState(false);
+  const { isMutating } = useMutateCategory();
 
   const filteredCategories = useMemo(() => {
     return categories.filter((category) => {
@@ -62,6 +66,27 @@ function CategoryBudgetList({
     });
   }, [categories, filterValue, hideEmptyCategories, recurringExpensesByCategoryRef]);
 
+  const {
+    selectedItem: selectedCategory,
+    setSelectedItem: setSelectedCategory,
+    clearSelection,
+  } = useTableSelection({ items: filteredCategories, isMutating });
+
+  const onEdit = (item: CategoryWithBudgetStatusOutput) => {
+    setSelectedCategory(item);
+    setIsEditOpen(true);
+  };
+
+  const onEditDismissed = () => {
+    clearSelection();
+    setIsEditOpen(false);
+  };
+
+  const onToggleRowSelection = (category: CategoryWithBudgetStatusOutput) => {
+    const isAlreadySelected = selectedCategory?.ref === category.ref;
+    setSelectedCategory(isAlreadySelected ? undefined : category);
+  };
+
   return (
     <>
       <ZolventFilter.FreeTextFilter
@@ -71,7 +96,8 @@ function CategoryBudgetList({
       />
       <Surface variant="secondary" className="w-full rounded-3xl px-1 pb-1">
         <TableToolbar
-          isMutating={false}
+          selectedItem={selectedCategory}
+          isMutating={isMutating}
           rowCount={filteredCategories.length}
           t={t}
         >
@@ -80,6 +106,7 @@ function CategoryBudgetList({
             noSeparator
             onPress={() => setIsCreateOpen(true)}
           />
+          <TableToolbar.EditAction onPress={onEdit} />
           <TableToolbar.ToggleAction
             isSelected={hideEmptyCategories}
             onChange={setHideEmptyCategories}
@@ -102,6 +129,8 @@ function CategoryBudgetList({
                 recurringExpenses={
                   recurringExpensesByCategoryRef.get(category.ref) ?? []
                 }
+                isSelected={selectedCategory?.ref === category.ref}
+                onToggleSelect={() => onToggleRowSelection(category)}
               />
             ))}
           </div>
@@ -110,6 +139,11 @@ function CategoryBudgetList({
       <CategoryModalForm
         isOpen={isCreateOpen}
         onDismiss={() => setIsCreateOpen(false)}
+      />
+      <CategoryModalForm
+        category={selectedCategory}
+        isOpen={isEditOpen}
+        onDismiss={onEditDismissed}
       />
     </>
   );

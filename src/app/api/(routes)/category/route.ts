@@ -95,6 +95,7 @@ export async function PUT(req: NextRequest) {
         id: validatedData.id,
         name: validatedData.name,
         icon: validatedData.icon,
+        restrictedTypes: validatedData.restrictedTypes,
         description: validatedData.description,
         color: validatedData.color,
         budget: validatedData.budget,

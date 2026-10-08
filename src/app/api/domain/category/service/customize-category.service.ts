@@ -36,9 +36,11 @@ export class CustomizeCategoryService
       );
     }
 
+    const restrictedTypes = input.restrictedTypes ?? predefined.restrictedTypes;
+
     await this.validateBudgetService.execute({
       budget: input.budget,
-      restrictedTypes: predefined.restrictedTypes,
+      restrictedTypes,
     });
 
     const data: CreateCategoryInput = {
@@ -46,7 +48,7 @@ export class CustomizeCategoryService
       icon: input.icon ?? predefined.icon,
       color: input.color ?? predefined.color,
       description: input.description ?? predefined.description,
-      restrictedTypes: predefined.restrictedTypes,
+      restrictedTypes,
       budget: input.budget,
     };
 
