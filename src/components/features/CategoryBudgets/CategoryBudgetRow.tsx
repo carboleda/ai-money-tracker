@@ -2,7 +2,6 @@
 
 import React, { useState } from "react";
 import { Button, Chip, ProgressBar, Surface } from "@heroui/react";
-import { HiOutlinePlusCircle } from "react-icons/hi";
 import { FaStar } from "react-icons/fa";
 import clsx from "clsx";
 import { useTranslation } from "react-i18next";
@@ -14,7 +13,6 @@ import type { CategoryWithBudgetStatusOutput } from "@/app/api/domain/category/p
 import type { RecurringExpenseOutput } from "@/app/api/domain/recurring-expense/ports/outbound/get-recurring-expenses.port";
 import { useMutateRecurringExpenses } from "@/hooks/useMutateRecurringExpense";
 import { useDeleteTableItem } from "@/hooks/useDeleteTableItem";
-import { RecurringExpenseModalForm } from "@/components/features/RecurringExpenses";
 import { CategoryModalForm } from "./CategoryModalForm/CategoryModalForm";
 import { CategoryType } from "@/app/api/domain/category/model/category.model";
 
@@ -24,6 +22,7 @@ interface CategoryBudgetRowProps {
   recurringExpenses: RecurringExpenseOutput[];
   isSelected: boolean;
   onToggleSelect: () => void;
+  onEditRecurring: (item: RecurringExpenseOutput) => void;
 }
 
 export const CategoryBudgetRow: React.FC<CategoryBudgetRowProps> = ({
@@ -32,14 +31,12 @@ export const CategoryBudgetRow: React.FC<CategoryBudgetRowProps> = ({
   recurringExpenses,
   isSelected,
   onToggleSelect,
+  onEditRecurring,
 }) => {
   const { t } = useTranslation(LocaleNamespace.CategoryBudgets);
   const [isExpanded, setIsExpanded] = useState(false);
   const [isBudgetModalOpen, setIsBudgetModalOpen] = useState(false);
   const [useRecurringAsBudget, setUseRecurringAsBudget] = useState(false);
-  const [isRecurringModalOpen, setIsRecurringModalOpen] = useState(false);
-  const [selectedRecurringItem, setSelectedRecurringItem] =
-    useState<RecurringExpenseOutput>();
 
   const { deleteConfig } = useMutateRecurringExpenses();
   const { onDelete } = useDeleteTableItem({ onConfirmDelete: deleteConfig });
@@ -48,21 +45,6 @@ export const CategoryBudgetRow: React.FC<CategoryBudgetRowProps> = ({
   const isOverCommitted =
     !!budget && category.committedFromRecurring > budget.limit;
   const percentageUsed = budget ? Math.min(budget.percentageUsed, 100) : 0;
-
-  const onAddRecurring = () => {
-    setSelectedRecurringItem(undefined);
-    setIsRecurringModalOpen(true);
-  };
-
-  const onEditRecurring = (item: RecurringExpenseOutput) => {
-    setSelectedRecurringItem(item);
-    setIsRecurringModalOpen(true);
-  };
-
-  const onRecurringModalDismissed = () => {
-    setSelectedRecurringItem(undefined);
-    setIsRecurringModalOpen(false);
-  };
 
   return (
     <Surface variant="default" className="flex flex-col w-full p-2 gap-2">
@@ -221,15 +203,6 @@ export const CategoryBudgetRow: React.FC<CategoryBudgetRowProps> = ({
               </div>
             </Surface>
           ))}
-          <Button
-            size="sm"
-            variant="ghost"
-            onPress={onAddRecurring}
-            className="self-end"
-          >
-            <HiOutlinePlusCircle />
-            {t("addRecurring")}
-          </Button>
         </div>
       )}
       <CategoryModalForm
@@ -238,12 +211,6 @@ export const CategoryBudgetRow: React.FC<CategoryBudgetRowProps> = ({
         isOpen={isBudgetModalOpen}
         useRecurringAsBudget={useRecurringAsBudget}
         onDismiss={() => setIsBudgetModalOpen(false)}
-      />
-      <RecurringExpenseModalForm
-        item={selectedRecurringItem}
-        defaultCategoryRef={category.ref}
-        isOpen={isRecurringModalOpen}
-        onDismiss={onRecurringModalDismissed}
       />
     </Surface>
   );

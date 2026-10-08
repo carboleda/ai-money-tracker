@@ -4,7 +4,12 @@ import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { Chip, Surface } from "@heroui/react";
-import { HiBanknotes, HiEye, HiEyeSlash } from "react-icons/hi2";
+import {
+  HiBanknotes,
+  HiEye,
+  HiEyeSlash,
+  HiMiniArrowPathRoundedSquare,
+} from "react-icons/hi2";
 import { LocaleNamespace } from "@/i18n/namespace";
 import { useAppStore } from "@/stores/useAppStore";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
@@ -24,6 +29,7 @@ import type { CategoryWithBudgetStatusOutput } from "@/app/api/domain/category/p
 import type { GetRecurringExpensesOutput, RecurringExpenseOutput } from "@/app/api/domain/recurring-expense/ports/outbound/get-recurring-expenses.port";
 import { CategoryBudgetRow } from "@/components/features/CategoryBudgets/CategoryBudgetRow";
 import { CategoryModalForm } from "@/components/features/CategoryBudgets/CategoryModalForm/CategoryModalForm";
+import { RecurringExpenseModalForm } from "@/components/features/RecurringExpenses";
 
 const CATEGORY_KEY = "/api/category/with-budget";
 const RECURRING_KEY = "/api/recurring-expenses";
@@ -53,6 +59,9 @@ function CategoryBudgetList({
   const { maxTableHeight, containerRef } = useMeasuredTableHeight();
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
+  const [isRecurringModalOpen, setIsRecurringModalOpen] = useState(false);
+  const [selectedRecurringItem, setSelectedRecurringItem] =
+    useState<RecurringExpenseOutput>();
   const { isMutating, deleteConfig } = useMutateCategory();
   const { onDelete } = useDeleteTableItem({ onConfirmDelete: deleteConfig });
 
@@ -88,6 +97,21 @@ function CategoryBudgetList({
     setSelectedCategory(isAlreadySelected ? undefined : category);
   };
 
+  const onAddRecurring = () => {
+    setSelectedRecurringItem(undefined);
+    setIsRecurringModalOpen(true);
+  };
+
+  const onEditRecurring = (item: RecurringExpenseOutput) => {
+    setSelectedRecurringItem(item);
+    setIsRecurringModalOpen(true);
+  };
+
+  const onRecurringModalDismissed = () => {
+    setSelectedRecurringItem(undefined);
+    setIsRecurringModalOpen(false);
+  };
+
   return (
     <>
       <ZolventFilter.FreeTextFilter
@@ -114,6 +138,11 @@ function CategoryBudgetList({
               onDelete(item.id, item.name).then((ok) => ok && clearSelection())
             }
           />
+          <TableToolbar.NewAction
+            icon={<HiMiniArrowPathRoundedSquare />}
+            labelKey="addRecurring"
+            onPress={onAddRecurring}
+          />
           <TableToolbar.ToggleAction
             isSelected={hideEmptyCategories}
             onChange={setHideEmptyCategories}
@@ -139,6 +168,7 @@ function CategoryBudgetList({
                 }
                 isSelected={selectedCategory?.ref === category.ref}
                 onToggleSelect={() => onToggleRowSelection(category)}
+                onEditRecurring={onEditRecurring}
               />
             ))}
           </div>
@@ -154,6 +184,12 @@ function CategoryBudgetList({
         existingCategories={categories}
         isOpen={isEditOpen}
         onDismiss={onEditDismissed}
+      />
+      <RecurringExpenseModalForm
+        item={selectedRecurringItem}
+        defaultCategoryRef={selectedCategory?.ref}
+        isOpen={isRecurringModalOpen}
+        onDismiss={onRecurringModalDismissed}
       />
     </>
   );
