@@ -1,7 +1,17 @@
 {
-  "title": "Sign In",
-  "subtitle": "Welcome to AI Money Track",
-  "signInWithButton": "Sign in with Google",
+  "welcomeTitle": "Welcome to Zolvent",
+  "welcomeSubtitle": "Sign in to start managing your money smarter.",
+  "heroTitle": "Take control of your finances",
+  "heroSubtitle": "Track expenses, manage budgets, and get AI-powered insights — all in one place.",
+  "heroCard": {
+    "spendingLabel": "Spending this month",
+    "budgetLabel": "Groceries budget",
+    "transactionLabel": "Salary deposit",
+    "transactionDate": "Today, 9:41 AM"
+  },
+  "signInWithButton": "Continue with Google",
+  "signInWithButtonLoging": "Waiting for Google login...",
+  "signInHelper": "New here? Signing in with Google creates your account automatically.",
   "signInErrorMessage": "Could not sign in with Google. Please try again.",
   "enablePushNotifications": "Enable Push Notifications",
   "signOut": "Sign Out",
