@@ -1,7 +1,16 @@
 {
-  "title": "Iniciar sesión",
-  "subtitle": "Bienvenido a AI Money Track",
-  "signInWithButton": "Iniciar sesión con Google",
+  "welcomeTitle": "Bienvenido a Zolvent",
+  "welcomeSubtitle": "Inicia sesión para seguir administrando tu dinero de forma más inteligente.",
+  "heroTitle": "Toma el control de tus finanzas",
+  "heroSubtitle": "Controla tus gastos, administra presupuestos y obtén información impulsada por IA, todo en un solo lugar.",
+  "heroCard": {
+    "spendingLabel": "Gastos este mes",
+    "budgetLabel": "Presupuesto de mercado",
+    "transactionLabel": "Depósito de salario",
+    "transactionDate": "Hoy, 9:41 AM"
+  },
+  "signInWithButton": "Continuar con Google",
+  "signInHelper": "¿Primera vez? Al iniciar sesión con Google creamos tu cuenta automáticamente.",
   "signInErrorMessage": "No se pudo iniciar sesión con Google. Por favor, inténtalo de nuevo.",
   "enablePushNotifications": "Habilitar notificaciones push",
   "signOut": "Cerrar sesión",
