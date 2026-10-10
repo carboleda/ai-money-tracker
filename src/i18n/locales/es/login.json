@@ -1,6 +1,6 @@
 {
   "welcomeTitle": "Bienvenido a Zolvent",
-  "welcomeSubtitle": "Inicia sesión para seguir administrando tu dinero de forma más inteligente.",
+  "welcomeSubtitle": "Inicia sesión para comenzar a administrar tu dinero de forma más inteligente.",
   "heroTitle": "Toma el control de tus finanzas",
   "heroSubtitle": "Controla tus gastos, administra presupuestos y obtén información impulsada por IA, todo en un solo lugar.",
   "heroCard": {
@@ -10,6 +10,7 @@
     "transactionDate": "Hoy, 9:41 AM"
   },
   "signInWithButton": "Continuar con Google",
+  "signInWithButtonLoging": "Esperando...",
   "signInHelper": "¿Primera vez? Al iniciar sesión con Google creamos tu cuenta automáticamente.",
   "signInErrorMessage": "No se pudo iniciar sesión con Google. Por favor, inténtalo de nuevo.",
   "enablePushNotifications": "Habilitar notificaciones push",

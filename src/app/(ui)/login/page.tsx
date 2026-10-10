@@ -7,7 +7,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { auth, provider } from "@/firebase/client/auth";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
-import { FcGoogle } from "react-icons/fc";
+import { FaGoogle } from "react-icons/fa";
 import { HiChartPie } from "react-icons/hi2";
 import { MdAccountBalance } from "react-icons/md";
 import { FirebaseError } from "firebase/app";
@@ -144,7 +144,7 @@ function LoginPage() {
     try {
       setErrorMessage("");
       setIsLoading(true);
-      const result = await signInWithPopup(auth, provider);
+      await signInWithPopup(auth, provider);
       const token = await auth.currentUser?.getIdToken(true);
       // IdP data available using getAdditionalUserInfo(result)
 
@@ -199,15 +199,14 @@ function LoginPage() {
 
   return (
     <div className="relative -mx-2 flex min-h-dvh flex-col md:-mx-4 md:flex-row">
-      <ThemeSwitch className="fixed right-4 top-4 z-20 rounded-full border border-border bg-surface/80 p-2 text-foreground backdrop-blur-sm" />
+      <ThemeSwitch className="fixed right-4 top-4 z-20 p-2 text-foreground backdrop-blur-sm" />
 
       {/* Mobile-only decorative card, fills the free space above the form */}
       <div
         aria-hidden="true"
-        className="relative flex flex-1 items-center justify-center px-6 pt-16 md:hidden"
+        className="relative flex flex-1 items-center justify-center px-6 pt-8 md:hidden"
       >
-        <div className="absolute inset-0 bg-radial from-accent/20 to-transparent to-70%" />
-        <SpendingCard t={t} className="relative w-52 -rotate-6" />
+        <SpendingCard t={t} className="relative w-52 -rotate-6 opacity-30" />
       </div>
 
       {/* Form panel */}
@@ -241,8 +240,8 @@ function LoginPage() {
               fullWidth
               className="gap-3"
             >
-              {!isLoading && <FcGoogle size={22} />}
-              {t("signInWithButton")}
+              {!isLoading && <FaGoogle size={22} />}
+              {isLoading ? t("signInWithButtonLoging") : t("signInWithButton")}
             </Button>
 
             {errorMessage && (
@@ -266,8 +265,7 @@ function LoginPage() {
         aria-hidden="true"
         className="relative flex flex-1 items-center justify-center px-6 pb-16 md:hidden"
       >
-        <div className="absolute inset-0 bg-radial from-success/20 to-transparent to-70%" />
-        <TransactionCard t={t} className="relative w-64 rotate-3" />
+        <TransactionCard t={t} className="relative w-64 rotate-3 opacity-30" />
       </div>
 
       {/* Visual panel (desktop only) */}
