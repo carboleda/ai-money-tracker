@@ -2,6 +2,8 @@ export * from "./chipStyles";
 export * from "./InlineEditableTitle";
 export * from "./InlineTextChip";
 export * from "./InlineSelectChip";
+export * from "./InlineMultiSelectChip";
+export * from "./InlineComboBoxChip";
 export * from "./InlineAmountChip";
 export * from "./InlineAccountChip";
 export * from "./InlineCategoryChip";

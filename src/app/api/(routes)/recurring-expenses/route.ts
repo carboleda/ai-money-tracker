@@ -6,7 +6,7 @@ import { UpdateRecurringExpenseService } from "@/app/api/domain/recurring-expens
 import { DeleteRecurringExpenseService } from "@/app/api/domain/recurring-expense/service/delete-recurring-expense.service";
 import type { CreateRecurringExpenseInput } from "@/app/api/domain/recurring-expense/ports/inbound/create-recurring-expense.port";
 import type { UpdateRecurringExpenseInput } from "@/app/api/domain/recurring-expense/ports/inbound/update-recurring-expense.port";
-import { DomainError } from "@/app/api/domain/shared/errors/domain.error";
+import { handleApiError } from "@/app/api/helpers/handle-api-error";
 import { api } from "@/app/api";
 import { withUserContext } from "@/app/api/context/initialize-context";
 
@@ -18,11 +18,7 @@ export async function GET(req: NextRequest) {
       const result = await service.execute();
       return NextResponse.json(result);
     } catch (error) {
-      const domainError = error as DomainError<unknown>;
-      return new NextResponse(null, {
-        status: domainError.statusCode,
-        statusText: domainError.message,
-      });
+      return handleApiError(error);
     }
   });
 }
@@ -41,11 +37,7 @@ export async function POST(req: NextRequest) {
 
       return NextResponse.json({ id });
     } catch (error) {
-      const domainError = error as DomainError<unknown>;
-      return new NextResponse(null, {
-        status: domainError.statusCode,
-        statusText: domainError.message,
-      });
+      return handleApiError(error);
     }
   });
 }
@@ -64,11 +56,7 @@ export async function PUT(req: NextRequest) {
 
       return NextResponse.json({ id: input.id });
     } catch (error) {
-      const domainError = error as DomainError<unknown>;
-      return new NextResponse(null, {
-        status: domainError.statusCode,
-        statusText: domainError.message,
-      });
+      return handleApiError(error);
     }
   });
 }
@@ -86,11 +74,7 @@ export async function DELETE(req: NextRequest) {
         statusText: "Recurring expense deleted successfully",
       });
     } catch (error) {
-      const domainError = error as DomainError<unknown>;
-      return new NextResponse(null, {
-        status: domainError.statusCode,
-        statusText: domainError.message,
-      });
+      return handleApiError(error);
     }
   });
 }

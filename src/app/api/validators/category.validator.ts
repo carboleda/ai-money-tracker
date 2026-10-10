@@ -26,13 +26,15 @@ export const CreateCategorySchema = z.object({
   budget: BudgetSchema.optional(),
 });
 
-export const UpdateCategorySchema = CreateCategorySchema.omit({
-  restrictedTypes: true,
-})
-  .partial()
-  .extend({
-    id: z.string().min(1, "ID is required"),
-  });
+export const UpdateCategorySchema = CreateCategorySchema.partial().extend({
+  id: z.string().min(1, "ID is required"),
+  budget: BudgetSchema.nullable().optional(),
+});
+
+export const CustomizeCategorySchema = CreateCategorySchema.partial().extend({
+  ref: z.string().min(1, "ref is required"),
+  budget: BudgetSchema.nullable().optional(),
+});
 
 export const DeleteCategorySchema = z.object({
   id: z.string().min(1, "ID is required"),
@@ -64,5 +66,6 @@ export const CategoryWithBudgetStatusOutputSchema = CategoryOutputSchema.extend(
         isAlerted: z.boolean(),
       })
       .optional(),
+    committedFromRecurring: z.number(),
   }
 );

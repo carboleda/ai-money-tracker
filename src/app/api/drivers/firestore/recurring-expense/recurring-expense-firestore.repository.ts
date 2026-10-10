@@ -44,7 +44,9 @@ export class RecurringExpenseFirestoreRepository
   private async enrichWithCategories(
     entities: Array<RecurringExpenseEntity & { id: string }>
   ): Promise<Array<RecurringExpenseEntity & { id: string }>> {
-    const customCategories = await this.categoryRepository.getAll();
+    // Include soft-deleted categories so recurring expenses keep resolving
+    // a deleted category's display data instead of degrading to a raw ref
+    const customCategories = await this.categoryRepository.getAllIncludingDeleted();
 
     const customCategoryMap = new Map<string, CategorySummary>();
     customCategories.forEach((cat) => {

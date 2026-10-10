@@ -3,10 +3,14 @@ import {
   Inject,
   InjectUserContext,
 } from "@/app/api/decorators/tsyringe.decorator";
-import { CategoryModel } from "@/app/api/domain/category/model/category.model";
+import {
+  CategoryModel,
+  CategoryBudget,
+  PredefinedCategory,
+} from "@/app/api/domain/category/model/category.model";
 import { CategoryRepository } from "@/app/api/domain/category/repository/category.repository";
 import { CategoryAdapter } from "./category.adapter";
-import { Firestore, Timestamp } from "firebase-admin/firestore";
+import { FieldValue, Firestore, Timestamp } from "firebase-admin/firestore";
 import { Collections } from "../types";
 import { CategoryEntity } from "./category.entity";
 import { BaseFirestoreRepository } from "@/app/api/drivers/firestore/base/base.firestore.repository";
@@ -14,12 +18,16 @@ import type { UserContext } from "@/app/api/context/user-context";
 import { CreateCategoryInput } from "@/app/api/domain/category/ports/inbound/create-category.port";
 import { UpdateCategoryInput } from "@/app/api/domain/category/ports/inbound/update-category.port";
 import { nanoid } from "nanoid";
+import { loadPredefinedCategoryMap } from "./predefined-category.helper";
 
 @Injectable()
 export class CategoryFirestoreRepository
   extends BaseFirestoreRepository
   implements CategoryRepository
 {
+  private readonly predefinedCategoryMap: Map<string, PredefinedCategory> =
+    loadPredefinedCategoryMap();
+
   constructor(
     @Inject(Firestore) firestore: Firestore,
     @InjectUserContext() userContext: UserContext
@@ -31,6 +39,17 @@ export class CategoryFirestoreRepository
     const snapshot = await this.getUserCollectionReference()
       .where("isDeleted", "==", false)
       .get();
+
+    const categories = snapshot.docs.map((doc) => {
+      const entity = { ...doc.data() } as CategoryEntity;
+      return CategoryAdapter.toModel(entity, doc.id);
+    });
+
+    return categories;
+  }
+
+  async getAllIncludingDeleted(): Promise<CategoryModel[]> {
+    const snapshot = await this.getUserCollectionReference().get();
 
     const categories = snapshot.docs.map((doc) => {
       const entity = { ...doc.data() } as CategoryEntity;
@@ -68,9 +87,20 @@ export class CategoryFirestoreRepository
   }
 
   async create(data: CreateCategoryInput): Promise<string> {
-    // Generate ref if not provided
-    const ref = nanoid(12);
+    return this.persistCustomCategory(nanoid(12), data);
+  }
 
+  async createCustomFromPredefined(
+    ref: string,
+    data: CreateCategoryInput
+  ): Promise<string> {
+    return this.persistCustomCategory(ref, data);
+  }
+
+  private async persistCustomCategory(
+    ref: string,
+    data: CreateCategoryInput
+  ): Promise<string> {
     // Check if ref already exists for this user (custom categories only)
     const existingCategory = await this.getCategoryByRef(ref);
     if (existingCategory) {
@@ -109,12 +139,20 @@ export class CategoryFirestoreRepository
       throw new Error(`Cannot modify predefined category`);
     }
 
-    const updates: Partial<CategoryEntity> = {};
+    const updates: Omit<Partial<CategoryEntity>, "budget"> & {
+      budget?: CategoryBudget | FieldValue;
+    } = {};
     if (data.name !== undefined) updates.name = data.name;
     if (data.icon !== undefined) updates.icon = data.icon;
+    if (data.restrictedTypes !== undefined)
+      updates.restrictedTypes = data.restrictedTypes;
     if (data.color !== undefined) updates.color = data.color;
     if (data.description !== undefined) updates.description = data.description;
-    if (data.budget !== undefined) updates.budget = data.budget;
+    if (data.budget === null) {
+      updates.budget = FieldValue.delete();
+    } else if (data.budget !== undefined) {
+      updates.budget = data.budget;
+    }
 
     updates.updatedAt = Timestamp.now();
 
@@ -131,6 +169,14 @@ export class CategoryFirestoreRepository
       throw new Error(`Cannot delete predefined category`);
     }
 
-    await this.getUserCollectionReference().doc(id).update({ isDeleted: true });
+    const docRef = this.getUserCollectionReference().doc(id);
+
+    // A customization of a predefined category can be hard-deleted: the
+    // predefined category remains available under the same ref anyway.
+    if (this.predefinedCategoryMap.has(category.ref)) {
+      await docRef.delete();
+    } else {
+      await docRef.update({ isDeleted: true });
+    }
   }
 }

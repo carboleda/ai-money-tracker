@@ -4,6 +4,7 @@ import {
   Injectable,
 } from "@/app/api/decorators/tsyringe.decorator";
 import { GetAllCategoriesService } from "./get-all-categories.service";
+import { GetRecurringCommitmentByCategoryService } from "./get-recurring-commitment-by-category.service";
 import { CategoryModel, BudgetStatus } from "../model/category.model";
 import {
   TransactionModel,
@@ -14,6 +15,7 @@ import type { FilterParams } from "@/app/api/domain/shared/interfaces/transactio
 
 interface CategoryWithBudgetStatus extends CategoryModel {
   budget?: BudgetStatus;
+  committedFromRecurring: number;
 }
 
 @Injectable()
@@ -22,6 +24,7 @@ export class GetAllCategoriesWithBudgetStatusService
 {
   constructor(
     private readonly getAllCategoriesService: GetAllCategoriesService,
+    private readonly getRecurringCommitmentByCategoryService: GetRecurringCommitmentByCategoryService,
     @InjectRepository(TransactionModel)
     private readonly transactionRepository: TransactionRepository
   ) {}
@@ -29,6 +32,9 @@ export class GetAllCategoriesWithBudgetStatusService
   async execute(): Promise<CategoryWithBudgetStatus[]> {
     // Get all categories (predefined + custom merged)
     const categories = await this.getAllCategoriesService.execute();
+
+    const commitmentByCategoryRef =
+      await this.getRecurringCommitmentByCategoryService.execute();
 
     // Get current month transactions (COMPLETE status only)
     const now = new Date();
@@ -58,10 +64,13 @@ export class GetAllCategoriesWithBudgetStatusService
       }
     });
 
-    // Enrich categories with budget status
+    // Enrich categories with budget status and recurring commitment
     const categoriesWithBudget = categories.map((category) => {
+      const committedFromRecurring =
+        commitmentByCategoryRef.get(category.ref) || 0;
+
       if (!category.budget) {
-        return category;
+        return { ...category, committedFromRecurring };
       }
 
       const spent = categorySpending.get(category.ref) || 0;
@@ -73,6 +82,7 @@ export class GetAllCategoriesWithBudgetStatusService
 
       return {
         ...category,
+        committedFromRecurring,
         budget: {
           limit: category.budget.limit,
           alertThreshold: category.budget.alertThreshold,

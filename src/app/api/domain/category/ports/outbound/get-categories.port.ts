@@ -21,4 +21,5 @@ export interface CategoryOutput {
 export interface CategoryWithBudgetStatusOutput
   extends Omit<CategoryOutput, "budget"> {
   budget?: BudgetStatus;
+  committedFromRecurring: number;
 }

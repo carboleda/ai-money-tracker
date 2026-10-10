@@ -1,5 +1,4 @@
 import "reflect-metadata";
-import { z } from "zod";
 import { GetAllCategoriesService } from "@/app/api/domain/category/service/get-all-categories.service";
 import { CreateCategoryService } from "@/app/api/domain/category/service/create-category.service";
 import { UpdateCategoryService } from "@/app/api/domain/category/service/update-category.service";
@@ -10,7 +9,7 @@ import { api } from "@/app/api/index";
 import { withUserContext } from "@/app/api/context/initialize-context";
 import { CreateCategoryInput } from "@/app/api/domain/category/ports/inbound/create-category.port";
 import { UpdateCategoryInput } from "@/app/api/domain/category/ports/inbound/update-category.port";
-import { DomainError } from "@/app/api/domain/shared/errors/domain.error";
+import { handleApiError } from "@/app/api/helpers/handle-api-error";
 import {
   CreateCategorySchema,
   UpdateCategorySchema,
@@ -70,21 +69,7 @@ export async function POST(req: NextRequest) {
 
       return NextResponse.json({ id }, { status: 201 });
     } catch (error) {
-      if (error instanceof z.ZodError) {
-        return NextResponse.json(
-          {
-            error: "Validation failed",
-            details: error.issues,
-          },
-          { status: 400 }
-        );
-      }
-
-      const domainError = error as DomainError<unknown>;
-      return new NextResponse(null, {
-        status: domainError.statusCode,
-        statusText: domainError.message,
-      });
+      return handleApiError(error);
     }
   });
 }
@@ -110,6 +95,7 @@ export async function PUT(req: NextRequest) {
         id: validatedData.id,
         name: validatedData.name,
         icon: validatedData.icon,
+        restrictedTypes: validatedData.restrictedTypes,
         description: validatedData.description,
         color: validatedData.color,
         budget: validatedData.budget,
@@ -120,21 +106,7 @@ export async function PUT(req: NextRequest) {
 
       return NextResponse.json({ id: input.id });
     } catch (error) {
-      if (error instanceof z.ZodError) {
-        return NextResponse.json(
-          {
-            error: "Validation failed",
-            details: error.issues,
-          },
-          { status: 400 }
-        );
-      }
-
-      const domainError = error as DomainError<unknown>;
-      return new NextResponse(null, {
-        status: domainError.statusCode,
-        statusText: domainError.message,
-      });
+      return handleApiError(error);
     }
   });
 }
@@ -155,21 +127,7 @@ export async function DELETE(req: NextRequest) {
         statusText: "Category deleted successfully",
       });
     } catch (error) {
-      if (error instanceof z.ZodError) {
-        return NextResponse.json(
-          {
-            error: "Validation failed",
-            details: error.issues,
-          },
-          { status: 400 }
-        );
-      }
-
-      const domainError = error as DomainError<unknown>;
-      return new NextResponse(null, {
-        status: domainError.statusCode,
-        statusText: domainError.message,
-      });
+      return handleApiError(error);
     }
   });
 }

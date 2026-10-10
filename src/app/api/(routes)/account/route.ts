@@ -1,5 +1,4 @@
 import "reflect-metadata";
-import { z } from "zod";
 import { GetAllAccountsService } from "@/app/api/domain/account/service/get-all.service";
 import { CreateAccountService } from "@/app/api/domain/account/service/create-account.service";
 import { UpdateAccountService } from "@/app/api/domain/account/service/update-account.service";
@@ -9,7 +8,7 @@ import { api } from "@/app/api/index";
 import { withUserContext } from "@/app/api/context/initialize-context";
 import { CreateAccountInput } from "@/app/api/domain/account/ports/inbound/create-account.port";
 import { UpdateAccountInput } from "@/app/api/domain/account/ports/inbound/update-account.port";
-import { DomainError } from "@/app/api/domain/shared/errors/domain.error";
+import { handleApiError } from "@/app/api/helpers/handle-api-error";
 import {
   CreateAccountSchema,
   UpdateAccountSchema,
@@ -47,21 +46,7 @@ export async function POST(req: NextRequest) {
 
       return NextResponse.json({ id });
     } catch (error) {
-      if (error instanceof z.ZodError) {
-        return NextResponse.json(
-          {
-            error: "Validation failed",
-            details: error.issues,
-          },
-          { status: 400 }
-        );
-      }
-
-      const domainError = error as DomainError<unknown>;
-      return new NextResponse(null, {
-        status: domainError.statusCode,
-        statusText: domainError.message,
-      });
+      return handleApiError(error);
     }
   });
 }
@@ -88,21 +73,7 @@ export async function PUT(req: NextRequest) {
 
       return NextResponse.json({ id: input.id });
     } catch (error) {
-      if (error instanceof z.ZodError) {
-        return NextResponse.json(
-          {
-            error: "Validation failed",
-            details: error.issues,
-          },
-          { status: 400 }
-        );
-      }
-
-      const domainError = error as DomainError<unknown>;
-      return new NextResponse(null, {
-        status: domainError.statusCode,
-        statusText: domainError.message,
-      });
+      return handleApiError(error);
     }
   });
 }
@@ -123,21 +94,7 @@ export async function DELETE(req: NextRequest) {
         statusText: "Account deleted successfully",
       });
     } catch (error) {
-      if (error instanceof z.ZodError) {
-        return NextResponse.json(
-          {
-            error: "Validation failed",
-            details: error.issues,
-          },
-          { status: 400 }
-        );
-      }
-
-      const domainError = error as DomainError<unknown>;
-      return new NextResponse(null, {
-        status: domainError.statusCode,
-        statusText: domainError.message,
-      });
+      return handleApiError(error);
     }
   });
 }

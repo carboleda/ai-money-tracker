@@ -5,6 +5,7 @@ import { sendRequest, invalidateResource, MutationRequest } from "@/config/reque
 import { useOfflineWriteGuard } from "@/hooks/useOnlineStatus";
 
 const KEY = "/api/recurring-expenses";
+const dependentQueries = [KEY, "/api/category/with-budget"];
 
 export const useMutateRecurringExpenses = () => {
   const queryClient = useQueryClient();
@@ -12,7 +13,7 @@ export const useMutateRecurringExpenses = () => {
 
   const { mutateAsync, isPending } = useMutation({
     mutationFn: (request: MutationRequest) => sendRequest(KEY, request),
-    onSuccess: () => invalidateResource(queryClient, KEY),
+    onSuccess: () => invalidateResource(queryClient, dependentQueries),
   });
 
   const createConfig = async (config: CreateRecurringExpenseInput) => {

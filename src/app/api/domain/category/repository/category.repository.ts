@@ -5,11 +5,18 @@ import { UpdateCategoryInput } from "../ports/inbound/update-category.port";
 export interface CategoryRepository {
   getAll(): Promise<CategoryModel[]>;
 
+  getAllIncludingDeleted(): Promise<CategoryModel[]>;
+
   getCategoryById(id: string): Promise<CategoryModel | null>;
 
   getCategoryByRef(ref: string): Promise<CategoryModel | null>;
 
   create(data: CreateCategoryInput): Promise<string>;
+
+  createCustomFromPredefined(
+    ref: string,
+    data: CreateCategoryInput
+  ): Promise<string>;
 
   update(data: UpdateCategoryInput): Promise<void>;
 

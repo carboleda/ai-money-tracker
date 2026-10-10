@@ -46,6 +46,7 @@ describe("RecurringExpenseFirestoreRepository", () => {
 
     const mockCategoryRepository: CategoryRepository = {
       getAll: jest.fn().mockResolvedValue([]),
+      getAllIncludingDeleted: jest.fn().mockResolvedValue([]),
       getById: jest.fn(),
       create: jest.fn(),
       update: jest.fn(),

@@ -1,6 +1,7 @@
 import { IconType } from "react-icons";
 import { HiCollection } from "react-icons/hi";
 import { HiMiniArrowPathRoundedSquare, HiChartPie } from "react-icons/hi2";
+import { BiCategoryAlt } from "react-icons/bi";
 import { MdPending, MdAccountBalance } from "react-icons/md";
 
 export type SiteConfig = typeof siteConfig;
@@ -28,7 +29,7 @@ export const pages: (Page | PageGroup)[] = [
     label: "transactions",
     href: "/private/transactions",
     icon: HiCollection,
-    className: "bg-accent/10 text-indigo-600",
+    className: "bg-muted/10 text-indigo-500",
   },
   {
     label: "pending",
@@ -44,6 +45,12 @@ export const pages: (Page | PageGroup)[] = [
         href: "/private/recurring-expenses",
         icon: HiMiniArrowPathRoundedSquare,
         className: "bg-accent/10 text-info",
+      },
+      {
+        label: "categoryBudgets",
+        href: "/private/category-budgets",
+        icon: BiCategoryAlt,
+        className: "bg-muted/10 text-fuchsia-400",
       },
       {
         label: "accounts",

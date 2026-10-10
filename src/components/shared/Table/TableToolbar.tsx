@@ -2,6 +2,7 @@ import {
   ButtonGroup,
   Button,
   ButtonProps,
+  ToggleButton,
   Chip,
   PressEvent,
   Badge,
@@ -68,7 +69,7 @@ const TableToolbarRoot: React.FC<TableToolbarProps> = ({
 
   return (
     <TableToolbarContext.Provider value={contextValue}>
-      <div className="flex flex-row gap-1 items-center py-2 justify-between">
+      <div className="flex flex-row gap-1 items-center py-2 justify-between w-full">
         <ButtonGroup variant="ghost">{children}</ButtonGroup>
         <div className="flex gap-1 items-center pr-3">
           <Chip size="sm" color="accent" variant="soft">
@@ -115,7 +116,7 @@ const BaseAction: React.FC<ActionProps> = ({
       aria-label={label}
       variant="ghost"
       isIconOnly={isMobile}
-      isDisabled={isMutating || (!noItemRequired && !selectedItem)}
+      isDisabled={isMutating || (!noItemRequired && !selectedItem) || isDisabled}
       onPress={() => onAction?.(selectedItem)}
       {...buttonProps}
     >
@@ -152,9 +153,41 @@ const ConfirmAction: React.FC<ActionProps> = (props) => {
   );
 };
 
+interface ToggleActionProps {
+  isSelected: boolean;
+  onChange: (isSelected: boolean) => void;
+  labelKey: string;
+  icon?: ReactNode;
+}
+
+const ToggleAction: React.FC<ToggleActionProps> = ({
+  isSelected,
+  onChange,
+  labelKey,
+  icon,
+}) => {
+  const { t } = useTableToolbarContext();
+  const isMobile = useIsMobile();
+  const label = t(labelKey);
+
+  return (
+    <ToggleButton
+      aria-label={label}
+      variant="ghost"
+      isIconOnly={isMobile}
+      isSelected={isSelected}
+      onChange={onChange}
+    >
+      {icon}
+      {!isMobile && label}
+    </ToggleButton>
+  );
+};
+
 export const TableToolbar = Object.assign(TableToolbarRoot, {
   NewAction,
   EditAction,
   DeleteAction,
   ConfirmAction,
+  ToggleAction,
 });

@@ -19,6 +19,7 @@ export async function GET(req: NextRequest) {
       restrictedTypes: cat.restrictedTypes,
       description: cat.description,
       budget: cat.budget,
+      committedFromRecurring: cat.committedFromRecurring,
       isCustom: cat.isCustom,
       createdAt: cat.createdAt.toISOString(),
       updatedAt: cat.updatedAt.toISOString(),
