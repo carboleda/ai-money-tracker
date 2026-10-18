@@ -19,7 +19,381 @@
         "bearerFormat": "JWT"
       }
     },
-    "schemas": {},
+    "schemas": {
+      "AccountTypeSchema": {
+        "type": "string"
+      },
+      "BudgetSchema": {
+        "type": "object",
+        "properties": {
+          "limit": {
+            "type": "number",
+            "exclusiveMinimum": true,
+            "minimum": 0
+          },
+          "alertThreshold": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 100
+          }
+        },
+        "required": [
+          "limit"
+        ]
+      },
+      "CategoryOutputSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "ref": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "icon": {
+            "type": "string"
+          },
+          "color": {
+            "type": "string"
+          },
+          "restrictedTypes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CategoryTypeSchema"
+            }
+          },
+          "description": {
+            "type": "string"
+          },
+          "budget": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/BudgetSchema"
+              }
+            ]
+          },
+          "isCustom": {
+            "type": "boolean"
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "ref",
+          "name",
+          "icon",
+          "restrictedTypes",
+          "isCustom",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "CategoryTypeSchema": {
+        "type": "string"
+      },
+      "CreateAccountSchema": {
+        "type": "object",
+        "properties": {
+          "ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "icon": {
+            "type": "string",
+            "minLength": 1
+          },
+          "type": {
+            "$ref": "#/components/schemas/AccountTypeSchema"
+          },
+          "balance": {
+            "type": "number"
+          },
+          "description": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "ref",
+          "name",
+          "icon",
+          "type",
+          "balance"
+        ]
+      },
+      "CreateCategorySchema": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 50
+          },
+          "icon": {
+            "type": "string",
+            "minLength": 1
+          },
+          "restrictedTypes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CategoryTypeSchema"
+            }
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 200
+          },
+          "color": {
+            "type": "string",
+            "pattern": "^#[0-9A-F]{6}$"
+          },
+          "budget": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/BudgetSchema"
+              }
+            ]
+          }
+        },
+        "required": [
+          "name",
+          "icon",
+          "restrictedTypes"
+        ]
+      },
+      "DeleteAccountSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "id"
+        ]
+      },
+      "DeleteCategorySchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "id"
+        ]
+      },
+      "ParseTransactionDataSchema": {
+        "type": "object",
+        "properties": {
+          "description": {
+            "type": "string",
+            "description": "Concise summary of transaction/merchant (max 100 chars)"
+          },
+          "amount": {
+            "type": "number",
+            "description": "Transaction amount in local currency (positive number)"
+          },
+          "type": {
+            "type": "string",
+            "description": "Transaction type: income, expense, or transfer"
+          },
+          "category": {
+            "type": "string",
+            "description": "Category reference ID matching user's categories list"
+          },
+          "sourceAccount": {
+            "type": "string",
+            "description": "Source account reference ID matching user's accounts list"
+          },
+          "destinationAccount": {
+            "type": "string",
+            "description": "Destination account reference ID for transfers"
+          },
+          "createdAt": {
+            "type": "string",
+            "description": "Date and time in ISO format yyyy-MM-dd'T'HH:mm"
+          },
+          "confidence": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "description": "AI confidence score between 0.0 and 1.0"
+          }
+        },
+        "required": [
+          "description",
+          "amount",
+          "type",
+          "category",
+          "sourceAccount",
+          "confidence"
+        ]
+      },
+      "ParseTransactionErrorSchema": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "description": "Error message if the transaction is invalid"
+          }
+        },
+        "required": [
+          "error"
+        ]
+      },
+      "ParseTransactionInputSchema": {
+        "type": "object",
+        "properties": {
+          "categories": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "ref": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "ref"
+              ]
+            }
+          },
+          "accounts": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "ref": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "ref",
+                "name"
+              ]
+            }
+          },
+          "text": {
+            "type": "string"
+          },
+          "picture": {
+            "type": "string"
+          },
+          "currentDate": {
+            "type": "string",
+            "description": "Current date/time in ISO format, used to resolve missing or relative dates"
+          }
+        },
+        "required": [
+          "categories",
+          "accounts",
+          "currentDate"
+        ]
+      },
+      "ParseTransactionOutputSchema": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "success",
+              "error"
+            ]
+          },
+          "data": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ParseTransactionDataSchema"
+              }
+            ]
+          },
+          "error": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ParseTransactionErrorSchema"
+              }
+            ]
+          }
+        },
+        "required": [
+          "type"
+        ]
+      },
+      "TransactionParamsSchema": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "status"
+        ]
+      },
+      "UpdateAccountSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "icon": {
+            "type": "string",
+            "minLength": 1
+          },
+          "type": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AccountTypeSchema"
+              }
+            ]
+          },
+          "balance": {
+            "type": "number"
+          },
+          "description": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "balance"
+        ]
+      }
+    },
     "responses": {
       "400": {
         "description": "Bad Request",
@@ -284,6 +658,25 @@
         }
       }
     },
+    "/category/customize": {
+      "post": {
+        "operationId": "post-category-customize",
+        "summary": "",
+        "description": "",
+        "tags": [
+          "Category"
+        ],
+        "parameters": [],
+        "responses": {
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
     "/category/with-budget": {
       "get": {
         "operationId": "get-category-with-budget",
@@ -513,16 +906,53 @@
         ],
         "parameters": [
           {
-            "name": "status",
             "in": "path",
+            "name": "status",
             "required": true,
             "schema": {
               "type": "string"
             },
-            "example": "example",
-            "description": "Path parameter: status"
+            "example": "example"
           }
         ],
+        "responses": {
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/transaction/parse": {
+      "post": {
+        "operationId": "post-transaction-parse",
+        "summary": "",
+        "description": "",
+        "tags": [
+          "Transaction"
+        ],
+        "parameters": [],
+        "responses": {
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/transaction/webhook": {
+      "post": {
+        "operationId": "post-transaction-webhook",
+        "summary": "",
+        "description": "",
+        "tags": [
+          "Transaction"
+        ],
+        "parameters": [],
         "responses": {
           "400": {
             "$ref": "#/components/responses/400"

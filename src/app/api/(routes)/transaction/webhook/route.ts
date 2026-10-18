@@ -7,7 +7,7 @@ import { withUserContext } from "@/app/api/context/initialize-context";
 
 export async function POST(req: NextRequest) {
   return withUserContext(req, async () => {
-    const text = await req.text();
+    const text = await req.json().then((data) => data.text);
 
     if (!text) {
       return NextResponse.json(
