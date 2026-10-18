@@ -5,6 +5,7 @@ export class Env {
   static readonly RATE_LIMIT_ENABLED =
     process.env.RATE_LIMIT_ENABLED === "true";
   static readonly CRON_SECRET = process.env.CRON_SECRET;
+  static readonly WEBHOOK_SECRET = process.env.WEBHOOK_SECRET;
   static readonly EARLY_REMINDER_DAYS_AHEAD = Number.parseInt(
     process.env.EARLY_REMINDER_DAYS_AHEAD || "1"
   );

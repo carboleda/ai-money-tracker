@@ -4,6 +4,7 @@ import { CreateTransactionService } from "./service/create-transaction.service";
 import { UpdateTransactionService } from "./service/update-transaction.service";
 import { DeleteTransactionService } from "./service/delete-transaction.service";
 import { FilterTransactionsService } from "./service/filter-transactions.service";
+import { CreateTransactionFromWebhookService } from "./service/create-transaction-from-webhook.service";
 
 export class TransactionModule {
   static register(): void {
@@ -26,6 +27,10 @@ export class TransactionModule {
 
     container.register(FilterTransactionsService, {
       useClass: FilterTransactionsService,
+    });
+
+    container.register(CreateTransactionFromWebhookService, {
+      useClass: CreateTransactionFromWebhookService,
     });
   }
 }

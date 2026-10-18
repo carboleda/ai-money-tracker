@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import vercelJson from "../../vercel.json" with { type: "json" };
 
-export async function cronjobSecretMiddleware(
-  request: NextRequest
-): Promise<NextResponse | void> {
+export function cronjobSecretMiddleware(
+  request: NextRequest,
+): NextResponse | void {
   const isCronPath = vercelJson.crons.some(
-    (cron) => cron.path === request.nextUrl.pathname
+    (cron) => cron.path === request.nextUrl.pathname,
   );
   if (isCronPath) {
     const CRON_SECRET = process.env.CRON_SECRET;
