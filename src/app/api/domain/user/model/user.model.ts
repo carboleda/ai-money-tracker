@@ -11,6 +11,7 @@ export enum EmailStrategy {
 
 export type UserSettings = {
   emailStrategy?: EmailStrategy;
+  paymentNotificationsEnabled?: boolean;
 };
 
 export class UserModel {
