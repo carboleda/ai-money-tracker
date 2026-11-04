@@ -5,9 +5,12 @@ import { HiFire } from "react-icons/hi";
 import { Color, TileTable } from "@/components/features/Summary/TileTable";
 
 import { Account } from "@/interfaces/account";
-import { Skeleton } from "@heroui/react";
+import { AccountType } from "@/app/api/domain/account/model/account.model";
+import { Button, Skeleton } from "@heroui/react";
 import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
+import { useTransactionDraftStore } from "@/stores/useTransactionDraftStore";
+import { FaRegCircleCheck } from "react-icons/fa6";
 
 export interface AccountsBalanceTitleProps {
   accountsBalance?: Account[];
@@ -21,12 +24,23 @@ export const AccountsBalanceTitle: React.FC<AccountsBalanceTitleProps> = ({
   totalBalance,
 }) => {
   const { t } = useTranslation(LocaleNamespace.Summary);
+  const openDraftModal = useTransactionDraftStore((s) => s.openDraftModal);
 
   if (!accountsBalance || !totalBalance) {
     return (
       <Skeleton className="h-60 rounded-lg w-full" />
     );
   }
+
+  const handlePayCreditAccount = (account: Account) => {
+    openDraftModal(
+      t("creditPayment.prompt", {
+        amount: Math.abs(account.balance),
+        accountName: account.name,
+      }),
+      true,
+    );
+  };
 
   return (
     <TileTable
@@ -37,6 +51,18 @@ export const AccountsBalanceTitle: React.FC<AccountsBalanceTitleProps> = ({
           name: account.name,
           amount: account.balance,
           color: (account.balance > 0 ? "success" : "danger") as Color,
+          action:
+            account.type === AccountType.CREDIT && account.balance < 0 ? (
+              <Button
+                variant="ghost"
+                size="sm"
+                aria-label={t("creditPayment.tooltip")}
+                onPress={() => handlePayCreditAccount(account)}
+              >
+                <FaRegCircleCheck />
+                {t("creditPayment.button")}
+              </Button>
+            ) : undefined,
         })),
         {
           id: "balance",

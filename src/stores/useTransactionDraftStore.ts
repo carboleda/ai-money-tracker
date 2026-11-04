@@ -22,6 +22,7 @@ export interface TransactionDraftState {
 
   // Prompt & Multimodal inputs
   prompt: string;
+  shouldAutoParse: boolean;
   receiptImageBase64: string | null;
   receiptPreviewUrl: string | null;
 
@@ -43,7 +44,7 @@ export interface TransactionDraftState {
   autoConfirmCountdown: number; // 5 -> 0 seconds
 
   // Actions
-  openDraftModal: (initialPrompt?: string) => void;
+  openDraftModal: (initialPrompt?: string, shouldAutoParse?: boolean) => void;
   closeDraftModal: () => void;
   setPrompt: (prompt: string) => void;
   setDescription: (description: string) => void;
@@ -65,6 +66,7 @@ export interface TransactionDraftState {
 type DraftDataFields = Pick<
   TransactionDraftState,
   | "prompt"
+  | "shouldAutoParse"
   | "receiptImageBase64"
   | "receiptPreviewUrl"
   | "description"
@@ -84,6 +86,7 @@ type DraftDataFields = Pick<
 
 const createInitialDraftFields = (): DraftDataFields => ({
   prompt: "",
+  shouldAutoParse: false,
   receiptImageBase64: null,
   receiptPreviewUrl: null,
   description: "",
@@ -106,11 +109,12 @@ export const useTransactionDraftStore = create<TransactionDraftState>()(
     isOpen: false,
     ...createInitialDraftFields(),
 
-    openDraftModal: (initialPrompt = "") =>
+    openDraftModal: (initialPrompt = "", shouldAutoParse = false) =>
       set({
         ...createInitialDraftFields(),
         isOpen: true,
         prompt: initialPrompt,
+        shouldAutoParse,
       }),
 
     closeDraftModal: () => set({ isOpen: false }),

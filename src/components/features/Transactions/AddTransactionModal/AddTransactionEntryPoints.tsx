@@ -24,6 +24,7 @@ import { useSearchParams } from "next/navigation";
 export const AddTransactionEntryPoints: React.FC = () => {
   const searchParams = useSearchParams();
   const isOpen = useTransactionDraftStore((s) => s.isOpen);
+  const shouldAutoParse = useTransactionDraftStore((s) => s.shouldAutoParse);
   const openDraftModal = useTransactionDraftStore((s) => s.openDraftModal);
   const closeDraftModal = useTransactionDraftStore((s) => s.closeDraftModal);
   const resetDraft = useTransactionDraftStore((s) => s.resetDraft);
@@ -75,7 +76,11 @@ export const AddTransactionEntryPoints: React.FC = () => {
       >
         <HiOutlineSparkles className="text-4xl" />
       </Button>
-      <AddTransactionModal isOpen={isOpen} onClose={handleClose} />
+      <AddTransactionModal
+        isOpen={isOpen}
+        onClose={handleClose}
+        shouldAutoParse={shouldAutoParse}
+      />
     </>
   );
 };

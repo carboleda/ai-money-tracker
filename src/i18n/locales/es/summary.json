@@ -15,5 +15,10 @@
   "amount": "MONTO",
   "total": "TOTAL",
   "description": "DESCRIPCIÓN",
-  "date": "FECHA"
+  "date": "FECHA",
+  "creditPayment": {
+    "button": "Pagado",
+    "tooltip": "Pagar esta cuenta de crédito",
+    "prompt": "Transferencia pago tarjeta de crédito por {{amount}} desde la cuenta de ahorros principal a {{accountName}}"
+  }
 }

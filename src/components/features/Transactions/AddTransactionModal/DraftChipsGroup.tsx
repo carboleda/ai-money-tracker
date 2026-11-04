@@ -27,8 +27,8 @@ export interface DraftChipsGroupProps {
 
 /**
  * Renders the row of interactive badged chips for the AI draft, adapting
- * the layout to the active TransactionType (Category hidden for Transfer,
- * Destination Account shown only for Transfer).
+ * the layout to the active TransactionType (Destination Account shown
+ * only for Transfer).
  * See sdd/ai-draft-transaction-pipeline.md §2.4 / §4.1 (<DraftChipsGroup>).
  */
 export const DraftChipsGroup: React.FC<DraftChipsGroupProps> = ({
@@ -95,18 +95,16 @@ export const DraftChipsGroup: React.FC<DraftChipsGroupProps> = ({
         ariaLabel={t("aiDraft.type.label")}
         onInteraction={onInteraction}
       />
-      {!isTransfer && (
-        <InlineCategoryChip
-          categoryRef={categoryRef}
-          categories={categories}
-          filterFn={categoryFilterFn}
-          placeholder={`🛒 ${t("aiDraft.category.select")}`}
-          searchPlaceholder={t("aiDraft.category.search")}
-          ariaLabel={t("aiDraft.category.label")}
-          onCategoryChange={(value) => updateDraftField("categoryRef", value)}
-          onInteraction={onInteraction}
-        />
-      )}
+      <InlineCategoryChip
+        categoryRef={categoryRef}
+        categories={categories}
+        filterFn={categoryFilterFn}
+        placeholder={`🛒 ${t("aiDraft.category.select")}`}
+        searchPlaceholder={t("aiDraft.category.search")}
+        ariaLabel={t("aiDraft.category.label")}
+        onCategoryChange={(value) => updateDraftField("categoryRef", value)}
+        onInteraction={onInteraction}
+      />
       <InlineAccountChip
         accountRef={sourceAccountRef}
         accounts={accounts}
