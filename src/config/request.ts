@@ -1,7 +1,7 @@
 import { QueryClient } from "@tanstack/react-query";
 
 export interface MutationRequest {
-  method: "POST" | "DELETE" | "PUT";
+  method: "POST" | "DELETE" | "PUT" | "PATCH";
   body: string | FormData;
 }
 

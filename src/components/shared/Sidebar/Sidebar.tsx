@@ -5,9 +5,7 @@ import Image from "next/image";
 import { siteConfig } from "@/config/site";
 import { SidebarMenuItems } from "./SidebarMenuItems";
 import { useAppStore } from "@/stores/useAppStore";
-import { Button, Separator } from "@heroui/react";
-import { LogOutButton } from "./LogOutButton";
-import { ThemeSwitch } from "../ThemeSwitch";
+import { Button } from "@heroui/react";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { HiChevronDoubleLeft } from "react-icons/hi2";
 import clsx from "clsx";
@@ -97,31 +95,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ children }) => {
                 onItemClick={() => setIsSidebarOpen(false)}
                 collapsed={isCollapsed}
               />
-              <div className="gap-2 mt-auto">
-                <Separator className="my-2" />
-                <LogOutButton collapsed={isCollapsed} />
-                <div
-                  className={clsx(
-                    "flex flex-row gap-2 m-4",
-                    isCollapsed
-                      ? "md:justify-center md:gap-0"
-                      : "justify-between",
-                  )}
-                >
-                  <span
-                    className={clsx(
-                      "text-sm font-semibold overflow-hidden whitespace-nowrap transition-all duration-300",
-                      EASE,
-                      isCollapsed
-                        ? "md:max-w-0 md:opacity-0"
-                        : "md:max-w-40 md:opacity-100",
-                    )}
-                  >
-                    Theme
-                  </span>
-                  <ThemeSwitch />
-                </div>
-              </div>
             </div>
           </div>
         </div>

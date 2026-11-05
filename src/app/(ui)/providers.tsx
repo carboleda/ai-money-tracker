@@ -24,7 +24,7 @@ export function Providers({ children }: Readonly<ProvidersProps>) {
   return (
     <RouterProvider navigate={router.push}>
       <CustomToastProvider />
-      <NextThemesProvider attribute="class" defaultTheme="dark">
+      <NextThemesProvider attribute="class" defaultTheme="system" enableSystem>
         <ThemeCookieSync />
         <OnlineStatusListener />
         <QueryProvider>

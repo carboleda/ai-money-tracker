@@ -71,6 +71,18 @@ describe("NotifyPaymentCreatedService", () => {
     expect(notificationService.sendBulkNotifications).not.toHaveBeenCalled();
   });
 
+  it("does nothing when the user disabled the push notifications master switch", async () => {
+    getUserService.execute.mockResolvedValue(
+      createUserModelFixture({
+        settings: { pushNotificationsEnabled: false },
+      })
+    );
+
+    await service.execute(input);
+
+    expect(notificationService.sendBulkNotifications).not.toHaveBeenCalled();
+  });
+
   it("does nothing when the user has no devices with an fcmToken", async () => {
     getUserService.execute.mockResolvedValue(
       createUserModelFixture({ devices: [] })
@@ -97,7 +109,7 @@ describe("NotifyPaymentCreatedService", () => {
         userId: user.id,
         fcmToken: "token1",
         notification: expect.objectContaining({
-          title: "Payment recorded",
+          title: "Payment recorded through your Apple Wallet integration",
           body: `You paid ${input.amount} for ${input.description}`,
           extraData: { transactionId: input.transactionId },
         }),

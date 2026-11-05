@@ -3,6 +3,7 @@ import { HiCollection } from "react-icons/hi";
 import { HiMiniArrowPathRoundedSquare, HiChartPie } from "react-icons/hi2";
 import { BiCategoryAlt } from "react-icons/bi";
 import { MdPending, MdAccountBalance } from "react-icons/md";
+import { IoSettingsOutline } from "react-icons/io5";
 
 export type SiteConfig = typeof siteConfig;
 
@@ -57,6 +58,12 @@ export const pages: (Page | PageGroup)[] = [
         href: "/private/accounts",
         icon: MdAccountBalance,
         className: "bg-success/10 text-success",
+      },
+      {
+        label: "preferences",
+        href: "/private/preferences",
+        icon: IoSettingsOutline,
+        className: "bg-muted/10 text-blue-500",
       },
     ],
   },

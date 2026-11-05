@@ -20,6 +20,7 @@ describe("GetUserService", () => {
       updateOrCreateUser: jest.fn(),
       getAllUsers: jest.fn(),
       nullifyStaleTokens: jest.fn(),
+      updateUserSettings: jest.fn(),
     };
 
     // Register mock repository

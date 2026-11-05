@@ -6,6 +6,8 @@ import { FilterTransactionsService } from "../../../transaction/service/filter-t
 import { getRepositoryToken } from "@/app/api/decorators/tsyringe.decorator";
 import { SummaryHistoryModel } from "../../model/summary-history.model";
 import { transactionModelFixture } from "@/app/api/domain/transaction/service/__tests__/fixtures/transaction.model.fixture";
+import { GetUserService } from "@/app/api/domain/user/service/get-user.service";
+import { createUserModelFixture } from "@/app/api/domain/user/service/__tests__/fixtures/user.model.fixture";
 
 jest.mock("@/config/env", () => ({
   Env: { RUN_ON_DAY_OF_MONTH: 15 },
@@ -17,6 +19,7 @@ describe("CreateMonthlySummaryService", () => {
   let service: CreateMonthlySummaryService;
   let mockRepository: jest.Mocked<SummaryHistoryRepository>;
   let mockFilterService: jest.Mocked<FilterTransactionsService>;
+  let mockGetUserService: jest.Mocked<GetUserService>;
 
   beforeEach(() => {
     const testContainer = container.createChildContainer();
@@ -30,11 +33,18 @@ describe("CreateMonthlySummaryService", () => {
       execute: jest.fn(),
     } as unknown as jest.Mocked<FilterTransactionsService>;
 
+    mockGetUserService = {
+      execute: jest.fn().mockResolvedValue(createUserModelFixture()),
+    } as unknown as jest.Mocked<GetUserService>;
+
     testContainer.register(getRepositoryToken(SummaryHistoryModel), {
       useValue: mockRepository,
     });
     testContainer.register(FilterTransactionsService, {
       useValue: mockFilterService,
+    });
+    testContainer.register(GetUserService, {
+      useValue: mockGetUserService,
     });
 
     service = testContainer.resolve(CreateMonthlySummaryService);
@@ -77,5 +87,31 @@ describe("CreateMonthlySummaryService", () => {
         createdAt: expect.any(Date),
       })
     );
+  });
+
+  it("should use the user's monthlyReportDay setting over the env default", async () => {
+    const customDay = 20;
+    mockGetUserService.execute.mockResolvedValue(
+      createUserModelFixture({ settings: { monthlyReportDay: customDay } })
+    );
+    jest.spyOn(Date.prototype, "getDate").mockReturnValue(customDay);
+    mockFilterService.execute.mockResolvedValue([transactionModelFixture]);
+
+    await service.execute();
+
+    expect(mockFilterService.execute).toHaveBeenCalled();
+    expect(mockRepository.create).toHaveBeenCalled();
+  });
+
+  it("should skip execution when the current day doesn't match the user's monthlyReportDay setting", async () => {
+    mockGetUserService.execute.mockResolvedValue(
+      createUserModelFixture({ settings: { monthlyReportDay: 20 } })
+    );
+    jest.spyOn(Date.prototype, "getDate").mockReturnValue(mockRunOnDayOfMonth);
+
+    await service.execute();
+
+    expect(mockFilterService.execute).not.toHaveBeenCalled();
+    expect(mockRepository.create).not.toHaveBeenCalled();
   });
 });

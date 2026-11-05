@@ -1,4 +1,4 @@
-import { UserModel } from "../model/user.model";
+import { UserModel, UserSettings } from "../model/user.model";
 
 export interface UserRepository {
   getExistingUser(): Promise<UserModel | null>;
@@ -9,4 +9,9 @@ export interface UserRepository {
    * of the provided values. The device record itself is kept intact.
    */
   nullifyStaleTokens(fcmTokens: string[]): Promise<void>;
+  /**
+   * Replaces the user's settings map wholesale with the given value, so
+   * keys omitted by the caller are actually removed rather than merged.
+   */
+  updateUserSettings(settings: UserSettings): Promise<UserSettings>;
 }

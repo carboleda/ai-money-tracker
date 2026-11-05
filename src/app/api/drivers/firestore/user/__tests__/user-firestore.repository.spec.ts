@@ -281,4 +281,48 @@ describe("UserFirestoreRepository", () => {
       expect(updateMock).not.toHaveBeenCalled();
     });
   });
+
+  describe("updateUserSettings", () => {
+    it("should replace the settings field wholesale via update when the user exists", async () => {
+      const updateMock = jest.fn().mockResolvedValue(undefined);
+      const setMock = jest.fn();
+      const getMock = jest.fn().mockResolvedValue({ exists: true });
+      const docMock = jest.fn().mockReturnValue({
+        get: getMock,
+        update: updateMock,
+        set: setMock,
+      });
+      (firestore.collection as jest.Mock).mockReturnValue({ doc: docMock });
+
+      const settings = { language: "es" as const };
+      const result = await repository.updateUserSettings(settings);
+
+      expect(docMock).toHaveBeenCalledWith("test-user-id");
+      expect(updateMock).toHaveBeenCalledWith({ settings });
+      expect(setMock).not.toHaveBeenCalled();
+      expect(result).toEqual(settings);
+    });
+
+    it("should create the document when the user does not exist yet", async () => {
+      const setMock = jest.fn().mockResolvedValue(undefined);
+      const updateMock = jest.fn();
+      const getMock = jest.fn().mockResolvedValue({ exists: false });
+      const docMock = jest.fn().mockReturnValue({
+        get: getMock,
+        update: updateMock,
+        set: setMock,
+      });
+      (firestore.collection as jest.Mock).mockReturnValue({ doc: docMock });
+
+      const settings = { monthlyReportDay: 5 };
+      const result = await repository.updateUserSettings(settings);
+
+      expect(setMock).toHaveBeenCalledWith({
+        email: "test@example.com",
+        settings,
+      });
+      expect(updateMock).not.toHaveBeenCalled();
+      expect(result).toEqual(settings);
+    });
+  });
 });

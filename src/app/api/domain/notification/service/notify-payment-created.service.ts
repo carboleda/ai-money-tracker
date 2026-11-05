@@ -25,7 +25,10 @@ export class NotifyPaymentCreatedService implements Service<
         return;
       }
 
-      if (user.settings?.paymentNotificationsEnabled === false) {
+      if (
+        user.settings?.pushNotificationsEnabled === false ||
+        user.settings?.paymentNotificationsEnabled === false
+      ) {
         console.log(
           `${this.logPrefix} User opted out of payment notifications`,
         );

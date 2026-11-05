@@ -201,6 +201,62 @@ describe("PendingTransactionNotificationService", () => {
       expect(result).toEqual({ success: false });
     });
 
+    it("should skip notifications when the user opted out of push notifications", async () => {
+      // Arrange
+      const user = createUserModelFixture({
+        settings: { pushNotificationsEnabled: false },
+      });
+      getUserService.execute.mockResolvedValue(user);
+
+      // Act
+      const result = await service.execute();
+
+      // Assert
+      expect(result).toEqual({ success: true, processedTransactions: 0 });
+      expect(filterTransactionsService.execute).not.toHaveBeenCalled();
+    });
+
+    it("should use the user's earlyReminderDaysAhead setting over the env default", async () => {
+      // Arrange
+      jest.useFakeTimers().setSystemTime(new Date("2024-01-11T00:00:00Z"));
+
+      const user = createUserModelFixture({
+        settings: { earlyReminderDaysAhead: 10 },
+      });
+      const nearFutureDate = new Date("2024-01-18T00:00:00Z"); // 7 days ahead
+
+      const transactions = getSeveralTransactionModels(1, [
+        {
+          createdAt: nearFutureDate,
+          description: "Upcoming payment",
+          status: TransactionStatus.PENDING,
+          type: TransactionType.EXPENSE,
+        },
+      ]);
+
+      getUserService.execute.mockResolvedValue(user);
+      filterTransactionsService.execute.mockResolvedValue(transactions);
+      standaloneNotificationStrategy.buildNotifications.mockReturnValue([
+        new NotificationModel({ title: "t", body: "b" }),
+      ]);
+      notificationService.sendBulkNotifications.mockResolvedValue({
+        totalSent: 1,
+        successful: 1,
+        failed: 0,
+        results: [{ success: true, messageId: "msg1" }],
+      });
+
+      // Act
+      await service.execute();
+
+      // Assert: the transaction, 7 days out, is within the 10-day custom
+      // window even though it's outside the mocked 3-day env default.
+      expect(standaloneNotificationStrategy.buildNotifications).toHaveBeenCalledWith(
+        transactions,
+        new Date("2024-01-11T00:00:00Z")
+      );
+    });
+
     describe("strategy selection", () => {
       const setUpTransactionsToNotify = () => {
         jest.useFakeTimers().setSystemTime(new Date("2024-01-11T00:00:00Z"));

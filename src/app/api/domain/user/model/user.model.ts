@@ -10,8 +10,15 @@ export enum EmailStrategy {
 }
 
 export type UserSettings = {
+  // Notifications
+  pushNotificationsEnabled?: boolean;
   emailStrategy?: EmailStrategy;
+  earlyReminderDaysAhead?: number;
   paymentNotificationsEnabled?: boolean;
+
+  // General & Reports
+  language?: "en" | "es";
+  monthlyReportDay?: number;
 };
 
 export class UserModel {

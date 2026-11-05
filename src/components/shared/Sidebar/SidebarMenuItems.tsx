@@ -137,6 +137,7 @@ export const SidebarMenuItems: React.FC<SidebarMenuItemsProps> = ({
         <ListBox.Item
           key={SidebarMenuItemKeys.Avatar}
           id={SidebarMenuItemKeys.Avatar}
+          href="/private/preferences"
           textValue="User Avatar"
           className={clsx(collapsed && "md:justify-center")}
         >
