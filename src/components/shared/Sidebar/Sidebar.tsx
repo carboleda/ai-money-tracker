@@ -5,7 +5,7 @@ import Image from "next/image";
 import { siteConfig } from "@/config/site";
 import { SidebarMenuItems } from "./SidebarMenuItems";
 import { useAppStore } from "@/stores/useAppStore";
-import { Button } from "@heroui/react";
+import { Button, Surface } from "@heroui/react";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { HiChevronDoubleLeft } from "react-icons/hi2";
 import clsx from "clsx";
@@ -43,7 +43,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ children }) => {
       )}
 
       {/* Sidebar with transition */}
-      <div
+      <Surface
         className={clsx(
           "fixed left-0 inset-y-0 z-40 w-74 transition-all duration-300",
           EASE,
@@ -55,8 +55,12 @@ export const Sidebar: React.FC<SidebarProps> = ({ children }) => {
         aria-label="Sidebar"
         onClick={(e) => showSidebar && e.stopPropagation()}
       >
-        <div id="default-sidebar" className="w-full h-full">
-          <div className="flex flex-col h-full px-3 py-4 overflow-y-auto shadow-xl border-r bg-surface dark:bg-surface border-gray-200 dark:border-zinc-700">
+        <Surface
+          id="default-sidebar"
+          variant="default"
+          className="w-full h-full"
+        >
+          <div className="flex flex-col h-full px-3 py-4 overflow-y-auto shadow-xl border-r">
             <div
               className={clsx(
                 "flex w-full items-center gap-3",
@@ -97,7 +101,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ children }) => {
               />
             </div>
           </div>
-        </div>
+        </Surface>
 
         <Button
           isIconOnly
@@ -114,7 +118,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ children }) => {
             )}
           />
         </Button>
-      </div>
+      </Surface>
 
       <div
         className={clsx(
