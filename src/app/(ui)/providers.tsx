@@ -6,6 +6,7 @@ import { RouterProvider } from "@heroui/react";
 import { useRouter } from "next/navigation";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 import TranslationsProvider from "@/components/providers/TranslationsProvider";
+import { LanguagePreferenceSync } from "@/components/providers/LanguagePreferenceSync";
 import { AccountsProvider } from "@/components/providers/AccountsProvider";
 import { CategoriesProvider } from "@/components/providers/CategoriesProvider";
 import { QueryProvider } from "@/components/providers/QueryProvider";
@@ -30,6 +31,7 @@ export function Providers({ children }: Readonly<ProvidersProps>) {
         <QueryProvider>
           <ServiceWorkerRegistrar />
           <TranslationsProvider>
+            <LanguagePreferenceSync />
             <AccountsProvider>
               <CategoriesProvider>{children}</CategoriesProvider>
             </AccountsProvider>

@@ -13,13 +13,13 @@ interface TranslationsProviderProps {
 
 const runsOnServerSide = typeof window === "undefined";
 
-i18next
+void i18next
   .use(initReactI18next)
   .use(LanguageDetector)
   .use(
     resourcesToBackend(
-      (lang: string, ns: string) => import(`@/i18n/locales/${lang}/${ns}.json`)
-    )
+      (lang: string, ns: string) => import(`@/i18n/locales/${lang}/${ns}.json`),
+    ),
   )
   .init({
     ...getOptions(),

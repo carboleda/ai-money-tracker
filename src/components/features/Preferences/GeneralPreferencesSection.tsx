@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect } from "react";
 import i18next, { changeLanguage } from "i18next";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "next-themes";
@@ -42,14 +41,6 @@ export const GeneralPreferencesSection: React.FC<
   const appearance: Appearance = isSSR
     ? "system"
     : ((theme as Appearance) ?? "system");
-
-  // Keep the active UI language in sync with the persisted setting once it
-  // loads, so the choice follows the user across devices/reloads.
-  useEffect(() => {
-    if (settings?.language && settings.language !== i18next.language) {
-      void changeLanguage(settings.language);
-    }
-  }, [settings?.language]);
 
   const language =
     settings?.language ?? (i18next.language as "en" | "es") ?? "en";
