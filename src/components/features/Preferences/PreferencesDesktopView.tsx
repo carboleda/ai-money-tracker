@@ -19,7 +19,7 @@ export const PreferencesDesktopView: React.FC<PreferencesDesktopViewProps> = ({
   onUpdate,
 }) => {
   return (
-    <div className="flex flex-col gap-4 w-full max-w-5xl">
+    <div className="flex flex-col gap-4 w-full">
       <ProfileSection profile={profile} />
       <GeneralPreferencesSection settings={settings} onUpdate={onUpdate} />
       <NotificationsSection settings={settings} onUpdate={onUpdate} />

@@ -45,10 +45,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ children }) => {
       {/* Sidebar with transition */}
       <div
         className={clsx(
-          "fixed left-0 inset-y-0 z-40 w-64 transition-all duration-300",
+          "fixed left-0 inset-y-0 z-40 w-74 transition-all duration-300",
           EASE,
           "md:translate-x-0",
-          isCollapsed ? "md:w-20" : "md:w-64",
+          isCollapsed ? "md:w-20" : "md:w-74",
           showSidebar ? "translate-x-0" : "-translate-x-full",
         )}
         style={{ willChange: "transform" }}
@@ -120,7 +120,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ children }) => {
         className={clsx(
           "md:p-4 transition-[margin] duration-300",
           EASE,
-          isCollapsed ? "md:ml-20" : "md:ml-64",
+          isCollapsed ? "md:ml-20" : "md:ml-74",
         )}
       >
         {children}
