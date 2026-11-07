@@ -31,14 +31,16 @@ export const IntegrationsSection: React.FC<IntegrationsSectionProps> = ({
         className="flex flex-col gap-4 w-full p-4 rounded-2xl"
       >
         <Card variant="default">
-          <Card.Header>
-            <Card.Title className="flex items-center gap-2">
-              <FaApplePay className="text-2xl" />
-              {t("appleWalletShortcut")}
-            </Card.Title>
-            <Card.Description>
-              {t("appleWalletShortcutHelper")}
-            </Card.Description>
+          <Card.Header className="flex flex-row align-top gap-2">
+            <FaApplePay className="text-7xl md:text-4xl" />
+            <div>
+              <Card.Title className="flex items-center gap-2">
+                {t("appleWalletShortcut")}
+              </Card.Title>
+              <Card.Description>
+                {t("appleWalletShortcutHelper")}
+              </Card.Description>
+            </div>
           </Card.Header>
           <Card.Footer className="flex justify-end">
             <Button

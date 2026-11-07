@@ -32,7 +32,7 @@
   "appleWallet": "Apple Wallet integration",
   "appleWalletHelper": "Get notified when a new transaction arrives from your Apple Wallet Shortcut.",
   "appleWalletShortcut": "Shortcut Automation for Apple Wallet",
-  "appleWalletShortcutHelper": "Install the Shortcut and configure an automation to send transactions from Apple Wallet.",
+  "appleWalletShortcutHelper": "Install the Shortcut and configure an automation to send transactions from Apple Wallet to Zolvent.",
   "downloadShortcut": "Download Shortcut",
   "pushOn": "Push On",
   "pushOff": "Push Off",

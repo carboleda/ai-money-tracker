@@ -13,9 +13,9 @@ import {
   ToggleButton,
   ToggleButtonGroup,
 } from "@heroui/react";
-import { HiOutlineAdjustmentsHorizontal } from "react-icons/hi2";
 import { LocaleNamespace } from "@/i18n/namespace";
 import { UserSettings } from "@/interfaces/user";
+import { IoSettingsOutline } from "react-icons/io5";
 
 interface GeneralPreferencesSectionProps {
   settings?: UserSettings;
@@ -70,7 +70,7 @@ export const GeneralPreferencesSection: React.FC<
   return (
     <div className="flex flex-col gap-2 w-full">
       <div className="flex items-center gap-2 text-foreground font-semibold">
-        <HiOutlineAdjustmentsHorizontal className="text-2xl" />
+        <IoSettingsOutline className="text-2xl" />
         {t("general")}
       </div>
       <Surface

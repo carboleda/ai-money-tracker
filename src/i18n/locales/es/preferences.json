@@ -32,7 +32,7 @@
   "appleWallet": "Integración con Apple Wallet",
   "appleWalletHelper": "Recibe una notificación cuando llegue una nueva transacción desde tu Apple Wallet Shortcut.",
   "appleWalletShortcut": "Atajo de Automatización para Apple Wallet",
-  "appleWalletShortcutHelper": "Instala el Shortcut y configura una automatización para enviar transacciones desde Apple Wallet.",
+  "appleWalletShortcutHelper": "Instala el Shortcut y configura una automatización para enviar transacciones desde Apple Wallet a Zolvent.",
   "downloadShortcut": "Descargar Shortcut",
   "pushOn": "Push activo",
   "pushOff": "Push inactivo",

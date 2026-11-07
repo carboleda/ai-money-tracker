@@ -190,7 +190,7 @@ export const NotificationsSection: React.FC<NotificationsSectionProps> = ({
           )}
         >
           <div className="flex flex-col">
-            <span>{t("appleWallet")}</span>
+            <Label>{t("appleWallet")}</Label>
             <span className="text-xs text-muted">{t("appleWalletHelper")}</span>
           </div>
           <Switch
