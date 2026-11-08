@@ -17,7 +17,7 @@
   "description": "DESCRIPCIÓN",
   "date": "FECHA",
   "creditPayment": {
-    "button": "Pagado",
+    "button": "Pagar",
     "tooltip": "Pagar esta cuenta de crédito",
     "prompt": "Transferencia pago tarjeta de crédito por {{amount}} desde la cuenta de ahorros principal a {{accountName}}"
   }
