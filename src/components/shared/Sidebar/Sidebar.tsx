@@ -5,9 +5,7 @@ import Image from "next/image";
 import { siteConfig } from "@/config/site";
 import { SidebarMenuItems } from "./SidebarMenuItems";
 import { useAppStore } from "@/stores/useAppStore";
-import { Button, Separator } from "@heroui/react";
-import { LogOutButton } from "./LogOutButton";
-import { ThemeSwitch } from "../ThemeSwitch";
+import { Button, Surface } from "@heroui/react";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { HiChevronDoubleLeft } from "react-icons/hi2";
 import clsx from "clsx";
@@ -45,20 +43,24 @@ export const Sidebar: React.FC<SidebarProps> = ({ children }) => {
       )}
 
       {/* Sidebar with transition */}
-      <div
+      <Surface
         className={clsx(
-          "fixed left-0 inset-y-0 z-40 w-64 transition-all duration-300",
+          "fixed left-0 inset-y-0 z-40 w-74 transition-all duration-300",
           EASE,
           "md:translate-x-0",
-          isCollapsed ? "md:w-20" : "md:w-64",
+          isCollapsed ? "md:w-20" : "md:w-74",
           showSidebar ? "translate-x-0" : "-translate-x-full",
         )}
         style={{ willChange: "transform" }}
         aria-label="Sidebar"
         onClick={(e) => showSidebar && e.stopPropagation()}
       >
-        <div id="default-sidebar" className="w-full h-full">
-          <div className="flex flex-col h-full px-3 py-4 overflow-y-auto shadow-xl border-r bg-surface dark:bg-surface border-gray-200 dark:border-zinc-700">
+        <Surface
+          id="default-sidebar"
+          variant="default"
+          className="w-full h-full"
+        >
+          <div className="flex flex-col h-full px-3 py-4 overflow-y-auto shadow-xl border-r">
             <div
               className={clsx(
                 "flex w-full items-center gap-3",
@@ -97,34 +99,9 @@ export const Sidebar: React.FC<SidebarProps> = ({ children }) => {
                 onItemClick={() => setIsSidebarOpen(false)}
                 collapsed={isCollapsed}
               />
-              <div className="gap-2 mt-auto">
-                <Separator className="my-2" />
-                <LogOutButton collapsed={isCollapsed} />
-                <div
-                  className={clsx(
-                    "flex flex-row gap-2 m-4",
-                    isCollapsed
-                      ? "md:justify-center md:gap-0"
-                      : "justify-between",
-                  )}
-                >
-                  <span
-                    className={clsx(
-                      "text-sm font-semibold overflow-hidden whitespace-nowrap transition-all duration-300",
-                      EASE,
-                      isCollapsed
-                        ? "md:max-w-0 md:opacity-0"
-                        : "md:max-w-40 md:opacity-100",
-                    )}
-                  >
-                    Theme
-                  </span>
-                  <ThemeSwitch />
-                </div>
-              </div>
             </div>
           </div>
-        </div>
+        </Surface>
 
         <Button
           isIconOnly
@@ -141,13 +118,13 @@ export const Sidebar: React.FC<SidebarProps> = ({ children }) => {
             )}
           />
         </Button>
-      </div>
+      </Surface>
 
       <div
         className={clsx(
           "md:p-4 transition-[margin] duration-300",
           EASE,
-          isCollapsed ? "md:ml-20" : "md:ml-64",
+          isCollapsed ? "md:ml-20" : "md:ml-74",
         )}
       >
         {children}

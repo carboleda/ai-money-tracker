@@ -57,6 +57,8 @@ const renderPageItem = (
   pathname: string,
   collapsed?: boolean
 ) => {
+  const isActive = page.label === keyLabel.get(pathname);
+
   return (
     <ListBox.Item
       key={page.label}
@@ -65,20 +67,27 @@ const renderPageItem = (
       textValue={page.label}
       className={clsx(collapsed && "md:justify-center md:gap-0 md:pe-2")}
     >
-      <IconWrapper className={page.className}>
+      <IconWrapper
+        className={clsx(
+          page.className,
+          isActive &&
+            collapsed &&
+            "md:ring-1 md:ring-muted/70 md:ring-offset-2 md:ring-offset-surface",
+        )}
+      >
         <page.icon className="text-lg md:text-base" />
       </IconWrapper>
       <Label
         className={clsx(
           "overflow-hidden whitespace-nowrap transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]",
-          collapsed ? "md:max-w-0 md:opacity-0" : "md:max-w-40 md:opacity-100"
+          collapsed ? "md:max-w-0 md:opacity-0" : "md:max-w-60 md:opacity-100",
         )}
       >
         {t(page.label)}
       </Label>
       <ListBox.ItemIndicator>
         {() =>
-          page.label === keyLabel.get(pathname) ? (
+          isActive ? (
             <FaCircleArrowRight
               className={clsx("size-4 text-accent", collapsed && "md:hidden")}
             />
@@ -137,6 +146,7 @@ export const SidebarMenuItems: React.FC<SidebarMenuItemsProps> = ({
         <ListBox.Item
           key={SidebarMenuItemKeys.Avatar}
           id={SidebarMenuItemKeys.Avatar}
+          href="/private/preferences"
           textValue="User Avatar"
           className={clsx(collapsed && "md:justify-center")}
         >

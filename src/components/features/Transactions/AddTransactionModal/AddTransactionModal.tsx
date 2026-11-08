@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Alert, Button, Modal } from "@heroui/react";
 import { HiOutlineSparkles } from "react-icons/hi2";
 import { useTranslation } from "react-i18next";
@@ -26,6 +26,7 @@ import { ModalContainer } from "@/components/shared/ModalContainer";
 export interface AddTransactionModalProps {
   isOpen: boolean;
   onClose: () => void;
+  shouldAutoParse?: boolean;
 }
 
 /**
@@ -37,6 +38,7 @@ export interface AddTransactionModalProps {
 export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
   isOpen,
   onClose,
+  shouldAutoParse = false,
 }) => {
   const { t } = useTranslation(LocaleNamespace.Transactions);
   const isMobile = useIsMobile();
@@ -45,6 +47,7 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
   const [isMicPermissionDenied, setIsMicPermissionDenied] = useState(false);
 
   const {
+    prompt,
     description,
     amount,
     type,
@@ -104,7 +107,7 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
       destinationAccount: isTransfer
         ? (destinationAccountRef ?? undefined)
         : undefined,
-      category: !isTransfer ? categoryRef : undefined,
+      category: categoryRef,
       createdAt: createdAt.toISOString(),
     };
 
@@ -137,6 +140,24 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
   ]);
 
   useDraftAutoConfirm(handleSave);
+
+  const hasAutoSubmittedRef = useRef(false);
+
+  useEffect(() => {
+    if (!isOpen) {
+      hasAutoSubmittedRef.current = false;
+      return;
+    }
+    if (
+      !hasAutoSubmittedRef.current &&
+      shouldAutoParse &&
+      prompt &&
+      pipelineStatus === "idle"
+    ) {
+      hasAutoSubmittedRef.current = true;
+      void parseDraft({ text: prompt });
+    }
+  }, [isOpen, shouldAutoParse, prompt, pipelineStatus, parseDraft]);
 
   const handleSubmitPrompt = ({
     text,

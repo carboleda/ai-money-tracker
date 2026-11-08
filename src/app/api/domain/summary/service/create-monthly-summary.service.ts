@@ -6,6 +6,7 @@ import { Service } from "@/app/api/domain/shared/ports/service.interface";
 import type { SummaryHistoryRepository } from "../repository/summary-history.repository";
 import { SummaryHistoryModel } from "../model/summary-history.model";
 import { FilterTransactionsService } from "@/app/api/domain/transaction/service/filter-transactions.service";
+import { GetUserService } from "@/app/api/domain/user/service/get-user.service";
 import {
   TransactionStatus,
   TransactionType,
@@ -19,14 +20,16 @@ export class CreateMonthlySummaryService implements Service<void, void> {
   constructor(
     @InjectRepository(SummaryHistoryModel)
     private readonly summaryHistoryRepository: SummaryHistoryRepository,
-    private readonly filterTransactionsService: FilterTransactionsService
+    private readonly filterTransactionsService: FilterTransactionsService,
+    private readonly getUserService: GetUserService
   ) { }
 
   async execute(): Promise<void> {
     const now = new Date();
+    const user = await this.getUserService.execute();
+    const scheduledDay = user?.settings?.monthlyReportDay ?? Env.RUN_ON_DAY_OF_MONTH;
 
-    // Only run on the 2nd of the month
-    if (now.getDate() !== Env.RUN_ON_DAY_OF_MONTH) {
+    if (now.getDate() !== scheduledDay) {
       return;
     }
 

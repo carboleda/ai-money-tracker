@@ -35,6 +35,11 @@ export class PendingTransactionNotificationService {
         return { success: false };
       }
 
+      if (user.settings?.pushNotificationsEnabled === false) {
+        console.log(`${this.logPrefix} User opted out of push notifications`);
+        return { success: true, processedTransactions: 0 };
+      }
+
       // Fetch pending transactions
       const transactions = await this.filterTransactionsService.execute({
         status: TransactionStatus.PENDING,
@@ -47,8 +52,10 @@ export class PendingTransactionNotificationService {
       }
 
       const now = new Date();
+      const daysAhead =
+        user.settings?.earlyReminderDaysAhead ?? Env.EARLY_REMINDER_DAYS_AHEAD;
       const earlyReminderDate = new Date();
-      earlyReminderDate.setDate(now.getDate() + Env.EARLY_REMINDER_DAYS_AHEAD);
+      earlyReminderDate.setDate(now.getDate() + daysAhead);
 
       const transactionsToNotify = transactions.filter((transaction) => {
         const createdAt = transaction.createdAt;

@@ -15,5 +15,10 @@
   "amount": "AMOUNT",
   "total": "TOTAL",
   "description": "DESCRIPTION",
-  "date": "DATE"
+  "date": "DATE",
+  "creditPayment": {
+    "button": "Mark as paid",
+    "tooltip": "Pay this credit account",
+    "prompt": "Transfer for credit card payment by {{amount}} from main saving account to {{accountName}}"
+  }
 }

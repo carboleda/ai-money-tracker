@@ -15,6 +15,7 @@ export type DataRow = {
   name: ReactNode;
   amount: number;
   color: Color;
+  action?: ReactNode;
 };
 
 export interface TableTileProps {
@@ -45,9 +46,12 @@ export const TileTable: React.FC<TableTileProps> = ({ columns, data }) => {
               <Table.Row key={item.id} id={item.id}>
                 <Table.Cell className="capitalize">{item.name}</Table.Cell>
                 <Table.Cell className="text-end">
-                  <TransactionTypeDecorator color={item.color}>
-                    {formatCurrency(item.amount)}
-                  </TransactionTypeDecorator>
+                  <div className="flex items-center justify-end gap-2">
+                    {item.action}
+                    <TransactionTypeDecorator color={item.color}>
+                      {formatCurrency(item.amount)}
+                    </TransactionTypeDecorator>
+                  </div>
                 </Table.Cell>
               </Table.Row>
             ))}

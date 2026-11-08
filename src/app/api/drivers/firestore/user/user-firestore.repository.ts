@@ -8,6 +8,7 @@ import { UserRepository } from "@/app/api/domain/user/repository/user.repository
 import {
   UserDeviceModel,
   UserModel,
+  UserSettings,
 } from "@/app/api/domain/user/model/user.model";
 import { Collections } from "@/app/api/drivers/firestore/types";
 import { UserAdapter } from "@/app/api/drivers/firestore/user/user.adapter";
@@ -64,6 +65,22 @@ export class UserFirestoreRepository
     });
 
     return id;
+  }
+
+  async updateUserSettings(settings: UserSettings): Promise<UserSettings> {
+    const { id, email } = this.getUserContext();
+    const docRef = this.firestore.collection(Collections.Users).doc(id);
+    const doc = await docRef.get();
+
+    if (!doc.exists) {
+      await docRef.set({ email, settings } as UserEntity);
+    } else {
+      // A plain (non dot-notation) field path replaces the whole map,
+      // so keys omitted from `settings` are actually removed.
+      await docRef.update({ settings });
+    }
+
+    return settings;
   }
 
   async getAllUsers(): Promise<UserModel[]> {

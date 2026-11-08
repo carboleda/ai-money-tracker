@@ -4,6 +4,7 @@ import { ParseTransactionDraftService } from "./parse-transaction-draft.service"
 import { CreateTransactionService } from "./create-transaction.service";
 import { TransactionStatus } from "../model/transaction.model";
 import { CreateTransactionFromTextInput } from "../ports/inbound/create-transaction-from-text.port";
+import { NotifyPaymentCreatedService } from "@/app/api/domain/notification/service/notify-payment-created.service";
 
 @Injectable()
 export class CreateTransactionFromWebhookService
@@ -11,7 +12,8 @@ export class CreateTransactionFromWebhookService
 {
   constructor(
     private readonly parseTransactionDraftService: ParseTransactionDraftService,
-    private readonly createTransactionService: CreateTransactionService
+    private readonly createTransactionService: CreateTransactionService,
+    private readonly notifyPaymentCreatedService: NotifyPaymentCreatedService
   ) {}
 
   async execute(input: CreateTransactionFromTextInput): Promise<string> {
@@ -19,7 +21,7 @@ export class CreateTransactionFromWebhookService
       text: input.text,
     });
 
-    return this.createTransactionService.execute({
+    const id = await this.createTransactionService.execute({
       description: draft.description,
       type: draft.type,
       status: TransactionStatus.COMPLETE,
@@ -29,5 +31,14 @@ export class CreateTransactionFromWebhookService
       amount: draft.amount,
       createdAt: new Date(draft.createdAt),
     });
+
+    await this.notifyPaymentCreatedService.execute({
+      transactionId: id,
+      description: draft.description,
+      amount: draft.amount,
+      type: draft.type,
+    });
+
+    return id;
   }
 }
