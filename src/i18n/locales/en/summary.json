@@ -28,7 +28,11 @@
     "incomes": "Incomes",
     "expenses": "Expenses",
     "netFlow": "Net flow",
-    "forecast": "Forecast"
+    "forecast": "Forecast",
+    "viewMode": {
+      "perMonth": "Per month",
+      "cumulative": "Cumulative"
+    }
   },
   "accounts": {
     "title": "Accounts",

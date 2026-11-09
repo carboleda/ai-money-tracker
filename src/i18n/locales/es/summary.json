@@ -28,7 +28,11 @@
     "incomes": "Ingresos",
     "expenses": "Gastos",
     "netFlow": "Flujo neto",
-    "forecast": "Proyección"
+    "forecast": "Proyección",
+    "viewMode": {
+      "perMonth": "Por mes",
+      "cumulative": "Acumulado"
+    }
   },
   "accounts": {
     "title": "Cuentas",

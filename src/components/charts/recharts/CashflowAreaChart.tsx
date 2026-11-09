@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import {
   Area,
   AreaChart,
@@ -13,7 +13,12 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { Skeleton, Surface } from "@heroui/react";
+import {
+  Skeleton,
+  Surface,
+  ToggleButton,
+  ToggleButtonGroup,
+} from "@heroui/react";
 import { CashflowPoint } from "@/interfaces/summary";
 import { formatCurrency } from "@/config/utils";
 import { useTranslation } from "react-i18next";
@@ -28,8 +33,17 @@ interface ChartPoint extends Omit<CashflowPoint, "netFlow"> {
   netFlowForecast?: number;
 }
 
+type NetFlowViewMode = "perMonth" | "cumulative";
+
+const compactCurrencyFormatter = new Intl.NumberFormat("en-US", {
+  style: "currency",
+  currency: "USD",
+  notation: "compact",
+  maximumFractionDigits: 1,
+});
+
 const formatCompactCurrency = (value: number) =>
-  `${formatCurrency(value / 1000, false)}K`;
+  compactCurrencyFormatter.format(value);
 
 const monthTickFormatter = new Intl.DateTimeFormat("en-US", {
   month: "short",
@@ -47,17 +61,32 @@ export const CashflowAreaChart: React.FC<CashflowAreaChartProps> = ({
   data,
 }) => {
   const { t } = useTranslation(LocaleNamespace.Summary);
+  const [viewMode, setViewMode] = useState<NetFlowViewMode>("perMonth");
 
   const { chartData, forecastStartDate } = useMemo(() => {
     const points = data ?? [];
     const firstForecastIndex = points.findIndex((point) => point.isForecast);
     const bridgeIndex = firstForecastIndex > 0 ? firstForecastIndex - 1 : -1;
 
+    // In "cumulative" mode, each point's net flow is the running total of every
+    // prior point's net flow (oldest historical month through the forecast
+    // months, in order), rather than that month's own isolated surplus/deficit.
+    let runningTotal = 0;
+    const resolvedNetFlow = points.map((point) => {
+      if (viewMode !== "cumulative") {
+        return point.netFlow;
+      }
+      runningTotal += point.netFlow;
+      return runningTotal;
+    });
+
     const mapped: ChartPoint[] = points.map((point, index) => ({
       ...point,
-      netFlow: point.isForecast ? undefined : point.netFlow,
+      netFlow: point.isForecast ? undefined : resolvedNetFlow[index],
       netFlowForecast:
-        point.isForecast || index === bridgeIndex ? point.netFlow : undefined,
+        point.isForecast || index === bridgeIndex
+          ? resolvedNetFlow[index]
+          : undefined,
     }));
 
     return {
@@ -65,25 +94,49 @@ export const CashflowAreaChart: React.FC<CashflowAreaChartProps> = ({
       forecastStartDate:
         firstForecastIndex >= 0 ? points[firstForecastIndex].date : undefined,
     };
-  }, [data]);
+  }, [data, viewMode]);
 
   if (!data) {
     return <Skeleton className="h-80 w-full rounded-2xl" />;
   }
+
+  const netFlowLabel =
+    viewMode === "cumulative"
+      ? `${t("cashflow.netFlow")} (${t("cashflow.viewMode.cumulative")})`
+      : t("cashflow.netFlow");
 
   return (
     <Surface
       variant="default"
       className="w-full rounded-2xl border border-border p-5"
     >
-      <div className="mb-4">
-        <h3 className="text-sm font-bold">{t("cashflow.title")}</h3>
-        <p className="text-xs text-muted">{t("cashflow.subtitle")}</p>
+      <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <h3 className="text-sm font-bold">{t("cashflow.title")}</h3>
+          <p className="text-xs text-muted">{t("cashflow.subtitle")}</p>
+        </div>
+        <ToggleButtonGroup
+          size="sm"
+          selectionMode="single"
+          disallowEmptySelection
+          selectedKeys={[viewMode]}
+          onSelectionChange={(keys) =>
+            setViewMode([...keys][0] as NetFlowViewMode)
+          }
+        >
+          <ToggleButton id="perMonth">
+            {t("cashflow.viewMode.perMonth")}
+          </ToggleButton>
+          <ToggleButton id="cumulative">
+            <ToggleButtonGroup.Separator />
+            {t("cashflow.viewMode.cumulative")}
+          </ToggleButton>
+        </ToggleButtonGroup>
       </div>
       <ResponsiveContainer width="100%" height={320}>
         <AreaChart
           data={chartData}
-          margin={{ top: 10, right: 8, left: -16, bottom: 0 }}
+          margin={{ top: 10, right: 8, left: 0, bottom: 0 }}
         >
           <defs>
             <linearGradient id="incomeGlow" x1="0" y1="0" x2="0" y2="1">
@@ -148,7 +201,7 @@ export const CashflowAreaChart: React.FC<CashflowAreaChartProps> = ({
           <Line
             type="monotone"
             dataKey="netFlow"
-            name={t("cashflow.netFlow")}
+            name={netFlowLabel}
             stroke="var(--warning)"
             strokeWidth={2}
             dot={false}
@@ -164,7 +217,7 @@ export const CashflowAreaChart: React.FC<CashflowAreaChartProps> = ({
             connectNulls
           />
           <Legend wrapperStyle={{ fontSize: 12 }} />
-          <Tooltip content={<CashflowTooltip />} />
+          <Tooltip content={<CashflowTooltip netFlowLabel={netFlowLabel} />} />
         </AreaChart>
       </ResponsiveContainer>
     </Surface>
@@ -174,11 +227,13 @@ export const CashflowAreaChart: React.FC<CashflowAreaChartProps> = ({
 interface CashflowTooltipProps {
   active?: boolean;
   payload?: Array<{ payload: ChartPoint }>;
+  netFlowLabel?: string;
 }
 
 const CashflowTooltip: React.FC<CashflowTooltipProps> = ({
   active,
   payload,
+  netFlowLabel,
 }) => {
   const { t } = useTranslation(LocaleNamespace.Summary);
 
@@ -205,7 +260,7 @@ const CashflowTooltip: React.FC<CashflowTooltipProps> = ({
         {t("cashflow.expenses")}: {formatCurrency(point.expenses)}
       </p>
       <p className="font-semibold text-warning">
-        {t("cashflow.netFlow")}: {formatCurrency(netFlow)}
+        {netFlowLabel ?? t("cashflow.netFlow")}: {formatCurrency(netFlow)}
       </p>
     </div>
   );
