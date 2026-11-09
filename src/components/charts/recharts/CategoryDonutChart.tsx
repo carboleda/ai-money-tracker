@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useEffect, useMemo, useState } from "react";
-import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
+import { Pie, PieChart, ResponsiveContainer, Sector, Tooltip } from "recharts";
+import type { PieSectorShapeProps } from "recharts";
 import {
   Button,
   Chip,
@@ -37,6 +38,10 @@ interface CategorySlice {
 }
 
 const DEFAULT_CATEGORY_ICON = "🏷️";
+
+const CategoryPieSector = (props: PieSectorShapeProps) => (
+  <Sector {...props} fill={(props.payload as CategorySlice).color} />
+);
 
 export const CategoryDonutChart: React.FC<CategoryDonutChartProps> = ({
   data,
@@ -109,12 +114,9 @@ export const CategoryDonutChart: React.FC<CategoryDonutChartProps> = ({
                     paddingAngle={4}
                     stroke="none"
                     cursor="pointer"
+                    shape={CategoryPieSector}
                     onClick={(_, index) => setSelectedCategory(slices[index])}
-                  >
-                    {slices.map((slice) => (
-                      <Cell key={slice.category} fill={slice.color} />
-                    ))}
-                  </Pie>
+                  />
                   <Tooltip
                     content={<CategoryTooltip />}
                     wrapperStyle={{ zIndex: 20, pointerEvents: "none" }}
@@ -127,14 +129,14 @@ export const CategoryDonutChart: React.FC<CategoryDonutChartProps> = ({
               <span className="text-[11px] uppercase tracking-wide text-muted">
                 {t("categories.totalSpend")}
               </span>
-              <span className="text-xl font-bold md:text-2xl">
+              <span className="text-xl font-bold md:text-xl">
                 {formatCurrency(totalExpenses)}
               </span>
               {trendPercentage !== undefined && (
                 <span
                   className={clsx(
                     "text-xs font-semibold",
-                    trendPercentage <= 0 ? "text-success" : "text-danger"
+                    trendPercentage <= 0 ? "text-success" : "text-danger",
                   )}
                 >
                   {trendPercentage >= 0 ? "+" : ""}
