@@ -55,13 +55,8 @@ export const FixedVsVariableBarChart: React.FC<
           <YAxis type="category" dataKey="name" hide />
           <Tooltip
             cursor={false}
-            formatter={(value) => formatCurrency(Number(value))}
-            contentStyle={{
-              backgroundColor: "var(--surface)",
-              border: "1px solid var(--border)",
-              borderRadius: 8,
-              fontSize: 12,
-            }}
+            content={<RecurringVsVariableTooltip />}
+            wrapperStyle={{ zIndex: 20 }}
           />
           <Bar
             dataKey="recurring"
@@ -102,5 +97,33 @@ export const FixedVsVariableBarChart: React.FC<
         </span>
       </div>
     </Surface>
+  );
+};
+
+interface RecurringVsVariableTooltipProps {
+  active?: boolean;
+  payload?: Array<{ payload: { recurring: number; variable: number } }>;
+}
+
+const RecurringVsVariableTooltip: React.FC<
+  RecurringVsVariableTooltipProps
+> = ({ active, payload }) => {
+  const { t } = useTranslation(LocaleNamespace.Summary);
+
+  if (!active || !payload?.length) {
+    return null;
+  }
+
+  const { recurring, variable } = payload[0].payload;
+
+  return (
+    <div className="rounded-xl border border-border bg-surface p-3 text-xs shadow-lg">
+      <p className="text-warning">
+        {t("recurringVsVariable.recurring")}: {formatCurrency(recurring)}
+      </p>
+      <p className="text-accent">
+        {t("recurringVsVariable.variable")}: {formatCurrency(variable)}
+      </p>
+    </div>
   );
 };

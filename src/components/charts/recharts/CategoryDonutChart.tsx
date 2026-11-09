@@ -95,36 +95,39 @@ export const CategoryDonutChart: React.FC<CategoryDonutChartProps> = ({
       {slices.length === 0 ? (
         <p className="text-sm text-muted">{t("categories.noExpenses")}</p>
       ) : (
-        <div className="flex flex-col items-center gap-5">
-          <div className="relative h-48 w-48 shrink-0">
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie
-                  data={slices}
-                  dataKey="total"
-                  nameKey="category"
-                  innerRadius={50}
-                  outerRadius={72}
-                  paddingAngle={4}
-                  stroke="none"
-                  cursor="pointer"
-                  onClick={(_, index) => setSelectedCategory(slices[index])}
-                >
-                  {slices.map((slice) => (
-                    <Cell key={slice.category} fill={slice.color} />
-                  ))}
-                </Pie>
-                <Tooltip
-                  content={<CategoryTooltip />}
-                  wrapperStyle={{ zIndex: 20, pointerEvents: "none" }}
-                />
-              </PieChart>
-            </ResponsiveContainer>
-            <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
+        <div className="flex flex-col gap-5">
+          <div className="flex items-center gap-5">
+            <div className="h-48 w-48 shrink-0">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={slices}
+                    dataKey="total"
+                    nameKey="category"
+                    innerRadius={50}
+                    outerRadius={72}
+                    paddingAngle={4}
+                    stroke="none"
+                    cursor="pointer"
+                    onClick={(_, index) => setSelectedCategory(slices[index])}
+                  >
+                    {slices.map((slice) => (
+                      <Cell key={slice.category} fill={slice.color} />
+                    ))}
+                  </Pie>
+                  <Tooltip
+                    content={<CategoryTooltip />}
+                    wrapperStyle={{ zIndex: 20, pointerEvents: "none" }}
+                  />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+
+            <div className="flex min-w-0 flex-col gap-1">
               <span className="text-[11px] uppercase tracking-wide text-muted">
                 {t("categories.totalSpend")}
               </span>
-              <span className="text-lg font-bold">
+              <span className="text-xl font-bold md:text-2xl">
                 {formatCurrency(totalExpenses)}
               </span>
               {trendPercentage !== undefined && (
