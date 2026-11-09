@@ -45,6 +45,31 @@ export const formatDate = (date: Date) => dateFormatter.format(date);
 
 export const formatMonthYear = (date: Date) => monthYearFormatter.format(date);
 
+const relativeTimeFormatter = new Intl.RelativeTimeFormat("en-US", {
+  numeric: "auto",
+});
+
+export const formatRelativeDate = (date: Date) => {
+  const diffMs = date.getTime() - Date.now();
+  const diffMinutes = Math.round(diffMs / (60 * 1000));
+
+  if (Math.abs(diffMinutes) < 60) {
+    return relativeTimeFormatter.format(diffMinutes, "minute");
+  }
+
+  const diffHours = Math.round(diffMinutes / 60);
+  if (Math.abs(diffHours) < 24) {
+    return relativeTimeFormatter.format(diffHours, "hour");
+  }
+
+  const diffDays = Math.round(diffHours / 24);
+  if (Math.abs(diffDays) < 7) {
+    return relativeTimeFormatter.format(diffDays, "day");
+  }
+
+  return formatDate(date);
+};
+
 export const getDaysInMonth = (year: number, monthIndex: number) =>
   new Date(year, monthIndex + 1, 0).getDate();
 

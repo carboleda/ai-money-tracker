@@ -1,13 +1,7 @@
 {
   "subtitle": "Cómo fluye tu dinero 💸",
   "emptyContent": "No hay filas para mostrar.",
-  "accountBalance": "Saldo de la cuenta",
-  "transactionsByType": "Transacciones por tipo",
-  "transactionsByCategory": "Transacciones por categoría",
-  "reccurentVsVariable": "Transacciones recurrentes vs variables",
-  "transactionsSummaryHistory": "Historial de resumen de transacciones",
   "dateRangeFilter": "Filtra el resumen por fecha",
-  "transactionForCategory": "Transacciones por categoría",
   "showLabels": "Mostrar etiquetas",
   "account": "CUENTA",
   "balance": "SALDO",
@@ -20,5 +14,45 @@
     "button": "Pagar",
     "tooltip": "Pagar esta cuenta de crédito",
     "prompt": "Transferencia pago tarjeta de crédito por {{amount}} desde la cuenta de ahorros principal a {{accountName}}"
+  },
+  "metrics": {
+    "overallBalance": "Saldo general",
+    "incomes": "Ingresos",
+    "expenses": "Gastos",
+    "transfers": "Transferencias",
+    "vsLastPeriod": "vs el período anterior"
+  },
+  "cashflow": {
+    "title": "Flujo de caja",
+    "subtitle": "Historial de 12 meses + proyección de 3 meses",
+    "incomes": "Ingresos",
+    "expenses": "Gastos",
+    "netFlow": "Flujo neto",
+    "forecast": "Proyección"
+  },
+  "accounts": {
+    "title": "Cuentas",
+    "totalLiquidity": "Liquidez activa total",
+    "noAccounts": "Todavía no hay cuentas activas."
+  },
+  "recentTransactions": {
+    "title": "Transacciones recientes",
+    "noTransactions": "Todavía no hay transacciones en este período.",
+    "viewAll": "Ver todas las transacciones"
+  },
+  "categories": {
+    "title": "Gastos por categoría",
+    "subtitle": "En qué se fue tu dinero este período",
+    "noExpenses": "Todavía no hay gastos en este período.",
+    "ofTotal": "del gasto total",
+    "totalSpend": "Gasto total",
+    "transactionsForCategory": "Transacciones por categoría",
+    "previousPage": "Categorías anteriores",
+    "nextPage": "Categorías siguientes"
+  },
+  "recurringVsVariable": {
+    "title": "Gastos recurrentes vs variables",
+    "recurring": "Recurrente",
+    "variable": "Variable"
   }
 }

@@ -8,6 +8,8 @@ import { CalculateTypeSummaryService } from "./service/calculate-type-summary.se
 import { CalculateRecurringVsVariableService } from "./service/calculate-recurring-vs-variable.service";
 import { CalculateBalanceService } from "./service/calculate-balance.service";
 import { CalculateSummaryMetricsService } from "./service/calculate-summary-metrics.service";
+import { CalculateSummaryTrendsService } from "./service/calculate-summary-trends.service";
+import { CalculateCashflowForecastService } from "./service/calculate-cashflow-forecast.service";
 
 export class SummaryModule {
   static register(): void {
@@ -38,6 +40,12 @@ export class SummaryModule {
     });
     container.register(CalculateBalanceService, {
       useClass: CalculateBalanceService,
+    });
+    container.register(CalculateSummaryTrendsService, {
+      useClass: CalculateSummaryTrendsService,
+    });
+    container.register(CalculateCashflowForecastService, {
+      useClass: CalculateCashflowForecastService,
     });
   }
 }

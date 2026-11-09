@@ -1,13 +1,7 @@
 {
   "subtitle": "How your money flows 💸",
   "emptyContent": "No rows to display.",
-  "accountBalance": "Account balance",
-  "transactionsByType": "Transactions by type",
-  "transactionsByCategory": "Transactions by category",
-  "reccurentVsVariable": "Recurring vs Variable transactions",
-  "transactionsSummaryHistory": "Transactions summary history",
   "dateRangeFilter": "Filter the summary by date",
-  "transactionForCategory": "Transactions for category",
   "showLabels": "Show labels",
   "account": "ACCOUNT",
   "balance": "BALANCE",
@@ -20,5 +14,45 @@
     "button": "Mark as paid",
     "tooltip": "Pay this credit account",
     "prompt": "Transfer for credit card payment by {{amount}} from main saving account to {{accountName}}"
+  },
+  "metrics": {
+    "overallBalance": "Overall balance",
+    "incomes": "Incomes",
+    "expenses": "Expenses",
+    "transfers": "Transfers",
+    "vsLastPeriod": "vs last period"
+  },
+  "cashflow": {
+    "title": "Cashflow",
+    "subtitle": "12-month trailing history + 3-month forecast",
+    "incomes": "Incomes",
+    "expenses": "Expenses",
+    "netFlow": "Net flow",
+    "forecast": "Forecast"
+  },
+  "accounts": {
+    "title": "Accounts",
+    "totalLiquidity": "Total active liquidity",
+    "noAccounts": "No active accounts yet."
+  },
+  "recentTransactions": {
+    "title": "Recent transactions",
+    "noTransactions": "No transactions in this period yet.",
+    "viewAll": "View all transactions"
+  },
+  "categories": {
+    "title": "Spending by category",
+    "subtitle": "Where your money went this period",
+    "noExpenses": "No expenses in this period yet.",
+    "ofTotal": "of total spend",
+    "totalSpend": "Total spend",
+    "transactionsForCategory": "Transactions for category",
+    "previousPage": "Previous categories",
+    "nextPage": "Next categories"
+  },
+  "recurringVsVariable": {
+    "title": "Recurring vs variable spend",
+    "recurring": "Recurring",
+    "variable": "Variable"
   }
 }
