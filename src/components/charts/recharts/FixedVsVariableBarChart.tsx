@@ -61,22 +61,22 @@ export const FixedVsVariableBarChart: React.FC<
           <Bar
             dataKey="recurring"
             stackId="a"
-            fill="var(--warning)"
+            fill="var(--accent)"
             radius={[8, 0, 0, 8]}
             barSize={28}
           />
           <Bar
             dataKey="variable"
             stackId="a"
-            fill="var(--accent)"
+            fill="var(--warning)"
             radius={[0, 8, 8, 0]}
             barSize={28}
           />
         </BarChart>
       </ResponsiveContainer>
-      <div className="mt-3 flex items-center justify-between text-sm">
+      <div className="mt-3 flex flex-col md:flex-row md:items-center justify-between text-sm">
         <span className="flex min-w-0 items-center gap-2">
-          <span className="size-2.5 shrink-0 rounded-full bg-warning" />
+          <span className="size-2.5 shrink-0 rounded-full bg-accent" />
           <span className="truncate">{t("recurringVsVariable.recurring")}</span>
           <span className="shrink-0 font-semibold">
             {formatCurrency(recurringTotal)}
@@ -86,7 +86,7 @@ export const FixedVsVariableBarChart: React.FC<
           </span>
         </span>
         <span className="flex min-w-0 items-center gap-2">
-          <span className="size-2.5 shrink-0 rounded-full bg-accent" />
+          <span className="size-2.5 shrink-0 rounded-full bg-warning" />
           <span className="truncate">{t("recurringVsVariable.variable")}</span>
           <span className="shrink-0 font-semibold">
             {formatCurrency(variableTotal)}
@@ -118,10 +118,10 @@ const RecurringVsVariableTooltip: React.FC<
 
   return (
     <div className="rounded-xl border border-border bg-surface p-3 text-xs shadow-lg">
-      <p className="text-warning">
+      <p className="text-accent">
         {t("recurringVsVariable.recurring")}: {formatCurrency(recurring)}
       </p>
-      <p className="text-accent">
+      <p className="text-warning">
         {t("recurringVsVariable.variable")}: {formatCurrency(variable)}
       </p>
     </div>

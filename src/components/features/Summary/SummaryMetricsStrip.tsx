@@ -145,7 +145,7 @@ const MetricCard: React.FC<MetricCardProps> = ({
       </div>
 
       <div className="flex items-baseline gap-2">
-        <span className={clsx("text-sm font-bold md:text-xl", colorClassName)}>
+        <span className={clsx("text-sm font-bold md:text-lg", colorClassName)}>
           {formatCurrency(amount)}
         </span>
         {inlinePercentage !== undefined && (

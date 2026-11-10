@@ -106,7 +106,7 @@ const MobileAccountsList: React.FC<AccountsListProps> = ({
       {accountsBalance.map((account) => (
         <li
           key={account.id}
-          className="flex min-w-[150px] shrink-0 flex-col gap-3 rounded-2xl border border-border bg-surface-secondary p-3 snap-start"
+          className="flex justify-end min-w-[150px] shrink-0 flex-col gap-3 rounded-2xl border border-border bg-surface-secondary p-3 snap-start"
         >
           <div className="flex items-center justify-between gap-2">
             <span
@@ -125,7 +125,7 @@ const MobileAccountsList: React.FC<AccountsListProps> = ({
             <span className="truncate text-sm font-medium">{account.name}</span>
             <span
               className={clsx(
-                "text-lg font-bold",
+                "text-md font-bold",
                 account.balance < 0 && "text-danger",
               )}
             >
@@ -182,8 +182,9 @@ const DesktopAccountsList: React.FC<AccountsListProps> = ({
             </span>
             {account.type === AccountType.CREDIT && account.balance < 0 && (
               <Button
-                variant="ghost"
+                variant="tertiary"
                 size="sm"
+                className="text-xs"
                 aria-label={t("creditPayment.tooltip")}
                 onPress={() => onPayCreditAccount(account)}
               >

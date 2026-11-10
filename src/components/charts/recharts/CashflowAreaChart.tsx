@@ -124,10 +124,10 @@ export const CashflowAreaChart: React.FC<CashflowAreaChartProps> = ({
             setViewMode([...keys][0] as NetFlowViewMode)
           }
         >
-          <ToggleButton id="perMonth">
+          <ToggleButton id="perMonth" className="text-xs">
             {t("cashflow.viewMode.perMonth")}
           </ToggleButton>
-          <ToggleButton id="cumulative">
+          <ToggleButton id="cumulative" className="text-xs">
             <ToggleButtonGroup.Separator />
             {t("cashflow.viewMode.cumulative")}
           </ToggleButton>
