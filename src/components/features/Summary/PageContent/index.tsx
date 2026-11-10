@@ -11,14 +11,14 @@ import {
 } from "@/components/shared/CustomDateRangePicker/ButtonGroup";
 import { parseAbsoluteToLocal, ZonedDateTime } from "@internationalized/date";
 import { RangeValue } from "@react-types/shared";
-import { CategoriesChart } from "@/components/charts/CategoriesChart";
-import { FixedVsVariableChart } from "@/components/charts/FixedVsVariableChart";
-import { Tiles } from "@/components/features/Summary/Tiles";
-import { AccountsBalanceTitle } from "@/components/features/Summary/AccountsBalanceTitle";
-import { TransactionsByTypeTitle } from "@/components/features/Summary/TransactionsByTypeTitle";
+import { CashflowAreaChart } from "@/components/charts/recharts/CashflowAreaChart";
+import { CategoryDonutChart } from "@/components/charts/recharts/CategoryDonutChart";
+import { FixedVsVariableBarChart } from "@/components/charts/recharts/FixedVsVariableBarChart";
+import { SummaryMetricsStrip } from "@/components/features/Summary/SummaryMetricsStrip";
+import { ConnectedAccountsTile } from "@/components/features/Summary/ConnectedAccountsTile";
+import { RecentTransactionsTile } from "@/components/features/Summary/RecentTransactionsTile";
 import { useTranslation } from "react-i18next";
 import { LocaleNamespace } from "@/i18n/namespace";
-import { TransactionsSummaryHistoryChart } from "@/components/charts/TransactionsSummaryHistoryChart";
 import { useAppStore } from "@/stores/useAppStore";
 
 const currentMonthBounds = getMonthBounds(new Date());
@@ -45,48 +45,10 @@ function PageContent() {
     setPageTitle(t("summary"), t("subtitle"));
   }, [t, setPageTitle]);
 
-  const tiles = [
-    {
-      title: t("accountBalance"),
-      data: (
-        <AccountsBalanceTitle
-          accountsBalance={response?.summary?.accountsBalance}
-          totalBalance={response?.summary?.totalBalance}
-        />
-      ),
-    },
-    {
-      title: t("transactionsByType"),
-      data: <TransactionsByTypeTitle byType={response?.summary?.byType} />,
-    },
-    {
-      title: t("transactionsSummaryHistory"),
-      className: "md:col-span-2",
-      data: response?.summary.transactionsSummaryHistory && (
-        <TransactionsSummaryHistoryChart
-          data={response?.summary.transactionsSummaryHistory}
-        />
-      ),
-    },
-    {
-      title: t("transactionsByCategory"),
-      data: response?.summary?.byCategory && (
-        <CategoriesChart
-          data={response?.summary?.byCategory}
-          detail={response?.transactions}
-        />
-      ),
-    },
-    {
-      title: t("reccurentVsVariable"),
-      data: response?.summary?.recurringVsVariable && (
-        <FixedVsVariableChart data={response?.summary?.recurringVsVariable} />
-      ),
-    },
-  ];
+  const summary = response?.summary;
 
   return (
-    <section className="flex flex-col gap-4">
+    <section className="flex flex-col gap-2">
       <div className="flex flex-row justify-items-stretch gap-2 w-full md:w-fit">
         <CustomDateRangePicker
           label={t("dateRangeFilter")}
@@ -100,7 +62,39 @@ function PageContent() {
         />
       </div>
 
-      <Tiles tiles={tiles} />
+      <SummaryMetricsStrip
+        totalBalance={summary?.totalBalance}
+        trends={summary?.trends}
+        byType={summary?.byType}
+        cashflow={summary?.cashflow}
+      />
+
+      <FixedVsVariableBarChart data={summary?.recurringVsVariable} />
+
+      <div className="grid grid-cols-1 gap-2 lg:grid-cols-12">
+        <div className="lg:col-span-7">
+          <CashflowAreaChart data={summary?.cashflow} />
+        </div>
+        <div className="lg:col-span-5">
+          <ConnectedAccountsTile
+            accountsBalance={summary?.accountsBalance}
+            totalBalance={summary?.totalBalance}
+          />
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 gap-2 lg:grid-cols-12">
+        <div className="lg:col-span-5">
+          <CategoryDonutChart
+            data={summary?.byCategory}
+            detail={response?.transactions}
+            trendPercentage={summary?.trends?.expenses.percentageChange}
+          />
+        </div>
+        <div className="lg:col-span-7">
+          <RecentTransactionsTile transactions={summary?.recentTransactions} />
+        </div>
+      </div>
     </section>
   );
 }

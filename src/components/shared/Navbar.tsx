@@ -1,7 +1,7 @@
 "use client";
 
 import { useAppStore } from "@/stores/useAppStore";
-import { Button } from "@heroui/react";
+import { Button, Surface } from "@heroui/react";
 import { CiMenuBurger } from "react-icons/ci";
 import { HiChevronLeft } from "react-icons/hi";
 import { NetworkIndicator } from "@/components/shared/NetworkIndicator";
@@ -10,7 +10,10 @@ export const Navbar = () => {
   const { pageTitle, pageSubtitle } = useAppStore();
 
   return (
-    <div className="flex flex-row justify-between items-center w-full gap-2 mb-4">
+    <Surface
+      variant="transparent"
+      className="sticky top-0 z-20 flex flex-row justify-between items-center w-full gap-2 bg-background pb-2 mb-2"
+    >
       <NavbarButton />
 
       <div className="flex flex-col w-full">
@@ -22,7 +25,7 @@ export const Navbar = () => {
           <NetworkIndicator />
         </div>
       </div>
-    </div>
+    </Surface>
   );
 };
 

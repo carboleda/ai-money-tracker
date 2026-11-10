@@ -1,5 +1,5 @@
 import { TransactionOutput } from "@/app/api/domain/transaction/ports/outbound/filter-transactions.port";
-import { Account, TransactionsSummaryHistory } from "./account";
+import { Account } from "./account";
 
 export interface CategorySummary {
   category: string;
@@ -21,13 +21,37 @@ export interface RecurringVsVariable {
   total: RecurringVsVariableEntry[];
 }
 
+export interface MetricTrend {
+  current: number;
+  previous: number;
+  percentageChange: number;
+}
+
+export interface SummaryTrends {
+  balance: MetricTrend;
+  incomes: MetricTrend;
+  expenses: MetricTrend;
+}
+
+export interface CashflowPoint {
+  date: string;
+  monthLabel: string;
+  incomes: number;
+  expenses: number;
+  transfers: number;
+  netFlow: number;
+  isForecast?: boolean;
+}
+
 export interface Summary {
   accountsBalance: Account[];
-  transactionsSummaryHistory: TransactionsSummaryHistory[];
+  totalBalance: number;
+  trends: SummaryTrends;
+  cashflow: CashflowPoint[];
   byCategory: CategorySummary[];
   byType: TypeSummary[];
+  recentTransactions: TransactionOutput[];
   recurringVsVariable: RecurringVsVariable;
-  totalBalance: number;
 }
 
 export interface GetSummaryResponse {

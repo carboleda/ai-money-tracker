@@ -6,6 +6,7 @@ import { LocaleNamespace } from "@/i18n/namespace";
 import { useAppStore } from "@/stores/useAppStore";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { useGetUser } from "@/hooks/useGetUser";
+import { useUserSettings } from "@/hooks/useUserSettings";
 import { useMutateUserSettings } from "@/hooks/useMutateUserSettings";
 import { useToast } from "@/hooks/useToast";
 import { UserSettings } from "@/interfaces/user";
@@ -16,7 +17,8 @@ export function PageContent() {
   const isMobile = useIsMobile();
   const { t } = useTranslation(LocaleNamespace.Preferences);
   const { setPageTitle } = useAppStore();
-  const { profile, user } = useGetUser();
+  const { profile } = useGetUser();
+  const settings = useUserSettings();
   const { updateSettings } = useMutateUserSettings();
   const { showSuccessToast, showErrorToast } = useToast();
 
@@ -37,7 +39,7 @@ export function PageContent() {
 
   return (
     <section className="flex flex-col items-center w-full">
-      <View profile={profile} settings={user?.settings} onUpdate={onUpdate} />
+      <View profile={profile} settings={settings} onUpdate={onUpdate} />
     </section>
   );
 }
