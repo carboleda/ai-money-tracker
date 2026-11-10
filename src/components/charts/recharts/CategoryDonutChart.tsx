@@ -129,7 +129,7 @@ export const CategoryDonutChart: React.FC<CategoryDonutChartProps> = ({
               <span className="text-[11px] uppercase tracking-wide text-muted">
                 {t("categories.totalSpend")}
               </span>
-              <span className="text-xl font-bold md:text-xl">
+              <span className="font-bold md:text-xl">
                 {formatCurrency(totalExpenses)}
               </span>
               {trendPercentage !== undefined && (
@@ -231,7 +231,7 @@ const CategoryBoxGrid: React.FC<{
               </span>
             </span>
             <span className="flex items-center justify-between gap-2">
-              <span className="text-sm font-bold">
+              <span className="text-xs md:text-sm font-bold">
                 {formatCurrency(slice.total)}
               </span>
               <span className="shrink-0 text-xs text-muted">

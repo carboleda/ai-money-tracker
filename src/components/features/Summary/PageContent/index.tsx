@@ -48,7 +48,7 @@ function PageContent() {
   const summary = response?.summary;
 
   return (
-    <section className="flex flex-col gap-4">
+    <section className="flex flex-col gap-2">
       <div className="flex flex-row justify-items-stretch gap-2 w-full md:w-fit">
         <CustomDateRangePicker
           label={t("dateRangeFilter")}
@@ -71,7 +71,7 @@ function PageContent() {
 
       <FixedVsVariableBarChart data={summary?.recurringVsVariable} />
 
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-12">
+      <div className="grid grid-cols-1 gap-2 lg:grid-cols-12">
         <div className="lg:col-span-7">
           <CashflowAreaChart data={summary?.cashflow} />
         </div>
@@ -83,7 +83,7 @@ function PageContent() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-12">
+      <div className="grid grid-cols-1 gap-2 lg:grid-cols-12">
         <div className="lg:col-span-5">
           <CategoryDonutChart
             data={summary?.byCategory}

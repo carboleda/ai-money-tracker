@@ -40,7 +40,7 @@ export const SummaryMetricsStrip: React.FC<SummaryMetricsStripProps> = ({
 
   if (totalBalance === undefined || !trends || !byType) {
     return (
-      <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+      <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
         {Array.from({ length: 4 }).map((_, index) => (
           <Skeleton key={index} className="h-28 rounded-2xl" />
         ))}
@@ -56,7 +56,7 @@ export const SummaryMetricsStrip: React.FC<SummaryMetricsStripProps> = ({
   );
 
   return (
-    <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+    <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
       <MetricCard
         label={t("metrics.overallBalance")}
         amount={totalBalance}
@@ -145,7 +145,7 @@ const MetricCard: React.FC<MetricCardProps> = ({
       </div>
 
       <div className="flex items-baseline gap-2">
-        <span className={clsx("text-lg font-bold md:text-xl", colorClassName)}>
+        <span className={clsx("text-sm font-bold md:text-xl", colorClassName)}>
           {formatCurrency(amount)}
         </span>
         {inlinePercentage !== undefined && (
@@ -163,15 +163,20 @@ const MetricCard: React.FC<MetricCardProps> = ({
 
       {trendPercentage !== undefined && (
         <Chip
-          className={clsx(
-            "inline-flex w-fit items-center gap-1 text-xs font-semibold",
-            isTrendPositive
-              ? "bg-success/15 text-success"
-              : "bg-danger/15 text-danger",
-          )}
+          className="inline-flex w-full flex-wrap items-center justify-center gap-1 md:py-3 text-xs font-semibold"
+          variant="soft"
+          size="sm"
+          color={isTrendPositive ? "success" : "danger"}
         >
-          {isTrendPositive ? <HiArrowTrendingUp /> : <HiArrowTrendingDown />}
-          {Math.abs(trendPercentage).toFixed(1)}% {t("metrics.vsLastPeriod")}
+          <span className="flex items-center gap-1 whitespace-nowrap">
+            {isTrendPositive ? (
+              <HiArrowTrendingUp className="size-3" />
+            ) : (
+              <HiArrowTrendingDown className="size-3" />
+            )}
+            {Math.abs(trendPercentage).toFixed(1)}%
+          </span>
+          <span className="whitespace-nowrap">{t("metrics.vsLastPeriod")}</span>
         </Chip>
       )}
 
