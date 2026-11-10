@@ -1,4 +1,7 @@
-import { Injectable } from "@/app/api/decorators/tsyringe.decorator";
+import {
+  Injectable,
+  InjectRepository,
+} from "@/app/api/decorators/tsyringe.decorator";
 import { TransactionStatus } from "@/app/api/domain/transaction/model/transaction.model";
 import { FilterTransactionsService } from "@/app/api/domain/transaction/service/filter-transactions.service";
 import { GetAllAccountsService } from "@/app/api/domain/account/service/get-all.service";
@@ -13,9 +16,10 @@ import { CalculateCashflowForecastService } from "./calculate-cashflow-forecast.
 import { GetSummaryResponseDto } from "../model/summary.dto";
 import { CashflowPointDto } from "../model/cashflow-point.dto";
 import { SummaryHistoryModel } from "../model/summary-history.model";
+import { UserModel } from "@/app/api/domain/user/model/user.model";
+import type { UserRepository } from "@/app/api/domain/user/repository/user.repository";
 import { getMonthBounds } from "@/config/utils";
-
-const RECENT_TRANSACTIONS_LIMIT = 7;
+import { Env } from "@/config/env";
 
 const monthLabelFormatter = new Intl.DateTimeFormat("en-US", {
   month: "short",
@@ -33,7 +37,9 @@ export class CalculateSummaryDashboardService {
     private readonly calculateRecurringVsVariableService: CalculateRecurringVsVariableService,
     private readonly calculateBalanceService: CalculateBalanceService,
     private readonly calculateSummaryTrendsService: CalculateSummaryTrendsService,
-    private readonly calculateCashflowForecastService: CalculateCashflowForecastService
+    private readonly calculateCashflowForecastService: CalculateCashflowForecastService,
+    @InjectRepository(UserModel)
+    private readonly userRepository: UserRepository
   ) {}
 
   async execute(
@@ -43,6 +49,20 @@ export class CalculateSummaryDashboardService {
     const currentMonthBounds = getMonthBounds(new Date());
     const effectiveStartDate = startDate ?? currentMonthBounds.start;
     const effectiveEndDate = endDate ?? currentMonthBounds.end;
+
+    const user = await this.userRepository.getExistingUser();
+    const settings = user?.settings;
+    const forecastHorizonMonths =
+      settings?.forecastHorizonMonths ??
+      Env.SUMMARY_DEFAULT_FORECAST_HORIZON_MONTHS;
+    const forecastBaselineMonths =
+      settings?.forecastBaselineMonths ??
+      Env.SUMMARY_DEFAULT_FORECAST_BASELINE_MONTHS;
+    const recentTransactionsLimit =
+      settings?.recentTransactionsLimit ??
+      Env.SUMMARY_DEFAULT_RECENT_TRANSACTIONS_LIMIT;
+    const historyWindowMonths =
+      settings?.historyWindowMonths ?? Env.SUMMARY_DEFAULT_HISTORY_WINDOW_MONTHS;
 
     // Transactions strictly scoped to the selected period. These drive
     // byCategory, byType, recentTransactions and the period trends — the
@@ -69,7 +89,7 @@ export class CalculateSummaryDashboardService {
       trends,
     ] = await Promise.all([
       this.getAllAccountsService.execute(),
-      this.getSummaryHistoryService.execute(),
+      this.getSummaryHistoryService.execute(historyWindowMonths),
       this.getAllRecurringExpensesService.execute(),
       this.calculateCategorySummaryService.execute(mappedTransactions),
       this.calculateTypeSummaryService.execute(mappedTransactions),
@@ -87,7 +107,9 @@ export class CalculateSummaryDashboardService {
 
     const forecastMonths = await this.calculateCashflowForecastService.execute(
       trailingHistory,
-      recurringExpenses.recurringExpensesConfig
+      recurringExpenses.recurringExpensesConfig,
+      forecastHorizonMonths,
+      forecastBaselineMonths
     );
 
     const cashflow: CashflowPointDto[] = [
@@ -97,7 +119,7 @@ export class CalculateSummaryDashboardService {
 
     const recentTransactions = [...mappedTransactions]
       .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
-      .slice(0, RECENT_TRANSACTIONS_LIMIT);
+      .slice(0, recentTransactionsLimit);
 
     return {
       summary: {

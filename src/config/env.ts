@@ -20,6 +20,20 @@ export class Env {
   );
   static readonly COLLECTION_SUFFIX = process.env.COLLECTION_SUFFIX || "";
 
+  // Summary dashboard environment variables
+  static readonly SUMMARY_DEFAULT_FORECAST_HORIZON_MONTHS = Number.parseInt(
+    process.env.SUMMARY_DEFAULT_FORECAST_HORIZON_MONTHS || "3",
+  );
+  static readonly SUMMARY_DEFAULT_FORECAST_BASELINE_MONTHS = Number.parseInt(
+    process.env.SUMMARY_DEFAULT_FORECAST_BASELINE_MONTHS || "3",
+  );
+  static readonly SUMMARY_DEFAULT_RECENT_TRANSACTIONS_LIMIT = Number.parseInt(
+    process.env.SUMMARY_DEFAULT_RECENT_TRANSACTIONS_LIMIT || "7",
+  );
+  static readonly SUMMARY_DEFAULT_HISTORY_WINDOW_MONTHS = Number.parseInt(
+    process.env.SUMMARY_DEFAULT_HISTORY_WINDOW_MONTHS || "12",
+  );
+
   // Gemini environment variables
   static readonly GEMINI_API_KEY = process.env.GEMINI_API_KEY || "";
   static readonly GEMINI_MODEL_NAME = process.env.GEMINI_MODEL_NAME || "";

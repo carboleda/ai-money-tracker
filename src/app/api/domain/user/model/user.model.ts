@@ -19,6 +19,12 @@ export type UserSettings = {
   // General & Reports
   language?: "en" | "es";
   monthlyReportDay?: number;
+
+  // Summary dashboard
+  forecastHorizonMonths?: 3 | 4 | 5 | 6;
+  forecastBaselineMonths?: 3 | 6 | 10 | 12;
+  recentTransactionsLimit?: 5 | 7 | 10;
+  historyWindowMonths?: 6 | 12;
 };
 
 export class UserModel {

@@ -2,9 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Surface } from "@heroui/react";
-import { HiOutlineBell, HiChevronRight } from "react-icons/hi";
-import { HiOutlinePuzzlePiece } from "react-icons/hi2";
+import { HiOutlineBell } from "react-icons/hi";
+import { HiChartPie, HiOutlinePuzzlePiece } from "react-icons/hi2";
 import { LocaleNamespace } from "@/i18n/namespace";
 import { EmailStrategy } from "@/app/api/domain/user/model/user.model";
 import { UserSettings } from "@/interfaces/user";
@@ -12,10 +11,12 @@ import { useAppStore } from "@/stores/useAppStore";
 import { LogOutButton } from "@/components/shared/Sidebar/LogOutButton";
 import { ProfileSection } from "./ProfileSection";
 import { GeneralPreferencesSection } from "./GeneralPreferencesSection";
+import { SummaryPreferencesSection } from "./SummaryPreferencesSection";
 import { NotificationsSection } from "./NotificationsSection";
 import { IntegrationsSection } from "./IntegrationsSection";
+import { PreferenceNavTile } from "./PreferenceNavTile";
 
-type View = "main" | "notifications" | "integrations";
+type View = "main" | "summary" | "notifications" | "integrations";
 
 interface PreferencesMobileViewProps {
   profile: { name?: string; email?: string; picture?: string } | null;
@@ -35,7 +36,10 @@ export const PreferencesMobileView: React.FC<PreferencesMobileViewProps> = ({
   // Swap the Navbar's menu button for a back button, and its title, while
   // the Notifications sub-view is open; restore both when going back.
   useEffect(() => {
-    if (view === "notifications") {
+    if (view === "summary") {
+      setPageTitle(t("summary"));
+      setBackButtonVisible(true);
+    } else if (view === "notifications") {
       setPageTitle(t("notifications"));
       setBackButtonVisible(true);
     } else if (view === "integrations") {
@@ -59,6 +63,18 @@ export const PreferencesMobileView: React.FC<PreferencesMobileViewProps> = ({
   // Never leave a stale back button in the Navbar if the user navigates
   // away from this page entirely while the sub-view is open.
   useEffect(() => () => setBackButtonVisible(false), [setBackButtonVisible]);
+
+  if (view === "summary") {
+    return (
+      <div className="flex flex-col gap-4 w-full">
+        <SummaryPreferencesSection
+          hdieTitle
+          settings={settings}
+          onUpdate={onUpdate}
+        />
+      </div>
+    );
+  }
 
   if (view === "notifications") {
     return (
@@ -90,60 +106,43 @@ export const PreferencesMobileView: React.FC<PreferencesMobileViewProps> = ({
   const walletState =
     settings?.paymentNotificationsEnabled !== false ? t("on") : t("off");
 
+  const forecastHorizonMonths = settings?.forecastHorizonMonths ?? 3;
+  const recentTransactionsLimit = settings?.recentTransactionsLimit ?? 7;
+  const historyWindowMonths = settings?.historyWindowMonths ?? 12;
+
   return (
     <div className="flex flex-col gap-4 w-full">
       <ProfileSection profile={profile} />
       <GeneralPreferencesSection settings={settings} onUpdate={onUpdate} />
 
-      <Surface
-        variant="secondary"
-        role="button"
-        tabIndex={0}
-        onClick={() => setView("notifications")}
-        onKeyDown={(e) => {
-          if (e.key === "Enter" || e.key === " ") {
-            e.preventDefault();
-            setView("notifications");
-          }
-        }}
-        className="flex items-center gap-3 w-full p-4 rounded-2xl text-left min-h-11 cursor-pointer"
-      >
-        <HiOutlineBell className="text-2xl shrink-0" />
-        <div className="flex flex-col flex-1 min-w-0">
-          <span className="font-semibold">{t("notifications")}</span>
-          <span className="text-xs text-muted truncate">
-            {t("notificationsPreview", {
-              pushState,
-              reminderFormat,
-              walletState,
-            })}
-          </span>
-        </div>
-        <HiChevronRight className="text-muted shrink-0" />
-      </Surface>
+      <PreferenceNavTile
+        icon={<HiChartPie className="text-2xl shrink-0" />}
+        title={t("summary")}
+        preview={t("summaryPreview", {
+          horizon: forecastHorizonMonths,
+          count: recentTransactionsLimit,
+          window: historyWindowMonths,
+        })}
+        onClick={() => setView("summary")}
+      />
 
-      <Surface
-        variant="secondary"
-        role="button"
-        tabIndex={0}
+      <PreferenceNavTile
+        icon={<HiOutlineBell className="text-2xl shrink-0" />}
+        title={t("notifications")}
+        preview={t("notificationsPreview", {
+          pushState,
+          reminderFormat,
+          walletState,
+        })}
+        onClick={() => setView("notifications")}
+      />
+
+      <PreferenceNavTile
+        icon={<HiOutlinePuzzlePiece className="text-2xl shrink-0" />}
+        title={t("integrations")}
+        preview={t("appleWalletShortcut")}
         onClick={() => setView("integrations")}
-        onKeyDown={(e) => {
-          if (e.key === "Enter" || e.key === " ") {
-            e.preventDefault();
-            setView("integrations");
-          }
-        }}
-        className="flex items-center gap-3 w-full p-4 rounded-2xl text-left min-h-11 cursor-pointer"
-      >
-        <HiOutlinePuzzlePiece className="text-2xl shrink-0" />
-        <div className="flex flex-col flex-1 min-w-0">
-          <span className="font-semibold">{t("integrations")}</span>
-          <span className="text-xs text-muted truncate">
-            {t("appleWalletShortcut")}
-          </span>
-        </div>
-        <HiChevronRight className="text-muted shrink-0" />
-      </Surface>
+      />
 
       <LogOutButton />
     </div>

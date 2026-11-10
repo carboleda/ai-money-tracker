@@ -3,9 +3,7 @@ import { SummaryHistoryModel } from "../model/summary-history.model";
 import { CashflowPointDto } from "../model/cashflow-point.dto";
 import { RecurringExpenseOutput } from "@/app/api/domain/recurring-expense/ports/outbound/get-recurring-expenses.port";
 import { Frequency } from "@/app/api/domain/recurring-expense/model/recurring-expense.model";
-
-const FORECAST_MONTHS = 3;
-const ROLLING_WINDOW_MONTHS = 3;
+import { Env } from "@/config/env";
 
 const monthLabelFormatter = new Intl.DateTimeFormat("en-US", {
   month: "short",
@@ -15,9 +13,11 @@ const monthLabelFormatter = new Intl.DateTimeFormat("en-US", {
 export class CalculateCashflowForecastService {
   async execute(
     history: SummaryHistoryModel[],
-    recurringExpenses: RecurringExpenseOutput[]
+    recurringExpenses: RecurringExpenseOutput[],
+    forecastMonths: number = Env.SUMMARY_DEFAULT_FORECAST_HORIZON_MONTHS,
+    rollingWindowMonths: number = Env.SUMMARY_DEFAULT_FORECAST_BASELINE_MONTHS
   ): Promise<CashflowPointDto[]> {
-    const recentHistory = history.slice(-ROLLING_WINDOW_MONTHS);
+    const recentHistory = history.slice(-rollingWindowMonths);
     const averageIncomes = this.average(recentHistory.map((h) => h.incomes));
     const averageExpenses = this.average(
       recentHistory.map((h) => h.expenses)
@@ -39,7 +39,7 @@ export class CalculateCashflowForecastService {
 
     const anchorDate = new Date();
 
-    return Array.from({ length: FORECAST_MONTHS }, (_, index) => {
+    return Array.from({ length: forecastMonths }, (_, index) => {
       const forecastDate = new Date(
         anchorDate.getFullYear(),
         anchorDate.getMonth() + index + 1,

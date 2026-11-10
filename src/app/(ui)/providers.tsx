@@ -10,6 +10,7 @@ import { LanguagePreferenceSync } from "@/components/providers/LanguagePreferenc
 import { AccountsProvider } from "@/components/providers/AccountsProvider";
 import { CategoriesProvider } from "@/components/providers/CategoriesProvider";
 import { QueryProvider } from "@/components/providers/QueryProvider";
+import { UserSettingsProvider } from "@/components/providers/UserSettingsProvider";
 import { ServiceWorkerRegistrar } from "@/components/providers/ServiceWorkerRegistrar";
 import { ThemeCookieSync } from "@/components/providers/ThemeCookieSync";
 import { OnlineStatusListener } from "@/components/providers/OnlineStatusListener";
@@ -31,10 +32,12 @@ export function Providers({ children }: Readonly<ProvidersProps>) {
         <QueryProvider>
           <ServiceWorkerRegistrar />
           <TranslationsProvider>
-            <LanguagePreferenceSync />
-            <AccountsProvider>
-              <CategoriesProvider>{children}</CategoriesProvider>
-            </AccountsProvider>
+            <UserSettingsProvider>
+              <LanguagePreferenceSync />
+              <AccountsProvider>
+                <CategoriesProvider>{children}</CategoriesProvider>
+              </AccountsProvider>
+            </UserSettingsProvider>
           </TranslationsProvider>
         </QueryProvider>
       </NextThemesProvider>

@@ -1,5 +1,8 @@
 import "reflect-metadata";
 import { container } from "tsyringe";
+import { getRepositoryToken } from "@/app/api/decorators/tsyringe.decorator";
+import { UserModel } from "@/app/api/domain/user/model/user.model";
+import type { UserRepository } from "@/app/api/domain/user/repository/user.repository";
 import { CalculateSummaryDashboardService } from "../calculate-summary-dashboard.service";
 import { FilterTransactionsService } from "@/app/api/domain/transaction/service/filter-transactions.service";
 import { GetAllAccountsService } from "@/app/api/domain/account/service/get-all.service";
@@ -31,6 +34,7 @@ describe("CalculateSummaryDashboardService", () => {
   let calculateBalanceService: jest.Mocked<CalculateBalanceService>;
   let calculateSummaryTrendsService: jest.Mocked<CalculateSummaryTrendsService>;
   let calculateCashflowForecastService: jest.Mocked<CalculateCashflowForecastService>;
+  let userRepository: jest.Mocked<UserRepository>;
 
   beforeEach(() => {
     const testContainer = container.createChildContainer();
@@ -65,6 +69,9 @@ describe("CalculateSummaryDashboardService", () => {
     const mockCalculateCashflowForecastService = {
       execute: jest.fn(),
     } as unknown as jest.Mocked<CalculateCashflowForecastService>;
+    const mockUserRepository = {
+      getExistingUser: jest.fn(),
+    } as unknown as jest.Mocked<UserRepository>;
 
     testContainer.register(FilterTransactionsService, {
       useValue: mockFilterTransactionsService,
@@ -96,6 +103,9 @@ describe("CalculateSummaryDashboardService", () => {
     testContainer.register(CalculateCashflowForecastService, {
       useValue: mockCalculateCashflowForecastService,
     });
+    testContainer.register(getRepositoryToken(UserModel), {
+      useValue: mockUserRepository,
+    });
 
     service = testContainer.resolve(CalculateSummaryDashboardService);
     filterTransactionsService = mockFilterTransactionsService;
@@ -109,6 +119,7 @@ describe("CalculateSummaryDashboardService", () => {
     calculateBalanceService = mockCalculateBalanceService;
     calculateSummaryTrendsService = mockCalculateSummaryTrendsService;
     calculateCashflowForecastService = mockCalculateCashflowForecastService;
+    userRepository = mockUserRepository;
   });
 
   afterEach(() => {
@@ -164,6 +175,7 @@ describe("CalculateSummaryDashboardService", () => {
       },
     ];
 
+    userRepository.getExistingUser.mockResolvedValue(null);
     filterTransactionsService.execute.mockResolvedValue(mockTransactions);
     getAllAccountsService.execute.mockResolvedValue(mockAccounts);
     getAllRecurringExpensesService.execute.mockResolvedValue({
@@ -230,9 +242,12 @@ describe("CalculateSummaryDashboardService", () => {
       },
       transactions: mappedTransactions,
     });
+    expect(getSummaryHistoryService.execute).toHaveBeenCalledWith(12);
     expect(calculateCashflowForecastService.execute).toHaveBeenCalledWith(
       mockHistory,
-      []
+      [],
+      3,
+      3
     );
   });
 });

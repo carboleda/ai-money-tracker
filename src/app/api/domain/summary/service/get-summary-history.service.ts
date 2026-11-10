@@ -8,6 +8,7 @@ import { CalculateCurrentMonthSummaryService } from "./calculate-current-month-s
 import { FilterTransactionsService } from "@/app/api/domain/transaction/service/filter-transactions.service";
 import { TransactionStatus } from "@/app/api/domain/transaction/model/transaction.model";
 import { getMonthBounds } from "@/config/utils";
+import { Env } from "@/config/env";
 
 @Injectable()
 export class GetSummaryHistoryService {
@@ -18,13 +19,15 @@ export class GetSummaryHistoryService {
     private readonly filterTransactionsService: FilterTransactionsService
   ) { }
 
-  async execute(): Promise<SummaryHistoryModel[]> {
-    const twelveMonthsAgo = new Date();
-    twelveMonthsAgo.setMonth(twelveMonthsAgo.getMonth() - 12);
-    twelveMonthsAgo.setDate(15);
+  async execute(
+    windowMonths: number = Env.SUMMARY_DEFAULT_HISTORY_WINDOW_MONTHS
+  ): Promise<SummaryHistoryModel[]> {
+    const windowStart = new Date();
+    windowStart.setMonth(windowStart.getMonth() - windowMonths);
+    windowStart.setDate(15);
 
     const history = await this.summaryHistoryRepository.getHistorySince(
-      twelveMonthsAgo
+      windowStart
     );
 
     // The current month hasn't been archived yet, so it's computed live
